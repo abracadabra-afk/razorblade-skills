@@ -16,6 +16,10 @@ $ErrorActionPreference = 'Stop'
 $Vault      = 'C:\Users\Chad\Dropbox\razorblade_mermaid'
 $RepoOS     = 'C:\Users\Chad\razorblade-os'       # private full mirror
 $RepoSkills = 'C:\Users\Chad\razorblade-skills'   # public tooling mirror
+$Log        = Join-Path $Vault 'WORKFLOWS\git-bridge\sync.log'
+
+# unattended-run visibility: log any terminating error instead of failing silently
+trap { "$(Get-Date -Format 'o')  ERROR  $($_.Exception.Message)" | Add-Content $Log; break }
 
 $brain = '_ME.md','_VAULT MAP.md','_SKILLS MAP.md','_DIRECTIVES.md',
          '_OBSERVATIONS.md','_BACKLOG.md','_CHANGELOG.md'
@@ -46,7 +50,7 @@ function Copy-Workflows($repo) {
   if (Test-Path $gSrc) {
     $gDst = Join-Path $wfDst 'git-bridge'
     New-Item -ItemType Directory -Force -Path $gDst | Out-Null
-    foreach ($t in 'build.py','seed-repo.ps1') {
+    foreach ($t in 'build.py','seed-repo.ps1','setup-schedule.ps1') {
       $tp = Join-Path $gSrc $t
       if (Test-Path $tp) { Copy-Item $tp $gDst -Force }
     }
@@ -137,3 +141,4 @@ Write-Utf8NoBom (Join-Path $RepoSkills 'README.md') $rs
 Commit-Push $RepoSkills "Sync razorblade-skills from vault $stamp"
 
 Write-Host ("Done. Hashed {0} skill package(s) (os) / {1} (skills)." -f $nOS,$nSk) -ForegroundColor Green
+"$(Get-Date -Format 'o')  OK  os=$nOS skills=$nSk" | Add-Content $Log
