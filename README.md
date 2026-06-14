@@ -1,4 +1,4 @@
-﻿# razorblade-skills
+# razorblade-skills
 
 Public distribution mirror of the Cowork/Obsidian OS tooling - the installable
 .skill packages, their canonical workflow docs, and a SHA-256 manifest. The
