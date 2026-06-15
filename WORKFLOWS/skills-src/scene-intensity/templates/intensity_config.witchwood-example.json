@@ -1,0 +1,5 @@
+{
+  "dialogue_dominated_frac": 0.35,
+  "d5_bins": [[3.0, 1], [6.0, 2]],
+  "_note": "Witchwood literary-fantasy register. D6 = narration-only fragments + dialogue cap (0.35). d5_bins were moved off the calm cluster (calm ~1.7-2.0/250, saturated crisis ~10/250). CALIBRATION FINDING (Ch.3): this register's somatic density is BIMODAL - calm ~1-2, visceral crisis ~10, nothing in between - so the 2/3 edge (6.0) cannot be empirically pinned and the D5=2 band is effectively unexercised here. That is fine: leave it provisional. Corollary: D5 is a WEAK signal in this register (even the euthanasia-decision climax scores D5=0, zero somatic words), so the composite leans almost entirely on the author-supplied semantic dims D1/D2/D4 - the mechanical floor is thin and the variance-reduction benefit is smaller than in a horror register. band_edges/weights inherited from engine DEFAULTS."
+}

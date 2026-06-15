@@ -10,9 +10,9 @@ Subcommands:
   verify   every .skill unzips, SKILL.md frontmatter parses (name+description),
            body is non-empty and not obviously truncated. Recomputes zip + content
            SHA-256 and, if skills-manifest.json is present, checks the zip SHA.
-  extract  unpack each .skill -> skills-src/<name>/ so SKILL.md becomes a diffable,
-           version-controlled source file instead of a binary blob.
-  package  re-zip skills-src/<name>/ -> WORKFLOWS/skills/<name>.skill DETERMINISTICALLY
+  extract  unpack each .skill -> WORKFLOWS/skills-src/<name>/ so SKILL.md becomes a
+           diffable, version-controlled source file instead of a binary blob.
+  package  re-zip WORKFLOWS/skills-src/<name>/ -> WORKFLOWS/skills/<name>.skill DETERMINISTICALLY
            (sorted entries, fixed timestamp, fixed compression) so a rebuild is
            byte-reproducible; then rewrite skills-manifest.json.
   audit    compare each package's CONTENT hash against the INSTALLED copy in the
@@ -137,7 +137,7 @@ def cmd_verify(root):
     return bad
 
 def cmd_extract(root):
-    src = pathlib.Path(root) / "skills-src"
+    src = pathlib.Path(root) / "WORKFLOWS" / "skills-src"
     for sp in packages(root):
         name = sp.stem
         for rel, data in pkg_files(sp).items():
@@ -149,7 +149,7 @@ def cmd_extract(root):
 
 FIXED_DT = (1980, 1, 1, 0, 0, 0)
 def cmd_package(root):
-    src = pathlib.Path(root) / "skills-src"
+    src = pathlib.Path(root) / "WORKFLOWS" / "skills-src"
     outdir = pathlib.Path(root) / "WORKFLOWS" / "skills"
     outdir.mkdir(parents=True, exist_ok=True)
     names = sorted(p.name for p in src.iterdir() if p.is_dir()) if src.exists() else []

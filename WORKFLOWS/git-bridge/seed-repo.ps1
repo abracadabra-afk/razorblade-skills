@@ -57,7 +57,7 @@ function Copy-Workflows($repo) {
   if (Test-Path $gSrc) {
     $gDst = Join-Path $wfDst 'git-bridge'
     New-Item -ItemType Directory -Force -Path $gDst | Out-Null
-    foreach ($t in 'build.py','seed-repo.ps1','setup-schedule.ps1','pack-skills.ps1') {
+    foreach ($t in 'build.py','seed-repo.ps1','setup-schedule.ps1','pack-skills.ps1','rotate-changelog.ps1') {
       $tp = Join-Path $gSrc $t
       if (Test-Path $tp) { Copy-Item $tp $gDst -Force }
     }
@@ -65,21 +65,55 @@ function Copy-Workflows($repo) {
   return (Join-Path $wfDst 'skills')
 }
 
+# content_sha256 == build.py's recipe over the PACKAGE's files (relpaths stripped of the
+# leading <name>/), so it equals build.py's manifest value and is exactly what
+# `build.py audit` recomputes from the package. Lets the spec'd SOURCE-AHEAD check
+# (compare source content-hash to the manifest's content_sha256) run against this manifest.
+function Get-PackageContentSha($skillPath) {
+  Add-Type -AssemblyName System.IO.Compression.FileSystem -ErrorAction SilentlyContinue
+  $name = [System.IO.Path]::GetFileNameWithoutExtension($skillPath)
+  $zip  = [System.IO.Compression.ZipFile]::OpenRead($skillPath)
+  try {
+    $entries = @{}
+    foreach ($e in $zip.Entries) {
+      if ($e.FullName.EndsWith('/')) { continue }                 # skip directory entries
+      $rel = $e.FullName
+      if ($rel.StartsWith("$name/")) { $rel = $rel.Substring($name.Length + 1) }
+      $s   = $e.Open()
+      $msf = New-Object System.IO.MemoryStream
+      $s.CopyTo($msf); $s.Close()
+      $entries[$rel] = $msf.ToArray()
+    }
+    $sha  = [System.Security.Cryptography.SHA256]::Create()
+    $ms   = New-Object System.IO.MemoryStream
+    $keys = [string[]]@($entries.Keys)
+    [Array]::Sort($keys, [System.StringComparer]::Ordinal)   # ORDINAL (codepoint) to match Python's sorted() in build.py; default Sort-Object is culture/case-insensitive and reorders 'SKILL.md' vs lowercase paths
+    foreach ($rel in $keys) {
+      $rb = [Text.Encoding]::UTF8.GetBytes($rel)
+      $ms.Write($rb, 0, $rb.Length); $ms.WriteByte(0)
+      $fh = $sha.ComputeHash($entries[$rel])
+      $ms.Write($fh, 0, $fh.Length)
+    }
+    -join ($sha.ComputeHash($ms.ToArray()) | ForEach-Object { $_.ToString('x2') })
+  } finally { $zip.Dispose() }
+}
+
 function New-Manifest($skillsDir, $outFile) {
   $skills = @()
   if (Test-Path $skillsDir) {
     Get-ChildItem $skillsDir -Filter *.skill | Sort-Object Name | ForEach-Object {
       $skills += [ordered]@{
-        name    = $_.BaseName
-        package = "WORKFLOWS/skills/$($_.Name)"
-        sha256  = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
-        bytes   = $_.Length
+        name           = $_.BaseName
+        package        = "WORKFLOWS/skills/$($_.Name)"
+        sha256         = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+        content_sha256 = (Get-PackageContentSha $_.FullName)
+        bytes          = $_.Length
       }
     }
   }
   $m = [ordered]@{
     generated = (Get-Date -Format 'o')
-    note      = 'sha256 = desktop-side hash of each built .skill package; skill-audit compares installed-vs-this.'
+    note      = 'sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.'
     skills    = $skills
   }
   Write-Utf8NoBom $outFile ($m | ConvertTo-Json -Depth 6)
@@ -111,6 +145,27 @@ function Commit-Push($repo, $msg) {
 Assert-Repo $RepoOS
 Assert-Repo $RepoSkills
 $stamp = Get-Date -Format 'yyyy-MM-dd HH:mm'
+
+# Build any changed skills from their text source first (source -> package), so the sync ships them.
+# Change-detected: no source change = no-op. This is what makes the daily task close the whole loop.
+$packScript = Join-Path $Vault 'WORKFLOWS\git-bridge\pack-skills.ps1'
+if (Test-Path $packScript) {
+  try { & $packScript | Out-Host }
+  catch { Write-Warning ("pack-skills failed: " + $_.Exception.Message + " - continuing with the sync") }
+}
+
+# Non-destructive housekeeping reminder: nudge when the append-only changelog gets large.
+# The carve itself stays a deliberate, reviewed desktop action (rotate-changelog.ps1 dry-run -> eyeball -> -Execute);
+# it is NEVER auto-run here - this only tells you WHEN it is due.
+$ChangelogReminderKB = 200
+$clog = Join-Path $Vault '_CHANGELOG.md'
+if (Test-Path $clog) {
+  $clogKB = [math]::Round((Get-Item $clog).Length / 1KB)
+  if ($clogKB -ge $ChangelogReminderKB) {
+    Write-Warning ("_CHANGELOG.md is {0} KB (>= {1}) - time to rotate: run WORKFLOWS\git-bridge\rotate-changelog.ps1 (dry-run), eyeball, then -Execute." -f $clogKB, $ChangelogReminderKB)
+    ("{0}  REMIND  _CHANGELOG.md {1}KB >= {2}KB - run rotate-changelog.ps1" -f (Get-Date -Format 'o'), $clogKB, $ChangelogReminderKB) | Add-Content $Log
+  }
+}
 
 # ---- razorblade-os (PRIVATE, full mirror) ----
 Write-Host "== razorblade-os (private) ==" -ForegroundColor Cyan

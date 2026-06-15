@@ -1,0 +1,19 @@
+{
+  "_comment": "Optional per-file 'config' block overrides intensity_config.json for just this run. Delete if not needed.",
+  "config": { "dread_floor": {} },
+  "scenes": [
+    {"id": "EX-S1", "pov": "A", "location": "kitchen", "summary": "quiet domestic setup",
+     "scores": {"D1": 1, "D2": 0, "D3": 1, "D4": 0},
+     "prose": "She set the table. The kettle ticked as it cooled. Outside, nothing moved.",
+     "dread": 0},
+    {"id": "EX-S2", "pov": "B", "location": "the road", "summary": "victim alone with the known threat; charmed, misreads it as safe",
+     "scores": {"D1": 1, "D2": 1, "D3": 1, "D4": 0},
+     "prose": "He smiled and named the trees for her, and she laughed, and the miles went by easy.",
+     "dread": 2,
+     "dread_source": "an earlier scene established the driver as the predator; he is in contact, the victim reads him as kind"},
+    {"id": "EX-S3", "pov": "A", "location": "the cliff", "summary": "the catastrophe, in full view",
+     "scores": {"D1": 3, "D2": 3, "D3": 3, "D4": 3},
+     "prose": "Blood. She screamed and could not breathe, her heart hammering as the talons tore and tore.",
+     "dread": 2, "dread_source": "the threat established across prior scenes", "on_page_detonation": true}
+  ]
+}

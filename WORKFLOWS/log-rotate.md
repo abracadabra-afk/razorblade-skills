@@ -4,7 +4,7 @@ name: log-rotate
 trigger: rotate the logs
 aliases: [log rotate, run the log doctor, vault health, check the brain-doc sizes, rotate the changelog]
 inputs: [_CHANGELOG.md, _OBSERVATIONS.md, _BACKLOG.md]
-outputs: [a measured size report, a rotated lean _CHANGELOG.md, dated archive files under history/, a gated "Needs CRE ruling" bin for risky rotations]
+outputs: [a measured size report, a rotated lean _CHANGELOG.md, dated archive files under SYSTEM/history/, a gated "Needs CRE ruling" bin for risky rotations]
 lane: meta
 status: active
 last_updated: 2026-06-15
@@ -35,19 +35,15 @@ Rotation keeps each live file small enough that a file-tool **top-insert stays s
 | WARN | 150K–200K | report + recommend rotation next run |
 | ROTATE | ≥ 200K | act per the per-file policy below |
 
-Measure with the file tools / bash `wc -c`. Defaults chosen 2026-06-15; tune in this table, not in the scheduled task.
+Measure with the **file tools** (read to EOF), **never** bash `wc -c` — on a large file the bash mount can serve a stale, truncated partial that understates size and would corrupt any carve range (`^obs-014` / `^obs-084`). Defaults chosen 2026-06-15; tune in this table, not in the scheduled task.
 
 ## Per-file policy (the core of this workflow)
 
-**`_CHANGELOG.md` — AUTO-ROTATE (safe op).**
-It is append-only and almost never back-referenced by anchor, so moving old entries is non-destructive. Past ROTATE:
-1. Keep live: frontmatter + the `# CHANGELOG` heading + the "For any AI reading this" / "Entry format" blocks + the **most recent ~30 entries OR the last 60 days, whichever is larger**, newest-first.
-2. Carve the older entries **verbatim** (newest-first preserved) into `history/_CHANGELOG-<YYYY>-H<1|2>.md` (half-year buckets; create `history/` if absent). Append to the bucket if it exists.
-3. Leave a pointer at the foot of the live file: `> Older entries archived to [[history/_CHANGELOG-<period>]] (rotated YYYY-MM-DD).`
-4. Bump `last_updated`.
+**`_CHANGELOG.md` — ROTATE via the DESKTOP carve (not the sandbox).**
+It is append-only and almost never back-referenced by anchor, so moving old entries is non-destructive — but the **carve is a desktop-owned write** (`^obs-083`): the Cowork sandbox sees a stale, truncated partial of this large file (`^obs-084`), so it can neither size nor carve it safely. The carve therefore runs as **`WORKFLOWS/git-bridge/rotate-changelog.ps1`** on the desktop (clean Dropbox access; the Git Bridge `razorblade-os` repo is the byte-exact restore floor). That script: keeps the most-recent N distinct dates live (default 2), carves older entries **verbatim** into `SYSTEM/history/_CHANGELOG-<bucket>.md`, **normalizes the live file to clean newest-first** (also fixing any foot-append inversion), leaves a foot pointer, bumps `last_updated`, and asserts entry-conservation before writing. It is **dry-run by default** (`-Execute` to apply). When this workflow runs in the sandbox and finds `_CHANGELOG` in the ROTATE band, it does **not** carve — it reports and recommends running `rotate-changelog.ps1 -Execute` on the desktop.
 
 **`_OBSERVATIONS.md` — GATE (never auto-move).**
-Its `^obs-NNN` anchors are cross-linked across the vault (`[[_OBSERVATIONS#^obs-NNN]]`); moving a block breaks every citation (`^obs-079` — never repoint blind). Past WARN/ROTATE, do **not** move content. Instead emit a gated recommendation: a **citation-safe split** — carve only observations whose anchors have **zero inbound references** vault-wide (verify with a search) into `history/_OBSERVATIONS-<period>.md`, leaving a redirect stub for any that are cited. List the candidates; let CRE rule.
+Its `^obs-NNN` anchors are cross-linked across the vault (`[[_OBSERVATIONS#^obs-NNN]]`); moving a block breaks every citation (`^obs-079` — never repoint blind). Past WARN/ROTATE, do **not** move content. Instead emit a gated recommendation: a **citation-safe split** — carve only observations whose anchors have **zero inbound references** vault-wide (verify with a search) into `SYSTEM/history/_OBSERVATIONS-<period>.md`, leaving a redirect stub for any that are cited. List the candidates; let CRE rule.
 
 **`_BACKLOG.md` — GATE (defer to `backlog-sweep`).**
 Growth here is open items; the right tool is `backlog-sweep` (archives closed items, dedupes), not rotation. Past WARN, recommend running `backlog-sweep` and/or a CRE working session; do not rotate.
@@ -57,6 +53,7 @@ Growth here is open items; the right tool is `backlog-sweep` (archives closed it
 - **File tools only** (Read / Write / Edit) on the mounted vault. **Never** `patch_vault_file` and **never** the Obsidian MCP whole-file rewrite for these files (`^obs-020` / `^obs-014` / `^obs-081`).
 - New/newest entries go in at the **top** via a targeted `Edit` (anchor on the `# CHANGELOG\n\n\n` → first-entry boundary), not appended at the foot. Rotation is what keeps that top-insert safe; restoring newest-first is part of the point.
 - After every write, **re-read the touched region with the file tools** to confirm it landed (`^obs-014`); do not trust a bash read alone.
+- **Size and carve from the file tools only** — never bash `wc -c` or a bash read of these files; the bash mount can serve a stale/truncated partial that understates size and would corrupt the carve (`^obs-084`).
 
 ## Steps
 
@@ -64,13 +61,13 @@ Growth here is open items; the right tool is `backlog-sweep` (archives closed it
 Confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). If it fails, **halt and report** — do not edit (`^obs-004`).
 
 ### Step 1 — Measure
-`wc -c` (or file-tool size) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`. Record each file's band.
+Measure each file with the **file tools** (read to EOF / file-size) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`. **Do not size with bash `wc -c`** — on a large file the bash mount may return a truncated partial (`^obs-084`: on the first live run it understated `_CHANGELOG` by ~16K and ended mid-entry). Record each file's band.
 
 ### Step 2 — Report
 Emit a one-table report: file · size · band · recommended action. If all GREEN, say so and **stop here** (read-only run).
 
-### Step 3 — Rotate `_CHANGELOG` if ROTATE
-Apply the `_CHANGELOG` auto-rotate policy with the file tools: identify the cutoff entry, Write/append the archive bucket, Edit the live file to drop the carved block + add the pointer, bump `last_updated`. Verify both files via the file tools.
+### Step 3 — Rotate `_CHANGELOG` if ROTATE (delegate to the desktop)
+Do **not** carve from the sandbox — the mount is stale (`^obs-084`) and the carve is desktop-owned (`^obs-083`). Report that `_CHANGELOG` is in the ROTATE band and recommend running **`WORKFLOWS/git-bridge/rotate-changelog.ps1`** on the desktop (preview first, then `-Execute`), then `seed-repo.ps1` to commit. Only on a clean, non-sandbox environment with authoritative file access should an agent carve directly — and then only entirely from file-tool reads, verifying both files after.
 
 ### Step 4 — Gate the rest
 For `_OBSERVATIONS` / `_BACKLOG` past WARN, assemble a `## Needs CRE ruling (log-rotate YYYY-MM-DD)` bin (append to `_BACKLOG.md`, or surface inline on an attended run): the proposed citation-safe split / backlog-sweep recommendation + reason. Never move their content automatically.

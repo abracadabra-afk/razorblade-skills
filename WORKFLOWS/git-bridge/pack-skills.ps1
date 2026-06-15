@@ -39,8 +39,9 @@ New-Item -ItemType Directory -Force -Path $SrcDir, $Tmp | Out-Null
 function Get-ContentSha($dir) {
   $sha  = [System.Security.Cryptography.SHA256]::Create()
   $base = (Resolve-Path $dir).Path
-  $rels = Get-ChildItem $dir -Recurse -File |
-          ForEach-Object { $_.FullName.Substring($base.Length + 1).Replace('\','/') } | Sort-Object
+  $rels = [string[]]@(Get-ChildItem $dir -Recurse -File |
+          ForEach-Object { $_.FullName.Substring($base.Length + 1).Replace('\','/') })
+  [Array]::Sort($rels, [System.StringComparer]::Ordinal)   # ORDINAL to match build.py's sorted(); default Sort-Object is culture/case-insensitive and reorders 'SKILL.md' vs lowercase paths
   $ms = New-Object System.IO.MemoryStream
   foreach ($rel in $rels) {
     $rb = [Text.Encoding]::UTF8.GetBytes($rel)

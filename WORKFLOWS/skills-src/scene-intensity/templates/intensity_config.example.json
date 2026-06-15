@@ -1,0 +1,52 @@
+{
+  "weights": {
+    "D1": 2,
+    "D2": 2,
+    "D3": 1,
+    "D4": 2,
+    "D5": 1,
+    "D6": 1
+  },
+  "band_edges": [
+    30.5,
+    55.5,
+    75.5
+  ],
+  "band_names": [
+    "REST",
+    "BUILD",
+    "HIGH",
+    "PEAK"
+  ],
+  "seam_distance": 4.0,
+  "fragment_max_words": 4,
+  "d5_bins": [
+    [
+      2.0,
+      1
+    ],
+    [
+      4.5,
+      2
+    ]
+  ],
+  "d6_bins": [
+    [
+      0.1,
+      1
+    ],
+    [
+      0.3,
+      2
+    ]
+  ],
+  "d6_long_zero": [
+    0.03,
+    16.0
+  ],
+  "somatic_extra": [],
+  "dread_cap": 2,
+  "dread_lift_bands": 1,
+  "dread_floor": {},
+  "dialogue_dominated_frac": 0.6
+}
