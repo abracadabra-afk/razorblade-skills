@@ -3,53 +3,68 @@ type: workflow
 name: skill-audit
 trigger: audit the skills
 aliases: [check skill drift, are my skills in sync, run the skill doctor, which skills need reinstalling, skill audit, skill doctor]
-inputs: [the mounted vault root, the installed skills directory (.claude/skills / skills-plugin), WORKFLOWS/*.md (canonical docs), the WORKFLOWS/skills/*.skill packages, the bundled skill_audit.py]
-outputs: [a drift + structural-integrity report across all skills, a rebuild/reinstall punch list, optional _CHANGELOG/_OBSERVATIONS entries on a real audit session]
+inputs: [a race-free clone of razorblade-skills (git), its skills-manifest.json, WORKFLOWS/git-bridge/build.py, the installed skills cache (.claude/skills / skills-plugin), WORKFLOWS/*.md (canonical reference docs)]
+outputs: [a current/STALE/not-installed report per skill, a Save-skill punch list, optional _CHANGELOG/_OBSERVATIONS entries on a real audit session]
 lane: meta
-status: draft
-last_updated: 2026-06-10
-scope: Any vault that keeps skill sources (WORKFLOWS/*.md and/or WORKFLOWS/skills/*.skill packages) and installs them into Cowork. Read-only — never writes the installed cache or a skill's content.
-pipeline_position: The verification half of the skill pipeline; skill-creator is the build half. Runs on demand to reconcile the three layers a Cowork skill exists in.
+status: active
+last_updated: 2026-06-14
+scope: Vaults using the Git Bridge (a versioned razorblade-skills repo + skills-manifest.json). Read-only — never writes the installed cache or a skill's content.
+pipeline_position: The verification half of the skill pipeline; skill-creator authors content, build.py packages it. Runs on demand (or under skills-sweep) to reconcile what RUNS against the canonical git package.
+git_bridge: Re-scoped onto the Git Bridge 2026-06-14 (see [[WORKFLOWS/git-bridge-proposal]] / `^obs-063`–`^obs-067`). Supersedes the pre-bridge mount+mtime version.
 ---
 
-# WORKFLOW: Skill Audit (the skill doctor)
+# WORKFLOW: Skill Audit (the skill doctor) — Git Bridge edition
 
-> A read-only reconciliation of every Cowork skill across its three layers — canonical doc, build artifact, installed copy — that reports drift and structural integrity and hands CRE a rebuild/reinstall punch list. It writes nothing but the report (and optional brain-log entries). Established 2026-06-10 after a `storyline-sync.skill` shipped truncated (`^obs-018`) and then ran stale because the install lagged the rebuild.
+> A read-only reconciliation of every Cowork skill against its **canonical git package**: does the copy that actually RUNS match the package in `razorblade-skills`? It reports `current` / `STALE` / `not-installed` and hands CRE a Save-skill punch list. It writes nothing but the report (and optional brain-log entries). Re-scoped 2026-06-14 onto the Git Bridge, which replaced the fragile Dropbox-mount reads that the original version (2026-06-10) had to defend against.
 
 ## Why this exists
 
-A skill that launches in Cowork loads from the **installed app-data cache, NOT from the vault.** The vault holds only the *source* (`WORKFLOWS/<name>.md`) and a *build artifact* (`<name>.skill` in the vault's `WORKFLOWS/skills/` build dir). Getting a vault edit to actually run is a two-hop manual chain — edit the doc → rebuild the `.skill` via skill-creator → install the `.skill` (Save skill button) — and drift can appear silently at each hop. Nothing today enforces that the running copy matches the current source. This workflow makes the drift visible.
+A skill that launches in Cowork loads from the **installed app-data cache, NOT from the vault** — and getting an edit to actually run is a manual chain (author → package → Save-skill), with silent drift at each hop. The original skill-audit had to read the package side through the Dropbox mount and guess doc-vs-package drift from mtimes, both unreliable (`^obs-014`, `^obs-060`). The Git Bridge removed that whole problem: the canonical packages now live in a **version-controlled, race-free git repo** with a **SHA-256 manifest**, so currency is an exact content-hash comparison, not a guess. This workflow is now the thin reporter over that.
 
-## The three layers
+## The layers (post-bridge)
 
-1. **Canonical doc** — `WORKFLOWS/<name>.md`. Human-edited source of truth. Matched to a skill by frontmatter `name:`.
-2. **Build artifact** — `<vault>/WORKFLOWS/skills/<name>.skill`. Zip of `<name>/SKILL.md`, built from the doc via skill-creator. (The auditor searches `WORKFLOWS/skills/` first; the vault root is a fallback for stray/legacy builds.)
-3. **Installed copy** — `<installed>/<name>/SKILL.md`. The file that actually RUNS — app data, outside the vault, read-only.
+1. **Source** — `skills-src/<name>/SKILL.md` (+ assets) in `razorblade-skills`, once adopted (`build.py extract`). The editable, diffable skill text.
+2. **Package** — `WORKFLOWS/skills/<name>.skill` in the repo, built deterministically from the source by `build.py package`. Its `content_sha256` lives in `skills-manifest.json`.
+3. **Installed** — `<installed>/<name>/SKILL.md` (+ assets). The copy that actually RUNS — app data, outside the vault, read-only.
+4. *(reference, not hash-gated)* **Doc** — `WORKFLOWS/<name>.md`. The human workflow spec. Kept consistent with the source editorially (skill-creator's job), not by a hash check — the package `SKILL.md` is an authored surface, not a copy of the doc.
 
-This workflow cannot fix layers 2 or 3: rebuilding is skill-creator's job; installing is CRE's (Save skill / Settings → Capabilities). It only diagnoses.
+This workflow cannot fix layers 1–3: authoring is skill-creator's job, packaging is `build.py`'s, installing is CRE's (Save skill). It only diagnoses.
 
 ## Steps
 
 ### Step 0 — Vault sentinel (`^obs-004`)
 Read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault.
 
-### Step 1 — Resolve the three roots
-From the system prompt's "Shell access" mapping, identify `VAULT` (mounted vault root), `INSTALLED` (the `.claude/skills` / `skills-plugin` dir), and `WORKFLOWS` (defaults to `VAULT/WORKFLOWS`). If `INSTALLED` is unclear, ask rather than auditing the wrong tree.
+### Step 1 — Pull the canonical packages (race-free)
+Clone the public skills repo fresh into a sandbox-local dir (NOT the Dropbox mount — that is the whole point):
+```
+git clone --depth 1 https://github.com/abracadabra-afk/razorblade-skills.git /tmp/rs
+```
+This is the `^obs-063` read path: git transport on `github.com` only. The clone is the canonical package side; never audit the package against the Dropbox-mounted `WORKFLOWS/skills/` (the `^obs-014`/`^obs-060` stale-mount class).
 
-### Step 2 — Run the script
-`python skill_audit.py --vault <VAULT> --installed <INSTALLED>`. It matches the three layers by frontmatter `name:` and checks, per skill: structural integrity (frontmatter parses; trailing newline present — a missing one is the `^obs-018` truncation signature; last line not a bare mid-word cut), installed==package (SHA + missing-sections list), and doc-vs-package (mtime heuristic, or exact if the package carries a `source_sha`). Verdicts: `OK` · `REINSTALL` · `REBUILD` · `UNBUILT` · `EXTERNAL` (not vault-managed) · `BROKEN-PKG`.
+### Step 2 — Verify package integrity
+`python3 /tmp/rs/WORKFLOWS/git-bridge/build.py verify --root /tmp/rs`. Confirms every `.skill` unzips, `SKILL.md` frontmatter parses, body is non-empty and not mid-word-truncated, and (if present) the zip SHA matches the manifest. A `BODY-MAYBE-TRUNCATED` or `FAIL` here means the canonical package itself is broken — a build/source repair (Step 5 handoff), rare now that builds are race-free.
 
-### Step 3 — Coherence guard (`^obs-014`) — MANDATORY confirmation
-The bash mount of the Dropbox-synced tree, and even the installed-cache mount, can serve **stale or incoherent copies**. The read-twice guard in the script catches *flickering* reads but NOT a *consistently stale* one. Therefore: for any skill flagged `REINSTALL`/`REBUILD` on **installed-side integrity**, re-read that installed `SKILL.md` through the file tools (live store) and trust that over the shell read before reporting. In the 2026-06-10 pilot this distinguished three bash-flagged "truncated" installs — two were false (storyline-sync, canon-sync read complete live) and one was real (register-pass genuinely ends mid-sentence). Never report an installed-side defect from a shell read alone.
+### Step 3 — Audit installed-vs-package (the currency check)
+`python3 /tmp/rs/WORKFLOWS/git-bridge/build.py audit --root /tmp/rs` (auto-detects the installed cache). It content-hashes each package's `SKILL.md`+assets against the installed copy and reports `current` / `STALE` / `not-installed`. `STALE` = the running copy differs from the canonical package → it needs a Save-skill.
 
-### Step 4 — Report
-Present the table + punch list, then translate to plain actions: `REINSTALL` → "running copy stale/broken — reinstall `<name>.skill`"; `REBUILD` → "doc changed after last build — rebuild via skill-creator, then reinstall"; `UNBUILT` → "doc exists, never packaged (or the package isn't kept in the vault)." Never claim to have fixed anything.
+### Step 4 — Coherence guard (`^obs-014` / `^obs-066`) — MANDATORY for STALE
+The package side is now race-free (git), but the **installed cache is still an app-data mount** that can read stale within a session — and a just-completed Save-skill may not have propagated into the sandbox's view (`^obs-066`: a re-audit right after reinstalling showed false STALE; the file tools confirmed the installs took). Therefore: for any `STALE` skill, re-read that installed `SKILL.md` through the **file tools** (live store) before reporting it. If the file-tools copy matches the package, it is **current** — the STALE flag was mount lag; say so. Never report an installed-side defect from the audit's mount read alone. When in doubt, a fresh Cowork session gives a new mount snapshot and a clean read.
 
-### Step 5 — Log (real audit sessions only)
+### Step 5 — Report
+Present the result + a plain punch list: `STALE` → "running copy differs from the git package — Save-skill `<name>.skill`"; `not-installed` → "packaged but never installed"; package `FAIL`/`verify` problems → "canonical package broken — rebuild from source (skill-creator + `build.py package`)." Note any `WORKFLOWS/<name>.md` doc that has drifted from its skill source as an *editorial* follow-up (not a currency defect). Never claim to have fixed anything.
+
+### Step 6 — Log (real audit sessions only)
 On a deliberate audit session, append a one-line `_CHANGELOG.md` (meta lane) entry naming flagged skills, and file new fragilities to `_OBSERVATIONS.md`. A quick check stays fully read-only.
 
-## Notes
+## What changed from the pre-bridge version (2026-06-10 → 2026-06-14)
 
-- **Vault package coverage is itself a finding.** If a skill is installed and has a doc but no `<name>.skill` in `WORKFLOWS/skills/`, its build artifact was one-off (e.g. session outputs) and isn't kept in the vault — so there's no durable artifact to diff or rebuild from. Surfacing those is half the value.
-- **Optional `source_sha` stamp.** A future build can stamp the doc's sha into the package frontmatter as `source_sha:`; the script then does an exact doc↔package check instead of the mtime heuristic. Honored if present, ignored if absent.
-- Keep this separate from skill-creator: this holds no build logic and never writes a skill's content.
+- **Package side reads from a git clone, not the Dropbox mount.** Retires the package-side `^obs-014` re-confirm and the `^obs-060` truncation risk on the canonical copy.
+- **Currency is a content hash, not an mtime heuristic.** `build.py audit` compares `SKILL.md`+assets byte-for-byte; the `source_sha` stamp the old Notes wished for is realized as the manifest `content_sha256`.
+- **The bundled `skill_audit.py` is superseded by `build.py`** (verify + audit). `build.py` is the single mechanical engine; this doc is the procedure around it.
+- **Installed-side guard stays.** The one place the old `^obs-014` discipline still bites is the app-data install cache (`^obs-066`) — Step 4 keeps the file-tools confirmation there.
+
+## What this is NOT
+
+- **Not a builder or installer.** It holds no build logic (that's `build.py` + skill-creator) and never clicks Save-skill (CRE's trust boundary).
+- **Not a content author.** Keep it separate from skill-creator: it never writes a skill's content, only reports drift.

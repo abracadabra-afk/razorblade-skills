@@ -3,131 +3,100 @@ type: workflow
 name: skills-manager
 trigger: manage the skills
 aliases: [run the skills manager, skills manager, what skills need work, refresh the skill registry, skills sweep]
-inputs: [WORKFLOWS/*.md (canonical docs), SKILLS/*.skill (build artifacts), the installed skills cache, SKILLS/REGISTRY.md (the ledger), skill-audit (scanner), skill-creator (builder)]
-outputs: [a refreshed SKILLS/REGISTRY.md, an Install queue (the only manual surface left for CRE), rebuilt .skill packages where the doc moved ahead, _CHANGELOG/_OBSERVATIONS/_BACKLOG entries]
+inputs: [a race-free clone of razorblade-skills (git), its skills-manifest.json, WORKFLOWS/git-bridge/build.py, skills-src/ (editable skill sources), the installed skills cache, skill-audit (reporter), skill-creator (authoring)]
+outputs: [a refreshed skills-manifest.json (the registry), an Install queue (the only manual surface left for CRE), repackaged .skill files where the source moved ahead, a desktop push of the repos, _CHANGELOG/_OBSERVATIONS/_BACKLOG entries]
 lane: meta
-status: active
+status: re-scoped (pending build)
 last_updated: 2026-06-14
-scope: Any vault that keeps skill sources (WORKFLOWS/*.md) + build artifacts (SKILLS/*.skill) and installs them into Cowork. Orchestration-only — holds no scan or build logic of its own; it sequences skill-audit and skill-creator and persists the result.
-pipeline_position: The management layer ABOVE the two existing skill skills. skill-audit is the scanner (diagnose), skill-creator is the builder (fix); skills-manager sequences them, persists state in a registry, and surfaces the one irreducibly-manual step (install) as a queue.
+scope: Vaults using the Git Bridge (a versioned razorblade-skills repo + skills-manifest.json) that install skills into Cowork. Orchestration-only — holds no scan, build, or hash logic of its own; it sequences build.py and skill-creator and surfaces the result.
+pipeline_position: The management layer ABOVE the bridge tooling. build.py is the mechanical engine (verify/package/audit/manifest); skill-creator is the authoring half; skill-audit is the reporter. skills-manager sequences them and surfaces the one irreducibly-manual step (Save-skill) as a queue.
+git_bridge: Re-scoped onto the Git Bridge 2026-06-14 (see [[WORKFLOWS/git-bridge-proposal]] / `^obs-063`–`^obs-067`). The bridge DELETED most of the original design's machinery (see "What the bridge retired"). Build pending — do not implement the pre-bridge version.
 ---
 
-# WORKFLOW: Skills Manager (the skill control tower)
+# WORKFLOW: Skills Manager (the skill control tower) — Git Bridge edition
 
-> **Recommended path (lead):** Don't build a new engine — you already own ~80% of it. `skill-audit` (scanner) and `skill-creator` (builder) exist and work. The actual pain you named — *"hard to know what to do with so many elements to touch"* — is a **state-tracking gap, not a tooling gap**. Fix it with one new persistent artifact (`SKILLS/REGISTRY.md`) and a thin orchestrator that runs audit → updates the registry → rebuilds where the doc moved ahead → hands you a one-line **Install queue**. Run it on a schedule so drift never silently accumulates. That's the whole system.
+> **Recommended path (lead):** You already own ~90% of it. The Git Bridge gave you the canonical, versioned package side (`razorblade-skills`), the registry (`skills-manifest.json`), the deterministic packager + content-hash audit (`build.py`), and an automatic desktop→GitHub push. `skill-creator` (author) and `skill-audit` (report) already exist. The remaining gap is a thin orchestrator that runs the audit, repackages any skill whose source moved ahead, and hands you a one-line **Install queue** — run weekly so drift never silently accumulates. The bridge turned most of the original plan into a no-op.
 
 ---
 
 ## Why this exists
 
-A Cowork skill lives in **three layers** that drift independently:
+A Cowork skill lives in layers that drift independently — editable **source** (`skills-src/<name>/`), built **package** (`WORKFLOWS/skills/<name>.skill`), and **installed** copy (app-data, what actually runs). Getting an edit to run is a chain: author → package → Save-skill, with silent drift at each hop, and historically the *state of that drift was scattered* across `^backlog-*-rebuild` lines, `_CHANGELOG`, and `_OBSERVATIONS`. The 2026-06-13 audit (`^obs-055`) found items marked "rebuild needed" when the rebuild was already done — a done deliverable masquerading as open work. The fix is a single derived ledger plus a thin orchestrator. The Git Bridge now provides that ledger for free.
 
-1. **Doc** — `WORKFLOWS/<name>.md` (human-edited source of truth)
-2. **Package** — `SKILLS/<name>.skill` (built from the doc via skill-creator)
-3. **Installed** — app-data cache, **what actually runs**, read-only
+## The design (re-mapped onto the bridge)
 
-Getting an edit to actually run is a three-hop manual chain: **edit doc → rebuild package → install (Save skill)**. Drift appears silently at each hop, and today the *state of that drift is scattered* — across `^backlog-*-rebuild` lines, `_CHANGELOG` entries, and `_OBSERVATIONS`. The result is exactly what you described: a pile of elements to touch with no single place that says *what's done, what's pending, and whose move it is.*
+### 1. The Registry → `skills-manifest.json` *(the bridge already builds + versions this)*
+One entry per skill — `name`, `package`, zip `sha256`, `content_sha256`, `bytes` — generated by `build.py` and committed to `razorblade-skills` on every sync. It is **derived, race-free, and version-controlled**, which is exactly what the original hand-spec'd `SKILLS/REGISTRY.md` was reaching for. The manager adds a thin **status view** on top (installed verdict + pending action + whose-move 🤖/🧑) by joining the manifest with a `build.py audit` run; it does not maintain a second ledger.
 
-Worse, the scatter goes stale. The 2026-06-13 audit (`^obs-055`, `^obs-054`, `^obs-050`) found multiple backlog items marked "rebuild needed" when the rebuild was **already done** and only the install remained — a done deliverable masquerading as open work. Without a single derived ledger, every dispatch risks re-doing finished work or jumping a gate.
+### 2. The Scanner → `build.py` (+ `skill-audit` as the reporter) *(exists)*
+`build.py verify` (package integrity) + `build.py audit` (content-hash installed-vs-package) replace the old `skill_audit.py` mtime/mount logic entirely. `skill-audit` is the read-only procedure around it (clone race-free, run build.py, confirm any STALE installed-side flag via the file tools — `^obs-066`).
 
-## The design (four parts, one new)
+### 3. The Builder → `skill-creator` (author) + `build.py package` (package) *(exists)*
+Division of labor the bridge requires: **`skill-creator` authors `SKILL.md` content** (new skills, behavior changes, description/trigger tuning) into `skills-src/<name>/`; **`build.py package` produces the `.skill` deterministically** + restamps the manifest. Never package with `skill-creator`'s own (non-deterministic) zip — two builders = two SHAs for identical content, churning the manifest.
 
-### 1. The Registry — `SKILLS/REGISTRY.md` *(new — the keystone)*
-One row per skill, **derived not hand-maintained**: lane, doc status, package present?, installed verdict (`OK` / `REINSTALL` / `REBUILD` / `UNBUILT` / `EXTERNAL`), last audited, **pending action**, and **whose move** (🤖 automatable vs 🧑 CRE-only). This is the single source of truth that replaces the scattered `^backlog-*-rebuild` lines. You glance at one table and know the state of every skill.
-
-### 2. The Scanner — `skill-audit` *(exists; one extension)*
-Already does the read-only three-layer reconciliation and prints a punch list. **Extension:** have it **write** its verdicts into the Registry instead of only printing them, and add the `^obs-054` check (flag any `WORKFLOWS/<name>.md` shorter than its packaged `SKILL.md` — a truncated doc that would ship a truncated skill if rebuilt). Keep its `^obs-014` mandatory file-tool confirmation of installed-side flags.
-
-### 3. The Builder — `skill-creator` *(exists; the handoff target)*
-When the Registry shows `REBUILD`, the manager hands the doc to skill-creator, rebuilds the `.skill` **bash-side on one filesystem** (`^obs-018` discipline), re-audits to confirm the package is now current, and flips the row `REBUILD → REINSTALL`.
-
-### 4. The Install Queue — *(new — the human handoff)*
-Install (Save skill) is the **only** step that must be CRE's — it's the trust boundary; nothing automates it. So the manager surfaces a dead-simple queue: *these N `.skill` files need Save-skill, nothing else.* That list is your entire manual surface area. Everything above it is automated.
+### 4. The Install Queue *(kept — the human handoff)*
+Save-skill is the **only** step that must be CRE's (the trust boundary). The manager surfaces a dead-simple queue: *these N `.skill` files need Save-skill, nothing else.*
 
 ## Steps (the orchestrator)
 
 ### Step 0 — Vault sentinel (`^obs-004`)
 Read `_DIRECTIVES.md`; confirm `type: ai-os-brain` + `file: directives`. Mismatch → halt and ask which folder is the vault.
 
-### Step 1 — Scan
-Run `skill-audit` across all three layers. Honor its `^obs-014` guard (confirm any installed-side flag via the file tools, never a bash read alone) and its `^obs-054` doc-truncation check.
+### Step 1 — Pull + scan (race-free)
+`git clone --depth 1 https://github.com/abracadabra-afk/razorblade-skills.git /tmp/rs`, then `build.py verify` + `build.py audit` (`skill-audit` Steps 1–3). All reads of the canonical side come from the clone, never the Dropbox mount. Honor the installed-side file-tools confirmation for any STALE (`^obs-066`).
 
-**Doc-vs-package staleness — content-based, never mtime (`^obs-060` #1).** The mtime heuristic gives false OKs in *both* directions: the 2026-06-14 scan reported `chapter-init` and `register-pass` as OK when a content grep of their packaged `SKILL.md` proved both stale (missing `weight`/Character-state and `voice-spec`/`Step 2.5`/`contamination` respectively). So a package is **never** ruled current on timestamps. Decide staleness by content, in this order:
+### Step 2 — Build the status view
+Join `skills-manifest.json` with the audit result: per skill, installed verdict (`current` / `STALE` / `not-installed`), source-vs-package check (exact: does `content_hash(skills-src/<name>/)` equal the manifest `content_sha256`? — `SOURCE-AHEAD` if not), pending action, and whose-move. Present it as a table; persist nothing new (the manifest is the ledger).
 
-1. **Preferred — `source_sha`.** If the package `SKILL.md` frontmatter carries `source_sha: <sha256>`, compare it to `sha256(WORKFLOWS/<name>.md)`. Equal → not stale. Differ → **REBUILD**. (Every rebuild in Step 3 stamps this, so packages become deterministically checkable over time.)
-2. **Fallback — content probe (no `source_sha` yet).** Extract the doc's distinctive current sections/tokens (recent step names, new field names, new section headers — e.g. for register-pass: `Step 2.5`, `voice-spec`, `contamination`; for chapter-init: `weight: standard`, `Character state @ end`) and confirm each appears in the packaged `SKILL.md` (and bundled scripts/templates where the doc puts the behavior). Any expected token missing → **REBUILD**. Emit OK only after a positive content check — never from mtime alone.
+### Step 3 — Repackage what's automatable (🤖)
+For any `SOURCE-AHEAD` row (the editable source moved ahead of the built package): run `build.py package` to rebuild the `.skill` deterministically from `skills-src/<name>/` and restamp the manifest. **Ship gate (kept, simplified):** refuse to ship unless `build.py verify` passes on the new package (frontmatter parses, body not truncated) and the rebuilt `content_sha256` equals `content_hash` of the source. Then the row flips to `STALE` (installed now lags the new package) → it lands in the Step-4 queue. Building happens in the **sandbox from the clone**, so the old NUL-pad / de-hydration / temp-dir gymnastics are unnecessary.
 
-**Package corruption — distinguish NUL-pad from real truncation (`^obs-060` #2).** Scan every file in each package for a **trailing run of NUL bytes** or a missing terminal newline on otherwise-complete text (the `^obs-018` atomic-write artifact: `land-chapter`/`workshop-chapter` carried 108/361 trailing NULs while their text ended cleanly on the final section). Flag these `NUL-PAD` — a safe 🤖 auto-clean (Step 3), **not** a doc problem. Reserve `BROKEN-PKG`/`DOC-REPAIR` (🧑) for text that ends **mid-word/mid-sentence** (genuine truncation). Report a NUL run explicitly as "obs-018 NUL padding (content complete; rebuild to clean)", never as "trailing whitespace."
-
-### Step 2 — Refresh the Registry
-Write the audit verdicts into `SKILLS/REGISTRY.md` — one row per skill, with pending action + whose-move. Derived fields overwrite; any CRE-authored note column is preserved (fill-gaps-only).
-
-### Step 3 — Auto-fix what's automatable (🤖)
-Three classes auto-fix; each ends by re-verifying the package and flipping the row to `REINSTALL` so it lands in the Step-4 queue. All build work is bash-side **on one filesystem** (`^obs-018`), and every write is verified *immediately* while still materialized (`^obs-062` — see below).
-
-**(a) `NUL-PAD` — mechanical clean (no doc change).** Strip the trailing NUL run / normalize to a single terminal newline, repackage deterministically (ZIP, temp dir), confirm 0 NUL bytes and the text is byte-identical to the de-NUL'd original. This is the safest fix — the instruction text is already correct.
-
-**(b) `REBUILD` — doc moved ahead, doc intact.** The packaged `SKILL.md` is **not** a copy of the doc; it's the authored skill surface. So rebuilding = **propagate the doc's current behavior into the package**, surgically:
-  1. Read the canonical `WORKFLOWS/<name>.md` and the packaged `SKILL.md` (+ bundled `scripts/`,`templates/`).
-  2. Identify exactly what the doc now specifies that the package lacks (the Step-1 content-probe tokens name it), and add/edit only those — sections in `SKILL.md`, and any script/template the doc puts behavior in (e.g. chapter-init's `templates/brief.md` weight field, `templates/continuity.md` Character-state section). Drop stray files that don't belong (e.g. a leftover `head.txt`).
-  3. Where the doc describes a runnable artifact (scaffold script, etc.), exercise it (dry-run + a throwaway real run) to confirm it still works with the change.
-
-**(c) `UNBUILT` doc that should be packaged** — first-time package via skill-creator.
-
-**Stamp + verify-or-revert (hard gate, every rebuild).** After building, stamp `source_sha: sha256(WORKFLOWS/<name>.md)` into the package `SKILL.md` frontmatter (serialized per DIR-004). Then run the **ship gate** — refuse to copy the package into `SKILLS/` unless ALL pass: every Step-1 expected token now present · 0 NUL bytes in every package file · single terminal newline · frontmatter parses (real YAML load) · the de-NUL'd `SKILL.md` is not **shorter** than the prior package's by more than a small tolerance (a truncation guard — a shrinking rebuild is the `^obs-018`/`^obs-054` signature). Any failure → **do not ship**; keep the old package, leave the row at `REBUILD`/`BROKEN-PKG`, and hand it to CRE in Step 5. A bad unattended rebuild must never overwrite a working package.
-
-**Skip** any row whose **doc** is truncated/incomplete (`^obs-054`) — that's a content repair (Step 5), not a rebuild.
-
-### Step 4 — Emit the Install queue (🧑)
-List exactly the `.skill` files now at `REINSTALL`. One line each: *"Save-skill `<name>.skill` — \<one-clause reason\>."* Nothing more. This is CRE's whole job.
+### Step 4 — Push + emit the Install queue (🧑)
+Commit the repackaged `.skill` + refreshed manifest and let the desktop sync push them (the `razorblade-os-sync` scheduled task, or `seed-repo.ps1` on demand). Then list exactly the `.skill` files now `STALE`: one line each — *"Save-skill `<name>.skill` — \<one-clause reason\>."* That list is CRE's whole job.
 
 ### Step 5 — Hand back the CRE-only content work
-Anything that requires authoring or ruling — a **truncated/incomplete doc** (`^obs-054`, e.g. storyline-sync.md), a **description/trigger-text** change (route to the `^obs-030` eval harness; rulings are CRE's), a **new skill from scratch** — is summarized as a handoff, never auto-edited. (Mirrors the `_ME` "AI executes; CRE creates" line: the manager moves bytes and runs builds, it doesn't author canonical procedure or creative content.)
+Anything requiring authoring or ruling — a **new skill from scratch**, a **behavior change**, a **description/trigger-text** change (route to the `^obs-030` eval harness; rulings are CRE's), a **drifted `WORKFLOWS/<name>.md` doc** — is summarized as a handoff, never auto-authored. (Mirrors `_ME` "AI executes; CRE creates": the manager moves bytes and runs deterministic builds, it does not author skill content or creative procedure.)
 
 ### Step 6 — Log
-On a real management run, refresh the Registry's `last_run`, append a one-line `_CHANGELOG` entry naming what was rebuilt and what's queued for install, and file any new fragility to `_OBSERVATIONS`. A quick status check stays read-only.
+On a real management run, append a one-line `_CHANGELOG` entry naming what was repackaged and what's queued for install, and file any new fragility to `_OBSERVATIONS`. A quick status check stays read-only.
 
 ## Automation boundaries (what stays manual, and why)
 
 | Step | Automatable? | Owner |
 |---|---|---|
-| Scan / diagnose (audit) | ✅ fully | 🤖 |
-| Update the registry | ✅ fully | 🤖 |
-| Rebuild a package from an **intact** doc | ✅ fully | 🤖 |
-| Clean a `NUL-PAD` package (strip NULs, repackage) | ✅ fully | 🤖 |
-| **Ship a rebuild that fails the verify gate** | ❌ never auto-ship | 🧑 CRE |
+| Scan / diagnose (`build.py` verify+audit) | ✅ fully | 🤖 |
+| Maintain the registry (manifest) | ✅ fully (build.py) | 🤖 |
+| Repackage a `.skill` from an **intact source** | ✅ fully (build.py package) | 🤖 |
+| Push repos to GitHub | ✅ fully (scheduled task) | 🤖 |
+| **Ship a rebuild that fails the verify/hash gate** | ❌ never auto-ship | 🧑 CRE |
 | **Install (Save skill)** | ❌ trust boundary | 🧑 CRE |
-| **Repair a truncated/incomplete doc** | ❌ canonical content | 🧑 CRE |
+| **Author / change skill content** | ❌ canonical content | 🧑 CRE + skill-creator |
 | **Description/trigger-text tuning** | ⚙️ semi (eval harness proposes) | 🧑 CRE rules |
-| **Author a brand-new skill** | ❌ creative procedure | 🧑 CRE + skill-creator |
 
-The design deliberately automates everything up to two hard lines — the **install trust boundary** and the **content-authoring boundary** — and stops there.
+The design automates everything up to two hard lines — the **install trust boundary** and the **content-authoring boundary** — and stops there.
 
-## Cadence (so drift stops accumulating)
+## Cadence
 
-Add a scheduled task (e.g. weekly **"skills sweep"**, or piggyback an existing runner) that runs this manager unattended: re-scan, refresh the Registry, rebuild the automatable rows, and report the Install queue. This is what kills the `^obs-055` stale-open class — the Registry is always current, so a backlog line can never quietly claim "rebuild needed" after the rebuild already shipped. The backlog stops carrying per-skill `^*-rebuild` lines at all; it carries only *"CRE: clear the Install queue"* when the queue is non-empty.
+The weekly **`skills-sweep`** scheduled task (Mondays) runs this manager unattended: clone → `build.py audit` → repackage automatable rows → push → report the Install queue. This kills the `^obs-055` stale-open class — the manifest is always current, so a backlog line can never quietly claim "rebuild needed" after it already shipped. The backlog carries only *"CRE: clear the Install queue"* when non-empty.
+
+## Rulings (CRE, 2026-06-13) — with 2026-06-14 bridge mapping
+
+1. **Registry IS the source of truth.** ✅ Principle holds. **Bridge mapping (CONFIRMED — CRE ruled 2026-06-14):** the registry is **`skills-manifest.json`** (build.py-generated, git-versioned, content-hashed). The old `WORKFLOWS/skills/REGISTRY.md` is **retired** (now a tombstone redirecting to the manifest). The manager maintains no second ledger — the manifest is the one source of truth.
+2. **The scanner writes nothing; something above it persists state.** ✅ Holds, re-assigned: **`build.py` writes the manifest**; `skill-audit` stays a pure read-only reporter; `skills-manager` orchestrates.
+3. **Weekly cadence.** ✅ Kept — `skills-sweep` now runs the bridge tooling.
+4. **DIR-004 graduated** (serialized derived-YAML). ✅ Unaffected — still a directive.
+
+## What the bridge retired (deliberately cut from the pre-bridge design)
+
+- **`SKILLS/REGISTRY.md`** → replaced by `skills-manifest.json` (and the stale `SKILLS/` path is gone — packages live in `WORKFLOWS/skills/`).
+- **mtime staleness heuristic + `source_sha` stamping** → replaced by exact content-hash compare (source↔package↔installed). Git already content-addresses everything.
+- **`NUL-PAD` cleaning + `^obs-062` de-hydration discipline + build-in-temp-then-verify gymnastics** → moot: builds run in the sandbox from a clean git clone, not on the Dropbox mount, so atomic-write NUL padding and cloud-only de-hydration don't occur.
+- **The mtime-driven "rebuild step never fired" failure (`^obs-060` #1)** → cannot recur: staleness is content, not timestamps.
+
+What stayed: the **Install queue**, the **automation-boundary discipline**, the **weekly cadence**, and the **verify/hash ship gate** (simplified). Those were the genuinely valuable parts; the rest was scaffolding against a substrate the bridge replaced.
 
 ## What this is NOT
 
-- **Not a new scanner or builder.** It holds no audit or build logic; it sequences `skill-audit` and `skill-creator` unchanged (the `land-chapter` orchestration discipline — duplicating their logic would make skill-audit flag the drift).
+- **Not a new scanner, builder, or hasher.** It sequences `build.py` and `skill-creator` unchanged.
 - **Not an installer.** It can never click Save-skill; it only makes the queue trivially short.
-- **Not a doc/skill author.** Truncation repair and new-skill authoring are handed back to CRE.
-
-## Rulings (CRE, 2026-06-13)
-
-All four open calls ruled — workflow flipped `status: active`:
-
-1. **Registry IS the source of truth.** `SKILLS/REGISTRY.md` owns skill state; the standing `^backlog-*-rebuild` lines collapse into Registry rows. The backlog keeps only "clear the Install queue" when non-empty.
-2. **The manager writes the Registry; `skill-audit` stays a pure read-only scanner.** The manager runs audit, then persists the verdicts (single-responsibility, the `land-chapter` discipline).
-3. **Weekly cadence.** Scheduled task `skills-sweep` (Mondays) runs this workflow unattended: re-scan → refresh Registry → rebuild automatable rows → report the Install queue.
-4. **DIR-004 graduated** — serialized derived-YAML is now a directive (`_DIRECTIVES#DIR-004`), retiring `^cand-dir-004-yaml`.
-
-## Hardening (2026-06-14, `^obs-060` / `^obs-062`)
-
-The first real auto-rebuild pass (4 packages, 2026-06-14) exposed why the previously-wired Step 3 had never fired and what makes unattended rebuilds safe:
-
-- **The scanner, not the rebuilder, was the gap.** Step 3 already said "rebuild REBUILD rows," but the mtime check mis-verdicted the stale packages as OK, so Step 3 never saw them. Fix is in Step 1: **content/`source_sha`-based staleness, never mtime.** A rebuild step is worthless if the scan won't flag what's stale.
-- **NUL-pad ≠ truncation.** Trailing-NUL packages still *run* (text complete) so they'd been logged "OK (runs)" and skipped. They are now their own auto-clean class (Step 3a) — `land-chapter`/`workshop-chapter` were exactly this.
-- **`source_sha` is the durable backbone.** Once stamped, doc-vs-package is an exact comparison; the content-probe fallback only covers not-yet-stamped packages and retires itself as each is rebuilt.
-- **Verify-or-revert is the safety that lets this run unattended.** Auto-authoring a package from an intact doc is in-bounds (CRE's boundaries table), but only because the ship gate refuses to overwrite a working package with one that lost a token, gained NULs, failed to parse, or shrank. The install Save remains CRE's review point.
-- **`^obs-062` de-hydration discipline (Dropbox).** Writing `.skill` files into `SKILLS/` puts the whole folder into a sync state — the just-written files stay visible, the rest revert to cloud-only placeholders that bash AND the Obsidian API briefly can't read. So: verify each write the instant it lands (before de-hydration), keep a non-Dropbox temp copy of anything to re-read this run, and treat a post-write missing sibling as sync-lag, not loss. Build in a temp dir, copy the finished `.skill` into `SKILLS/`, verify, move on.
+- **Not a content author.** New skills and behavior/description changes are handed back to CRE + skill-creator.

@@ -20,6 +20,7 @@ CRE says **"sort the inbox"** (or has dumped a pile into [[INBOX]] and wants it 
 ## Core discipline
 - **Auto-file the confident; review-bin the rest.** High-confidence items get filed immediately; ambiguous or spans-two-books items stay in INBOX's **🔍 Needs review** with the candidate books + reasoning. Never guess on a low-confidence item — and never pester CRE item-by-item. (This makes the router safe to run **unattended on a schedule**.)
 - **Capture text is preserved verbatim** when filing to Vibes (no inline provenance that would pollute a creative fragment). Provenance lives in the sort log, not inside creative text.
+- **Voice-note intent hints (from the dictation-runner).** An item may be immediately preceded by an HTML comment like `<!-- voice-note 2026-06-14 · intent: file under marketing · confidence: uncertain -->`. That intent is CRE's own spoken steer routed here by the [[WORKFLOWS/dictation-runner]] - treat it as a **strong** classification signal (often enough to lift a borderline item to high-confidence and file it). Still file the item body **verbatim**; never carry the comment into the filed note (provenance lives in the sort log).
 - File-tools write rule (`^obs-020`); verify writes with the file tools, not a bash read (`^obs-014`).
 
 ## The routing table (book definitions the classifier uses)
@@ -54,33 +55,8 @@ Confirm `_DIRECTIVES.md` frontmatter (the `^obs-004` guard). Read [[INBOX]] (Inb
 Split the Inbox into discrete items: by blank line, by bullet/checkbox, or by obvious topic boundary. One captured thought = one item. Don't merge unrelated lines; don't split a single multi-sentence thought.
 
 ### Step 3 — Classify
-For each item, assign the best-fit book using the routing table, with a **confidence**: high (file) / low (review). Watch for: a secret/credential (DIR-001 → do not file into any note; flag in the report, tell CRE to move + rotate); a cleanly-separable multi-item (split); a spans-two-books item that won't separate (→ review).
+For each item, assign the best-fit book using the routing table, with a **confidence**: high (file) / low (review). Watch for: a secret/credential (DIR-001 → do not file into any note; flag in the report, tell CRE to move + rotate); a cleanly-separable multi-item (split); a spans-two-books item that won't separate (→ review). If an item carries a leading `<!-- voice-note … intent: … -->` comment, weight that spoken intent heavily (see Core discipline); a clear directive (e.g. *task*, *file under marketing*) usually settles the book.
 
 ### Step 4 — File (confident items)
 Append each high-confidence item to its target's intake zone, preserving CRE's wording:
-- **Vibes** → under `VIBES/CAPTURE.md` "⚡ Inbox" (verbatim, no inline tag — the weave anchors it later).
-- **Tasks** → under `TASKS/TASKS.md` "⚡ Inbox" as `- [ ] <item>`.
-- **Workflows** → under `WORKFLOWS/_WORKFLOWS.md` "⚡ Intake" as `- <idea>`.
-- **Life** → the right `REFERENCE/` note (create + link from `_REFERENCE` if a new category) or the matching domain folder.
-- **Knowledge** → the matching `KNOWLEDGE/<area>/` note (create + note in the report if a new area).
-- **Business** → the matching `BUSINESS/<area>/` note (create + note in the report if a new area).
-- **_BACKLOG** → the matching lane section as a `- [ ]` item.
-Remove filed items from INBOX's Inbox.
-
-### Step 5 — Review-bin the rest
-Leave low-confidence / unsplittable items in INBOX's **🔍 Needs review**, each with: the item, the 2 candidate books, and one line on why it's ambiguous. Don't auto-file these.
-
-### Step 6 — Log + report
-Append a dated line to INBOX's **Sort log** (counts per book). Bump `last_updated` on every file touched. Report to CRE a compact table: *item → book* for everything filed, plus the Needs-review list to rule on. If anything went to Vibes, note it'll be picked up by the next weave (manual "weave the vibebook" or the scheduled weave task).
-
-## Stop conditions
-- Inbox empty → "nothing to sort," stop.
-- Secret/credential detected → do not file it anywhere; flag + advise rotate (DIR-001).
-- A target intake is missing/renamed → halt that item to Needs review with a note; don't create books ad hoc (except a new `REFERENCE/` category note under Life, or a new `<area>/` note under Knowledge/Business, which is expected).
-
-## Notes
-- Router dispatches only; each book's own workflow (e.g. `weave-vibebook`) does the deep processing.
-- Safe to run **unattended on a schedule** (auto-file confident, review-bin the rest). Pipeline order when chained: **inbox-router → weave-vibebook** (router files new fragments into Vibes' inbox; the weave then anchors + connects them).
-
-## Logging
-On completion, append an entry to [[_CHANGELOG]] under the `os` lane (or note in the INBOX Sort log for routine/scheduled runs).
+- **Vibes** → under `VIBES/CAPTU

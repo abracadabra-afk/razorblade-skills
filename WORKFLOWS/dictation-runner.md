@@ -5,62 +5,91 @@ lane: fiction / os
 status: active
 trigger: scheduled task `dictation-runner` (polls _DICTATION INBOX/) + manual "run the dictation runner"
 created: 2026-06-14
-purpose: Remote, phone-first dictation pipeline. Drop audio in _DICTATION INBOX/ from anywhere; a scheduled Cowork task transcribes it offline, reconciles garbled proper nouns against project canon, runs dictation-cleanup, and leaves a finished first draft waiting — no desktop orchestration, no Buzz, no copy-paste.
+updated: 2026-06-14
+purpose: Remote, phone-first VOICE pipeline. Drop ANY audio in _DICTATION INBOX/ from anywhere - a chapter you're dictating or a random thought/task/list. A scheduled Cowork task transcribes it, then forks it: fiction goes to the chapter-draft pipeline (reconcile -> cleanup -> _drafts/), everything else goes to your INBOX for the inbox-router to file. One drop zone, no toggling.
 ---
 
 # dictation-runner
 
-> **The problem this kills:** the old flow was record → Buzz (manual desktop transcribe) → copy-paste into Cowork → trigger cleanup/transcode. Four hand-offs, all desktop-bound. This collapses it to: **drop audio in one folder; a polling task does the rest.** The orchestrator is a scheduled Cowork task (the same mechanism as `mount-the-vault`), so there are no cross-app event triggers to wire.
+> **The problem this kills:** the old flow was record -> Buzz (manual desktop transcribe) -> copy-paste into Cowork -> trigger cleanup/transcode. Four hand-offs, all desktop-bound. This collapses it to: **drop audio in one folder; a polling task does the rest.** As of 2026-06-14 that one folder takes *every* kind of voice note, not just chapter dictation - the runner decides at transcription time whether a clip is fiction or a second-brain note, so you never pick a folder.
 
-## Architecture — one polling loop, two stages
+## What changed (2026-06-14): one folder, two destinations
+
+You used to need a separate path for "dictate a chapter" vs "capture a stray thought." Now both land in `_DICTATION INBOX/`. The separation of concerns moved out of *which folder you drop into* and into a **classifier** the runner runs after transcription. The runner makes exactly one decision - **fiction, or not** - and each branch hands off to an already-built, mature pipeline:
+
+- **fiction** -> the existing reconcile + cleanup path (unchanged).
+- **not fiction** -> your **[[INBOX]]**, where the existing **[[WORKFLOWS/inbox-router|inbox-router]]** does all the domain sorting.
+
+**Guardrail:** the runner NEVER writes a domain bucket directly. Per the vault's connector discipline ([[_VAULT MAP]]), the inbox-router is the *sole* write-path into Vibes/Tasks/Life/Knowledge/Business/Workflows. A non-fiction clip is dropped into INBOX (the universal front door) with the spoken intent preserved as a hint; the router files it from there.
+
+## Architecture - one polling loop, transcribe-then-fork
 
 ```
-phone (record audio) ──Dropbox app──▶ _DICTATION INBOX/<clip>.m4a
-                                              │
-              scheduled task "dictation-runner" wakes (~every 15 min)
-                                              │
-  STAGE A · deterministic (runner.py, no LLM)
-   • faster-whisper-small (vendored, offline) transcribes the audio
-   • canon name-reconcile: garbled proper nouns matched vs the project's
-     StoryLine Codex + REFERENCE/bible.md + REFERENCE/_LEXICON.md
-   • writes _reconciled/<clip>.md  (reconciled text + corrections + raw audit)
-   • moves the audio to processed/
-                                              │
-  STAGE B · the skills (this Cowork session)
-   • runs dictation-cleanup on the reconciled transcript (non-destructive copy-edit)
-   • writes _drafts/<clip>-clean.md   ← finished first draft, waiting
-   • moves the reconciled note to _reconciled/done/
-   • logs the run to _CHANGELOG
+phone (record audio) --Dropbox app--> _DICTATION INBOX/<clip>.m4a
+                                              |
+              scheduled task "dictation-runner" wakes (~every 30 min)
+                                              |
+  STAGE A . deterministic (runner.py, no LLM)
+   * faster-whisper-small (vendored, offline) transcribes the audio
+   * classify_route(): decide fiction vs inbox (see "The fork" below)
+   |
+   |-- FICTION:
+   |     * canon name-reconcile (garbled proper nouns vs Codex + bible + _LEXICON.md)
+   |     * writes _reconciled/<clip>.md  (reconciled text + corrections + raw audit)
+   |
+   |-- INBOX (everything else):
+   |     * writes _inbox/<clip>.md  (verbatim transcript body + intent hint + confidence)
+   |
+   * moves the audio to processed/
+                                              |
+  STAGE B . the skills (this Cowork session)
+   |-- for each new _reconciled/*.md:  dictation-cleanup -> _drafts/<clip>-clean.md
+   |                                    -> move note to _reconciled/done/
+   |-- for each new _inbox/*.md:        append body to INBOX (with intent-hint comment)
+   |                                    -> move note to _inbox/done/
+   * logs one consolidated line per clip to _CHANGELOG
+                                              |
+  (decoupled) the inbox-router - on its own schedule or "sort the inbox" -
+  files the new INBOX items into the domain books, honoring the intent hint.
 ```
 
-**Why polling, not triggers:** every "who fires whom" hand-off (Buzz→save→Cowork) was the brittle part and impossible to drive from a phone. A single scheduled task that watches one folder removes all of them. You don't need real-time — dictate on a walk, the draft is built by the time you're back.
+**Why polling, not triggers:** every "who fires whom" hand-off was the brittle part and impossible to drive from a phone. A single scheduled task watching one folder removes them all. **Transport is Dropbox:** the vault lives in Dropbox, so a file the phone drops into `_DICTATION INBOX/` is already visible to the runner's sandbox mount.
 
-**Transport is Dropbox:** the vault lives in Dropbox, so a file the phone drops into `_DICTATION INBOX/` is already visible to the runner's sandbox mount. No Google Drive / Supabase plumbing for transport.
+## The fork (classify_route, Stage A detail)
 
-## Scope boundary (v1)
+The runner decides fiction-vs-inbox in this order. The whole thing is biased so that **uncertainty resolves to INBOX** - both branches are non-destructive staging (a holding draft in `_drafts/` vs. text in INBOX), the inbox-router can segment a mixed clip and review-bin anything ambiguous, and the fiction branch never commits to a chapter on its own. So a wrong guess is always cheap and recoverable; a stray thought never lands silently inside a chapter.
 
-- **Automated:** transcribe → reconcile → cleanup → holding draft in `_DICTATION INBOX/_drafts/`. Safe: `dictation-cleanup` is the protective, word-preserving copy-edit and the output never touches a chapter folder.
-- **Stays a desk action:** the **transcoder/slate** into a specific `CHAPTER N/` `draft.md`. It needs an `envelope.md` (perceptual POV) and a chapter target — not on-the-go inputs. At the desk you route the holding draft into a chapter and run `slate this dictation` as usual.
+1. **Explicit spoken directive at the head of the clip (highest priority).** A keyword *or* a natural-language instruction in the first clause, honored deterministically:
+   - **Fiction markers:** `fiction`, `chapter`, `scene`, `dictation`, `slate`, `prose`, `manuscript`, `draft`, `narration`, or a **project name** (`Witchwood`, `Godsrift`, `Ghost River`, `Darkbloom`). A spoken project name also overrides the filename's project.
+   - **Inbox markers:** `inbox`, `task`, `to-do`, `reminder` / `remind me`, `note to self`, `idea`, `vibe`, `capture`, `thought`, `list`, `file under ...`, `add to ...`, `put in ...`, `business`, `marketing`, `knowledge`, `workflow`, `backlog`.
+   - The runner peels the directive clause off the body at the first separator (`:` `,` `-`) and keeps it as a **routing hint** for the inbox-router. Recommended phrasing: *say the directive, a slight pause/comma/colon, then the note.* Without a separator the directive stays in the body (harmless) and routing still works.
+2. **No explicit directive -> heuristic classifier.** Two deterministic signals:
+   - **canon-density** (the strongest signal, and one Stage A is uniquely good at): how many high-confidence canon names per 100 words. A clip dense in Witchwood/Godsrift vocabulary in narration is almost certainly prose.
+   - **register**: third-person + past tense + quoted dialogue lean fiction; first-person + to-do/imperative cues (`remember to`, `need to`, `call`, `email`, `renew`, lists) lean inbox.
+3. **Low signal either way -> INBOX, flagged `uncertain`.** Defaulted there for the router (and its Needs-review) to handle.
 
-## The name-reconcile (Stage A detail)
+**v1 is heuristic by design.** The explicit directive is the primary control; the classifier is just the fallback for when you forget. Tunable knobs live at the top of `runner.py` (`CANON_STRONG`, `FICTION_SCORE`, `INBOX_SCORE`). Upgrade path: swap the heuristic for an LLM classify step in Stage B (see `_BACKLOG`); the fork interface stays the same.
 
-Lives in `WORKFLOWS/dictation-runner/lexicon.py` + `runner.py`. Deterministic, stdlib + `jellyfish`.
+## Scope boundary (still true)
 
-- **Lexicon source (derived + curated, no hand-maintenance of the bulk):**
-  - StoryLine Codex filenames (`WRITING/STORYLINE/<Project>/Codex/**`) — characters, items, locations, lore.
-  - `### ` entity headers in `REFERENCE/bible.md`.
-  - A curated seed `REFERENCE/_LEXICON.md` for **world/lore terms not in the Codex** (e.g. *Witchwood*, *Godsrift*) and **known mishears** (`winch wood => Witchwood`). This is the one file you hand-grow.
-- **Matching:** double-metaphone phonetic key + Jaro-Winkler on the surface form, best-of-window over 1–4 word spans, span-aligned, article-dedup.
-- **Confidence tiers:** ≥0.92 → auto-correct; 0.86–0.92 → flag inline `[AUTHOR: heard → Canonical?]` (your existing review convention); <0.86 → left alone. Common words (the boy, the river, wind, water) are guarded out to avoid false positives.
-- **Why this beats a bigger model:** `large-v3` has never heard of *Godsrift* either. Only your canon knows your invented vocabulary, so a lexicon pass is the correct fix — and it's free and offline.
-- **Project selection:** default **Witchwood**; override by putting the project in the filename (`godsrift_...m4a`).
+- **Automated:** transcribe -> fork -> (fiction) holding draft in `_drafts/` or (inbox) item in `INBOX`. Both are safe, non-destructive staging.
+- **Stays a desk action:** the **transcoder/slate** into a specific `CHAPTER N/` `draft.md`. It needs an `envelope.md` (perceptual POV) and a chapter target - not on-the-go inputs. At the desk you route a holding draft into a chapter and run `slate this dictation` as usual.
+
+## The name-reconcile (Stage A, fiction branch only)
+
+Lives in `WORKFLOWS/dictation-runner/lexicon.py` + `runner.py`. Deterministic, stdlib + `jellyfish`. (The same lexicon machinery also powers `canon_density()`, which the fork uses as a fiction signal - scored for *presence* of canon, not repair of it.)
+
+- **Lexicon source (derived + curated):** StoryLine Codex filenames (`WRITING/STORYLINE/<Project>/Codex/**`); `### ` entity headers in `REFERENCE/bible.md`; a curated seed `REFERENCE/_LEXICON.md` for world/lore terms not in the Codex (e.g. *Witchwood*, *Godsrift*) and known mishears (`winch wood => Witchwood`).
+- **Matching:** double-metaphone phonetic key + Jaro-Winkler on the surface form, best-of-window over 1-4 word spans.
+- **Confidence tiers:** >=0.92 -> auto-correct; 0.86-0.92 -> flag inline `[AUTHOR: heard -> Canonical?]`; <0.86 -> left alone. Common words guarded out.
+- **Project selection:** default **Witchwood**; override by filename (`godsrift_...m4a`) or by a spoken project name at the head of the clip.
 
 ## Dependencies (installed at runtime by the scheduled task)
 
 ```
-pip install --break-system-packages faster-whisper jellyfish
+pip install --break-system-packages faster-whisper jellyfish pyyaml
 ```
-The model is **vendored** at `_models/faster-whisper-small` (the sandbox is firewalled from Hugging Face, so it loads from the vault — offline, ~3 s). To (re)vendor or swap size, run on a machine with HF access:
+`pyyaml` is required by the staging-note writer (DIR-004: derived frontmatter is serialized via `yaml.safe_dump` and parse-gated, never hand-formatted). The model is **vendored** at `_models/faster-whisper-small` (offline). To (re)vendor or swap size, run on a machine with HF access:
 ```
 huggingface-cli download Systran/faster-whisper-small --local-dir "<vault>\_models\faster-whisper-small"
 ```
@@ -68,34 +97,37 @@ huggingface-cli download Systran/faster-whisper-small --local-dir "<vault>\_mode
 ## The scheduled task prompt (Stage A + B)
 
 > Bootstrap is NOT required for this task. Do exactly this:
-> 1. `pip install --break-system-packages faster-whisper jellyfish` in the sandbox.
-> 2. Run `python3 "<vault>/WORKFLOWS/dictation-runner/runner.py"`. It prints JSON of what it processed. If `processed: 0`, stop — nothing to do, no log entry.
-> 3. For each new `_DICTATION INBOX/_reconciled/*.md` not yet in `_reconciled/done/`: run the **dictation-cleanup** skill on its "Reconciled transcript" section; carry the `[AUTHOR:]` flags through; **suppress cleanup's own `_CHANGELOG` self-log** (Step 4 owns the single line); on a noisy transcript that would trip cleanup's pause/HALT, write `_drafts/<stem>-NEEDS-REVIEW.md` with a note and continue (never stall — no author present); else write `_drafts/<stem>-clean.md`; move the reconciled note to `_reconciled/done/`.
-> 4. Append ONE consolidated line per processed clip to `_CHANGELOG.md`.
-> 5. Leave any `[AUTHOR:]` name flags in place — CRE rules them at the desk.
+> 1. `pip install --break-system-packages faster-whisper jellyfish pyyaml` in the sandbox.
+> 2. Run `python3 "<vault>/WORKFLOWS/dictation-runner/runner.py"`. It prints JSON of what it processed; each result carries a `route` (`fiction` or `inbox`). If `processed: 0`, stop - nothing to do, no log entry.
+> 3. **Fiction branch** - for each new `_DICTATION INBOX/_reconciled/*.md` not yet in `_reconciled/done/`: run the **dictation-cleanup** skill on its "Reconciled transcript" section; carry the `[AUTHOR:]` flags through; **suppress cleanup's own `_CHANGELOG` self-log** (Step 5 owns the single line); on a noisy transcript that would trip cleanup's pause/HALT, write `_drafts/<stem>-NEEDS-REVIEW.md` with a note and continue (never stall - no author present); else write `_drafts/<stem>-clean.md`; move the reconciled note to `_reconciled/done/`.
+> 4. **Inbox branch** - for each new `_DICTATION INBOX/_inbox/*.md` not yet in `_inbox/done/`: read its frontmatter (`intent_hint`, `confidence`) and its "## Body (verbatim transcript)" section. Append the body **verbatim** to `INBOX.md` under the `## ⚡ Inbox` heading as a new item. If `intent_hint` is non-empty OR `confidence` is `uncertain`, prepend an HTML-comment hint on its own line immediately above the item: `<!-- voice-note <date> . intent: <intent_hint> . confidence: <confidence> -->` (the comment is a steer for the inbox-router; it is NOT part of the captured text). Do NOT classify into a domain here - that is the inbox-router's job. Move the staging note to `_inbox/done/`. Use the file tools to edit `INBOX.md`, not patch-by-heading.
+> 5. Append ONE consolidated line per processed clip to `_CHANGELOG.md`, noting the route, e.g. `- dictation-runner: <stem> [fiction] (<project>, <s>s, <N> corrections) -> _drafts/<stem>-clean.md` or `- dictation-runner: <stem> [inbox] (<s>s, <confidence>) -> INBOX`.
+> 6. Leave any `[AUTHOR:]` name flags in place - CRE rules them at the desk. Never bind a clip to a chapter (that is a desk action).
 
-## Interaction with dictation-cleanup
+## Interaction with the inbox-router
 
-Stage B calls the `dictation-cleanup` skill, so its contract matters. Verified 2026-06-14 against the installed skill:
+The inbox branch is **decoupled**: the runner only deposits items into INBOX. The inbox-router files them on its own schedule (the `books-daily-ingest-weave` task) or when CRE says "sort the inbox." The router reads the leading `<!-- voice-note ... -->` comment as a strong steer but still files the body verbatim and parks anything ambiguous in its own Needs-review (see [[WORKFLOWS/inbox-router]]).
 
-- **Compatible (no change):** the reconciled transcript is still *raw dictation* (corrected proper nouns + flags), so it satisfies cleanup's guard "input is ALWAYS raw dictation, never an already-drafted chapter." Cleanup preserves "every remaining `[AUTHOR:]` flag," so the reconcile pass's `[AUTHOR: heard → Canonical?]` flags survive. It returns only clean Pass-4 prose and is vault-portable.
-- **Adjusted (two):** (1) cleanup **self-logs** a `[fiction] dictation cleanup` entry to `_CHANGELOG` when the brain files are present → the scheduled task suppresses that and keeps one consolidated runner line, avoiding double entries per clip. (2) cleanup's **human-in-the-loop stop conditions** (>15 `[AUTHOR:]` flags → pause; possible-rewrite → HALT) assume a present author; unattended, the task writes `<stem>-NEEDS-REVIEW.md` and continues instead of stalling. If `dictation-cleanup`'s flag format or output protocol changes again, re-check these two points.
+## Interaction with dictation-cleanup (fiction branch)
+
+Unchanged. Stage B calls `dictation-cleanup` on the reconciled transcript (still raw dictation + flags, so it satisfies cleanup's input guard). Two adjustments persist: suppress cleanup's own `_CHANGELOG` self-log (the runner owns one consolidated line), and on cleanup's human-in-the-loop pause/HALT conditions write `<stem>-NEEDS-REVIEW.md` and continue rather than stall.
 
 ## Run modes
 
-- **Unattended (scheduled):** empty inbox = silent no-op. Never blocks on a gate; name flags ride through in the draft for later.
-- **Manual:** "run the dictation runner" — same steps, on demand.
+- **Unattended (scheduled):** empty inbox = silent no-op. Never blocks on a gate.
+- **Manual:** "run the dictation runner" - same steps, on demand.
 
 ## Known v1 limits (tracked)
 
-- Multi-word mishears whose phonetics diverge (e.g. *widows pain* → flags *widows → Widowsbane?* and leaves *pain*). The flag still catches it; tighten via `_LEXICON.md` alias.
-- Transcription accuracy = `small` model; reconcile fixes proper nouns, not general mishears. Upgrade path: the Supabase→Groq `whisper-large-v3` backend leg (see `_BACKLOG`), which replaces only Stage A.
-- Scheduled Cowork tasks run on the desktop's uptime: "unattended" = you don't orchestrate it, not "desktop off." Server-side transcription (the Groq leg) is the answer if desktop-off processing is ever needed.
+- The fiction/inbox **classifier is heuristic** (canon-density + register). Explicit spoken directives are the reliable control; the classifier is the forget-proofing fallback, and it defaults to INBOX when unsure. Upgrade path: LLM classify in Stage B.
+- A first-person fiction passage with no canon names and no spoken directive can misroute to INBOX. Recoverable (it's just staged text); lead with "fiction" to be sure.
+- Multi-word mishears whose phonetics diverge still rely on the `[AUTHOR:]` flag; tighten via `_LEXICON.md` aliases.
+- Transcription accuracy = `small` model. Upgrade path: Supabase->Groq `whisper-large-v3` for Stage A only.
 
 ## Files
 
-- `WORKFLOWS/dictation-runner/runner.py` — Stage A orchestrator (self-locating).
-- `WORKFLOWS/dictation-runner/lexicon.py` — lexicon compile + reconcile.
-- `_DICTATION INBOX/` — drop zone (`README.md`, `_reconciled/`, `_reconciled/done/`, `_drafts/`, `processed/`).
-- `WRITING/PROJECTS/<PROJECT>/REFERENCE/_LEXICON.md` — curated seed (per project).
-- `_models/faster-whisper-small/` — vendored model.
+- `WORKFLOWS/dictation-runner/runner.py` - Stage A orchestrator: transcribe, `classify_route()` fork, `write_reconciled()` (fiction), `write_inbox_note()` (inbox). Self-locating.
+- `WORKFLOWS/dictation-runner/lexicon.py` - lexicon compile + `reconcile()` + `canon_density()` (the fork's fiction signal).
+- `_DICTATION INBOX/` - drop zone (`README.md`, `_reconciled/` + `done/`, `_inbox/` + `done/`, `_drafts/`, `processed/`).
+- `WRITING/PROJECTS/<PROJECT>/REFERENCE/_LEXICON.md` - curated seed (per project).
+- `_models/faster-whisper-small/` - vendored model.
