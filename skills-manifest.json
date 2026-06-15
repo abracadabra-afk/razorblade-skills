@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-15T05:49:42.0492819-07:00",
+    "generated":  "2026-06-15T06:49:10.1789298-07:00",
     "note":  "sha256 = desktop-side hash of each built .skill package; skill-audit compares installed-vs-this.",
     "skills":  [
                    {
@@ -41,8 +41,8 @@
                    {
                        "name":  "link-audit",
                        "package":  "WORKFLOWS/skills/link-audit.skill",
-                       "sha256":  "e2003f48021564520104dc3ae435b66408037dbcc1646e24d125bd78d2c69af2",
-                       "bytes":  4936
+                       "sha256":  "03bf4e9a7027442322cadf8e9183ffb5fa3dcfc1c4957989024363ce0c5b2c16",
+                       "bytes":  6626
                    },
                    {
                        "name":  "promote-revision",

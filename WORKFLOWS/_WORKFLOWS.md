@@ -2,7 +2,7 @@
 type: workflows-anchor
 purpose: The automations book — built workflows, the skills built from them, and an intake for raw automation ideas.
 status: active
-last_updated: 2026-06-14
+last_updated: 2026-06-15
 ---
 
 # WORKFLOWS
@@ -26,6 +26,8 @@ The workflow docs in this folder are the canonical source for each automation; [
 > CRE (or the router) drops half-formed "wouldn't it be useful if…" automation ideas here. When one is real, it graduates into its own `WORKFLOWS/<name>.md` (use [[WORKFLOWS/_TEMPLATE]]) and gets registered in `_SKILLS MAP`.
 
 <!-- idea: <one line> — why / what it would do -->
+
+- idea: Build an auto researcher skill/trigger <!-- routed from INBOX 2026-06-15 -->
 
 ## Rules
 - An idea is not a workflow until it graduates — keep raw ideas in Intake, built automations as their own docs.

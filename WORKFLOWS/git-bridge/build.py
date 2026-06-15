@@ -16,8 +16,12 @@ Subcommands:
            (sorted entries, fixed timestamp, fixed compression) so a rebuild is
            byte-reproducible; then rewrite skills-manifest.json.
   audit    compare each package's CONTENT hash against the INSTALLED copy in the
-           skills cache -> current / STALE / not-installed. Answers the real
-           question: "is what's actually running the same as the canonical package?"
+           skills cache -> current / STALE / SUSPECT-STALE / not-installed. Answers
+           the real question: "is what's actually running the same as the canonical
+           package?" A hash mismatch off a TRUNCATED/NUL installed-side read (the
+           Dropbox/installed-cache mount staleness, obs-014/obs-070) is downgraded to
+           SUSPECT-STALE -- not a confident STALE -- so the sweep stops queuing false
+           reinstalls; re-confirm those via the file tools / a fresh session.
 
 content_sha256 = sha256 over the skill's files keyed by path RELATIVE TO THE SKILL
 ROOT (leading '<name>/' stripped), sorted, so package(zip) and installed(dir) are
@@ -79,6 +83,23 @@ def looks_truncated(body: str):
     s = body.rstrip()
     last = s[-1]
     return (last not in TRUNC_OK_END) and last.islower() and s[-2:].isalpha()
+
+def mount_suspect(pkg_d: dict, inst_d: dict):
+    """Detect a poisoned/truncated INSTALLED-side read (obs-014/obs-070/obs-073).
+    Signatures: a NUL byte or the UTF-8 replacement char in any installed file, or
+    an installed file that is a non-empty proper PREFIX of its package counterpart
+    (the classic mount-truncation pattern). Returns (bool, reason) so a content-hash
+    mismatch off a bad read is reported SUSPECT-STALE rather than a false STALE."""
+    for rel, b in inst_d.items():
+        if b"\x00" in b or b"\xef\xbf\xbd" in b:
+            return True, f"NUL/replacement byte in installed {rel}"
+    for rel, pb in pkg_d.items():
+        ib = inst_d.get(rel)
+        if ib is None:
+            continue
+        if ib != pb and 0 < len(ib) < len(pb) and pb[:len(ib)] == ib:
+            return True, f"installed {rel} is a truncated prefix ({len(ib)}/{len(pb)}B)"
+    return False, ""
 
 def packages(root):
     d = pathlib.Path(root) / "WORKFLOWS" / "skills"
@@ -158,19 +179,27 @@ def cmd_package(root):
 def cmd_audit(root, installed_root):
     inst = pathlib.Path(installed_root)
     print(f"audit: packages in {root}  vs installed cache {installed_root}\n")
-    cur = stale = missing = 0
+    cur = stale = suspect = missing = 0
     for sp in packages(root):
         name = sp.stem
-        pkg_h = content_hash(pkg_files(sp))
+        pkg_d = pkg_files(sp)
+        pkg_h = content_hash(pkg_d)
         idir = inst / name
         if not idir.exists():
             print(f"  NOT-INSTALLED  {name}"); missing += 1; continue
-        inst_h = content_hash(dir_files(idir))
+        inst_d = dir_files(idir)
+        inst_h = content_hash(inst_d)
         if inst_h == pkg_h:
-            print(f"  current        {name}"); cur += 1
+            print(f"  current        {name}"); cur += 1; continue
+        bad, why = mount_suspect(pkg_d, inst_d)
+        if bad:
+            print(f"  SUSPECT-STALE  {name}   {why} - re-confirm via file tools / fresh session"); suspect += 1
         else:
             print(f"  STALE          {name}   installed != package (reinstall to sync)"); stale += 1
-    print(f"\naudit: {cur} current, {stale} STALE, {missing} not-installed (of {len(packages(root))} packaged)")
+    print(f"\naudit: {cur} current, {stale} STALE, {suspect} SUSPECT-STALE, {missing} not-installed (of {len(packages(root))} packaged)")
+    if suspect:
+        print(f"MOUNT MAY BE STALE: {suspect} skill(s) had a truncated/NUL installed-side read (obs-014/obs-070).")
+        print("  -> NOT confirmed stale; verify the installed SKILL.md via the file tools or re-run in a fresh session before queuing a reinstall.")
     if stale:
         print("note: confirm any STALE via the file tools before acting (obs-014 installed-cache mount can read stale).")
 

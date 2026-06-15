@@ -7,7 +7,7 @@ inputs: [the mounted vault root]
 outputs: [a categorized punch list of dangling links / broken anchors / broken headings; optional brain-log entries]
 lane: meta
 status: active
-last_updated: 2026-06-14
+last_updated: 2026-06-15
 ---
 
 # WORKFLOW: link-audit (the link doctor)
@@ -16,11 +16,12 @@ last_updated: 2026-06-14
 CRE says **"run the link doctor"** / "check for broken links" / "find dangling references," or wants the vault swept for reference rot — especially **after a restructure or a batch of moves**. The reference sibling of `skill-audit` (skills) and `backlog-sweep` (the backlog): **read-only**, it diagnoses and hands CRE a fix list; it never edits a note.
 
 ## What it checks
-Scans every note for `[[wikilinks]]`, `![[embeds]]`, and `[md](links)` and resolves each against the real file index, plus heading/block-anchor indices. Reports four kinds:
+Scans every note for `[[wikilinks]]`, `![[embeds]]`, and `[md](links)` and resolves each against the real file index, plus heading/block-anchor indices. Reports five kinds:
 - **DANGLING** — target file not found anywhere.
 - **BROKEN-ANCHOR** — file resolves, but the `^block-id` doesn't exist in it.
 - **BROKEN-HEADING** — file resolves, but the `#heading` doesn't exist in it.
 - **AMBIGUOUS** (info, off by default) — a basename matches >1 file and none in the same folder; Obsidian still resolves to the shortest path, so this is low-priority.
+- **SUSPECT-STALE** — a target file read back **truncated** (NUL bytes / partial), so its anchor/heading index can't be trusted; any `BROKEN-ANCHOR`/`BROKEN-HEADING` off it is downgraded to this advisory instead of a confident false finding, and the run prints a top-level "MOUNT MAY BE STALE" banner. The `^obs-073` guard.
 
 ## Resolution rules (matches Obsidian)
 - Bare `[[Note]]` resolves by **basename**, with a **folder-proximity tie-break** (a same-folder match wins — so `[[open-loops]]` resolves to the sibling, not a random chapter's).
@@ -30,8 +31,8 @@ Scans every note for `[[wikilinks]]`, `![[embeds]]`, and `[md](links)` and resol
 
 ## Steps
 1. **Vault sentinel** — confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`); the `^obs-004` guard. Write nothing.
-2. **Run** the bundled resolver: `python3 link_audit.py --vault <VAULT>` (add `--all` to include the quarantined zones, `--ambiguous` to show the info tier, `--json` for machine output).
-3. **Apply the `^obs-014` guard** — a flagged-missing file can be a stale-mount artifact. **Run in a FRESH session**, and confirm any surprising DANGLING via the file tools (or the Obsidian MCP) before reporting it as real. The in-session bash mount serves stale views of files moved/deleted that session.
+2. **Run** the bundled resolver: `python3 link_audit.py --vault <VAULT>` (add `--all` to include the quarantined zones, `--ambiguous` to show the info tier, `--json` for machine output). **Strongest read freshness:** pass `--rest-base http://127.0.0.1:27123 --rest-key <Local REST API key>` (or env `OBSIDIAN_REST_BASE`/`OBSIDIAN_API_KEY`) to read every target from Obsidian's **live in-memory view** instead of the bash/Dropbox mount — immune to mount staleness, falls back to disk per-file on any API error (the `^obs-073` / `^link-audit-mount-staleness` fix).
+3. **Apply the `^obs-014`/`^obs-073` guard** — a flagged-missing file can be a stale-mount artifact, and a recently-written file can read back **truncated** (the bash mount serves stale/partial views of files written/moved/deleted that session; a file-tools write does not heal it). Mitigations: prefer `--rest-base` (Step 2); truncated reads self-flag as `SUSPECT-STALE` + a banner; still **run in a FRESH session** and confirm any surprising DANGLING via the file tools before reporting it as real.
 4. **Categorize, don't dump.** Separate the punch list into: genuine breakage (fix), the vault's **folder-link convention** (links pointing at folders rather than notes — pre-existing style, not breakage), and resolver-soft cases (heading-fragment near-misses). Present the actionable list; quarantine GRAVEYARD / `evals/` / `_CHANGELOG` / `_OBSERVATIONS` noise.
 5. **Hand off.** Fixes are manual or a separate pass — this skill never edits a note.
 
