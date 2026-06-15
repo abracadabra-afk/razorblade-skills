@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-15T06:49:10.1789298-07:00",
+    "generated":  "2026-06-15T08:09:09.9109000-07:00",
     "note":  "sha256 = desktop-side hash of each built .skill package; skill-audit compares installed-vs-this.",
     "skills":  [
                    {

@@ -45,12 +45,19 @@ function Copy-Workflows($repo) {
     New-Item -ItemType Directory -Force -Path $sDst | Out-Null
     Copy-Item (Join-Path $sSrc '*.skill') $sDst -Force
   }
-  # Git Bridge tooling (build.py + this script) so the sandbox pulls them with the repo
+  # skills-src/ : the editable text source for the packages (diffable in git; pack-skills.ps1 builds .skill from it)
+  $srcSrc = Join-Path $wfSrc 'skills-src'
+  if (Test-Path $srcSrc) {
+    $srcDst = Join-Path $wfDst 'skills-src'
+    if (Test-Path $srcDst) { Remove-Item $srcDst -Recurse -Force }
+    Copy-Item $srcSrc $srcDst -Recurse -Force
+  }
+  # Git Bridge tooling (build.py + the desktop scripts) so the sandbox pulls them with the repo
   $gSrc = Join-Path $wfSrc 'git-bridge'
   if (Test-Path $gSrc) {
     $gDst = Join-Path $wfDst 'git-bridge'
     New-Item -ItemType Directory -Force -Path $gDst | Out-Null
-    foreach ($t in 'build.py','seed-repo.ps1','setup-schedule.ps1') {
+    foreach ($t in 'build.py','seed-repo.ps1','setup-schedule.ps1','pack-skills.ps1') {
       $tp = Join-Path $gSrc $t
       if (Test-Path $tp) { Copy-Item $tp $gDst -Force }
     }

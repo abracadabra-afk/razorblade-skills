@@ -23,8 +23,8 @@ A skill that launches in Cowork loads from the **installed app-data cache, NOT f
 
 ## The layers (post-bridge)
 
-1. **Source** — `skills-src/<name>/SKILL.md` (+ assets) in `razorblade-skills`, once adopted (`build.py extract`). The editable, diffable skill text.
-2. **Package** — `WORKFLOWS/skills/<name>.skill` in the repo, built deterministically from the source by `build.py package`. Its `content_sha256` lives in `skills-manifest.json`.
+1. **Source** — `WORKFLOWS/skills-src/<name>/SKILL.md` (+ assets). The editable, diffable skill text. Adopted + built by `pack-skills.ps1` (desktop); rides to the repos via `seed-repo.ps1`.
+2. **Package** — `WORKFLOWS/skills/<name>.skill`, built from the source by `pack-skills.ps1` (desktop, `^obs-058`-safe) — *not* the sandbox. Its content is what `build.py audit` content-hashes.
 3. **Installed** — `<installed>/<name>/SKILL.md` (+ assets). The copy that actually RUNS — app data, outside the vault, read-only.
 4. *(reference, not hash-gated)* **Doc** — `WORKFLOWS/<name>.md`. The human workflow spec. Kept consistent with the source editorially (skill-creator's job), not by a hash check — the package `SKILL.md` is an authored surface, not a copy of the doc.
 

@@ -48,11 +48,11 @@ Read `_DIRECTIVES.md`; confirm `type: ai-os-brain` + `file: directives`. Mismatc
 ### Step 2 — Build the status view
 Join `skills-manifest.json` with the audit result: per skill, installed verdict (`current` / `STALE` / `not-installed`), source-vs-package check (exact: does `content_hash(skills-src/<name>/)` equal the manifest `content_sha256`? — `SOURCE-AHEAD` if not), pending action, and whose-move. Present it as a table; persist nothing new (the manifest is the ledger).
 
-### Step 3 — Repackage what's automatable (🤖)
-For any `SOURCE-AHEAD` row (the editable source moved ahead of the built package): run `build.py package` to rebuild the `.skill` deterministically from `skills-src/<name>/` and restamp the manifest. **Ship gate (kept, simplified):** refuse to ship unless `build.py verify` passes on the new package (frontmatter parses, body not truncated) and the rebuilt `content_sha256` equals `content_hash` of the source. Then the row flips to `STALE` (installed now lags the new package) → it lands in the Step-4 queue. Building happens in the **sandbox from the clone**, so the old NUL-pad / de-hydration / temp-dir gymnastics are unnecessary.
+### Step 3 — Repackage what's automatable — **desktop build leg (`pack-skills.ps1`)**
+The source→package→push leg is wired (`^git-bridge-delivery-leg`, 2026-06-15) and it runs on the **desktop**, not the sandbox — writing a `.skill` into Dropbox is safe from the desktop (an ordinary local write), whereas a *sandbox* write is the `^obs-058`/`^obs-062` hazard and the sandbox holds no push PAT. So for any `SOURCE-AHEAD` row, the **sandbox sweep diagnoses it and hands off** (Step 4); the rebuild itself is `WORKFLOWS/git-bridge/pack-skills.ps1` on the desktop — it builds `.skill` from `skills-src/<name>/` into the vault (change-detected: only rebuilds what actually changed, no churn), and the existing `seed-repo.ps1` pushes it. `build.py audit` (content-hash) confirms the installed copies afterward. The sandbox never builds or pushes; it only pulls + audits.
 
-### Step 4 — Push + emit the Install queue (🧑)
-Commit the repackaged `.skill` + refreshed manifest and let the desktop sync push them (the `razorblade-os-sync` scheduled task, or `seed-repo.ps1` on demand). Then list exactly the `.skill` files now `STALE`: one line each — *"Save-skill `<name>.skill` — \<one-clause reason\>."* That list is CRE's whole job.
+### Step 4 — Emit the Install queue + Repackage handoff (🧑)
+List exactly the `.skill` files now `STALE`: one line each — *"Save-skill `<name>.skill` — \<one-clause reason\>."* For any `SOURCE-AHEAD` row, emit a **Repackage handoff**: *"run `pack-skills.ps1` on the desktop, then `seed-repo.ps1`"* (the build is a desktop action by design — `^obs-058`). That list is CRE's whole job.
 
 ### Step 5 — Hand back the CRE-only content work
 Anything requiring authoring or ruling — a **new skill from scratch**, a **behavior change**, a **description/trigger-text** change (route to the `^obs-030` eval harness; rulings are CRE's), a **drifted `WORKFLOWS/<name>.md` doc** — is summarized as a handoff, never auto-authored. (Mirrors `_ME` "AI executes; CRE creates": the manager moves bytes and runs deterministic builds, it does not author skill content or creative procedure.)
@@ -66,8 +66,9 @@ On a real management run, append a one-line `_CHANGELOG` entry naming what was r
 |---|---|---|
 | Scan / diagnose (`build.py` verify+audit) | ✅ fully | 🤖 |
 | Maintain the registry (manifest) | ✅ fully (build.py) | 🤖 |
-| Repackage a `.skill` from an **intact source** | ✅ fully (build.py package) | 🤖 |
-| Push repos to GitHub | ✅ fully (scheduled task) | 🤖 |
+| Repackage a `.skill` from an **intact source** | ✅ desktop (`pack-skills.ps1`, change-detected) | 🤖 desktop |
+| Push the skills to GitHub | ✅ fully (`seed-repo.ps1` / `razorblade-os-sync`) | 🤖 |
+| Build/push from the **sandbox** | ❌ by design — sandbox only pulls + audits (`^obs-058`) | — |
 | **Ship a rebuild that fails the verify/hash gate** | ❌ never auto-ship | 🧑 CRE |
 | **Install (Save skill)** | ❌ trust boundary | 🧑 CRE |
 | **Author / change skill content** | ❌ canonical content | 🧑 CRE + skill-creator |
@@ -77,7 +78,7 @@ The design automates everything up to two hard lines — the **install trust bou
 
 ## Cadence
 
-The weekly **`skills-sweep`** scheduled task (Mondays) runs this manager unattended: clone → `build.py audit` → repackage automatable rows → push → report the Install queue. This kills the `^obs-055` stale-open class — the manifest is always current, so a backlog line can never quietly claim "rebuild needed" after it already shipped. The backlog carries only *"CRE: clear the Install queue"* when non-empty.
+The weekly **`skills-sweep`** scheduled task (Mondays) runs this manager unattended: clone → `build.py verify`+`audit` → file-tools-confirm any STALE → report the Install queue (+ a Repackage handoff — *run `pack-skills.ps1` on the desktop* — for `SOURCE-AHEAD` rows). The sweep stays diagnose-and-report **by design**: the build+push leg runs on the desktop (`pack-skills.ps1` → `seed-repo.ps1`), never in the sandbox. This kills the `^obs-055` stale-open class — the manifest is always current, so a backlog line can never quietly claim "rebuild needed" after it already shipped. The backlog carries only *"CRE: clear the Install queue"* when non-empty.
 
 ## Rulings (CRE, 2026-06-13) — with 2026-06-14 bridge mapping
 
