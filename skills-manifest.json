@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-16T12:00:09.7331116-07:00",
+    "generated":  "2026-06-16T16:20:29.1499804-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -71,6 +71,13 @@
                        "sha256":  "d156204ebeb8db28a2edabb33817b7ad5a1761787cbd9569af6180f593ca3981",
                        "content_sha256":  "1ae2a6ac6b0bb33f45612c4380eabba76e8c75c0500f8db9fd31371b13f43caf",
                        "bytes":  6528
+                   },
+                   {
+                       "name":  "loop-clearer",
+                       "package":  "WORKFLOWS/skills/loop-clearer.skill",
+                       "sha256":  "372a9ed26870eed5511f38853b9a40d0e1c1b97755b3872c1ea82fd1e23138cf",
+                       "content_sha256":  "c4d5fa1e44f176409fb3d39b68e586751680128837640a4aa91874876d53de90",
+                       "bytes":  3497
                    },
                    {
                        "name":  "promote-revision",

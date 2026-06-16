@@ -5,7 +5,7 @@ lane: os
 status: active
 trigger: scheduled task `file-inbox-runner` (polls _FILE INBOX/, cron 15,45 * * * *) + manual "run the file inbox"
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-16
 purpose: Remote, drop-and-forget FILE intake. Drop ANY document/spreadsheet/PDF/image into _FILE INBOX/ from phone or desktop (Dropbox). A polling task EXTRACTS the content, decides what to ingest and where, files the facts into the right domain, and stores the ORIGINAL for safekeeping in that domain's _sources/. The document sibling of dictation-runner.
 ---
 
@@ -102,6 +102,7 @@ The router stays the **sole write-path into a domain for genuinely uncertain ite
 - **DIR-004 — serialized YAML:** every staging note's frontmatter is emitted via `yaml.safe_dump` and parse-gated; never hand-formatted.
 - **DIR-005 — OS-doc edits:** the `_CHANGELOG` line and any `_SKILLS MAP` edits use the file tools only (no `patch_vault_file` / whole-file MCP rewrite), verified by re-reading via the file tools.
 - **Vault sentinel (`^obs-004`):** Stage B confirms `_DIRECTIVES.md` before writing into a domain.
+- **Mounted-script integrity (`^obs-103`):** before executing `runner.py` off the bash mount, verify it against the file-tools copy (line count / `py_compile`) and refresh on mismatch — a stale-mount truncation of the *script* is wrong behavior, not just wrong data. Extends the DIR-005 stale-mount read guard to *executes*. See the run step.
 
 ## Dependencies (installed at runtime by the scheduled task)
 
@@ -114,7 +115,7 @@ All pure-Python; no system binaries. `pyyaml` is required by the staging-note wr
 
 > Bootstrap is NOT required for this task. Do exactly this:
 > 1. `pip install --break-system-packages odfpy openpyxl pdfplumber python-docx pyyaml` in the sandbox.
-> 2. Run `python3 "<vault>/WORKFLOWS/file-inbox/runner.py"`. It prints JSON of what it processed; each result carries a `route` (`domain` / `inbox` / `needs-vision`) and a `proposed_domain` + `source_dest`. If `processed: 0`, stop — nothing to do, no log entry.
+> 2. **Integrity-gate the runner, then run it (`^obs-103` stale-mount guard).** Before executing, guard against a stale-mount truncation of the *script itself*: the bash mount can serve a TRUNCATED partial of `runner.py` while Dropbox is mid-sync (the `^obs-073`/`^obs-095` hazard — a truncated *script* is wrong **behavior**, not just wrong data, so catch it before `python3` runs). Verify the mounted `runner.py` against the authoritative **file-tools** copy — compare line count and/or run `python3 -m py_compile <file>`; on a line-count mismatch or a compile/syntax error, refresh the workflow-dir copy from the file-tools read (write the complete file back into the workflow dir) and run **that**. Only then run `python3 "<vault>/WORKFLOWS/file-inbox/runner.py"`. It prints JSON of what it processed; each result carries a `route` (`domain` / `inbox` / `needs-vision`) and a `proposed_domain` + `source_dest`. If `processed: 0`, stop — nothing to do, no log entry.
 > 3. Confirm `_DIRECTIVES.md` frontmatter (the `^obs-004` vault sentinel) before any domain write.
 > 4. **For each new `_FILE INBOX/_extracted/*.md` not yet in `_extracted/done/`:**
 >    - Read the staging note (frontmatter `proposed_domain` / `proposed_source_dest` / `route` / `kind`, and the `## Extracted content`). For an image, read the original in `processed/` natively (vision) to pull text/data.

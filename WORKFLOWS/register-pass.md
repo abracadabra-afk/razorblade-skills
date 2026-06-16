@@ -7,7 +7,7 @@ inputs: [the chapter's newest slate clean-draft.md, the project register at REFE
 outputs: [revised passage in revisions/, editorial-note sidecar in revisions/]
 lane: fiction
 status: active
-last_updated: 2026-06-13
+last_updated: 2026-06-16
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that also keep a project register at REFERENCE/register.md. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]]; the dedicated revision stage out of the slate (closes the "revision-specific workflow TBD" note in each chapter's revisions/README). Optionally downstream of [[WORKFLOWS/spec-check]] — when a ready verdict sheet exists, runs execute-only.
 ---
@@ -48,7 +48,7 @@ The register changes project to project. Witchwood's is "Braided-Register Litera
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Resolve the chapter, the register, and the working text
-Locate the chapter folder; walk up to the project root and read `REFERENCE/register.md`. Pick the **working text**: prefer `draft.md` when its `status` marks real content (e.g. `dev-revised` — the developmental pass has run); otherwise fall back to the newest slate `clean-draft.md`. Name what you picked so a misfire is visible. Any missing → halt (see Stop conditions).
+Locate the chapter folder; walk up to the project root and read `REFERENCE/register.md`. Pick the **working text**: prefer `draft.md` when its `status` marks real content (e.g. `dev-revised` — the developmental pass has run — or `loops-cleared` — the loop-clearer ran and was promoted); otherwise fall back to the newest slate `clean-draft.md`. Name what you picked so a misfire is visible. Any missing → halt (see Stop conditions).
 
 ### Step 1.5 — Mode select (optional spec-check coupling)
 Look for `<chapter>/spec-check/<slate-run-id>/verdicts.md` matching the slate run. If it exists with `status: ready`, run **execute-only**: apply its MECHANICAL fixes, honor its RULED judgment calls verbatim (don't re-litigate), build its UNDRAMATIZED items, act on its NOTES. Otherwise run **full** discover-and-revise (the default; the battery is optional/selective). A `verdicts.md` whose `slate_run` doesn't match is treated as absent.

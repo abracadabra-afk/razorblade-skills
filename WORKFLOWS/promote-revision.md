@@ -7,7 +7,7 @@ inputs: [the chapter's newest revisions/YYYY-MM-DD-<slug>-rev<N>.md, the chapter
 outputs: [draft.md body replaced with the promoted revision + rewritten lineage frontmatter]
 lane: fiction
 status: active
-last_updated: 2026-06-03
+last_updated: 2026-06-16
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). Any project with a revisions/ + draft.md — no register required (the register already ran upstream).
 pipeline_position: the return trip out of [[WORKFLOWS/register-pass]]. register-pass writes revisions/ and deliberately never touches draft.md; this workflow moves the newest revision back into the live draft, closing that gap.
 ---
@@ -37,7 +37,7 @@ Do NOT trigger this to revise against the register (that is [[WORKFLOWS/register
 |---|---|
 | Promoted prose (byte-for-byte from the revision) + rewritten frontmatter | `<chapter>/draft.md` |
 
-Frontmatter mapping: `status: register-revised`; **keep** `source_slate` (deep provenance); **add** `source_revision` (immediate parent = the promoted rev path); carry `register`/`register_title`/`mode` from the rev; keep `blind_read` and other prior pointers; bump `last_updated`. `slate/`, `revisions/`, and `spec-check/` are never touched.
+Frontmatter mapping: `status: register-revised` — **except** when the promoted rev carries `kind: loop-clear` (a `loop-clearer` output), in which case map `status: loops-cleared`. Read the rev's `kind` and branch: `loop-clear → loops-cleared`, default (no `kind`, or any register-pass rev) → `register-revised`. Then **keep** `source_slate` (deep provenance); **add** `source_revision` (immediate parent = the promoted rev path); carry `register`/`register_title`/`mode` from the rev when present (a loop-clear rev may carry none — omit what's absent rather than inventing it); keep `blind_read` and other prior pointers; bump `last_updated`. `slate/`, `revisions/`, and `spec-check/` are never touched.
 
 ## Steps
 
@@ -51,7 +51,7 @@ Resolve the chapter folder; pick the newest `…-rev<N>.md` passage (or the name
 Compare the revision's `source_slate` to `draft.md`'s. Match (or draft is a scaffold) → proceed. Mismatch → surface both slates and ask before overwriting — a real divergence should never be buried silently.
 
 ### Step 3 — Promote
-Replace `draft.md`'s body with the revision's prose (keep any `[unclear: …]` marks); rewrite the frontmatter per the mapping. Optionally bump `_status.md` `last_updated`.
+Replace `draft.md`'s body with the revision's prose (keep any `[unclear: …]` marks); rewrite the frontmatter per the mapping (read the rev's `kind` first — `loop-clear` lands `status: loops-cleared`, otherwise `register-revised`). Optionally bump `_status.md` `last_updated`.
 
 ### Step 4 — Log
 Append to the chapter `changelog.md` and vault [[_CHANGELOG]] (fiction lane); file fragilities to [[_OBSERVATIONS]].
