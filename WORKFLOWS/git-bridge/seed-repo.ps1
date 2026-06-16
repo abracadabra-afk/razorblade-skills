@@ -21,6 +21,15 @@ $Log        = Join-Path $Vault 'WORKFLOWS\git-bridge\sync.log'
 # unattended-run visibility: log any terminating error instead of failing silently
 trap { "$(Get-Date -Format 'o')  ERROR  $($_.Exception.Message)" | Add-Content $Log; break }
 
+# Preflight: git MUST be on PATH (^obs-100). The scheduled task has run in a shell
+# where git was absent, turning the push into a logged-but-late failure part-way
+# through a two-repo sync (os pushed, skills not, or neither). Fail early + clearly,
+# before any repo work, so sync.log carries an actionable message instead of a raw
+# "git is not recognized" from mid-Commit-Push.
+if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+  throw "git not found on PATH - install git or add it to the scheduled task's PATH before running seed-repo.ps1 (^obs-100)"
+}
+
 $brain = '_ME.md','_VAULT MAP.md','_SKILLS MAP.md','_DIRECTIVES.md',
          '_OBSERVATIONS.md','_BACKLOG.md','_CHANGELOG.md'
 $wfSrc = Join-Path $Vault 'WORKFLOWS'
