@@ -84,10 +84,13 @@ Lives in `WORKFLOWS/dictation-runner/lexicon.py` + `runner.py`. Deterministic, s
 - **Confidence tiers:** >=0.92 -> auto-correct; 0.86-0.92 -> flag inline `[AUTHOR: heard -> Canonical?]`; <0.86 -> left alone. Common words guarded out.
 - **Project selection:** default **Witchwood**; override by filename (`godsrift_...m4a`) or by a spoken project name at the head of the clip.
 
-## Dependencies (installed at runtime by the scheduled task)
+## Dependencies (self-bootstrapped by `runner.py`)
+
+`runner.py` now owns its own deps via an **import-first guard** (`_ensure_deps()`, top of file): it tries to import `faster_whisper`, `jellyfish`, `yaml`; if they already resolve (vendored, or a reuse dir already on the path) it does nothing; else it adds ONE deterministic reuse dir (`$DICTATION_DEPS`, default `/tmp/pydeps`) to `sys.path`; only as a last resort does it `pip install --no-cache-dir --target <that one dir>`. The explicit `pip install` step below is therefore **optional** — kept only as a fallback. This replaces the old blind per-run `pip install --break-system-packages …`, which scattered fresh ~481 MB copies into new dirs every run and, on an ~10 GB sandbox already carrying the 6 GB vault mount, eventually failed with *No space left on device* (^obs: sandbox-disk-pressure). Note those scattered copies end up owned by a privileged boot identity (`nobody`), so a normal task run cannot delete them — only a boot-time `/tmp` sweep can. **Fix lives above the task: the sandbox image should clear leftover `/tmp/{site,pylibs,pydeps,pipcache}` on session start.**
 
 ```
-pip install --break-system-packages faster-whisper jellyfish pyyaml
+# fallback only — runner.py self-bootstraps; prefer letting it
+pip install --no-cache-dir --target /tmp/pydeps faster-whisper jellyfish pyyaml
 ```
 `pyyaml` is required by the staging-note writer (DIR-004: derived frontmatter is serialized via `yaml.safe_dump` and parse-gated, never hand-formatted). The model is **vendored** at `_models/faster-whisper-small` (offline). To (re)vendor or swap size, run on a machine with HF access:
 ```
@@ -97,7 +100,7 @@ huggingface-cli download Systran/faster-whisper-small --local-dir "<vault>\_mode
 ## The scheduled task prompt (Stage A + B)
 
 > Bootstrap is NOT required for this task. Do exactly this:
-> 1. `pip install --break-system-packages faster-whisper jellyfish pyyaml` in the sandbox.
+> 1. Deps are self-bootstrapped by `runner.py` (import-first guard, reuses `/tmp/pydeps`, installs `--no-cache-dir` to one fixed dir only if missing) — no separate `pip install` step needed. If you must install by hand, use `pip install --no-cache-dir --target /tmp/pydeps faster-whisper jellyfish pyyaml` (never `--break-system-packages` into the shared sandbox — that's what filled the disk).
 > 2. Run `python3 "<vault>/WORKFLOWS/dictation-runner/runner.py"`. It prints JSON of what it processed; each result carries a `route` (`fiction` or `inbox`). If `processed: 0`, stop - nothing to do, no log entry.
 > 3. **Fiction branch** - for each new `_DICTATION INBOX/_reconciled/*.md` not yet in `_reconciled/done/`: run the **dictation-cleanup** skill on its "Reconciled transcript" section; carry the `[AUTHOR:]` flags through; **suppress cleanup's own `_CHANGELOG` self-log** (Step 5 owns the single line); on a noisy transcript that would trip cleanup's pause/HALT, write `_drafts/<stem>-NEEDS-REVIEW.md` with a note and continue (never stall - no author present); else write `_drafts/<stem>-clean.md`; move the reconciled note to `_reconciled/done/`.
 > 4. **Inbox branch** - for each new `_DICTATION INBOX/_inbox/*.md` not yet in `_inbox/done/`: read its frontmatter (`intent_hint`, `confidence`) and its "## Body (verbatim transcript)" section. Append the body **verbatim** to `INBOX.md` under the `## ⚡ Inbox` heading as a new item. If `intent_hint` is non-empty OR `confidence` is `uncertain`, prepend an HTML-comment hint on its own line immediately above the item: `<!-- voice-note <date> . intent: <intent_hint> . confidence: <confidence> -->` (the comment is a steer for the inbox-router; it is NOT part of the captured text). Do NOT classify into a domain here - that is the inbox-router's job. Move the staging note to `_inbox/done/`. Use the file tools to edit `INBOX.md`, not patch-by-heading.
