@@ -43,7 +43,7 @@ def pkg_files(skill_path):
     with zipfile.ZipFile(skill_path) as z:
         for zi in z.infolist():
             if zi.is_dir(): continue
-            rel = zi.filename
+            rel = zi.filename.replace("\\", "/")  # normalize Windows backslash zip entries (^obs-092)
             if rel.startswith(name + "/"): rel = rel[len(name)+1:]
             out[rel] = z.read(zi.filename)
     return out

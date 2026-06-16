@@ -7,7 +7,7 @@ inputs: [raw mixed items in INBOX.md ⚡ Inbox]
 outputs: [items filed into Vibes / Tasks / Workflows / Life / Knowledge / Business / _BACKLOG intakes; ambiguous items left in INBOX Needs-review; a sort-log line + run report]
 lane: os
 status: active
-last_updated: 2026-06-14
+last_updated: 2026-06-15
 ---
 
 # WORKFLOW: inbox-router
@@ -59,4 +59,29 @@ For each item, assign the best-fit book using the routing table, with a **confid
 
 ### Step 4 — File (confident items)
 Append each high-confidence item to its target's intake zone, preserving CRE's wording:
-- **Vibes** → under `VIBES/CAPTU
+- **Vibes** → under `VIBES/CAPTURE.md` "⚡ Inbox" (verbatim, no inline tag — the weave anchors it later).
+- **Tasks** → under `TASKS/TASKS.md` "⚡ Inbox" as `- [ ] <item>`.
+- **Workflows** → under `WORKFLOWS/_WORKFLOWS.md` "⚡ Intake" as `- <idea>`.
+- **Life** → the right `REFERENCE/` note (create + link from `_REFERENCE` if a new category) or the matching domain folder.
+- **Knowledge** → the matching `KNOWLEDGE/<area>/` note (create + note in the report if a new area).
+- **Business** → the matching `BUSINESS/<area>/` note (create + note in the report if a new area).
+- **_BACKLOG** → the matching lane section as a `- [ ]` item.
+Remove filed items from INBOX's Inbox.
+
+### Step 5 — Review-bin the rest
+Leave low-confidence / unsplittable items in INBOX's **🔍 Needs review**, each with: the item, the 2 candidate books, and one line on why it's ambiguous. Don't auto-file these.
+
+### Step 6 — Log + report
+Append a dated line to INBOX's **Sort log** (counts per book). Bump `last_updated` on every file touched. Report to CRE a compact table: *item → book* for everything filed, plus the Needs-review list to rule on. If anything went to Vibes, note it'll be picked up by the next weave (manual "weave the vibebook" or the scheduled weave task).
+
+## Stop conditions
+- Inbox empty → "nothing to sort," stop.
+- Secret/credential detected → do not file it anywhere; flag + advise rotate (DIR-001).
+- A target intake is missing/renamed → halt that item to Needs review with a note; don't create books ad hoc (except a new `REFERENCE/` category note under Life, or a new `<area>/` note under Knowledge/Business, which is expected).
+
+## Notes
+- Router dispatches only; each book's own workflow (e.g. `weave-vibebook`) does the deep processing.
+- Safe to run **unattended on a schedule** (auto-file confident, review-bin the rest). Pipeline order when chained: **inbox-router → weave-vibebook** (router files new fragments into Vibes' inbox; the weave then anchors + connects them).
+
+## Logging
+On completion, append an entry to [[_CHANGELOG]] under the `os` lane (or note in the INBOX Sort log for routine/scheduled runs).

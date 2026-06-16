@@ -23,6 +23,7 @@
 #>
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem | Out-Null
+Add-Type -AssemblyName System.IO.Compression -ErrorAction SilentlyContinue | Out-Null
 
 $Vault     = 'C:\Users\Chad\Dropbox\razorblade_mermaid'
 $SkillsDir = Join-Path $Vault 'WORKFLOWS\skills'
@@ -85,9 +86,31 @@ foreach ($d in (Get-ChildItem $SrcDir -Directory)) {
   # source changed, or package missing -> rebuild
   $zip = Join-Path $Tmp "$name.skill"
   if (Test-Path $zip) { Remove-Item $zip -Force }
-  # includeBaseDirectory = $true  ->  entries are "<name>/<rel>" with forward slashes (cross-platform safe)
-  [System.IO.Compression.ZipFile]::CreateFromDirectory($d.FullName, $zip,
-     [System.IO.Compression.CompressionLevel]::Optimal, $true)
+  # Build entries BY HAND with forward-slash names "<name>/<rel>". NB: under Windows PowerShell 5.1
+  # (.NET Framework) [ZipFile]::CreateFromDirectory writes the OS separator (BACKSLASH) into entry
+  # names, poisoning build.py's content_sha256 and tripping the audit false-STALE (^obs-092). Writing
+  # entries by hand with '/' is the write-side root-cause fix (ordinal-sorted, <name>/ base kept).
+  $base    = (Resolve-Path $d.FullName).Path
+  $relList = New-Object System.Collections.Generic.List[string]
+  foreach ($f in (Get-ChildItem $d.FullName -Recurse -File)) {
+    $relList.Add($f.FullName.Substring($base.Length + 1).Replace('\','/'))
+  }
+  $relArr = $relList.ToArray()
+  [Array]::Sort($relArr, [System.StringComparer]::Ordinal)
+  $fs = [System.IO.File]::Open($zip, [System.IO.FileMode]::CreateNew)
+  $za = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Create)
+  try {
+    foreach ($rel in $relArr) {
+      $entry = $za.CreateEntry("$name/$rel", [System.IO.Compression.CompressionLevel]::Optimal)
+      $es    = $entry.Open()
+      $bytes = [System.IO.File]::ReadAllBytes((Join-Path $base $rel))
+      $es.Write($bytes, 0, $bytes.Length)
+      $es.Dispose()
+    }
+  } finally {
+    $za.Dispose()
+    $fs.Dispose()
+  }
   Copy-Item $zip $pkg -Force
   $hashes[$name] = $h
   $rebuilt += $name

@@ -77,7 +77,7 @@ function Get-PackageContentSha($skillPath) {
     $entries = @{}
     foreach ($e in $zip.Entries) {
       if ($e.FullName.EndsWith('/')) { continue }                 # skip directory entries
-      $rel = $e.FullName
+      $rel = $e.FullName.Replace('\','/')   # normalize Windows backslash zip entries (^obs-092)
       if ($rel.StartsWith("$name/")) { $rel = $rel.Substring($name.Length + 1) }
       $s   = $e.Open()
       $msf = New-Object System.IO.MemoryStream
