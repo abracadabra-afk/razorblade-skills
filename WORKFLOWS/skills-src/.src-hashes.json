@@ -1,13 +1,13 @@
 {
     "loop-clearer":  "112e8173133c61b40b49239d94468f90cae9b3b2f069a339e1598c8cc57df709",
-    "link-audit":  "1ae2a6ac6b0bb33f45612c4380eabba76e8c75c0500f8db9fd31371b13f43caf",
     "dictation-transcoder":  "4b6fe2a90f39aef623f28f3b50d8adc9b5f3f11966e976c599115c4c62edc64b",
     "workshop-chapter":  "cd30c798fb5305d79a0dd9500dbbf3cd0fb8b2a1d310057ed18d76c99d12cc7e",
     "canon-sync":  "6a90dcdcd9a23db72c92dbf9ccd5015a8a5b622840598be62a0f845f75a9186a",
     "land-chapter":  "2f4a2457cde90974882614f5a8ff19d66c8b37daf5832a23e8526fc9da3b0e70",
     "dictation-preflight":  "483a1f52edf23faade7f44c55a43644c4c86b88f49cdd769fb0fe2ff886a2093",
     "promote-revision":  "08a940d084ea201e546e2b3a1fc484df468536369f553835821ed4b59f55016a",
-    "register-pass":  "330763a87ffa0b2bf0c6a0f2df0aef2cc385e63d817feeed4072d0398f75a3df",
+    "book-ingest":  "543258d4fa31f37801f180b3ef539743b8610794bd422be94ac5417afae69b82",
+    "chapter-init":  "ec923c79db2d858dfd81e5b1c7f21d2b4d7ef72af6a043f2f7ab244407185f3c",
     "restrained-omniscient-register":  "8d8977aaa4f61e8670e7f33b333e60c79279278768e52af16066882769434f2b",
     "spec-passes":  "858ff05ffc79e50841e33074d14a7e95437b527a1119ca2628a9c3488cf3346d",
     "skill-audit":  "5639edc9eefa38bc6377dc0c7a20db7a5375850049f4c4f48271ef944ab1c135",
@@ -17,8 +17,8 @@
     "dictation-cleanup":  "f2efa6513d315f4ceed55cb6baccc1b21af98710c47ed091828a97f90d233c77",
     "vault-boot":  "f5e964965858809c3c8826e5a5e9deb38307dee7dfce39eb278d9464148bdd05",
     "runway-builder":  "14e8b8ffa35e3341658f0b9e1c95fb3b52bff48d804bb11ad9e56cfd3d35bca2",
-    "book-ingest":  "543258d4fa31f37801f180b3ef539743b8610794bd422be94ac5417afae69b82",
-    "chapter-init":  "ec923c79db2d858dfd81e5b1c7f21d2b4d7ef72af6a043f2f7ab244407185f3c",
+    "link-audit":  "1ae2a6ac6b0bb33f45612c4380eabba76e8c75c0500f8db9fd31371b13f43caf",
+    "register-pass":  "330763a87ffa0b2bf0c6a0f2df0aef2cc385e63d817feeed4072d0398f75a3df",
     "scene-intensity":  "e02639c62771bebdad0b6ff0f6a0ef81218fd893daf8a293a2a534eb87e6ca82",
     "blind-read":  "e9ee490622d81b81441988389c8d28bebd325e8b2d928857b6bca750589a7a71"
 }
