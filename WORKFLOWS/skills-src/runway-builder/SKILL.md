@@ -133,10 +133,11 @@ last_updated: <today>
 - Warm-up: 5 min forward-only junk on this scene. "Supposed to be bad."
 
 ## ② THE RUNWAY
-**Scene:** <name>   **Cut on:** <curtain>
-1. `keywords` → `next`
-2. `keywords` → `next`
-3. `keywords` → `CUT`
+**Scene:** <name>   **POV:** <who>   **contour:** <one line, e.g. "cold, one hot spike at the choice">   **Cut on:** <curtain>
+[cold]  <in-mode beat prompt>          → next
+[warm]  <in-mode beat prompt>          → next
+[HOT]   <in-mode beat prompt>
+[cold]  <in-mode beat prompt>          → CUT
 ★ Write-in-full (one): "<lifted line, or blank>"
 [SEALED]: <what to enact-and-withhold, from the brief's seal schedule>
 
@@ -149,11 +150,22 @@ Screen off · one pass no stopping · beats not voice (dialogue in character) ·
 - ★ Tomorrow's first prompt: ______
 ```
 
-Legend to include once near the top of the file: `→` forward-pointer · `[SEALED]` enact-don't-narrate · `★` one write-in-full · say "bracket fix this bracket" to mark a misspeak and keep going.
+Legend to include once near the top of the file: `[cold]`/`[warm]`/`[HOT]` temperature (run cold, spend heat at the peak) · `→` forward-pointer · `[SEALED]` enact-don't-narrate · `★` one write-in-full · say "bracket fix this bracket" to mark a misspeak and keep going.
 
 Close your reply with a **derivation note**: which beats mapped to which prompts, the `weight` you scaled to, anything tagged `<<UNCERTAIN>>`, and any place the brief's beats and its seal schedule pulled against each other.
 
 ---
+
+## Beat-envelope form (register-legend spine)
+
+On the dictation route this is the runway's real shape, and it **supersedes the 3–5-keyword cap in Step 2.** The job is to pre-pay the per-beat register decision so dictation is pure speaking — it kills the 10–30s "how do I present this?" pause. The spine is the Register Legend (`KNOWLEDGE/STYLE/REGISTER LEGEND`).
+
+- **Go to scene-level beats** — one line per beat, finer than the keyword cap.
+- **Phrase each beat in its mode's register** so the phrasing carries the mode (no mode label): *watching* → sensory fragments; *doing* → a flowing action phrase; *thinking* → a reveal/contrast cue, never a restatement. Keep it a trigger, not the finished sentence — the moment it reads as prose, cut it back.
+- **Tag only the temperature** — `[cold]` / `[warm]` / `[HOT]`. It is the one dial not recoverable from a beat's content and the only one carrying the contour. **Do not tag mode or motion** (mode rides in the phrasing; motion is a live choice defaulted by temperature). For a beat whose mode is deliberately open — a choice that could be thought *or* acted — phrase it mode-neutral and let temperature + content carry it.
+- **Derive temperature from the contour, default cold.** Mark warm/hot only at the scene's peaks (from the sequence envelope's escalation + the scene's place in it; scene-intensity can't run pre-draft, so this is the *planned* contour). Lead each scene with a one-line contour header. The author overrides any beat's temperature live — roadmap, not cage.
+
+Everything else (forward-pointers, `[SEALED]`, the one `★`, the conditions block, the close, never-overwrite, weight-scaling) is unchanged.
 
 ## Files this skill writes — and the ones it must not
 

@@ -58,7 +58,7 @@ Read `_DIRECTIVES.md` at the mounted root; confirm `type: ai-os-brain` + `file: 
 
 ### Phase 1 — Construct (per sequence, one sitting)
 1. **Workshop-1** ([[WORKFLOWS/workshop-chapter]], plan mode) — establish CRE's intent for the sequence; author the **sequence envelope**; scaffold each chapter folder ([[WORKFLOWS/chapter-init]] if it doesn't exist) and **derive each chapter `envelope.md`** from the sequence envelope; write the per-chapter `brief.md`. Output: briefs + envelopes for the whole sequence.
-2. **runway-builder** ([[WORKFLOWS/runway-builder]]) — `brief.md` → `runway.md` (speaking outline) for each chapter.
+2. **runway-builder** ([[WORKFLOWS/runway-builder]]) — `brief.md` + the chapter envelope → `runway.md` for each chapter, as a **scene-level beat-envelope** scaffold: each beat phrased in its mode's register with a single temperature tag (cold default, heat at the contour's peaks), off the [[KNOWLEDGE/STYLE/REGISTER LEGEND]] spine. This is what CRE dictates from — the per-beat register decision pre-paid so dictation is pure speaking.
 
 ### Phase 2 — Draft (per sequence, peak hours)
 3. **Dictate** from each runway → raw transcript in the chapter's `dictation/`. After each, the AI appends to the **block canon scratch**.
