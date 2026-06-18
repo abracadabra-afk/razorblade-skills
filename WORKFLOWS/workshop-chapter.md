@@ -7,9 +7,9 @@ inputs: [the in-progress chapter folder (working text = draft.md if present, els
 outputs: [an interactive, intent-first workshop conversation about the chapter; a dated workshop.md saved to the chapter folder capturing stated intent, the informed read by dimension, the decisions/next moves CRE landed on, and open questions. NO change to draft.md, slate/, revisions/, REFERENCE/, or StoryLine — read-only on everything but workshop.md]
 lane: fiction
 status: draft
-last_updated: 2026-06-12
+last_updated: 2026-06-18
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). REFERENCE/ and StoryLine deepen the read but are not required — the workshop degrades gracefully when either is thin or absent. First intended adopter — Witchwood.
-pipeline_position: A mid-draft DEVELOPMENTAL thinking partner that sits UPSTREAM of the QA/revision machinery, not inside it. It is the deliberate inverse of [[WORKFLOWS/spec-check]] Pass 1 (`blind-read`), which reads cold and ignorant; workshop-chapter reads fully project-informed and in dialogue with the author. It does not revise (`blind-response` / [[WORKFLOWS/register-pass]] do that), does not run the line passes ([[WORKFLOWS/spec-check]]), and does not derive state ([[WORKFLOWS/canon-sync]] / [[WORKFLOWS/storyline-sync]]). It INVOKES the scene-intensity engine for the pacing read (caller, not owner). It answers the question those tools can't: "what is this chapter trying to do, and is the draft on track to do it — given everything the project has set up?"
+pipeline_position: A mid-draft DEVELOPMENTAL thinking partner that sits UPSTREAM of the QA/revision machinery, not inside it. It is the deliberate inverse of [[WORKFLOWS/spec-check]] Pass 1 (`blind-read`), which reads cold and ignorant; workshop-chapter reads fully project-informed and in dialogue with the author. It does not revise (`blind-response` / [[WORKFLOWS/register-pass]] do that), does not run the line passes ([[WORKFLOWS/spec-check]]), and does not derive state ([[WORKFLOWS/canon-sync]] / [[WORKFLOWS/storyline-sync]]). It INVOKES the scene-intensity engine for the pacing read (caller, not owner). It answers the question those tools can't: "what is this chapter trying to do, and is the draft on track to do it — given everything the project has set up?" When invoked by [[WORKFLOWS/chapter-pipeline]] (the dictation route) it gains two roles — **Workshop-1** (sequence-plan: authors the sequence envelope, derives chapter envelopes, scaffolds the chapters) and **Workshop-2** (prose-read: reconciles the clean-room blind-read findings before CRE rules). See "Pipeline integration".
 ---
 
 # WORKFLOW: Workshop Chapter (intent meets an informed collaborator)
@@ -24,7 +24,7 @@ pipeline_position: A mid-draft DEVELOPMENTAL thinking partner that sits UPSTREAM
 
 3. **Well-versed before opinionated.** Load the full context pack (Step 1) before saying one word about the chapter. The entire value over a generic editor is project fluency — what the book has promised, where the arc stands, what the trajectory is. Reading the chapter without the context is malpractice here, the mirror-image of why `blind-read` refuses the spec.
 
-4. **Read-only / non-destructive.** The workshop touches no `draft.md`, no `slate/`, no `revisions/`, no `REFERENCE/`, no StoryLine file. Its only write is the chapter's `workshop.md` (plus the session logs). Actual revision is a separate, downstream, gated act — hand off to `blind-response` (structure/reader-experience) or [[WORKFLOWS/register-pass]] (line/voice). Keeping diagnosis and revision separate is the same discipline the rest of the pipeline runs on.
+4. **Read-only / non-destructive.** The workshop touches no `draft.md`, no `slate/`, no `revisions/`, no `REFERENCE/`, no StoryLine file. Its only write is the chapter's `workshop.md` (plus the session logs). Actual revision is a separate, downstream, gated act — hand off to `blind-response` (structure/reader-experience) or [[WORKFLOWS/register-pass]] (line/voice). Keeping diagnosis and revision separate is the same discipline the rest of the pipeline runs on. **Exception — pipeline plan mode (see "Pipeline integration").** When run as the chapter-pipeline's **Workshop-1**, the skill additionally authors *planning artifacts* — the sequence envelope and each chapter's `envelope.md` — and may scaffold chapter folders via [[WORKFLOWS/chapter-init]]. These are constraint specs, not prose: the rules that it never writes the fiction and never touches `draft.md` / `slate/` / `revisions/` / `REFERENCE/` / StoryLine still hold in full.
 
 5. **Reader expectation is measured against the project's own promises, not generic genre beats.** Judge "what is the reader owed here / what does this plant, advance, or pay / what does it raise that the book must later honor" against `REFERENCE/threads.md` (open reader-promises: planted → advanced → paid) and the trajectory in `story-so-far.md` — not against a stock structure template. This is the continuity-and-trajectory lens CRE asked for, and it's only possible because of principle 3.
 
@@ -96,6 +96,54 @@ Append to the chapter `changelog.md` and the vault [[_CHANGELOG]] (fiction lane)
 
 ## Logging
 On completion append an entry to [[_CHANGELOG]] (fiction lane) and the chapter's `changelog.md`; new follow-ups to [[_BACKLOG]]; fragilities to [[_OBSERVATIONS]]. (DIR-003.)
+
+---
+
+## Pipeline integration (chapter-pipeline) — two roles
+
+When invoked by [[WORKFLOWS/chapter-pipeline]] (the dictation route), workshop-chapter runs in one of two modes. Standalone "workshop chapter N" use is unchanged — it is **Mode B without the blind-read input**.
+
+### Mode A — Workshop-1 (sequence-plan)
+Runs **once per sequence**, at plan stage, before any dictation. The only mode that writes planning artifacts (per the principle-4 exception). Additive to Steps 0–2; Step 1 loads at **sequence scope** — the whole arc's REFERENCE plus the *prior* sequence's landed canon (so this sequence is planned against the psychological state the last threshold left behind).
+
+1. **Capture sequence intent** (Step 2 at sequence scope): the transformation the sequence carries, the chapters it should span (opening / middle(s) / closing), the reader experience across the run.
+2. **Author the sequence envelope** → `<project>/SEQUENCES/SEQUENCE <N> - <NAME>/sequence-envelope.md` (schema below). This is the parent spec for the whole sequence.
+3. **Scaffold the chapters** via [[WORKFLOWS/chapter-init]] (opening/middle/closing).
+4. **Derive each chapter `envelope.md` from the sequence envelope** — POV frame and register band inherited verbatim; each chapter gets its *slice* of the transformation (the portion of entry→exit it advances) and its own perceptual segments (the existing per-segment Boundaries/POV/Conditions/State form). Stamp `derived_from: "SEQUENCE <N> - <NAME>"`. On this route the envelope is **prescriptive** — the POV/perceptual contract the dictation honors — not the Transcoder's retro-derived input (the line in the envelope header about being "Required input for the Transcoder" is superseded on the dictation route).
+5. **Seed each `brief.md`** from the sequence's seeds/payoffs (job, beats, setups to plant, payoffs due), tagged `<<PROPOSED — CRE to rule>>` as chapter-init already does.
+
+**Cap: one sequence per Mode-A run** (the chapter-pipeline "one sequence ahead" rule — never plan past a threshold that changes the input state).
+
+### Mode B — Workshop-2 (prose-read + blind reconciliation)
+Runs **once per chapter**, post-dictation/cleanup, as the pipeline's Phase 3. Read-only (writes only `workshop.md`), exactly like the standalone workshop, with **one added input**: the chapter's clean-room blind-read findings at `spec-check/<run>/pass-1-blind.md`, produced by the `blind-read` subagent immediately before (its isolation is preserved because it ran in its own context with no spec/brief/envelope). In **Step 3**, reconcile the cold blind read against the warm project-fluent read: present them side by side, mark each finding **PROBLEM vs WORKING-AS-INTENDED** with reasoning, and capture CRE's rulings. The ruled fixes are the hand-off to `blind-response` run **execute-only** (it no longer does its own triage — that now lives here). Also reconcile the chapter `envelope.md` to the actual drafted segments if the dictation drifted from the prescriptive plan.
+
+### Sequence-envelope schema
+
+```yaml
+---
+type: sequence-envelope
+project: <PROJECT>
+sequence: "SEQUENCE <N> - <NAME>"
+chapters: ["CHAPTER <a> - …", "CHAPTER <b> - …", "CHAPTER <c> - …"]   # opening / middle(s) / closing
+sequence_type: <one of the 16 — e.g. Confrontation>     # KNOWLEDGE/REFERENCES/Sequences
+threshold: <Awareness|Commitment|Testing|Crisis|Revelation|Decision|Sacrifice|Rebirth>
+last_updated: YYYY-MM-DD
+---
+```
+
+Body fields:
+- **POV frame** — the POV lock for the sequence (e.g. close-third, the hunter). Inherited verbatim by every chapter envelope.
+- **Transformation (entry → exit, signed)** — the character's psychological state coming in → going out, **and the polarity: `ascent | descent | flat`.** Witchwood's grieving journey is *descent* (exit lower than entry); recording the sign makes the downward arc intentional so QA never "fixes" it as a sag. See [[KNOWLEDGE/REFERENCES/Methods/Fractal Envelope Model]].
+- **Register band** — the emotional-logical ratio + tonal notes; the band each chapter must stay inside.
+- **Escalation range** — where the sequence enters and exits on the conflict/dread curve.
+- **Entry canon** — what's true coming in (read from REFERENCE at plan time).
+- **Exit canon / threshold crossed** — what must be true going out; the new canon the sequence establishes (reconciled into REFERENCE at the sequence boundary by `canon-sync`).
+- **Seeds & payoffs (sequence scope)** — setups to plant / payoffs due across the sequence; distributed into the chapter briefs in step 5.
+
+### Derivation chain (one-way)
+story (`bible`/`arcs`/`threads`) → `sequence-envelope` → chapter `envelope.md` → segment. Each level derives from its parent; the draft is the leaf. **Constraint inherits down** — a chapter may not exceed its sequence's threshold allocation or leave its register band (a *detectable* defect); the line/scene QA passes check each child against its parent envelope. **Derived YAML is serialized + parse-gated** (DIR-004).
+
+> **One redirectable decision:** the sequence envelope is stored under a new `<project>/SEQUENCES/SEQUENCE <N> - <NAME>/` folder (parallel to `CHAPTERS/`). This keeps the prescriptive sequence spec out of `REFERENCE/` (which holds *derived* canon — mixing prescriptive + derived would break the one-way discipline). If CRE prefers another home (e.g. in the opening chapter's folder), it's a one-line change here before build.
 
 ---
 

@@ -241,4 +241,20 @@ On completion append an entry to [[_CHANGELOG]] (fiction lane) noting which slat
 
 ---
 
+## Dictation route (chapter-pipeline) deltas
+
+This battery was written for the **slate route** and still runs it unchanged. When invoked by [[WORKFLOWS/chapter-pipeline]] (the **dictation route**), four things change; the five pass prompts, the verdict sheet, and `reconcile` are identical.
+
+1. **Working text = the cleaned `draft.md`.** There is no slate on the dictation route — the chapter is dictated, run through `dictation-cleanup`, then developmentally revised. Every pass reads `draft.md`, and the `spec-check/<run-id>/` folder is keyed to a date/run tag instead of a slate-run id. The "no slate `clean-draft`" stop condition does not apply; the gate is "no cleaned `draft.md`." Passes 2–5 still run on the **structurally-settled** draft (after the developmental + loop revisions are promoted — chapter-pipeline Phase 4), then feed `register-pass` execute-only.
+
+2. **Pass 1 runs as a subagent, and its triage moves to Workshop-2.** `blind-read` is invoked as an isolated clean-room **subagent** whose `pass-1-blind.md` is handed to [[WORKFLOWS/workshop-chapter]] **Workshop-2**, which reconciles the cold read against the warm project-fluent read and captures CRE's PROBLEM / WORKING-AS-INTENDED rulings (the brief still informs the call). So the developmental **triage** (running-order step 2) is performed in Workshop-2, not by `blind-response`. `blind-read`'s own logic is unchanged — only its invocation (subagent) and the destination of its findings.
+
+3. **`blind-response` runs execute-only.** Because Workshop-2 already produced the ruled triage, `blind-response` **skips its own phase-1 triage** and executes the ruled structural fixes into `draft.md` (`status: dev-revised`) — the same use-if-present coupling `register-pass` has to a ready `verdicts.md`. Standalone "respond to the blind read" still runs the full two-phase triage; **execute-only fires only when a Workshop-2 ruling set is present.**
+
+4. **No weight-scoping.** Every chapter is load-bearing (CRE-ruled 2026-06-18), so the full battery runs on every chapter; the [[WORKFLOWS/chapter-weight]] lean/bridge branch ("Scope by chapter weight") is not applied on this route.
+
+> **Build note (desktop-gated):** these deltas are specified here (canonical) and in [[WORKFLOWS/workshop-chapter]]. Propagating them to the running skills requires editing `skills-src/blind-response/SKILL.md` (add the execute-only mode **and** repair the `^obs-094` truncation — append the missing `).` to its `## Security` tail) and `skills-src/blind-read/SKILL.md` (note the subagent invocation), then `pack-skills.ps1` rebuild + Save-skill reinstall. Tracked at `^backlog-chapter-pipeline-build`.
+
+---
+
 _Canonical reference for the Witchwood spec-check battery. Pass 1 is delivered as the `blind-read` Cowork skill; Passes 2–5 are pasteable prompts run in fresh contexts. Procedure changes land here first, then propagate to the skills via skill-creator._

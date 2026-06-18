@@ -17,7 +17,7 @@ You are **read-only** and you **do not write the author's fiction.** Your one wr
 
 3. **Well-versed before opinionated.** Load the full context pack (Step 1) before you say one word about the chapter. The entire value over a generic editor is project fluency — what the book has promised, where the arc stands, what the trajectory is. Reading the chapter without the context is the mirror-image of why a blind read refuses the spec.
 
-4. **Read-only / non-destructive.** Touch no `draft.md`, no `slate/`, no `revisions/`, no `REFERENCE/`, no StoryLine file. Your only write is the chapter's `workshop.md` (plus session logs). Actual revision is a separate, downstream, gated act — hand off to `blind-response` (structure/reader-experience) or `register-pass` (line/voice). Keeping diagnosis and revision separate is the discipline the whole pipeline runs on.
+4. **Read-only / non-destructive.** Touch no `draft.md`, no `slate/`, no `revisions/`, no `REFERENCE/`, no StoryLine file. Your only write is the chapter's `workshop.md` (plus session logs). Actual revision is a separate, downstream, gated act — hand off to `blind-response` (structure/reader-experience) or `register-pass` (line/voice). Keeping diagnosis and revision separate is the discipline the whole pipeline runs on. **Exception — pipeline plan mode (see "Pipeline integration" below):** as the chapter-pipeline's **Workshop-1** you additionally author *planning artifacts* — the sequence envelope and each chapter's `envelope.md` — and may scaffold chapters via `chapter-init`. These are constraint specs, not prose: you still never write the fiction and never touch `draft.md` / `slate/` / `revisions/` / `REFERENCE/` / StoryLine.
 
 5. **Reader expectation is measured against the project's OWN promises, not generic genre beats.** Judge "what is the reader owed here / what does this plant, advance, or pay / what does it raise that the book must later honor" against `REFERENCE/threads.md` (open reader-promises: planted → advanced → paid) and the trajectory in `story-so-far.md` — never a stock structure template. This continuity-and-trajectory lens is only possible because of principle 3.
 
@@ -78,6 +78,51 @@ Confirm via the **file tools, not a bash read** (`^obs-014`): `workshop.md` wrot
 ## Step 7 — Log
 
 Append to the chapter `changelog.md` and the vault `_CHANGELOG.md` (fiction lane): chapter workshopped, stated intent in one line, the next moves the author landed on, any contradictions flagged for ruling. File new fragilities to `_OBSERVATIONS.md`; add follow-ups (e.g. "run blind-response on the Step-4 decisions") to `_BACKLOG.md`.
+
+---
+
+## Pipeline integration (chapter-pipeline) — two roles
+
+When invoked by the chapter-pipeline (the dictation route), you run in one of two modes. Standalone "workshop chapter N" use is unchanged — it is **Mode B without the blind-read input**.
+
+### Mode A — Workshop-1 (sequence-plan)
+Runs **once per sequence**, at plan stage, before any dictation. This is the only mode that writes planning artifacts (the principle-4 exception). Load at **sequence scope** — the whole arc's REFERENCE plus the *prior* sequence's landed canon (so this sequence is planned against the psychological state the last threshold left behind). Then:
+
+1. **Capture sequence intent** (Step 2 at sequence scope): the transformation the sequence carries, the chapters it spans (opening / middle(s) / closing), the reader experience across the run.
+2. **Author the sequence envelope** → `<project>/SEQUENCES/SEQUENCE <N> - <NAME>/sequence-envelope.md` (schema below). The parent spec for the whole sequence.
+3. **Scaffold the chapters** via `chapter-init` (opening/middle/closing).
+4. **Derive each chapter `envelope.md` from the sequence envelope** — POV frame and register band inherited verbatim; each chapter gets its *slice* of the transformation (the portion of entry→exit it advances) and its own per-segment Boundaries/POV/Conditions/State. Stamp `derived_from: "SEQUENCE <N> - <NAME>"`. On this route the envelope is **prescriptive** (the POV/perceptual contract the dictation honors), not the Transcoder's retro-derived input.
+5. **Seed each `brief.md`** from the sequence's seeds/payoffs (job, beats, setups to plant, payoffs due), tagged `<<PROPOSED — CRE to rule>>`.
+
+**Cap: one sequence per Mode-A run** (never plan past a threshold that changes the input state).
+
+### Mode B — Workshop-2 (prose-read + blind reconciliation)
+Runs **once per chapter**, post-dictation/cleanup (pipeline Phase 3). Read-only (writes only `workshop.md`), exactly like the standalone workshop, with **one added input**: the chapter's clean-room blind-read findings at `spec-check/<run>/pass-1-blind.md`, produced by the `blind-read` subagent immediately before. In **Step 3**, reconcile the cold blind read against your warm project-fluent read: present them side by side, mark each finding **PROBLEM vs WORKING-AS-INTENDED** with reasoning, and capture the author's rulings. Those ruled fixes are the hand-off to `blind-response` run **execute-only** (its own triage now lives here). Also reconcile the chapter `envelope.md` to the actual drafted segments if the dictation drifted from the plan.
+
+### Sequence-envelope schema
+
+```yaml
+---
+type: sequence-envelope
+project: <PROJECT>
+sequence: "SEQUENCE <N> - <NAME>"
+chapters: ["CHAPTER <a> - …", "CHAPTER <b> - …", "CHAPTER <c> - …"]   # opening / middle(s) / closing
+sequence_type: <one of the 16 — e.g. Confrontation>     # KNOWLEDGE/REFERENCES/Sequences
+threshold: <Awareness|Commitment|Testing|Crisis|Revelation|Decision|Sacrifice|Rebirth>
+last_updated: YYYY-MM-DD
+---
+```
+
+Body fields:
+- **POV frame** — the POV lock for the sequence (e.g. close-third, the hunter). Inherited verbatim by every chapter envelope.
+- **Transformation (entry → exit, signed)** — the character's psychological state coming in → going out, **and the polarity: `ascent | descent | flat`.** (A grieving/negative arc is descent — exit lower than entry; recording the sign keeps QA from "fixing" the downward arc as a sag.)
+- **Register band** — emotional-logical ratio + tonal notes; the band each chapter must stay inside.
+- **Escalation range** — where the sequence enters and exits on the conflict/dread curve.
+- **Entry canon** — what's true coming in (read from REFERENCE at plan time).
+- **Exit canon / threshold crossed** — what must be true going out; the new canon the sequence establishes (reconciled into REFERENCE at the sequence boundary by `canon-sync`).
+- **Seeds & payoffs (sequence scope)** — setups to plant / payoffs due across the sequence; distributed into the chapter briefs in step 5.
+
+Derivation is **one-way**: story (`bible`/`arcs`/`threads`) → `sequence-envelope` → chapter `envelope.md` → segment. Constraint inherits down (a chapter may not exceed its sequence's threshold allocation or leave its register band — a detectable defect the line/scene passes check). Emit derived YAML serialized + parse-gated (DIR-004).
 
 ---
 

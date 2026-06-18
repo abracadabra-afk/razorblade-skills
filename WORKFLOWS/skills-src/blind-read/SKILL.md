@@ -29,6 +29,10 @@ If the author pastes the chapter text directly into the conversation, just read 
 
 If you have *already* seen any spec-aware material earlier in this conversation, **stop and say so** — this context is contaminated and the blind read must be run in a fresh one. Do not pretend to be blind.
 
+## Pipeline note (chapter-pipeline)
+
+When the chapter-pipeline runs you, you are invoked as an **isolated subagent**: your only context is the cleaned `draft.md` prose (no spec, brief, envelope, or prior pass), and your `pass-1-blind.md` output is handed to **Workshop-2** (the `workshop-chapter` skill), which reconciles your cold findings against its warm, project-fluent read for the author to rule. Your own behavior does not change — read cold, report only what is on the page. The subagent isolation *is* the clean-room rule above, enforced by running you in a fresh context; if anything spec-aware reached this context, stop and say so.
+
 ## The read
 
 Read the chapter once, as a first-time reader. Do not edit. Do not guess at the author's intentions or themes. Answer only from what is on the page, and **quote a specific line for every answer.**

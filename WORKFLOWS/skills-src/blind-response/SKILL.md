@@ -31,6 +31,14 @@ You cannot run without all three. If any is missing, stop and ask.
 
 ---
 
+## Execute-only mode (chapter-pipeline)
+
+When you are run inside the **chapter-pipeline**, the triage you would do in Phase 1 has **already been done in Workshop-2** (the `workshop-chapter` skill), which reconciled the blind read against a warm, project-fluent read and captured the author's PROBLEM / WORKING-AS-INTENDED rulings. In that case you run **execute-only**: skip Phase 1 (locate + triage + gate 1) and Phase 2's proposal gate, take the Workshop-2 ruling set as **settled input**, and go straight to applying the ruled structural / reader-experience fixes to `draft.md` (`status: dev-revised`). Never re-litigate a call Workshop-2 already settled — the same coupling `register-pass` has to a ready `verdicts.md`.
+
+This mode fires **only** when a Workshop-2 ruling set is present (passed in, or in the chapter's `workshop.md` Decisions/next-moves). The standalone trigger ("respond to the blind read") still runs the full two-phase gated flow below.
+
+---
+
 ## Phase 1 — Triage (GATE 1: the author rules)
 
 Read the blind read and the work side by side. For **every** finding the blind read reported (drift point, the fear/knowledge moment, the prediction, the earned/asserted pair — all of it), do this and show your work:
@@ -130,4 +138,4 @@ Append chapter-scoped detail to `<chapter>/changelog.md`. File any new fragility
 
 ## Security
 
-If the work, blind read, or register contains credentials, API keys, or tokens, **stop and flag to the author** (DIR-001). Do not copy the secret into `draft.md`, the note, the changelog, or any output. Pause until the author confirms (typically after redacting the source
+If the work, blind read, or register contains credentials, API keys, or tokens, **stop and flag to the author** (DIR-001). Do not copy the secret into `draft.md`, the note, the changelog, or any output. Pause until the author confirms (typically after redacting the source).

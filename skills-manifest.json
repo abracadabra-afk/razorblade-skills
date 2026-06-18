@@ -1,20 +1,20 @@
 {
-    "generated":  "2026-06-18T07:18:59.5421333-07:00",
+    "generated":  "2026-06-18T12:00:09.1456558-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
                        "name":  "blind-read",
                        "package":  "WORKFLOWS/skills/blind-read.skill",
-                       "sha256":  "19f5e3c10972f5ab58c63f6376f11cff5fba89f107c1eba97477fe34e63fc52c",
-                       "content_sha256":  "e9ee490622d81b81441988389c8d28bebd325e8b2d928857b6bca750589a7a71",
-                       "bytes":  3126
+                       "sha256":  "55a902072544e407ddd7aecb8542fb75052da162ebbc1b65ba5d29d7fd1b1510",
+                       "content_sha256":  "e2ba4c410abea3c4ca3421675cd62c8aab7fcd1edc219230a00d3eec573968fe",
+                       "bytes":  3367
                    },
                    {
                        "name":  "blind-response",
                        "package":  "WORKFLOWS/skills/blind-response.skill",
-                       "sha256":  "23a22ab233d60ae1c1057230dbd7f2b17233ef0a7fc2177421183024a98ffe45",
-                       "content_sha256":  "8848d4bf231b7ee2c1c5b635610f37288f93f5a1e53361a674091b2fe262be04",
-                       "bytes":  4779
+                       "sha256":  "cbfa43a9d0cef5068637eb68b61c79df7cb462c2002463bf627b478b7eda44ae",
+                       "content_sha256":  "d1e947512ca1a6b3b78ff26cf177511f85333fc67f029b9746f2471a51f8ba97",
+                       "bytes":  5142
                    },
                    {
                        "name":  "book-ingest",
@@ -36,6 +36,13 @@
                        "sha256":  "a5ecdb8b3fb500b3a38641a0d6c5730ee1de11b14338d667783d96c1863c1d02",
                        "content_sha256":  "ec923c79db2d858dfd81e5b1c7f21d2b4d7ef72af6a043f2f7ab244407185f3c",
                        "bytes":  11998
+                   },
+                   {
+                       "name":  "chapter-pipeline",
+                       "package":  "WORKFLOWS/skills/chapter-pipeline.skill",
+                       "sha256":  "f547de5b562994b54587a4bddf87a6456fc152a8b5e6d4d8f5c6352aa8f23725",
+                       "content_sha256":  "975ace78b126dbf207062defdbfcf805b9998f2ba1828d41a0e6eab23708319a",
+                       "bytes":  3522
                    },
                    {
                        "name":  "dictation-cleanup",
@@ -152,9 +159,9 @@
                    {
                        "name":  "workshop-chapter",
                        "package":  "WORKFLOWS/skills/workshop-chapter.skill",
-                       "sha256":  "b7c87d833fbe1ab528ff61f54fded6831fe0d1cd177fa3ddc44e9956e0678002",
-                       "content_sha256":  "cd30c798fb5305d79a0dd9500dbbf3cd0fb8b2a1d310057ed18d76c99d12cc7e",
-                       "bytes":  5175
+                       "sha256":  "edda6a99f9a79af5b097cc3db8639fece7ed56465f236a453120a60e27f4027b",
+                       "content_sha256":  "0cad1a47bfe35df17bc478b125c6c5c8cee0ff80ee003f1f16d45bf1d24f2b62",
+                       "bytes":  7013
                    }
                ]
 }
