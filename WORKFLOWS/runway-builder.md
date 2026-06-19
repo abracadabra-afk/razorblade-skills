@@ -58,8 +58,11 @@ Write `<chapter>/runway.md`. **Never overwrite** an existing `runway.md` — if 
 
 On the dictation route, the runway's job is to **pre-pay the per-beat register decision** so dictation is pure speaking — it kills the 10–30s "how do I present this?" pause by making the only convergent micro-decision (temperature) ahead of time, in planning. It is the **beat rung of the [[KNOWLEDGE/REFERENCES/Methods/Fractal Envelope Model]], materialized transiently**, with the [[KNOWLEDGE/STYLE/REGISTER LEGEND]] as its spine.
 
-### Granularity — scene-level beats
-Segment the chapter into **scenes** (from `envelope.md` segments / the brief's locations). Decompose each scene into its **beats** — finer than the old 3–5 keyword prompts. One line per beat.
+### Granularity — scene-level beats, count from the scene's goal (no cap)
+Segment the chapter into **scenes** (from `envelope.md` segments / the brief's locations) and decompose each into its **beats** — one line per beat, and **the beat count comes from the scene's goal, not a fixed number.** (The old "3–5 prompts" was a chapter-level vestige; at scene scope it crushes a struggle into montage.) Read the scene's **goal** (character goal + story goal, from the chapter envelope) and build the beats that satisfy it:
+- **Connect beats with *but* / *therefore*, never *and then*** ([[KNOWLEDGE/REFERENCES/Methods/But and Therefore/But and Therefore Method|the But-and-Therefore method]]). A struggle or peak scene **ratchets** through as many try-fail beats as the tension needs; each beat should *cost* something. An "and then" between two beats is the failure state — make it a complication (*but*) or a consequence (*therefore*), or fold them.
+- **Large beats break into sub-beats** that choreograph the moment (the fall: dropped → snow in his cloak → digs him out → his warmth fainter).
+- **"Tight, no gaps" means *adjacency*, not brevity.** A harrowing scene should feel harrowing — more beats, not fewer. A cold connective scene stays sparse; a peak scene earns its length.
 
 ### Each beat = in-mode phrasing + one temperature tag
 - **Phrase the beat in its mode's register**, so the *form* carries the mode and no mode label is needed (Register Legend, Beat structure):
@@ -69,18 +72,31 @@ Segment the chapter into **scenes** (from `envelope.md` segments / the brief's l
   Keep it a **trigger, not the finished sentence** — keywords in the mode's shape; CRE speaks the actual line. If a beat reads as completed prose, cut it back (the no-prose rule still holds).
 - **Tag only the temperature** — `[cold]` / `[warm]` / `[HOT]`. It is the one dial not recoverable from beat content and the one carrying the craft. **Do not tag mode or motion** — mode rides in the phrasing; motion is a live choice defaulted by temperature (hot→dilate, cold→compress); both live in the Legend as concepts, not runway labels. For a beat whose mode is deliberately open (a choice that could be thought *or* acted), phrase it mode-neutral and let temperature + content carry it (the "her choice — let him drown" case).
 
+### Scene vs. sequel — pick the template by contour position
+Per [[KNOWLEDGE/REFERENCES/Methods/Tension and Transformation Framework]], every scene is one of two shapes, **selected from its place on the contour**:
+- **Scene (proactive)** — `goal → conflict → disaster`. A peak; beats ratchet to a worse-than-it-started turn.
+- **Sequel (reactive)** — `reaction → dilemma → decision`. The modulation beat *after* a peak — absorb, process, a new goal crystallizes; its closing **decision** closes an escape and fires the next scene (the staircase).
+
+Right after a high point, run a **sequel** (the reader's numb; the floor needs resetting). Don't stack peaks (plateau fatigue) or sequels (slack) — the contour says which comes next. **Want vs. resistance is the but/therefore engine:** the *but* is the resistance, the *therefore* the cost it exacts; a sagging beat means soft resistance — strengthen the obstacle or deepen the want.
+
 ### Temperature is derived from the contour — proposed, not imposed
 Default **cold**. Mark **warm/hot** at the scene's intensity peaks, derived from the sequence envelope's escalation range + the chapter/scene's place in it (scene-intensity can't run pre-draft, so this is the *planned* contour). Open each scene with a one-line **contour header**. CRE overrides any beat's temperature live — the runway is a roadmap, not a cage; this only removes the *forced* pause, never the freedom.
 
+### Every present character is an agent — no decor
+Build from the scene's **roster** (the chapter envelope lists who's present + each one's carried state, read from `arcs.md` / prior `continuity.md` / the **working-canon overlay**). **Every present character with a live arc gets their own *but/therefore* thread** — their struggle, successes, failures — interleaved with the POV character's. A present character given no thread is **decor**, the character-level UNDRAMATIZED failure — flag it. (The hound on the storm-trek is not set dressing: he entered overriding his fear with the doll in his maw, so he drops it, she says "leave it," he retrieves it — she delivers the boy, he delivers the doll.)
+
 ### Form
 ```
-SCENE — <name>   POV: <who>   contour: <one line, e.g. "cold, one hot spike at the choice">
+SCENE — <name>   POV: <who>   present: <roster + carried state>   contour: <one line>
+goal — <character goal>  /  <story goal>
 ──────────────────────────────────────────────
-[cold]  <in-mode beat prompt>          → <forward-pointer>
-[warm]  <in-mode beat prompt>          → …
+[cold]  <in-mode beat prompt>                  → BUT <complication>
+[cold]  <in-mode beat prompt>                  → THEREFORE <consequence>
+   └ <sub-beat choreographing the moment>
+   └ <sub-beat>
+[cold]  <another present character's thread>   → THEREFORE <what it costs / the parallel>
 [HOT]   <in-mode beat prompt>
-[cold]  <in-mode beat prompt>
-★ <one write-in-full slot, only if the brief specifies a line/image CRE already hears>
+★ <one write-in-full, only if the brief specifies a line/image CRE already hears>
 [SEALED] <what to enact-and-withhold, per the seal schedule>
 ```
 

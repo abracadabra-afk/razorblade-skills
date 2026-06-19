@@ -1,6 +1,6 @@
 ---
 name: canon-sync
-description: Sync a chapter's landed draft into the project's rolling canon — update REFERENCE/story-so-far.md, bible.md, threads.md, arcs.md (per-character entry/waypoint/exit state), and the chapter's continuity.md end-state + character-state sections, gating anything that contradicts existing canon for the author to rule. Use whenever the author asks to "sync the canon," "canon sync," "update the story so far," "update the bible," or wants project reference docs brought current after a chapter's draft.md lands (typically right after promote-revision) in a vault using the per-chapter folder convention. It DERIVES state from finished prose and never changes a word of any draft. Do NOT use it to revise prose (register-pass), promote a revision (promote-revision), fill an envelope (dictation-preflight), or slate dictation (dictation-transcoder). For the full promote-then-canon-then-storyline bundle, use the land-chapter skill instead.
+description: Sync a chapter's landed draft into the project canon — REFERENCE/story-so-far.md, bible.md, threads.md, arcs.md + the chapter's continuity.md end-state, gating contradictions for the author to rule. Triggers: "sync the canon," "canon sync," "update the story so far," "update the bible" (after draft.md lands, per-chapter folder convention). Derives from finished prose; never edits a draft. A working mode ("sync the working canon") re-derives a disposable in-flight overlay (NOT REFERENCE) so forward chapters are legible before landing. NOT for register-pass, promote-revision, dictation-preflight, or dictation-transcoder; for promote→canon→storyline use land-chapter.
 ---
 
 # Canon Sync
@@ -11,12 +11,28 @@ You hold **no craft opinion and no plot opinion.** You never change a word of an
 
 Six principles govern everything below:
 
-1. **Derive only from landed text.** The source is `<chapter>/draft.md`. Never derive canon from `slate/` or `revisions/` — those are intermediate stages.
+1. **Derive only from landed text — *in land mode.*** The land-mode source is `<chapter>/draft.md`; never derive *REFERENCE* canon from `slate/` or `revisions/`. (Working mode is the deliberate exception — it derives a *disposable overlay* from provisional material; see "Two-tier sync".)
 2. **Every derived fact carries provenance.** Tag facts `(CH<N> rev<M>)` from the draft's `source_revision`. Provenance is what makes re-syncing safe.
 3. **Idempotent per chapter.** Re-running on the same chapter replaces that chapter's derived entries in place — never duplicates, never touches entries sourced from other chapters.
 4. **Additions write; conflicts gate.** New facts flow through. Contradictions halt for the author's ruling before the dependent writes land.
 5. **Fill-gaps-only on author text.** Author-written lines (anything without a provenance tag) outrank derived facts and are never overwritten. When unsure, tag `<<UNCERTAIN: …; confirm?>>` — never guess silently.
 6. **State is observed-or-inferred, and tracked over time.** Physical/mental/relationship state and arc position are derived per chapter. A state the text *states* is recorded plainly; a state it only *implies* gets the `<<UNCERTAIN>>` tag (the orchestrator's `derivation_mode: direct|inference`, mapped to the vault's convention). The per-chapter `continuity.md` blocks are the source data; `arcs.md` is the idempotent roll-up — entry state written once at first appearance (a change to it is a contradiction → gate it), a waypoint appended only at a flagged turn, exit state always overwritten to the latest chapter. Character-state entries carry `(CH<N> rev<M>)` provenance like every other fact.
+
+---
+
+## Two-tier sync — land mode vs working mode
+
+You run in two modes; everything else here is **land mode** unless noted.
+
+- **Land mode** (default, "sync the canon"): derive from the **landed `draft.md`** into the sacrosanct `REFERENCE/`, provenance-tagged and gated. The authoritative floor; runs at landing.
+- **Working mode** ("sync the working canon" / called by the chapter-pipeline orchestrator at each seam): keep the **in-flight sequence legible to itself before anything lands**, so workshop + runway-builder can read a forward chapter's carried state without waiting for it to land.
+
+Working-mode contract:
+- **Source:** the *current* working material — **skeletons** (sequence-envelope + chapter envelopes + briefs + runways) at Construct, then **cleaned drafts + revisions** as they appear. (The one deliberate exception to Principle 1.)
+- **Target:** a **disposable overlay** at `<project>/SEQUENCES/SEQUENCE <N> - <NAME>/working-canon.md` — never `REFERENCE/`. Story-so-far / threads / arcs **deltas** for the in-flight sequence only.
+- **Regenerated wholesale; never gated; never rolled back** — a one-way mirror of the current drafts. Each run re-derives from scratch, so a draft change can't corrupt it and there is no rollback; the next run reflects the new truth.
+- **Marks planned vs drafted:** tag a fact `(planned)` when it comes from a skeleton (intended, may change) or `(drafted CH<N>)` when from real cleaned/revised prose.
+- **Read, never promoted alone:** workshop + runway read `REFERENCE/` **+** this overlay (overlay wins for in-flight chapters). At landing, land mode re-derives that chapter into REFERENCE (gated, provenance-tagged) and its overlay entries retire. This is the grown-up form of the chapter-pipeline's block-canon-scratch.
 
 ---
 

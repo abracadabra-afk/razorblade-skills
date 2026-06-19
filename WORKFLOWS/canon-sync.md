@@ -2,12 +2,12 @@
 type: workflow
 name: canon-sync
 trigger: sync the canon
-aliases: [canon sync, update the canon, update the story so far, update the bible, sync chapter N]
+aliases: [canon sync, update the canon, update the story so far, update the bible, sync chapter N, sync the working canon]
 inputs: [the chapter's landed draft.md, REFERENCE/story-so-far.md, REFERENCE/bible.md, REFERENCE/threads.md, REFERENCE/arcs.md, the chapter's continuity.md, the chapter's brief.md (read-only, intent cross-check), the run's pass-1-blind.md (read-only, Prediction harvest)]
 outputs: [updated REFERENCE/story-so-far.md, updated REFERENCE/bible.md, updated REFERENCE/threads.md (thread events + blind-read pickup), updated REFERENCE/arcs.md (entry/waypoint/exit character state), filled end-state sections + the Character state @ end of chapter block in the chapter's continuity.md, a conflict block for CRE to rule when the draft contradicts existing canon]
 lane: fiction
 status: active
-last_updated: 2026-06-13
+last_updated: 2026-06-19
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/promote-revision]] — runs when a chapter's draft.md has landed. Its outputs feed the NEXT chapter's [[WORKFLOWS/dictation-preflight]] (which reads REFERENCE first, back-walks only as fallback).
 ---
@@ -22,10 +22,24 @@ pipeline_position: downstream of [[WORKFLOWS/promote-revision]] — runs when a 
 
 After promoting a revision (or whenever `draft.md` meaningfully changed and the project state is stale). Trigger phrases: "sync the canon," "update the story so far," "update the bible." (The full promote→canon→storyline bundle is [[WORKFLOWS/land-chapter]], which now owns "land the chapter" and calls this skill as its canon leg.) Do NOT use it to revise prose (that is [[WORKFLOWS/register-pass]]), to move a revision into the draft (that is [[WORKFLOWS/promote-revision]]), or to fill an envelope (that is [[WORKFLOWS/dictation-preflight]]). It derives state from finished prose; it never changes a word of any draft.
 
+## Two-tier sync — land mode vs working mode (2026-06-18)
+
+Canon-sync runs in two modes. Everything else in this doc is **land mode** unless noted.
+
+- **Land mode** (default, the trigger "sync the canon"): derives from the **landed `draft.md`** into the sacrosanct `REFERENCE/`, provenance-tagged and conflict-gated. The authoritative floor. Runs at landing (chapter-pipeline Phase 5).
+- **Working mode** ("sync the working canon" / called by the chapter-pipeline orchestrator at each seam): keeps the **in-flight sequence legible to itself before anything lands**, so workshop and runway-builder can read a forward chapter's carried state without waiting for it to land. The fix for the land-only blind spot (`^obs-107`).
+
+**Working mode contract:**
+- **Source:** the *current* working material of the in-flight sequence — the **skeletons** (sequence-envelope + chapter envelopes + briefs + runways) at Construct, then **cleaned drafts + revisions** as they appear. (The deliberate exception to Principle 1: working mode may read provisional text; land mode may not.)
+- **Target:** a **disposable working-canon overlay** at `<project>/SEQUENCES/SEQUENCE <N> - <NAME>/working-canon.md` — *never* `REFERENCE/`. It holds only the in-flight sequence's story-so-far / threads / arcs **deltas** (what this sequence adds or changes), as an overlay on REFERENCE.
+- **Regenerated wholesale; never gated; never rolled back.** It is a one-way mirror of the current drafts (the storyline-sync discipline): each run *re-derives* it from whatever the drafts now say, so a draft change can't corrupt it and there is no rollback — the next run reflects the new truth. No provenance-replace, no contradiction gate.
+- **Marks planned vs drafted.** Each fact is tagged `(planned)` when derived from a skeleton (intended, may still change) or `(drafted CH<N>)` when derived from actual cleaned/revised prose. A forward chapter reading the overlay knows which of its facts are soft.
+- **Read, never promoted on its own.** Workshop + runway-builder read `REFERENCE/` **+** this overlay (overlay wins for in-flight chapters). At landing, **land mode** re-derives that chapter's facts from the finished draft into REFERENCE (gated, provenance-tagged) and the chapter's working-canon entries retire. The overlay is the grown-up form of the chapter-pipeline's block-canon-scratch — a real story-so-far/threads/arcs layer instead of a name list.
+
 ## Key principles
 
-1. **Derive only from landed text.** The source is `<chapter>/draft.md`. Never derive canon from `slate/` or `revisions/` — those are intermediate. If `draft.md` is a scaffold or `status` shows pre-register work, warn and ask before syncing.
-2. **Every derived fact carries provenance.** Each bible fact and story-so-far section is tagged with its source (`CH<N> rev<M>` from the draft's `source_revision`). Provenance is what makes re-syncing safe: when a chapter is re-promoted, the re-run replaces exactly the facts sourced from that chapter and nothing else.
+1. **Derive only from landed text — *in land mode.*** The land-mode source is `<chapter>/draft.md`. Never derive *REFERENCE* canon from `slate/` or `revisions/` — those are intermediate. If `draft.md` is a scaffold or `status` shows pre-register work, warn and ask before syncing. (Working mode is the deliberate exception: it derives the *disposable overlay* from provisional material — see "Two-tier sync".)
+2. **Every derived fact carries provenance.** Each bible fact and story-so-far section is tagged with its source (`CH<N> rev<M>` from the draft's `source_revision`; for a book-ingested chapter the tag is `CH<N> ingested`). Provenance is what makes re-syncing safe: when a chapter is re-promoted (or re-ingested), the re-run replaces exactly the facts sourced from that chapter and nothing else.
 3. **Idempotent per chapter.** Re-running canon-sync on the same chapter replaces that chapter's derived entries in place. It never duplicates and never touches entries sourced from other chapters.
 4. **Additions write; conflicts gate.** New entities, new facts, and the chapter synopsis write automatically. Anything that **contradicts** existing canon (bible says blue eyes, draft says brown; story-so-far has him in the vale, draft opens him on the ridge) halts for CRE's ruling — it is either a continuity error or an intentional reveal, and only CRE can rule which. Deferred rulings are logged to the chapter's `open-loops.md`.
 5. **Fill-gaps-only on author text.** In `continuity.md` and the bible, author-written lines are never overwritten. Uncertain derivations are tagged `<<UNCERTAIN: …; confirm?>>`, never guessed silently (same discipline as pre-flight).
@@ -37,7 +51,7 @@ After promoting a revision (or whenever `draft.md` meaningfully changed and the 
 Read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Locate chapter + verify it has landed
-Resolve the chapter folder; read `draft.md` frontmatter. Expect `status: register-revised` (or `dev-revised` if CRE explicitly syncs mid-pipeline). Record `source_revision` (or `source_slate` if no revision yet) as this sync's provenance tag. Scaffold or missing draft → halt.
+Resolve the chapter folder; read `draft.md` frontmatter. Expect `status: register-revised` (or `dev-revised` if CRE explicitly syncs mid-pipeline, or `ingested` when the draft is published prose brought in by [[WORKFLOWS/book-ingest]] — `ingested` IS a landed state, `^obs-023`). Record `source_revision` (or `source_slate` if no revision yet; for an ingested chapter there is no revision — use the `ingested` provenance form below). Scaffold or missing draft → halt.
 
 ### Step 2 — Load current state
 Read `REFERENCE/story-so-far.md`, `REFERENCE/bible.md`, `REFERENCE/threads.md`, and `REFERENCE/arcs.md` (create any from the scaffold templates if missing) and the chapter's `continuity.md`. Index existing bible facts by entity and provenance, open threads by id, and the current entry/waypoint/exit state per character in `arcs.md`. **The set of bible facts and thread events already provenance-tagged to THIS chapter (`(CH<N> rev<M>)`) is the prior extraction — treat it as the baseline to diff the new draft against (see Step 3).** Also read, read-only: the chapter's `brief.md` (if present) and the run's `spec-check/<slate-run>/pass-1-blind.md` (if present).
@@ -101,7 +115,7 @@ File anything fragile (a state contradiction suggesting drift, a bible or arcs s
 
 - Vault sentinel fails → halt, ask which folder is the vault.
 - No `draft.md`, or the draft is a scaffold → halt; nothing landed to sync.
-- Draft status is pre-register and the author didn't ask for a mid-pipeline sync → pause, confirm.
+- Draft status is pre-register (and not `ingested`) and the author didn't ask for a mid-pipeline sync → pause, confirm. (`status: ingested` is a landed state — do not pause on it.)
 - A conflict ruling is pending (fact, dropped fact, or **state contradiction**) → hold the dependent writes; everything non-conflicting still lands.
 
 ---

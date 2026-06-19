@@ -6,8 +6,8 @@ aliases: [storyline sync, build the storyline, update storyline, convert to stor
 inputs: [the chapter's landed draft.md, REFERENCE/bible.md (codex source), REFERENCE/threads.md (plotline-tag source), REFERENCE/arcs.md (character entry/exit/waypoint state — codex arc-field source), the chapter's continuity.md (scene end-state + per-character state), the scene-intensity engine (scene_intensity.py + intensity_config.json — invoked in Step 3b to seed the intensity fields), the target StoryLine project under WRITING/STORYLINE/<Project>/]
 outputs: [one or more StoryLine scene files in WRITING/STORYLINE/<Project>/Scenes/, codex entries in WRITING/STORYLINE/<Project>/Codex/Characters/ and /Locations/, a conflict block for CRE to rule when the draft contradicts existing StoryLine data]
 lane: fiction
-status: draft
-last_updated: 2026-06-13
+status: active
+last_updated: 2026-06-19
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder AND have a StoryLine project to mirror into. First adopter — Witchwood → WRITING/STORYLINE/WW - Test.
 pipeline_position: parallel sibling of [[WORKFLOWS/canon-sync]] — both run downstream of [[WORKFLOWS/promote-revision]] on a landed draft.md and DERIVE a read-only artifact from it. canon-sync derives REFERENCE state; storyline-sync derives the StoryLine project. It also INVOKES the scene-intensity engine (Step 3b) to seed the intensity fields — scene-intensity needs the scenes segmented first, which this sync produces. Run order: canon-sync → storyline-sync (scene-intensity runs inside it, after segmentation). Best run right after canon-sync, so its bible/threads facts are current.
 ---

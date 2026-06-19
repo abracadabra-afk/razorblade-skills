@@ -133,11 +133,13 @@ last_updated: <today>
 - Warm-up: 5 min forward-only junk on this scene. "Supposed to be bad."
 
 ## ② THE RUNWAY
-**Scene:** <name>   **POV:** <who>   **contour:** <one line, e.g. "cold, one hot spike at the choice">   **Cut on:** <curtain>
-[cold]  <in-mode beat prompt>          → next
-[warm]  <in-mode beat prompt>          → next
-[HOT]   <in-mode beat prompt>
-[cold]  <in-mode beat prompt>          → CUT
+**Scene:** <name>   **POV:** <who>   **present:** <roster + carried state>   **contour:** <one line>   **Cut on:** <curtain>
+**goal —** <character goal>  /  <story goal>
+[cold]  <in-mode beat prompt>                 → BUT <complication>
+[cold]  <in-mode beat prompt>                 → THEREFORE <consequence>
+   └ <sub-beat choreographing the moment>
+[cold]  <another present character's thread>  → THEREFORE <what it costs / the parallel>
+[HOT]   <in-mode beat prompt>                 → CUT
 ★ Write-in-full (one): "<lifted line, or blank>"
 [SEALED]: <what to enact-and-withhold, from the brief's seal schedule>
 
@@ -160,7 +162,10 @@ Close your reply with a **derivation note**: which beats mapped to which prompts
 
 On the dictation route this is the runway's real shape, and it **supersedes the 3–5-keyword cap in Step 2.** The job is to pre-pay the per-beat register decision so dictation is pure speaking — it kills the 10–30s "how do I present this?" pause. The spine is the Register Legend (`KNOWLEDGE/STYLE/REGISTER LEGEND`).
 
-- **Go to scene-level beats** — one line per beat, finer than the keyword cap.
+- **Beat count comes from the scene's goal — no cap.** One line per beat; the count satisfies the scene's **goal** (character + story, from the chapter envelope), not a fixed number. The old "3–5" was a chapter-level vestige; at scene scope it crushes a struggle into montage.
+- **Connect beats with *but* / *therefore*, never *and then*** (the But-and-Therefore method). A struggle/peak scene ratchets through as many try-fail beats as the tension needs; each beat should *cost* something. Large beats break into **sub-beats** that choreograph the moment. "Tight, no gaps" = adjacency, not brevity — a harrowing scene earns more beats.
+- **Every present character is an agent — no decor.** Build from the scene's **roster** (the chapter envelope's who's-present + each one's carried state, read from `arcs.md` / prior `continuity.md` / the working-canon overlay). Each present character with a live arc gets their own *but/therefore* thread, interleaved with the POV's; a present character with no thread is decor (the character-level UNDRAMATIZED) — flag it.
+- **Pick the beat template by contour position** (Tension & Transformation Framework): a peak is a proactive **scene** (`goal → conflict → disaster`); after a peak, a reactive **sequel** (`reaction → dilemma → decision`) whose closing decision closes an escape and fires the next. Don't stack peaks (plateau) or sequels (slack). **Want vs. resistance is the but/therefore engine** — the *but* is resistance, the *therefore* the cost; a sagging beat = soft resistance (strengthen the obstacle or deepen the want).
 - **Phrase each beat in its mode's register** so the phrasing carries the mode (no mode label): *watching* → sensory fragments; *doing* → a flowing action phrase; *thinking* → a reveal/contrast cue, never a restatement. Keep it a trigger, not the finished sentence — the moment it reads as prose, cut it back.
 - **Tag only the temperature** — `[cold]` / `[warm]` / `[HOT]`. It is the one dial not recoverable from a beat's content and the only one carrying the contour. **Do not tag mode or motion** (mode rides in the phrasing; motion is a live choice defaulted by temperature). For a beat whose mode is deliberately open — a choice that could be thought *or* acted — phrase it mode-neutral and let temperature + content carry it.
 - **Derive temperature from the contour, default cold.** Mark warm/hot only at the scene's peaks (from the sequence envelope's escalation + the scene's place in it; scene-intensity can't run pre-draft, so this is the *planned* contour). Lead each scene with a one-line contour header. The author overrides any beat's temperature live — roadmap, not cage.

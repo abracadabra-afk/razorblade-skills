@@ -86,12 +86,14 @@ Append to the chapter `changelog.md` and the vault `_CHANGELOG.md` (fiction lane
 When invoked by the chapter-pipeline (the dictation route), you run in one of two modes. Standalone "workshop chapter N" use is unchanged — it is **Mode B without the blind-read input**.
 
 ### Mode A — Workshop-1 (sequence-plan)
-Runs **once per sequence**, at plan stage, before any dictation. This is the only mode that writes planning artifacts (the principle-4 exception). Load at **sequence scope** — the whole arc's REFERENCE plus the *prior* sequence's landed canon (so this sequence is planned against the psychological state the last threshold left behind). Then:
+
+> **Driven by the Tension & Transformation Framework** (`KNOWLEDGE/REFERENCES/Methods/Tension and Transformation Framework`): the transformation *is* the POV character's **fault line** + refusal arc; each chapter slice **closes one escape** along it; the closing chapter **forces the gated choice** (external win gated on the internal decision); scenes are chosen **scene-vs-sequel by contour position** (peak = proactive scene goal→conflict→disaster; post-peak = reactive sequel reaction→dilemma→decision). Structure is *derived from the refusal*, not guessed.
+Runs **once per sequence**, at plan stage, before any dictation. This is the only mode that writes planning artifacts (the principle-4 exception). Load at **sequence scope** — the whole arc's REFERENCE plus the *prior* sequence's landed canon (so this sequence is planned against the psychological state the last threshold left behind), **plus the working-canon overlay** (`SEQUENCES/.../working-canon.md`) so a chapter's roster can read the carried state of chapters dictated-but-not-yet-landed. Then:
 
 1. **Capture sequence intent** (Step 2 at sequence scope): the transformation the sequence carries, **how many chapters** the transformation needs and what each spans (opening / middle(s) / closing) — the count set by how the threshold's stages distribute, each stage getting the room it needs (e.g. a pact deserving its own chapter); proposed, CRE rules — and the reader experience across the run.
 2. **Author the sequence envelope** → `<project>/SEQUENCES/SEQUENCE <N> - <NAME>/sequence-envelope.md` (schema below). The parent spec for the whole sequence.
 3. **Scaffold the chapters** via `chapter-init` (opening/middle/closing).
-4. **Derive each chapter `envelope.md` from the sequence envelope** — POV frame and register band inherited verbatim; each chapter gets its *slice* of the transformation (the portion of entry→exit it advances) and its own per-segment Boundaries/POV/Conditions/State — **the chapter's scenes** (determine how many, and each scene's job / POV / conditions, from the chapter's slice: POV / location / time shifts; these are what `runway-builder` turns into scene-beat runways). Stamp `derived_from: "SEQUENCE <N> - <NAME>"`. On this route the envelope is **prescriptive** (the POV/perceptual contract the dictation honors), not the Transcoder's retro-derived input.
+4. **Derive each chapter `envelope.md` from the sequence envelope** — POV frame and register band inherited verbatim; each chapter gets its *slice* of the transformation (the portion of entry→exit it advances) and its own per-segment Boundaries/POV/Conditions/State — **the chapter's scenes** (determine how many, and for each scene its **goal** (character + story — the goal sets the beat structure), its **roster** (who's present) + each present character's **carried state** (from `arcs.md` / prior `continuity.md` / the working-canon overlay), plus POV / conditions, from the chapter's slice: POV / location / time / who-enters-or-leaves shifts; every present character with a live arc is an agent the runway must thread, never decor; these are what `runway-builder` turns into scene-beat runways). Stamp `derived_from: "SEQUENCE <N> - <NAME>"`. On this route the envelope is **prescriptive** (the POV/perceptual contract the dictation honors), not the Transcoder's retro-derived input.
 5. **Seed each `brief.md`** from the sequence's seeds/payoffs (job, beats, setups to plant, payoffs due), tagged `<<PROPOSED — CRE to rule>>`.
 
 **Cap: one sequence per Mode-A run** (never plan past a threshold that changes the input state).
@@ -111,6 +113,9 @@ sequence: "SEQUENCE <N> - <NAME>"
 chapters: ["CHAPTER <a> - …", "CHAPTER <b> - …", "CHAPTER <c> - …"]   # opening / middle(s) / closing
 sequence_type: <one of the 16 — e.g. Confrontation>     # KNOWLEDGE/REFERENCES/Sequences
 threshold: <Awareness|Commitment|Testing|Crisis|Revelation|Decision|Sacrifice|Rebirth>
+fault_line: <what the POV character will NOT surrender — the seam>   # Tension & Transformation Framework
+arc: <positive | flat | negative>                                   # the refusal's outcome (sets the sign)
+curve: <rising | spike | oscillating | plateau | slow-burn | inverted | spike-collapse>
 last_updated: YYYY-MM-DD
 ---
 ```

@@ -6,8 +6,8 @@ aliases: [resolve the loops, work the open loops, clear the loops, clear chapter
 inputs: [the chapter's open-loops.md (unresolved entries), the chapter's draft.md (the prose to revise), the project voice spec at REFERENCE/voice-spec.md (optional), the project register at REFERENCE/register.md (optional), KNOWLEDGE/VOICE SAMPLES + KNOWLEDGE/STYLE (voice reference)]
 outputs: [a loop-clear revision in revisions/ carrying the surgical fixes + marked demo blocks for the bigger rewrites, the chapter's open-loops.md with ruled entries moved to Resolved / marked in-progress]
 lane: fiction
-status: draft
-last_updated: 2026-06-16
+status: active
+last_updated: 2026-06-19
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep an open-loops.md populated by the Transcoder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]] (which POPULATES open-loops.md); upstream of [[WORKFLOWS/register-pass]]. Automates the open-loops.md note's own instruction ("Resolve here, then patch draft.md") into a gated, in-voice revision. Its loop-clear revision is landed by [[WORKFLOWS/promote-revision]].
 ---

@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-18T14:36:25.8865631-07:00",
+    "generated":  "2026-06-19T08:51:56.1193833-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -26,9 +26,9 @@
                    {
                        "name":  "canon-sync",
                        "package":  "WORKFLOWS/skills/canon-sync.skill",
-                       "sha256":  "bdb2ed51dd769488831593e30ac4b0bf1bcf340370a124b156d45952a4210d6e",
-                       "content_sha256":  "6a90dcdcd9a23db72c92dbf9ccd5015a8a5b622840598be62a0f845f75a9186a",
-                       "bytes":  6198
+                       "sha256":  "ee151c53a37bd69fcea3635d815c2e7ed9b3dcf949c2838819068df9640dc474",
+                       "content_sha256":  "e3b27a243414e4663daaa50d52f0e2def80670f6be0d09a7948ef2d56d68bc07",
+                       "bytes":  6699
                    },
                    {
                        "name":  "chapter-init",
@@ -117,9 +117,9 @@
                    {
                        "name":  "runway-builder",
                        "package":  "WORKFLOWS/skills/runway-builder.skill",
-                       "sha256":  "934af0dd1141f7951cf41632f552a3d8207dc6ae42b8a5bdd62ebf090d64da9d",
-                       "content_sha256":  "1a32d15c888874c5d6a73124139e3061c6cc5f1fa2b4deb79622b678e0aedd0d",
-                       "bytes":  6412
+                       "sha256":  "20578d9c6d53cead9da3d06e972c2b451ccf28c7133acbfc4ba8fa2094588be0",
+                       "content_sha256":  "09dbbb39f4f49358f14e90a297d05f0585d94db0fe037530513851c6a5eabce2",
+                       "bytes":  7154
                    },
                    {
                        "name":  "scene-intensity",
@@ -159,9 +159,9 @@
                    {
                        "name":  "workshop-chapter",
                        "package":  "WORKFLOWS/skills/workshop-chapter.skill",
-                       "sha256":  "05221aa88856a38b9315021d38f8d61d45bcfb446df6a3d8e45bca2c9d5c61ed",
-                       "content_sha256":  "bb4b3d4c2476ad1d90e5c52d0b321b2260186c40bea7695a3c090c9d0ebb29dc",
-                       "bytes":  7334
+                       "sha256":  "31b09af25899533e3c55331877dc63d56d032b41ce8b4e88e2f04c8dde706ed9",
+                       "content_sha256":  "85239215d4e2b8dd5e68e0858d7fa319b2a5da9438500aee4d1bb3b2abb73ad6",
+                       "bytes":  7872
                    }
                ]
 }

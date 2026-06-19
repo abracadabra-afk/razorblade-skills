@@ -3,11 +3,11 @@ type: workflow
 name: register-pass
 trigger: run the register
 aliases: [revise with the register, register pass, run the reviser]
-inputs: [the chapter's newest slate clean-draft.md, the project register at REFERENCE/register.md, the project voice spec at REFERENCE/voice-spec.md (optional), the contamination checklist at REFERENCE/contamination-checklist.md (optional)]
+inputs: [the working text — prefer draft.md when its status marks real content (dev-revised or loops-cleared), else the chapter's newest slate clean-draft.md, the project register at REFERENCE/register.md, the project voice spec at REFERENCE/voice-spec.md (optional), the contamination checklist at REFERENCE/contamination-checklist.md (optional)]
 outputs: [revised passage in revisions/, editorial-note sidecar in revisions/]
 lane: fiction
 status: active
-last_updated: 2026-06-16
+last_updated: 2026-06-19
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that also keep a project register at REFERENCE/register.md. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]]; the dedicated revision stage out of the slate (closes the "revision-specific workflow TBD" note in each chapter's revisions/README). Optionally downstream of [[WORKFLOWS/spec-check]] — when a ready verdict sheet exists, runs execute-only.
 ---
