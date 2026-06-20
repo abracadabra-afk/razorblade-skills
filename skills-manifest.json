@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-19T12:00:08.6620629-07:00",
+    "generated":  "2026-06-19T17:42:11.2987701-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -33,9 +33,9 @@
                    {
                        "name":  "chapter-init",
                        "package":  "WORKFLOWS/skills/chapter-init.skill",
-                       "sha256":  "a5ecdb8b3fb500b3a38641a0d6c5730ee1de11b14338d667783d96c1863c1d02",
-                       "content_sha256":  "ec923c79db2d858dfd81e5b1c7f21d2b4d7ef72af6a043f2f7ab244407185f3c",
-                       "bytes":  11998
+                       "sha256":  "264aea6d7aeb448e91c1ab8c73a0e7dbb933373380041884cfdfba852aab3840",
+                       "content_sha256":  "4e838a385238ed40ce4439c8bfbd2475d4731aa63fb0906f77e4d97426d2caa1",
+                       "bytes":  12316
                    },
                    {
                        "name":  "chapter-pipeline",
@@ -117,9 +117,9 @@
                    {
                        "name":  "runway-builder",
                        "package":  "WORKFLOWS/skills/runway-builder.skill",
-                       "sha256":  "20578d9c6d53cead9da3d06e972c2b451ccf28c7133acbfc4ba8fa2094588be0",
-                       "content_sha256":  "09dbbb39f4f49358f14e90a297d05f0585d94db0fe037530513851c6a5eabce2",
-                       "bytes":  7154
+                       "sha256":  "ef95b348b61f1ccd873441bf6d679fdf5ea330575d06173c8e83ce05a4422c87",
+                       "content_sha256":  "9dce14c7156a981fc8937dc052ff30eeec277a67b92d1ea6ae9b04b06284cf6a",
+                       "bytes":  8715
                    },
                    {
                        "name":  "scene-intensity",

@@ -7,7 +7,7 @@ inputs: [project (defaults to the only project with a CHAPTERS/ dir), chapter nu
 outputs: [a complete per-chapter folder with stamped frontmatter, a seeded brief.md, init entries in the chapter changelog + pipeline board]
 lane: fiction
 status: active
-last_updated: 2026-06-03
+last_updated: 2026-06-19
 ---
 
 # WORKFLOW: chapter-init
@@ -32,7 +32,7 @@ CHAPTER N - <TITLE>/
 ├── changelog.md      carries the S1 init entry
 ├── draft.md          status: scaffold, placeholder body
 ├── open-loops.md     empty sections (register ambiguity / image-doubling / left-for-later / resolved)
-├── continuity.md     end-state sections pointing at REFERENCE/ (not the archive relics)
+├── continuity.md     end-state + Character state @ end of chapter sections (canon-sync-owned, `^obs-048`), pointing at REFERENCE/ (not the archive relics)
 ├── notes.md          empty
 ├── _status.md        phase table, no segment rows yet (segments come from envelope.md)
 ├── dictation/README.md
