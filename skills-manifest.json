@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-21T14:05:19.0470788-07:00",
+    "generated":  "2026-06-21T15:17:28.2277973-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -47,9 +47,9 @@
                    {
                        "name":  "dev-capture",
                        "package":  "WORKFLOWS/skills/dev-capture.skill",
-                       "sha256":  "9718114937906434e4fd577bddc0a85d893b7e2b391d62908ffd745778d207f3",
-                       "content_sha256":  "95e82c123a3a1f4be27519e5f1186018c35a5f8bb290f93efabe369a9938e50f",
-                       "bytes":  22641
+                       "sha256":  "144fbcad0741eb563879e1191e829a5dd2d7cfa1e86f91d58694ce2104fdd0ef",
+                       "content_sha256":  "27a06ddabc4306b7ef94889f6c77968868b6dcb6dfa366ccb58ff210523a5eeb",
+                       "bytes":  29056
                    },
                    {
                        "name":  "dictation-cleanup",
