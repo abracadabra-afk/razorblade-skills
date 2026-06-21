@@ -8,7 +8,7 @@ outputs: [segments routed into DEV/scenes, DEV/sequences, DEV/registry, DEV/_DEV
 lane: fiction
 status: draft
 last_updated: 2026-06-21
-revision_note: parity pass — _audit/ floor + drift-flag refinements folded back from the build
+revision_note: layer two hardened 2026-06-21 — cue-or-reason router across all buckets + deferred ledger + poetics graduation loop proven (sandbox); gated REFERENCE crossing remains separate
 ---
 
 # WORKFLOW: dev-capture
@@ -131,7 +131,7 @@ Planned later editions (defer until proof-of-concept; **no re-scope required**):
 1. The `DEV/` scaffold for Witchwood (deterministic, every file stamped — mirrors `chapter-init`, no template-copy drift).
 2. **Scene-capture path only:** spoken/Buzz scene → evolving `scenes/` entry, sharpen-in-place, transcript to the floor, pointer left behind. Prove the granular unit where most discovery happens.
 3. The taste anchor `_DEV.md` + its downward propagation (the anti-drift payoff; cheap).
-4. *Then* layer two: sequences, full registry, the cue-or-reason router across all buckets, the deferred ledger, the poetics log, and last the gated REFERENCE-promotion crossing.
+4. *Then* layer two: sequences, full registry, the cue-or-reason router across all buckets, the deferred ledger, the poetics log — **BUILT + hardened 2026-06-21** (router proven end-to-end across every bucket against a sandbox copy of the Witchwood `DEV/` tree; the poetics graduation loop is concrete in SKILL.md Step 7 + the `_DEV_MAP` graduated-patterns binding format). **Still separate:** the gated REFERENCE-promotion crossing (its own downstream workflow — see *The one gated crossing* above). Propagation to the installed skill = the desktop `pack-skills.ps1` + Save-skill repack (source-ahead).
 5. *Later editions (no re-scope — see Scaling profiles):* the scaffold's form-profile switch (short story / novella / novel), then series (shared registry + arcs layer), serial (ledger ship-boundary trigger), and the Substack fiction→post hand-off. Build each after proof-of-concept; the foundation does not move for any of them.
 
 ## Logging

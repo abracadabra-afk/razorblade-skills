@@ -58,8 +58,17 @@ Below-bar / unsplittable segments → `_intake/HOLD-<date>-<n>.md` with the cand
 ## Step 6 — Ledger (deferred contradictions)
 If a discovery collides with **already-banked manuscript material** (a landed `draft.md`, a sealed thread, a paid-off plant), append one line to `_intake/_LEDGER.md` — **silently. Do not surface it now.** Honor the ledger's `surface_trigger` frontmatter (`editing-seat` for novels, `ship-boundary` for serial). Resolving the ledger is a separate future editing workflow.
 
-## Step 7 — Poetics (observe the process, slowly)
-File any repeated **routing reality** as a `^poe-NNN` noticing in `_POETICS.md` (dated, with a sighting count). **Process only — never story content.** A noticing binds nothing and **does not surface for CRE's ruling until it has recurred.** Never graduate a pattern on first sighting.
+## Step 7 — Poetics (observe the process, slowly) — the graduation loop
+File any repeated **routing reality** as a `^poe-NNN` noticing in `_POETICS.md` (dated, with a sighting count). **Process only — never story content.** Walk the loop:
+
+1. **Notice (sighting 1).** New process pattern → write the `^poe-NNN` block, `**Status:** noticing`. It binds nothing. One session is an anecdote — **never** graduate or surface on first sighting.
+2. **Recur (sighting ≥2).** Same pattern seen again → bump the **Sightings** count + date, flip `**Status:** recurred`. Still binds nothing; still silent.
+3. **Propose (recurred + steady).** Once recurred and stable, flip `**Status:** <<PROPOSED — CRE to promote>>` and surface it to CRE in the routing log (Step 8) — *as a proposal, never as an applied change.* This is the only moment a poetics pattern reaches CRE.
+4. **Promote (CRE rules).** Only on CRE's explicit promotion: write a one-line **binding rule** into `_DEV_MAP.md` § *Graduated poetics patterns* (format: `- ^poe-NNN — <rule the router now applies> (promoted YYYY-MM-DD)`), and flip the `_POETICS` entry to `**Status:** promoted → _DEV_MAP`. **Only now does the pattern bind the router** — Step 1 reads only *graduated* patterns from `_DEV_MAP`.
+
+**Canonical worked example — the recognized braid (dual-route).** Until a braid pattern is promoted, a genuine two-bucket segment **HOLDs** (Step 3/5). After CRE promotes `^poe-NNN — character-transformation×plot-intensity braids dual-route`, that same segment routes to **both** buckets, wikilinked, instead of holding. The graduation loop is exactly what converts a recurring HOLD into a recognized shape. Same mechanism for any other promoted routing rule.
+
+The log models *process only* — where things go, what cues mean, what order CRE thinks in. It learns the shape of the hand, never holds the brush.
 
 ## Step 8 — Log + report
 - **Routing log (early-trust mode):** show the router's reasoning per segment (`segment 3 → registry/characters/Halloran.md (inferred: sustained character focus, no cue); segment 7 → _intake, held (sequence beat or scene?)`) so CRE can see where the calls match his intent. Mute on request once trust is established.
@@ -68,9 +77,10 @@ File any repeated **routing reality** as a `^poe-NNN` noticing in `_POETICS.md` 
 
 ---
 
-## Build status (this skill is being built in stages — see `WORKFLOWS/dev-capture.md` build order)
-- **Live now (steps 1–3 of build order):** the `DEV/` scaffolder; the **scene-capture path** (cued/inferred scene → evolving `scenes/` entry, sculptor-overwrite, transcript to floor, pointer left); the **`_DEV.md` taste anchor + downward propagation**.
-- **Layer two (not yet hardened):** the full cue-or-reason router across *all* buckets (sequences/registry/lore/locations), the deferred ledger automation, the poetics graduation loop, and the gated REFERENCE-promotion crossing. The templates and steps for these exist; treat their routing as proposal-and-confirm with CRE until proven, and prefer HOLD over a confident multi-bucket call.
+## Build status (see `WORKFLOWS/dev-capture.md` build order)
+- **Live (build-order steps 1–3):** the `DEV/` scaffolder; the **scene-capture path** (cued/inferred scene → evolving `scenes/` entry, sculptor-overwrite, transcript to floor, pointer left); the **`_DEV.md` taste anchor + downward propagation**.
+- **Live (build-order step 4 — layer two, hardened 2026-06-21):** the full **cue-or-reason router across *all* buckets** (sequences / registry characters / locations / lore / items), the **deferred ledger** with its configurable `surface_trigger` (editing-seat ↔ ship-boundary), and the **poetics graduation loop** (Step 7). Proven end-to-end against a sandbox copy of the Witchwood `DEV/` tree (every bucket routes; inferred boundaries tagged; stumbled dialogue flagged; ledger logs silently; the ungraduated braid correctly HOLDs; first-sighting poetics binds nothing). Standing discipline still holds: **HOLD beats a confident misfile**, and a multi-bucket segment routes to two buckets **only** once its braid pattern has graduated (else HOLD).
+- **Not built here (build-order item 4, last clause — a separate, gated downstream workflow):** promoting DEV material into trusted **REFERENCE** canon (bible / threads / arcs). The dev layer's permissiveness is safe *precisely because* nothing crosses into canon silently; that crossing is named in `WORKFLOWS/dev-capture.md` § *The one gated crossing* and is its own future skill, not part of capture.
 
 ## Files this skill writes — and must not
 **Writes:** the `DEV/` tree (via the scaffolder); `scenes/` (+ later `sequences/`, `registry/`, `project.md`) entries; `_intake/` holds + `_audit/` floor; `_LEDGER.md`; `_POETICS.md`; the routing log; a vault `_CHANGELOG` entry.

@@ -46,5 +46,6 @@ DEV/
 - **DIR-001.** A detected secret/credential is never filed — flag + advise rotate.
 
 ## Graduated poetics patterns (router-binding once promoted)
-<!-- dev-capture lists ^poe-NNN patterns here ONLY after CRE promotes them. Empty until the poetics log has recurrences. -->
+<!-- dev-capture lists ^poe-NNN patterns here ONLY after CRE promotes them (Step 7 graduation loop: noticing → recurred → PROPOSED → CRE promotes). Empty until the poetics log has recurrences. -->
+<!-- Binding-rule format (one line each):  - ^poe-NNN — <rule the router now applies> (promoted YYYY-MM-DD) -->
 _(none yet)_
