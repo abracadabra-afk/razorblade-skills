@@ -7,8 +7,8 @@ inputs: [a cleaned dictation transcript (Buzz-local for long sessions, or dictat
 outputs: [segments routed into DEV/scenes, DEV/sequences, DEV/registry, DEV/_DEV.md; held items in DEV/_intake; a deferred contradiction line in _LEDGER.md; an observed-pattern noticing in _POETICS.md; a routing log]
 lane: fiction
 status: draft
-last_updated: 2026-06-21
-revision_note: layer two hardened 2026-06-21 — cue-or-reason router across all buckets + deferred ledger + poetics graduation loop proven (sandbox); gated REFERENCE crossing remains separate
+last_updated: 2026-06-22
+revision_note: layer two hardened 2026-06-21 — cue-or-reason router across all buckets + deferred ledger + poetics graduation loop proven (sandbox); gated REFERENCE crossing remains separate. 2026-06-22 — added cleanup discipline (intake-removal invariant + scoped/guarded .tmp orphan sweep, Steps 4/8)
 ---
 
 # WORKFLOW: dev-capture
@@ -35,7 +35,7 @@ WRITING/PROJECTS/<PROJECT>/DEV/
 │   ├── locations/<name>.md
 │   ├── lore/<topic>.md
 │   └── items.md
-├── _intake/             holding pen — raw transcript lands here first; held/ambiguous segments wait here
+├── _intake/             holding pen — UNROUTED only: raw transcript lands here, held/ambiguous segments wait here; a routed transcript is removed once swept to _audit/ (the floor is canonical)
 │   ├── _LEDGER.md        the deferred contradiction ledger (silent capture, editing-seam resolution)
 │   └── _audit/           the transcript floor — swept source transcripts land here; the recovery point a scene's one-line pointer aims at
 ├── _POETICS.md          observed patterns in HOW CRE develops (capture-permissive, promote-gated)
@@ -88,7 +88,7 @@ Split the cleaned transcript into discrete segments: on explicit cues first (har
 Per segment, apply the segmentation contract: cue wins; else infer-and-tag on the confidence bar; else hold. Apply graduated braid patterns from `_POETICS` (dual-route recognized braids). Watch for: a segment that resolves an ambiguity CRE left open (preserve the question instead); a stumbled dialogue line (capture as target, flag un-tested); a secret (DIR-001 — never file, flag).
 
 ### Step 4 — Route (confident + cued segments)
-Write each into its destination, **scene-level overwriting in place** (sculptor): the entry becomes the current sharpest version; sweep the source transcript to the floor at `_intake/_audit/` and leave a one-line pointer (`superseded prior take: see _audit/<date>`) — no old prose retained. Registry entries are wikilinked so Obsidian's graph *is* the connection map. Re-derive the sequence read above any changed scene, and note if the project read may have shifted (silent, no ceremony — authority flows up).
+Write each into its destination, **scene-level overwriting in place** (sculptor): the entry becomes the current sharpest version; sweep the source transcript to the floor at `_intake/_audit/` and leave a one-line pointer (`superseded prior take: see _audit/<date>`) — no old prose retained. **Once the transcript is fully processed** (every segment routed or captured as its own HOLD file in Step 5), **remove it from `_intake/`** — the `_audit/` floor is the canonical verbatim copy and `_intake/` holds only *unrouted* material. Registry entries are wikilinked so Obsidian's graph *is* the connection map. Re-derive the sequence read above any changed scene, and note if the project read may have shifted (silent, no ceremony — authority flows up).
 
 ### Step 5 — Hold the rest
 Below-bar / unsplittable segments stay in `DEV/_intake/` with the candidate destinations + one line on why held. Never auto-file these.
@@ -102,7 +102,7 @@ If a scene discovery rolls up and collides with **already-banked manuscript mate
 File any repeated routing reality as a `^poe-NNN` noticing in `_POETICS.md` (dated, with a **sighting count**). A noticing does nothing binding and **does not surface for CRE's ruling until it has recurred** (slow to generalize — one session is an anecdote). The log models *process only*, never story content: where things go, what cues mean, what order CRE thinks in. It learns the shape of the hand, never holds the brush.
 
 ### Step 8 — Log + report
-Early-trust mode: leave a short routing log showing the router's reasoning (`segment 3 → characters/Halloran.md (inferred: sustained character focus, no cue); segment 7 → _intake, held (sequence beat or scene?)`) so CRE can see where its calls match his intent. Mute on request once trust is established. Report a compact *segment → destination* table + the held list. Append a dated entry to [[_CHANGELOG]] under the `fiction` lane.
+Early-trust mode: leave a short routing log showing the router's reasoning (`segment 3 → characters/Halloran.md (inferred: sustained character focus, no cue); segment 7 → _intake, held (sequence beat or scene?)`) so CRE can see where its calls match his intent. Mute on request once trust is established. Report a compact *segment → destination* table + the held list. Append a dated entry to [[_CHANGELOG]] under the `fiction` lane. **Leave the floor clean (cleanup):** after your file-tool writes finish, sweep atomic-write orphans *you* created — for each file you wrote (DEV entries, `_CHANGELOG`), delete only a `<basename>.tmp.<pid>.<hex>` sibling **whose real target exists and is non-empty**, matched by exact basename. Never a blind `*.tmp` wipe; never touch a temp whose target is missing (it may be another process's in-flight write). A vault-wide orphan sweep is the janitor pass's job, not this one.
 
 ## The one gated crossing (stated, not built here)
 Promoting DEV material into trusted **REFERENCE** canon (bible / threads / arcs) is a **separate, deliberate, gated act** — the `promote-revision` discipline applied to development. The dev layer's permissiveness is *safe precisely because* nothing crosses into canon silently. That gate is named here for completeness but is a downstream workflow, not part of capture.

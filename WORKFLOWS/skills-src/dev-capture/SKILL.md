@@ -44,7 +44,7 @@ Write each into its destination using the matching entry template (`templates/_s
 
 **Scene-level overwrite in place (sculptor, not historian):**
 1. If the scene/entry exists, the new take **replaces** the body so the entry holds the current sharpest version — do **not** keep old prose inline.
-2. **Sweep the source transcript to `_intake/_audit/<date>-<source>.md`** (verbatim — the recoverable floor).
+2. **Sweep the source transcript to `_intake/_audit/<date>-<source>.md`** (verbatim — the recoverable floor), then **remove the routed transcript from `_intake/` once it is fully processed** (every segment routed or held-as-its-own-file). The floor is the canonical copy; `_intake/` holds only *unrouted* material (pending + holds).
 3. Leave a one-line pointer in the entry footer: `superseded prior take: see intake <date>`.
 4. **Taste is first-class** — fill the entry's *What I love / why it matters* field; never discard taste as meta-commentary.
 
@@ -74,16 +74,19 @@ The log models *process only* — where things go, what cues mean, what order CR
 - **Routing log (early-trust mode):** show the router's reasoning per segment (`segment 3 → registry/characters/Halloran.md (inferred: sustained character focus, no cue); segment 7 → _intake, held (sequence beat or scene?)`) so CRE can see where the calls match his intent. Mute on request once trust is established.
 - **Report** a compact *segment → destination* table + the held list.
 - **Vault `_CHANGELOG.md`:** one dated entry under the `fiction` lane (file tools only — DIR-005). File any build surprise to `_OBSERVATIONS.md`.
+- **Leave the floor clean (cleanup).** After your file-tool writes finish, sweep atomic-write orphans *you* created: for each file you wrote (DEV entries, `_CHANGELOG`), delete only `<basename>.tmp.<pid>.<hex>` siblings **whose real target file exists and is non-empty**, matched by exact basename — never a blind `*.tmp` wipe, never a temp whose target is missing (it may be another process's in-flight write). Vault-wide orphan sweeps are the janitor pass, not this skill.
 
 ---
 
 ## Build status (see `WORKFLOWS/dev-capture.md` build order)
 - **Live (build-order steps 1–3):** the `DEV/` scaffolder; the **scene-capture path** (cued/inferred scene → evolving `scenes/` entry, sculptor-overwrite, transcript to floor, pointer left); the **`_DEV.md` taste anchor + downward propagation**.
 - **Live (build-order step 4 — layer two, hardened 2026-06-21):** the full **cue-or-reason router across *all* buckets** (sequences / registry characters / locations / lore / items), the **deferred ledger** with its configurable `surface_trigger` (editing-seat ↔ ship-boundary), and the **poetics graduation loop** (Step 7). Proven end-to-end against a sandbox copy of the Witchwood `DEV/` tree (every bucket routes; inferred boundaries tagged; stumbled dialogue flagged; ledger logs silently; the ungraduated braid correctly HOLDs; first-sighting poetics binds nothing). Standing discipline still holds: **HOLD beats a confident misfile**, and a multi-bucket segment routes to two buckets **only** once its braid pattern has graduated (else HOLD).
+- **Live (2026-06-22 — cleanup discipline):** the **intake-removal invariant** (`_intake/` holds only *unrouted* material; the routed transcript is removed once swept to the `_audit/` floor, the canonical copy) and a **scoped, guarded `.tmp` orphan sweep** (exact-basename + target-intact only; never a blind `*.tmp` wipe). Source-ahead of the installed skill until the next repack (`^backlog-dev-capture-cleanup-repack`).
 - **Not built here (build-order item 4, last clause — a separate, gated downstream workflow):** promoting DEV material into trusted **REFERENCE** canon (bible / threads / arcs). The dev layer's permissiveness is safe *precisely because* nothing crosses into canon silently; that crossing is named in `WORKFLOWS/dev-capture.md` § *The one gated crossing* and is its own future skill, not part of capture.
 
 ## Files this skill writes — and must not
 **Writes:** the `DEV/` tree (via the scaffolder); `scenes/` (+ later `sequences/`, `registry/`, `project.md`) entries; `_intake/` holds + `_audit/` floor; `_LEDGER.md`; `_POETICS.md`; the routing log; a vault `_CHANGELOG` entry.
+**Deletes (bounded cleanup):** the routed transcript from `_intake/` once it is floored; atomic-write `.tmp` orphans of files it wrote (exact-basename + target-intact guard only — never a blind `*.tmp` wipe).
 **Must NOT write:** any `REFERENCE/` file, any chapter `draft.md`/`brief.md`, or any prose that commits what CRE left open. No promotion into canon — that crossing is separate and gated.
 
 ## Stop conditions
