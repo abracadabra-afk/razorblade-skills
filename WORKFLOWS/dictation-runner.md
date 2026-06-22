@@ -5,7 +5,7 @@ lane: fiction / os
 status: active
 trigger: scheduled task `dictation-runner` (polls _DICTATION INBOX/) + manual "run the dictation runner"
 created: 2026-06-14
-updated: 2026-06-16
+updated: 2026-06-21
 purpose: Remote, phone-first VOICE pipeline. Drop ANY audio in _DICTATION INBOX/ from anywhere - a chapter you're dictating or a random thought/task/list. A scheduled Cowork task transcribes it, then forks it: fiction goes to the chapter-draft pipeline (reconcile -> cleanup -> _drafts/), everything else goes to your INBOX for the inbox-router to file. One drop zone, no toggling.
 ---
 
@@ -15,12 +15,13 @@ purpose: Remote, phone-first VOICE pipeline. Drop ANY audio in _DICTATION INBOX/
 
 ## What changed (2026-06-14): one folder, two destinations
 
-You used to need a separate path for "dictate a chapter" vs "capture a stray thought." Now both land in `_DICTATION INBOX/`. The separation of concerns moved out of *which folder you drop into* and into a **classifier** the runner runs after transcription. The runner makes exactly one decision - **fiction, or not** - and each branch hands off to an already-built, mature pipeline:
+You used to need a separate path for "dictate a chapter" vs "capture a stray thought." Now both land in `_DICTATION INBOX/`. The separation of concerns moved out of *which folder you drop into* and into a **classifier** the runner runs after transcription. The runner forks each clip to one of **three** destinations, then each branch hands off to an already-built pipeline:
 
+- **dev** (head says "dev note" / "capture the dev") -> `<PROJECT>/DEV/_intake/`, where **[[WORKFLOWS/dev-capture|dev-capture]]** ("capture the dev") segments + routes it. *(Added 2026-06-21 — `^backlog-dictation-runner-dev-fork`.)*
 - **fiction** -> the existing reconcile + cleanup path (unchanged).
 - **not fiction** -> your **[[INBOX]]**, where the existing **[[WORKFLOWS/inbox-router|inbox-router]]** does all the domain sorting.
 
-**Guardrail:** the runner NEVER writes a domain bucket directly. Per the vault's connector discipline ([[_VAULT MAP]]), the inbox-router is the *sole* write-path into Vibes/Tasks/Life/Knowledge/Business/Workflows. A non-fiction clip is dropped into INBOX (the universal front door) with the spoken intent preserved as a hint; the router files it from there.
+**Guardrail:** the runner NEVER writes a domain bucket or a `DEV/` content file directly. Per the vault's connector discipline ([[_VAULT MAP]]), the inbox-router is the *sole* write-path into Vibes/Tasks/Life/Knowledge/Business/Workflows, and dev-capture is the *sole* write-path into `DEV/scenes|sequences|registry`. The runner only **stages**: a non-fiction clip drops into INBOX, a dev clip into `DEV/_intake/`, each with the spoken intent preserved as a hint; the downstream router files it from there.
 
 ## Architecture - one polling loop, transcribe-then-fork
 
@@ -31,7 +32,11 @@ phone (record audio) --Dropbox app--> _DICTATION INBOX/<clip>.m4a
                                               |
   STAGE A . deterministic (runner.py, no LLM)
    * faster-whisper-small (vendored, offline) transcribes the audio
-   * classify_route(): decide fiction vs inbox (see "The fork" below)
+   * classify_route(): decide dev vs fiction vs inbox (see "The fork" below)
+   |
+   |-- DEV ("dev note" / "capture the dev" at head):
+   |     * writes <PROJECT>/DEV/_intake/<clip>.md  (verbatim body + subcue hint + project)
+   |     * (no DEV/ tree for that project -> falls back to INBOX)
    |
    |-- FICTION:
    |     * canon name-reconcile (garbled proper nouns vs Codex + bible + _LEXICON.md)
@@ -47,20 +52,22 @@ phone (record audio) --Dropbox app--> _DICTATION INBOX/<clip>.m4a
    |                                    -> move note to _reconciled/done/
    |-- for each new _inbox/*.md:        append body to INBOX (with intent-hint comment)
    |                                    -> move note to _inbox/done/
-   * logs one consolidated line per clip to _CHANGELOG
+   |-- DEV notes: NO Stage-B action (they wait in DEV/_intake/ for "capture the dev")
+   * logs one consolidated line per clip to _CHANGELOG (noting route: dev/fiction/inbox)
                                               |
-  (decoupled) the inbox-router - on its own schedule or "sort the inbox" -
-  files the new INBOX items into the domain books, honoring the intent hint.
+  (decoupled) the inbox-router files new INBOX items ("sort the inbox"); dev-capture
+  files DEV/_intake/ notes ("capture the dev") - each on its own trigger.
 ```
 
 **Why polling, not triggers:** every "who fires whom" hand-off was the brittle part and impossible to drive from a phone. A single scheduled task watching one folder removes them all. **Transport is Dropbox:** the vault lives in Dropbox, so a file the phone drops into `_DICTATION INBOX/` is already visible to the runner's sandbox mount.
 
 ## The fork (classify_route, Stage A detail)
 
-The runner decides fiction-vs-inbox in this order. The whole thing is biased so that **uncertainty resolves to INBOX** - both branches are non-destructive staging (a holding draft in `_drafts/` vs. text in INBOX), the inbox-router can segment a mixed clip and review-bin anything ambiguous, and the fiction branch never commits to a chapter on its own. So a wrong guess is always cheap and recoverable; a stray thought never lands silently inside a chapter.
+The runner decides dev-vs-fiction-vs-inbox in this order. The whole thing is biased so that **uncertainty resolves to INBOX** - all branches are non-destructive staging (a holding draft in `_drafts/`, a dev note in `DEV/_intake/`, or text in INBOX), the downstream routers can segment a mixed clip and review-bin anything ambiguous, and the fiction branch never commits to a chapter on its own. So a wrong guess is always cheap and recoverable; a stray thought never lands silently inside a chapter.
 
-1. **Explicit spoken directive at the head of the clip (highest priority).** A keyword *or* a natural-language instruction in the first clause, honored deterministically:
-   - **Fiction markers:** `fiction`, `chapter`, `scene`, `dictation`, `slate`, `prose`, `manuscript`, `draft`, `narration`, or a **project name** (`Witchwood`, `Godsrift`, `Ghost River`, `Darkbloom`). A spoken project name also overrides the filename's project.
+0. **Explicit dev directive at the head (highest priority, wins over fiction).** Head starts with **`dev note`** or **`capture the dev`** -> the `dev` route into `<PROJECT>/DEV/_intake/`. A spoken project name in the head still resolves *which* project's DEV tree (e.g. `"dev note, Witchwood — …"`); omit it and the project defaults to Witchwood, flagged `uncertain`. A sub-cue keyword in the head (`scene`, `sequence`, `character`, `place`, `location`, `lore`) is preserved as a `subcue_hint` for dev-capture. If the resolved project has no `DEV/` tree, the clip falls back to INBOX (no silent scaffold). Narrow phrase set ("dev note") by design (CRE ruling 2026-06-21) so it never fires mid-prose. Stage B is a no-op for dev clips — you run "capture the dev" to route them.
+1. **Explicit spoken directive at the head of the clip.** A keyword *or* a natural-language instruction in the first clause, honored deterministically:
+   - **Fiction markers:** `fiction`, `chapter`, `scene`, `dictation`, `slate`, `prose`, `manuscript`, `draft`, `narration`, or a **project name** (`Witchwood`, `Godsrift`, `Ghost River`, `Darkbloom`). A spoken project name also overrides the filename's project. *(A leading `dev note` overrides these — see 0.)*
    - **Inbox markers:** `inbox`, `task`, `to-do`, `reminder` / `remind me`, `note to self`, `idea`, `vibe`, `capture`, `thought`, `list`, `file under ...`, `add to ...`, `put in ...`, `business`, `marketing`, `knowledge`, `workflow`, `backlog`.
    - The runner peels the directive clause off the body at the first separator (`:` `,` `-`) and keeps it as a **routing hint** for the inbox-router. Recommended phrasing: *say the directive, a slight pause/comma/colon, then the note.* Without a separator the directive stays in the body (harmless) and routing still works.
 2. **No explicit directive -> heuristic classifier.** Two deterministic signals:
@@ -101,10 +108,11 @@ huggingface-cli download Systran/faster-whisper-small --local-dir "<vault>\_mode
 
 > Bootstrap is NOT required for this task. Do exactly this:
 > 1. Deps are self-bootstrapped by `runner.py` (import-first guard, reuses `/tmp/pydeps`, installs `--no-cache-dir` to one fixed dir only if missing) — no separate `pip install` step needed. If you must install by hand, use `pip install --no-cache-dir --target /tmp/pydeps faster-whisper jellyfish pyyaml` (never `--break-system-packages` into the shared sandbox — that's what filled the disk).
-> 2. **Stage the runner off the mount, then run it (`^obs-103` structural kill).** NEVER run `runner.py` directly off the Dropbox mount — the mount can serve a stale, TRUNCATED copy of the *script* (the `^obs-073`/`^obs-095` hazard; a truncated script is wrong **behavior**, not just wrong data) that crashes `python3` with a SyntaxError. Instead always run a clean copy read via the **file tools** (cloud-authoritative — they serve the full file): read `runner.py` **and** `lexicon.py` via the file tools and **write both to the session outputs folder** (the Write tool reaches the outputs folder, NOT sandbox `/tmp`; outputs is session scratch — not Dropbox-synced, so never stale-truncated — and bash reads it at `/sessions/*/mnt/outputs/`). Both must land in the same dir (`runner.py` imports `lexicon` as a sibling). Then `OUT=$(ls -d /sessions/*/mnt/outputs|head -1); VAULT_ROOT="<vault>" python3 "$OUT/runner.py"`. `runner.py` reads `VAULT_ROOT` for every vault path (inbox, vendored `_models`, lexicon sources), so all reads/writes land in the **real** vault while the *code* runs from the clean staged copy — the mount copy of the script is never trusted (sanity: `py_compile "$OUT/runner.py"`; if a staged file won't compile, re-read via the file tools, never fall back to the mount; you may instead bash-`cp` the outputs copy into `/tmp` and run there). It prints JSON of what it processed; each result carries a `route` (`fiction` or `inbox`). If `processed: 0`, stop - nothing to do, no log entry.
+> 2. **Stage the runner off the mount, then run it (`^obs-103` structural kill).** NEVER run `runner.py` directly off the Dropbox mount — the mount can serve a stale, TRUNCATED copy of the *script* (the `^obs-073`/`^obs-095` hazard; a truncated script is wrong **behavior**, not just wrong data) that crashes `python3` with a SyntaxError. Instead always run a clean copy read via the **file tools** (cloud-authoritative — they serve the full file): read `runner.py` **and** `lexicon.py` via the file tools and **write both to the session outputs folder** (the Write tool reaches the outputs folder, NOT sandbox `/tmp`; outputs is session scratch — not Dropbox-synced, so never stale-truncated — and bash reads it at `/sessions/*/mnt/outputs/`). Both must land in the same dir (`runner.py` imports `lexicon` as a sibling). Then `OUT=$(ls -d /sessions/*/mnt/outputs|head -1); VAULT_ROOT="<vault>" python3 "$OUT/runner.py"`. `runner.py` reads `VAULT_ROOT` for every vault path (inbox, vendored `_models`, lexicon sources), so all reads/writes land in the **real** vault while the *code* runs from the clean staged copy — the mount copy of the script is never trusted (sanity: `py_compile "$OUT/runner.py"`; if a staged file won't compile, re-read via the file tools, never fall back to the mount; you may instead bash-`cp` the outputs copy into `/tmp` and run there). It prints JSON of what it processed; each result carries a `route` (`dev`, `fiction`, or `inbox`). If `processed: 0`, stop - nothing to do, no log entry.
 > 3. **Fiction branch** - for each new `_DICTATION INBOX/_reconciled/*.md` not yet in `_reconciled/done/`: run the **dictation-cleanup** skill on its "Reconciled transcript" section; carry the `[AUTHOR:]` flags through; **suppress cleanup's own `_CHANGELOG` self-log** (Step 5 owns the single line); on a noisy transcript that would trip cleanup's pause/HALT, write `_drafts/<stem>-NEEDS-REVIEW.md` with a note and continue (never stall - no author present); else write `_drafts/<stem>-clean.md`; move the reconciled note to `_reconciled/done/`.
 > 4. **Inbox branch** - for each new `_DICTATION INBOX/_inbox/*.md` not yet in `_inbox/done/`: read its frontmatter (`intent_hint`, `confidence`) and its "## Body (verbatim transcript)" section. Append the body **verbatim** to `INBOX.md` under the `## ⚡ Inbox` heading as a new item. If `intent_hint` is non-empty OR `confidence` is `uncertain`, prepend an HTML-comment hint on its own line immediately above the item: `<!-- voice-note <date> . intent: <intent_hint> . confidence: <confidence> -->` (the comment is a steer for the inbox-router; it is NOT part of the captured text). Do NOT classify into a domain here - that is the inbox-router's job. Move the staging note to `_inbox/done/`. Use the file tools to edit `INBOX.md`, not patch-by-heading.
-> 5. Append ONE consolidated line per processed clip to `_CHANGELOG.md`, noting the route, e.g. `- dictation-runner: <stem> [fiction] (<project>, <s>s, <N> corrections) -> _drafts/<stem>-clean.md` or `- dictation-runner: <stem> [inbox] (<s>s, <confidence>) -> INBOX`.
+> 4b. **Dev branch** - dev clips are already staged by Stage A in `<PROJECT>/DEV/_intake/<stem>.md` (`route: dev` in their frontmatter). **No Stage-B action**: leave them in place — CRE (or a later session) runs **"capture the dev"** to segment + route them into the `DEV/` tree. Do NOT run dev-capture from this unattended task. (Stage A already handled the no-DEV-tree fallback to INBOX, so any `_inbox/` note is processed by Step 4.)
+> 5. Append ONE consolidated line per processed clip to `_CHANGELOG.md`, noting the route, e.g. `- dictation-runner: <stem> [fiction] (<project>, <s>s, <N> corrections) -> _drafts/<stem>-clean.md`, `- dictation-runner: <stem> [inbox] (<s>s, <confidence>) -> INBOX`, or `- dictation-runner: <stem> [dev] (<project>, <s>s, <subcue>) -> DEV/_intake`.
 > 6. Leave any `[AUTHOR:]` name flags in place - CRE rules them at the desk. Never bind a clip to a chapter (that is a desk action).
 
 ## Interaction with the inbox-router
@@ -126,11 +134,13 @@ Unchanged. Stage B calls `dictation-cleanup` on the reconciled transcript (still
 - A first-person fiction passage with no canon names and no spoken directive can misroute to INBOX. Recoverable (it's just staged text); lead with "fiction" to be sure.
 - Multi-word mishears whose phonetics diverge still rely on the `[AUTHOR:]` flag; tighten via `_LEXICON.md` aliases.
 - Transcription accuracy = `small` model. Upgrade path: Supabase->Groq `whisper-large-v3` for Stage A only.
+- **The fork has three destinations — dev, fiction, or INBOX** (the `dev` route added 2026-06-21, `^backlog-dictation-runner-dev-fork`). Sub-cue detection for a dev clip is head-only: a sub-cue after a sentence-ending period (e.g. `"capture the dev. character — …"`) isn't captured as the `subcue_hint`, which is harmless since dev-capture re-segments the full body anyway. The dev marker set is the narrow phrase `dev note` / `capture the dev` by design — broader words like a bare "develop" were dropped (CRE ruling) to avoid firing mid-prose.
 
 ## Files
 
-- `WORKFLOWS/dictation-runner/runner.py` - Stage A orchestrator: transcribe, `classify_route()` fork, `write_reconciled()` (fiction), `write_inbox_note()` (inbox). Self-locating.
+- `WORKFLOWS/dictation-runner/runner.py` - Stage A orchestrator: transcribe, `classify_route()` fork, `write_dev_note()` (dev), `write_reconciled()` (fiction), `write_inbox_note()` (inbox). Self-locating.
 - `WORKFLOWS/dictation-runner/lexicon.py` - lexicon compile + `reconcile()` + `canon_density()` (the fork's fiction signal).
 - `_DICTATION INBOX/` - drop zone (`README.md`, `_reconciled/` + `done/`, `_inbox/` + `done/`, `_drafts/`, `processed/`).
+- `WRITING/PROJECTS/<PROJECT>/DEV/_intake/` - dev-route staging destination (the dev clip lands here for [[WORKFLOWS/dev-capture]] to pick up).
 - `WRITING/PROJECTS/<PROJECT>/REFERENCE/_LEXICON.md` - curated seed (per project).
 - `_models/faster-whisper-small/` - vendored model.

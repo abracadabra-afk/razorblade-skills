@@ -49,7 +49,7 @@ WRITING/PROJECTS/<PROJECT>/DEV/
 
 ## Two transport paths, one router
 Transport and routing are **separate concerns** — the router keys off a *text transcript + a cue*, never off audio.
-- **Path A — short voice notes (≤5 min):** [[WORKFLOWS/dictation-runner]] transcribes; a spoken head-directive forks dev-bound clips into `DEV/_intake/`.
+- **Path A — short voice notes (≤5 min):** ✅ **WIRED (2026-06-21).** [[WORKFLOWS/dictation-runner]] transcribes, then its `classify_route()` forks a clip headed with **"dev note"** (or **"capture the dev"**) into `<PROJECT>/DEV/_intake/`. The `dev` marker **wins over the fiction markers** — a spoken project name still picks *which* project's DEV tree, but no longer forces the fiction branch (CRE ruling). Say the project to target it (`"dev note, Witchwood — the scene where…"`); omit it and it defaults to Witchwood flagged `uncertain`. A sub-cue ("scene…", "character…") is preserved as a routing hint. If the named project has no `DEV/` tree, the clip falls back to INBOX rather than scaffolding silently. The runner only **stages** the note in `_intake/`; you then run **"capture the dev"** to segment + route it (the runner never writes `DEV/scenes|sequences|registry` directly). Marker set is intentionally the narrow phrase "dev note" so it never fires mid-prose.
 - **Path B — long development sessions (the deep work):** CRE records long-form, runs **Buzz locally**, drops the cleaned transcript. Bypasses the runner's chunking ceiling entirely. This is the *more* important path. Chain: **Buzz → [[WORKFLOWS/dictation-cleanup]] (existing, protective copy-edit) → dev-capture router (this doc) → segments land in `DEV/`.** The new skill is only the last link.
 
 ## The cue table (the verbal cues that route)
