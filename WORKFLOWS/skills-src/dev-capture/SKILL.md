@@ -48,7 +48,7 @@ Write each into its destination using the matching entry template (`templates/_s
 3. Leave a one-line pointer in the entry footer: `superseded prior take: see intake <date>`.
 4. **Taste is first-class** — fill the entry's *What I love / why it matters* field; never discard taste as meta-commentary.
 
-**Authority flows up:** after changing a scene, re-derive the sequence read above it (`sequences/SEQ NN`), and note silently in `project.md` if the macro read may have shifted (no ceremony). Registry entries are **wikilinked** so Obsidian's graph *is* the connection map.
+**Authority flows up:** after changing a scene, re-derive the sequence read above it (`sequences/SEQ NN`), and note silently in `project.md` if the macro read may have shifted (no ceremony). Registry entries are **wikilinked** (basename form — `[[Entry]]` / `[[items#Heading]]`) so Obsidian's graph *is* the connection map.
 
 **Taste propagates down:** measure each routed scene's taste against `_DEV.md`. If it drifts from the anchor, **surface the drift** for CRE — never rewrite the scene to match.
 
@@ -59,7 +59,7 @@ Below-bar / unsplittable segments → `_intake/HOLD-<date>-<n>.md` with the cand
 If a discovery collides with **already-banked manuscript material** (a landed `draft.md`, a sealed thread, a paid-off plant), append one line to `_intake/_LEDGER.md` — **silently. Do not surface it now.** Honor the ledger's `surface_trigger` frontmatter (`editing-seat` for novels, `ship-boundary` for serial). Resolving the ledger is a separate future editing workflow.
 
 ## Step 7 — Poetics (observe the process, slowly) — the graduation loop
-File any repeated **routing reality** as a `^poe-NNN` noticing in `_POETICS.md` (dated, with a sighting count). **Process only — never story content.** Walk the loop:
+File any repeated **routing reality** as a `^poe-NNN` noticing in `_POETICS.md` (dated, with a sighting count). **Assign the anchor collision-safe** — scan the *whole* file for the highest existing `^poe-NNN` and take max+1; never reuse a number a concurrent run or manual edit may already hold (the `^obs-122` duplicate-anchor class). **Process only — never story content.** Walk the loop:
 
 1. **Notice (sighting 1).** New process pattern → write the `^poe-NNN` block, `**Status:** noticing`. It binds nothing. One session is an anecdote — **never** graduate or surface on first sighting.
 2. **Recur (sighting ≥2).** Same pattern seen again → bump the **Sightings** count + date, flip `**Status:** recurred`. Still binds nothing; still silent.
