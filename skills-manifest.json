@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-25T10:49:08.7786375-07:00",
+    "generated":  "2026-06-25T12:00:09.1750231-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -85,6 +85,13 @@
                        "sha256":  "67511e0fa627bfd4619971c0c6a9bd0b5fa05aae75eafcd1eddfc2bbdc5b0a04",
                        "content_sha256":  "4b6fe2a90f39aef623f28f3b50d8adc9b5f3f11966e976c599115c4c62edc64b",
                        "bytes":  8391
+                   },
+                   {
+                       "name":  "file-inbox",
+                       "package":  "WORKFLOWS/skills/file-inbox.skill",
+                       "sha256":  "638459c607afd6eb4805458003d41fd53f0da50e00d4d7f346733c3c4ed8abac",
+                       "content_sha256":  "44b2d8938864d8602b6eda1e6e58c4dff7c4255e54edf6572cd32843826af166",
+                       "bytes":  5300
                    },
                    {
                        "name":  "land-chapter",
