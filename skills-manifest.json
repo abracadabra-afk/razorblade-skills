@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-25T12:00:09.1750231-07:00",
+    "generated":  "2026-06-26T11:23:41.8980026-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -89,9 +89,9 @@
                    {
                        "name":  "file-inbox",
                        "package":  "WORKFLOWS/skills/file-inbox.skill",
-                       "sha256":  "638459c607afd6eb4805458003d41fd53f0da50e00d4d7f346733c3c4ed8abac",
-                       "content_sha256":  "44b2d8938864d8602b6eda1e6e58c4dff7c4255e54edf6572cd32843826af166",
-                       "bytes":  5300
+                       "sha256":  "89d7a933b7e035fc2e623b9b06014d47938a60cf98f68d7062d2ed346b52e072",
+                       "content_sha256":  "2dad2dbc050d5bab19a1763a6da8d2ea2c321aa40ee058685c7642a17b715f6f",
+                       "bytes":  5302
                    },
                    {
                        "name":  "land-chapter",
@@ -110,9 +110,9 @@
                    {
                        "name":  "log-rotate",
                        "package":  "WORKFLOWS/skills/log-rotate.skill",
-                       "sha256":  "e48a336cfe4a6bdfa41f915aac56f64a27011a04c9e03b3364fc76650c0aeb1d",
-                       "content_sha256":  "ac3c4cc16ae66d1b32c141cd79106c5715a4e8b28f43c9a2fce27a216dccb18d",
-                       "bytes":  3771
+                       "sha256":  "3eb332cefc7e5781272896ec730f483ebca5d62eb4e6d5cd53cdf494e47bb5f2",
+                       "content_sha256":  "3dd93e2f4a05fb4b4bc62837fa966344afe875349860f4b110cc91196fd975d4",
+                       "bytes":  3731
                    },
                    {
                        "name":  "loop-clearer",
@@ -145,9 +145,9 @@
                    {
                        "name":  "research-briefing",
                        "package":  "WORKFLOWS/skills/research-briefing.skill",
-                       "sha256":  "195cd68efe1dea05f2ed33ee2d31df9d3f900b601610e53ca5600b403d9726f5",
-                       "content_sha256":  "bdcf5c5db8994bfdc5b31fbb6232800694be096305332a698cd5cd14969a66b9",
-                       "bytes":  4920
+                       "sha256":  "2eb3047b26366c61e4b89208250077d09481fe53c10c970b43b62965f834e5f6",
+                       "content_sha256":  "9ed5a46c417cdc6a5081984ebbaa034015fc5923c9fc76049e570479178ee1ff",
+                       "bytes":  4898
                    },
                    {
                        "name":  "restrained-omniscient-register",
