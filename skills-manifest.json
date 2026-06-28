@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-27T19:52:34.2899411-07:00",
+    "generated":  "2026-06-27T21:52:28.3833511-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -103,9 +103,9 @@
                    {
                        "name":  "link-audit",
                        "package":  "WORKFLOWS/skills/link-audit.skill",
-                       "sha256":  "d156204ebeb8db28a2edabb33817b7ad5a1761787cbd9569af6180f593ca3981",
-                       "content_sha256":  "1ae2a6ac6b0bb33f45612c4380eabba76e8c75c0500f8db9fd31371b13f43caf",
-                       "bytes":  6528
+                       "sha256":  "76af36ab94b245225445c91a69b690ff06df2b79a5621820c3f410d9b52dce9a",
+                       "content_sha256":  "a6ad27ac2be99602a969c2cae109562447aac21d9e261cef167108e922390499",
+                       "bytes":  6928
                    },
                    {
                        "name":  "log-rotate",

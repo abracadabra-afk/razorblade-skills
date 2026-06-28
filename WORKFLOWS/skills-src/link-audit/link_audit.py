@@ -12,6 +12,12 @@ tie-break, or path match), plus heading/block-anchor indices. Reports:
   SUSPECT-STALE   - a target file read back TRUNCATED (NUL bytes / partial), so its
                     anchor/heading set can't be trusted; the audit refuses to emit a
                     confident BROKEN-ANCHOR/HEADING off a poisoned read. (^obs-073)
+  INTEGRITY       - a scanned note's OWN bytes carry NUL / control / trailing-pad bytes
+                    (the ^obs-089/103/129/133 trailing-NUL corruption class). SUSPECT
+                    under the disk mount (may be a stale partial -> verify via the file
+                    tools / --rest-base, then strip-or-restore); CONFIRMED under
+                    --rest-base. Checked for every .md, incl. the link-quarantined logs
+                    (_CHANGELOG / _OBSERVATIONS), since those are exactly what corrupts.
 
 OBS-014 / OBS-073 GUARD: the local bash/Dropbox mount can serve STALE or TRUNCATED
 copies of recently-written/moved files (a file-tools write does not heal the bash
@@ -56,11 +62,21 @@ def looks_truncated(raw_bytes, text):
     # (^obs-018/^obs-027). errors='replace' would otherwise hide them as U+FFFD.
     return b'\x00' in raw_bytes or '\x00' in text or '�' in text
 
+def integrity_metrics(raw):
+    # ^obs-089/103/129/133: NUL / control / trailing-pad bytes are the documented
+    # Dropbox-sync / atomic-write corruption signature. tab/lf/cr are legitimate.
+    nul = raw.count(b'\x00')
+    ctrl = sum(1 for b in raw if b < 32 and b not in (9, 10, 13))
+    trail_nul = len(raw) - len(raw.rstrip(b'\x00'))
+    if nul or ctrl or trail_nul:
+        return {'nul': nul, 'ctrl': ctrl, 'trail_nul': trail_nul, 'bytes': len(raw)}
+    return None
+
 def read_disk(path):
     with open(path, 'rb') as fh:
         raw = fh.read()
     text = raw.decode('utf-8', errors='replace')
-    return text, looks_truncated(raw, text)
+    return text, looks_truncated(raw, text), integrity_metrics(raw)
 
 def read_rest(base, key, rel):
     url = base.rstrip('/') + '/vault/' + urllib.parse.quote(rel)
