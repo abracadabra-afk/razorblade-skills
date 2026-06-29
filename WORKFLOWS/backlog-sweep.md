@@ -3,7 +3,7 @@ type: workflow
 name: backlog-sweep
 trigger: sweep the backlog
 aliases: [clean the backlog, tidy the backlog, backlog maintenance, dedupe the backlog]
-inputs: [_BACKLOG.md]
+inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md)]
 outputs: [a tidied _BACKLOG.md, archived-completed entries in _CHANGELOG.md, a sweep report, a gated "Needs CRE ruling" bin]
 lane: writing-ops
 status: active
@@ -20,7 +20,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 
 ## Inputs
 
-`_BACKLOG.md` (the whole file). Cross-references: `_CHANGELOG.md` (archive destination), `_OBSERVATIONS.md` (for `^obs-NNN` / `^anchor` validity), and `_SKILLS MAP.md` (to confirm a referenced workflow still exists before keeping a task that points at it).
+`_BACKLOG.md` (the whole file). **Plus the per-project backlog shards** listed under `_BACKLOG.md` § Project pointers — `WRITING/PROJECTS/<PROJECT>/backlog.md` (Witchwood, Ghost River, Godsrift): sweep each shard with the identical safe-op/gate rules (carved 2026-06-29 backlog segmentation). Cross-references: `_CHANGELOG.md` (archive destination), `_OBSERVATIONS.md` (for `^obs-NNN` / `^anchor` validity), and `_SKILLS MAP.md` (to confirm a referenced workflow still exists before keeping a task that points at it).
 
 ## Outputs
 

@@ -3,7 +3,7 @@ type: workflow
 name: log-rotate
 trigger: rotate the logs
 aliases: [log rotate, run the log doctor, vault health, check the brain-doc sizes, rotate the changelog]
-inputs: [_CHANGELOG.md, _OBSERVATIONS.md, _BACKLOG.md]
+inputs: [_CHANGELOG.md, _OBSERVATIONS.md, _BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md)]
 outputs: [a measured size report, a rotated lean _CHANGELOG.md, dated archive files under SYSTEM/history/, a gated "Needs CRE ruling" bin for risky rotations]
 lane: meta
 status: active
@@ -20,7 +20,7 @@ This is the size sibling of `backlog-sweep` (content) and `link-audit` (referenc
 
 ## The problem it solves
 
-Three files grow without bound: `_CHANGELOG.md` (one entry/session), `_OBSERVATIONS.md` (one+ per non-trivial session), `_BACKLOG.md` (drained by `backlog-sweep`, but open items accrete). Past a size threshold:
+Three files grow without bound: `_CHANGELOG.md` (one entry/session), `_OBSERVATIONS.md` (one+ per non-trivial session), `_BACKLOG.md` (drained by `backlog-sweep`, but open items accrete) — **plus the per-project backlog shards** (`WRITING/PROJECTS/*/backlog.md`, carved 2026-06-29), added to the measured set for completeness though they stay append-light and should band GREEN. Past a size threshold:
 - whole-file rewrites via the Obsidian MCP truncate or fail (`^obs-060`);
 - `patch_vault_file` heading/json targets dump cruft instead of inserting (`^obs-020` / `^obs-081`);
 - the safe path narrows to **file-tool targeted Edits** (`^obs-014`).
