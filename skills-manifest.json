@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-29T12:00:09.7837750-07:00",
+    "generated":  "2026-06-29T12:29:41.1206455-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -19,9 +19,9 @@
                    {
                        "name":  "book-ingest",
                        "package":  "WORKFLOWS/skills/book-ingest.skill",
-                       "sha256":  "108b650a3cd5331a1bf6f57a830557d8e61e3ad67bec3bd982f8f4bb49fbbade",
-                       "content_sha256":  "543258d4fa31f37801f180b3ef539743b8610794bd422be94ac5417afae69b82",
-                       "bytes":  5700
+                       "sha256":  "9fd6e453b4a97c571bf9533366909b40b5e82369833fc14fd620fbbf1fec0252",
+                       "content_sha256":  "18402cdfe6c6625dd175c521edeb3d9e61d00a8a9df6387ac4e7df6098288d39",
+                       "bytes":  6095
                    },
                    {
                        "name":  "canon-sync",
@@ -190,6 +190,13 @@
                        "sha256":  "1e92c39d4fe00ef7d78a70f11ff48bd5c40051be413239e8a28baac7ca171005",
                        "content_sha256":  "895da6cdfd1a653f2c1d61d65b9c97d45b2e62be6bbe35afa7d3617ecc594577",
                        "bytes":  10148
+                   },
+                   {
+                       "name":  "task-audit",
+                       "package":  "WORKFLOWS/skills/task-audit.skill",
+                       "sha256":  "f7fafe562682d4b9fe5b1f03a81c06d3ebcf5908227748ef4c9df1f8e915978a",
+                       "content_sha256":  "099aa9f014b357b1936c329ff8882bca9df50249b19227d26760aa6e14611c80",
+                       "bytes":  8973
                    },
                    {
                        "name":  "vault-boot",

@@ -1,0 +1,14 @@
+{
+  "research-runner":            {"docs": ["research-briefing.md"],                  "shape_expect": "inline-behavior"},
+  "books-daily-ingest-weave":   {"docs": ["inbox-router.md", "weave-vibebook.md"],  "shape_expect": "inline-behavior"},
+  "capture-the-dev":            {"docs": ["dev-capture.md"],                        "shape_expect": "inline-behavior"},
+  "vault-backlog-agent":        {"docs": [],                                        "shape_expect": "inline-behavior"},
+  "mount-the-vault":            {"docs": ["vault-boot.md"],                         "shape_expect": "inline-behavior"},
+  "witchwood-pipeline-advance": {"docs": ["chapter-pipeline.md"],                   "shape_expect": "inline-behavior"},
+  "skills-sweep":               {"docs": ["skills-manager.md"],                     "shape_expect": "doc-deferring"},
+  "backlog-sweep":              {"docs": ["backlog-sweep.md"],                      "shape_expect": "doc-deferring"},
+  "vault-health":               {"docs": ["log-rotate.md"],                         "shape_expect": "doc-deferring"},
+  "dictation-runner":           {"docs": ["dictation-runner.md"],                   "shape_expect": "runner-staged"},
+  "file-inbox-runner":          {"docs": ["file-inbox.md"],                         "shape_expect": "runner-staged"},
+  "ghost-river-ingest":         {"docs": ["book-ingest.md"],                        "shape_expect": "runner-staged"}
+}
