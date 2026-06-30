@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-06-29T14:03:46.6477269-07:00",
+    "generated":  "2026-06-29T18:13:37.5736790-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
