@@ -28,7 +28,7 @@ from pathlib import Path
 
 THIN_CHARS = 400  # entry body shorter than this => possible thin stub
 ALLOWED_INTAKE_FILES = {"README.md", "_LEDGER.md"}
-BOUNDARY_VALUES = {"cued", "inferred", "per-entry"}
+BOUNDARY_VALUES = {"cued", "inferred", "per-entry", "authored-down", "cued-partial"}
 
 
 def die(msg):
@@ -216,7 +216,7 @@ def main():
         if not b:
             add("WARN", p, "no boundary tag (expected cued|inferred).")
         elif b not in BOUNDARY_VALUES:
-            add("WARN", p, f"boundary '{b}' not one of cued|inferred|per-entry.")
+            add("WARN", p, f"boundary '{b}' not one of cued|inferred|per-entry|authored-down|cued-partial.")
     for p in bucket:
         if not fms[p].get("boundary"):
             add("WARN", p, "bucket file has no boundary tag (expected per-entry).")
@@ -243,7 +243,7 @@ def main():
     resolvable = names | headings | aliases
     for p in content:
         for raw in re.findall(r"\[\[([^\]]+)\]\]", texts[p]):
-            tgt = raw.lstrip("!").split("|")[0].split("#")[0].strip()
+            tgt = raw.lstrip("!").replace("\\|", "|").split("|")[0].split("#")[0].rstrip("\\").strip()
             if not tgt or tgt.startswith("_intake/_audit/") or "..." in tgt:
                 continue
             base = tgt.split("/")[-1].strip().lower()
@@ -255,8 +255,9 @@ def main():
         _, body = split_frontmatter(texts[p])
         if len(body.strip()) < THIN_CHARS:
             add("WARN", p, f"thin entry ({len(body.strip())} chars) — possible empty/fabricated stub or missing taste.")
-        if "Routed (" not in texts[p] and "*Routed" not in texts[p]:
-            add("INFO", p, "no 'Routed (…)' provenance footer.")
+        if ("Routed (" not in texts[p] and "*Routed" not in texts[p]
+                and "Scaffolded from" not in texts[p]):
+            add("INFO", p, "no 'Routed (…)' or 'Scaffolded from …' provenance footer.")
 
     # ---- Report ----
     order = {"ERROR": 0, "WARN": 1, "INFO": 2}

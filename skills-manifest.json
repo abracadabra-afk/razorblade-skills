@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-07T12:00:09.9480679-07:00",
+    "generated":  "2026-07-08T12:00:09.8806344-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -54,9 +54,9 @@
                    {
                        "name":  "dev-capture-audit",
                        "package":  "WORKFLOWS/skills/dev-capture-audit.skill",
-                       "sha256":  "3c91b0bc8a80566624d3be4e6148f687f35fa9ee7befa0e1234a16b24703076e",
-                       "content_sha256":  "5dce88afb8001ca63ae2ef4645e659acf1b11d5d4544f77413c5f753e21c2cd4",
-                       "bytes":  7562
+                       "sha256":  "90f4499bd1d8d57707c6a210bb857b23812396ad9ef57acfd995be9d9e7af99b",
+                       "content_sha256":  "3c7dcbae570d80a57244073b009a33a61da5c4280530a33197b9437c3af5a1af",
+                       "bytes":  7633
                    },
                    {
                        "name":  "dev-readiness",
