@@ -1,214 +1,214 @@
 {
-    "generated":  "2026-07-09T19:29:19.1244981-07:00",
+    "generated":  "2026-07-10T08:33:41.9361860-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
                        "name":  "blind-read",
                        "package":  "WORKFLOWS/skills/blind-read.skill",
-                       "sha256":  "55a902072544e407ddd7aecb8542fb75052da162ebbc1b65ba5d29d7fd1b1510",
+                       "sha256":  "19f96163f6ebea92f81a801c20de52e5d11d5534e83ff806932949c23dc8bf7b",
                        "content_sha256":  "e2ba4c410abea3c4ca3421675cd62c8aab7fcd1edc219230a00d3eec573968fe",
                        "bytes":  3367
                    },
                    {
                        "name":  "blind-response",
                        "package":  "WORKFLOWS/skills/blind-response.skill",
-                       "sha256":  "cbfa43a9d0cef5068637eb68b61c79df7cb462c2002463bf627b478b7eda44ae",
+                       "sha256":  "e71b60827f46c31fa64fc73dfaa2e8b7b15e8eda6e5b9363cf128190681f4c6b",
                        "content_sha256":  "d1e947512ca1a6b3b78ff26cf177511f85333fc67f029b9746f2471a51f8ba97",
                        "bytes":  5142
                    },
                    {
                        "name":  "book-ingest",
                        "package":  "WORKFLOWS/skills/book-ingest.skill",
-                       "sha256":  "9fd6e453b4a97c571bf9533366909b40b5e82369833fc14fd620fbbf1fec0252",
+                       "sha256":  "0a2ec121a438c108e3b99707a08e868bb8210edf636606a0af4fb4d1b6524b14",
                        "content_sha256":  "18402cdfe6c6625dd175c521edeb3d9e61d00a8a9df6387ac4e7df6098288d39",
                        "bytes":  6095
                    },
                    {
                        "name":  "canon-sync",
                        "package":  "WORKFLOWS/skills/canon-sync.skill",
-                       "sha256":  "ee151c53a37bd69fcea3635d815c2e7ed9b3dcf949c2838819068df9640dc474",
+                       "sha256":  "215822d2c7a00200652a6ae483c44a2374577369b924ca54d1ddc8afcd5e3b1a",
                        "content_sha256":  "e3b27a243414e4663daaa50d52f0e2def80670f6be0d09a7948ef2d56d68bc07",
                        "bytes":  6699
                    },
                    {
                        "name":  "chapter-init",
                        "package":  "WORKFLOWS/skills/chapter-init.skill",
-                       "sha256":  "264aea6d7aeb448e91c1ab8c73a0e7dbb933373380041884cfdfba852aab3840",
+                       "sha256":  "6ec5e369b629ecb83484d9eb5cd2c2e6b81c0d91281e1c3430de1bd27f7a3889",
                        "content_sha256":  "4e838a385238ed40ce4439c8bfbd2475d4731aa63fb0906f77e4d97426d2caa1",
                        "bytes":  12316
                    },
                    {
                        "name":  "chapter-pipeline",
                        "package":  "WORKFLOWS/skills/chapter-pipeline.skill",
-                       "sha256":  "f547de5b562994b54587a4bddf87a6456fc152a8b5e6d4d8f5c6352aa8f23725",
+                       "sha256":  "eb39202addd151cef9c61b897290782e1a676676fd999c054bb3efa08255de11",
                        "content_sha256":  "975ace78b126dbf207062defdbfcf805b9998f2ba1828d41a0e6eab23708319a",
                        "bytes":  3522
                    },
                    {
                        "name":  "dev-capture",
                        "package":  "WORKFLOWS/skills/dev-capture.skill",
-                       "sha256":  "804426ab8e1471460d6fe58541f990d8060a6ccdbad23877500143a47f1f94ae",
+                       "sha256":  "c3ebfe3ca13bfba88fd52d61e874d7ace6fddf20602a04b354ce95b87a7e0ba6",
                        "content_sha256":  "0402e734b805db99980f81eb5cae9edb385836b61597b53e9b1766462dd14823",
                        "bytes":  30706
                    },
                    {
                        "name":  "dev-capture-audit",
                        "package":  "WORKFLOWS/skills/dev-capture-audit.skill",
-                       "sha256":  "90f4499bd1d8d57707c6a210bb857b23812396ad9ef57acfd995be9d9e7af99b",
+                       "sha256":  "3975fb9b25416cc0b623cee815d786f8771e1b84c0910a35ff6b96738f050de0",
                        "content_sha256":  "3c7dcbae570d80a57244073b009a33a61da5c4280530a33197b9437c3af5a1af",
                        "bytes":  7633
                    },
                    {
                        "name":  "dev-readiness",
                        "package":  "WORKFLOWS/skills/dev-readiness.skill",
-                       "sha256":  "60596dcef15566e2704b4d515d6ec3d3592dddb133401aba0ee5fe0a9cafe09d",
+                       "sha256":  "ec55b859b65957a742dae39d83246cb291c18846e0734906e1ce0921ed42fcc8",
                        "content_sha256":  "a031ea086c2a226d0e72dbb7e0f01f0f1d675a6cb27ea2b4e782838144df93bd",
                        "bytes":  4396
                    },
                    {
                        "name":  "dictation-cleanup",
                        "package":  "WORKFLOWS/skills/dictation-cleanup.skill",
-                       "sha256":  "dcde0c2c7b26b1db71df1b14974200a7b6f5c17efdc27581a6d1574f15f30dc8",
+                       "sha256":  "7e2e5b370ee1f6d5f5b38bfa782f15c4ec2f7328a7b66b1195ed6e1a77b3598b",
                        "content_sha256":  "f2efa6513d315f4ceed55cb6baccc1b21af98710c47ed091828a97f90d233c77",
-                       "bytes":  3477
+                       "bytes":  3365
                    },
                    {
                        "name":  "dictation-preflight",
                        "package":  "WORKFLOWS/skills/dictation-preflight.skill",
-                       "sha256":  "ea7199014dea852d3e58e425a1872831bc5519f5705b2a488c73dca7a87078ae",
+                       "sha256":  "3216faaa0bee51d7df739b0b71e3e5f70b1528150e3f796236e86a258be7b3a3",
                        "content_sha256":  "483a1f52edf23faade7f44c55a43644c4c86b88f49cdd769fb0fe2ff886a2093",
-                       "bytes":  5636
+                       "bytes":  5520
                    },
                    {
                        "name":  "dictation-transcoder",
                        "package":  "WORKFLOWS/skills/dictation-transcoder.skill",
-                       "sha256":  "67511e0fa627bfd4619971c0c6a9bd0b5fa05aae75eafcd1eddfc2bbdc5b0a04",
+                       "sha256":  "5044aa3cc7e0cecde8b447d9ce0889e9d6bd7daa1a5af67d7664267a2bdea822",
                        "content_sha256":  "4b6fe2a90f39aef623f28f3b50d8adc9b5f3f11966e976c599115c4c62edc64b",
                        "bytes":  8391
                    },
                    {
                        "name":  "file-inbox",
                        "package":  "WORKFLOWS/skills/file-inbox.skill",
-                       "sha256":  "89d7a933b7e035fc2e623b9b06014d47938a60cf98f68d7062d2ed346b52e072",
+                       "sha256":  "1bffa4972ed269a04e268d93be92ae897aef051d5c1e380db8cb5723cec7ad06",
                        "content_sha256":  "2dad2dbc050d5bab19a1763a6da8d2ea2c321aa40ee058685c7642a17b715f6f",
                        "bytes":  5302
                    },
                    {
                        "name":  "land-chapter",
                        "package":  "WORKFLOWS/skills/land-chapter.skill",
-                       "sha256":  "62f0b3cbd2f3397be2324e1e943e0a0fea285c9d03939f6d758c13c8bb6e6fcd",
+                       "sha256":  "718fc7b936e03e0b8fcdd7f2f171b7b4890404322da0b506e48a37fa330be69b",
                        "content_sha256":  "2f4a2457cde90974882614f5a8ff19d66c8b37daf5832a23e8526fc9da3b0e70",
-                       "bytes":  4134
+                       "bytes":  4032
                    },
                    {
                        "name":  "link-audit",
                        "package":  "WORKFLOWS/skills/link-audit.skill",
-                       "sha256":  "76af36ab94b245225445c91a69b690ff06df2b79a5621820c3f410d9b52dce9a",
+                       "sha256":  "cdd451bef9a960758e652b7673d139f32404bbcffaadfd879371e133db98adb4",
                        "content_sha256":  "a6ad27ac2be99602a969c2cae109562447aac21d9e261cef167108e922390499",
                        "bytes":  6928
                    },
                    {
                        "name":  "log-rotate",
                        "package":  "WORKFLOWS/skills/log-rotate.skill",
-                       "sha256":  "3eb332cefc7e5781272896ec730f483ebca5d62eb4e6d5cd53cdf494e47bb5f2",
+                       "sha256":  "932ea7e344945b8598cdce5e3947625f3f0835404ee0209cdd58791a4701d356",
                        "content_sha256":  "3dd93e2f4a05fb4b4bc62837fa966344afe875349860f4b110cc91196fd975d4",
                        "bytes":  3731
                    },
                    {
                        "name":  "loop-clearer",
                        "package":  "WORKFLOWS/skills/loop-clearer.skill",
-                       "sha256":  "372a9ed26870eed5511f38853b9a40d0e1c1b97755b3872c1ea82fd1e23138cf",
-                       "content_sha256":  "c4d5fa1e44f176409fb3d39b68e586751680128837640a4aa91874876d53de90",
-                       "bytes":  3497
+                       "sha256":  "d5db057b4259d09b194d23437a28f6d205e6d438ea755e642badf0ed19d0fa6e",
+                       "content_sha256":  "112e8173133c61b40b49239d94468f90cae9b3b2f069a339e1598c8cc57df709",
+                       "bytes":  3487
                    },
                    {
                        "name":  "promote-revision",
                        "package":  "WORKFLOWS/skills/promote-revision.skill",
-                       "sha256":  "7c3085fc41a013fa734047ce13e9bba558da2a0b6633580df032df60e63681e9",
+                       "sha256":  "a4954bb3c5ee2381e30badd4868e3bc27e99c87dc2c888460cd9486fe3067c4e",
                        "content_sha256":  "08a940d084ea201e546e2b3a1fc484df468536369f553835821ed4b59f55016a",
-                       "bytes":  4328
+                       "bytes":  4218
                    },
                    {
                        "name":  "reconcile",
                        "package":  "WORKFLOWS/skills/reconcile.skill",
-                       "sha256":  "f16a3ab1815122f225428258dbb64782b29873463b979c61a4d1f85c6272764c",
+                       "sha256":  "1f681d7730d02c56aff52d3fdb56b5b886216679db46f390039c1038c5362bf6",
                        "content_sha256":  "aaf2ce5442970f7bceee625c3427ea6ae03883ea183f7c91bbec1dcac22952f1",
                        "bytes":  3943
                    },
                    {
                        "name":  "register-pass",
                        "package":  "WORKFLOWS/skills/register-pass.skill",
-                       "sha256":  "8000815c0599d36b6e5eb9dc6cc4d53cdde5dd955e20fdd2c7a7e82d367c9454",
+                       "sha256":  "410f8c31ab4da15a6e97dff671e2944f1894615ba84da879c0fd7d8153b95e08",
                        "content_sha256":  "330763a87ffa0b2bf0c6a0f2df0aef2cc385e63d817feeed4072d0398f75a3df",
                        "bytes":  10686
                    },
                    {
                        "name":  "research-briefing",
                        "package":  "WORKFLOWS/skills/research-briefing.skill",
-                       "sha256":  "2eb3047b26366c61e4b89208250077d09481fe53c10c970b43b62965f834e5f6",
+                       "sha256":  "c755a12e403280d8acffd9d03fa0e9f709a6a223deca37f1d9bcbdfa2d1826a9",
                        "content_sha256":  "9ed5a46c417cdc6a5081984ebbaa034015fc5923c9fc76049e570479178ee1ff",
                        "bytes":  4898
                    },
                    {
                        "name":  "restrained-omniscient-register",
                        "package":  "WORKFLOWS/skills/restrained-omniscient-register.skill",
-                       "sha256":  "3f4ac681368fe4c069093d6873dfe214063d1fe28099c1be1622c2c67bdcbeb2",
+                       "sha256":  "7b35e576e417dcb574cb3b09bec49e0adbba21cdcbd78f3463b4e469f1c9e70b",
                        "content_sha256":  "8d8977aaa4f61e8670e7f33b333e60c79279278768e52af16066882769434f2b",
                        "bytes":  6003
                    },
                    {
                        "name":  "runway-builder",
                        "package":  "WORKFLOWS/skills/runway-builder.skill",
-                       "sha256":  "c3c0ceaa0b452e26a663801560a5f8e2d11cb4028ebb02583b557304e95643e9",
+                       "sha256":  "bf08f8d544cc51ffc266e6c1b5cdab596d364a04926d50a74aeabd84c0a2de8a",
                        "content_sha256":  "e7da8b04a50fa2e2a52ac475d29d22c811d447266c53b01557d2cce1e7bbe94e",
                        "bytes":  8682
                    },
                    {
                        "name":  "scene-intensity",
                        "package":  "WORKFLOWS/skills/scene-intensity.skill",
-                       "sha256":  "e5dcfdbc164f422986b195f606ad112a7790a0c5151d724ec9a645a624c537a2",
+                       "sha256":  "55869893fe8e81d0260fdf887a117d919341eb7fd08485be86715e665bc6dbb7",
                        "content_sha256":  "e02639c62771bebdad0b6ff0f6a0ef81218fd893daf8a293a2a534eb87e6ca82",
                        "bytes":  18805
                    },
                    {
                        "name":  "skill-audit",
                        "package":  "WORKFLOWS/skills/skill-audit.skill",
-                       "sha256":  "8bc3dc47de17d9a5a2f9ca12b1dce2efa49506eedc2d56d345406d996fe9fb24",
+                       "sha256":  "fdfa22fcbb9997c936014a2bf16db296634e7282e2c1d24e0bee68c7852ddd5a",
                        "content_sha256":  "5639edc9eefa38bc6377dc0c7a20db7a5375850049f4c4f48271ef944ab1c135",
-                       "bytes":  6560
+                       "bytes":  6460
                    },
                    {
                        "name":  "spec-passes",
                        "package":  "WORKFLOWS/skills/spec-passes.skill",
-                       "sha256":  "4b408cbd71209849d6d0e98e6b26674d2916277f7a880eb9c3107cd4171e6338",
+                       "sha256":  "5134b6ff5653784b07cfd809722500fe72ed6e6f8f30d75d812afb93351143ae",
                        "content_sha256":  "858ff05ffc79e50841e33074d14a7e95437b527a1119ca2628a9c3488cf3346d",
                        "bytes":  3967
                    },
                    {
                        "name":  "storyline-sync",
                        "package":  "WORKFLOWS/skills/storyline-sync.skill",
-                       "sha256":  "1e92c39d4fe00ef7d78a70f11ff48bd5c40051be413239e8a28baac7ca171005",
+                       "sha256":  "58889f4ac32b53d5ed19dcd0a4df40961e337095ab3fc673de3efc4a090b14ee",
                        "content_sha256":  "895da6cdfd1a653f2c1d61d65b9c97d45b2e62be6bbe35afa7d3617ecc594577",
                        "bytes":  10148
                    },
                    {
                        "name":  "task-audit",
                        "package":  "WORKFLOWS/skills/task-audit.skill",
-                       "sha256":  "f7fafe562682d4b9fe5b1f03a81c06d3ebcf5908227748ef4c9df1f8e915978a",
+                       "sha256":  "4949520f6319a984d2cbc2bc59c92665f13dcbd864798ce297f6169985bb7545",
                        "content_sha256":  "099aa9f014b357b1936c329ff8882bca9df50249b19227d26760aa6e14611c80",
                        "bytes":  8973
                    },
                    {
                        "name":  "vault-boot",
                        "package":  "WORKFLOWS/skills/vault-boot.skill",
-                       "sha256":  "dc41d5c12db020939b86aefe2b3fa12686947e989d1013af833dc9119b5293a0",
+                       "sha256":  "6b05f2272e21058b0060f414c536cc225115366eac4f0344e928e0a415798006",
                        "content_sha256":  "f5e964965858809c3c8826e5a5e9deb38307dee7dfce39eb278d9464148bdd05",
                        "bytes":  1575
                    },
                    {
                        "name":  "workshop-chapter",
                        "package":  "WORKFLOWS/skills/workshop-chapter.skill",
-                       "sha256":  "31b09af25899533e3c55331877dc63d56d032b41ce8b4e88e2f04c8dde706ed9",
+                       "sha256":  "d01c150879c9d1f962b748c6aa0fa7b5819afb994ef498411e8fbd03f95bf494",
                        "content_sha256":  "85239215d4e2b8dd5e68e0858d7fa319b2a5da9438500aee4d1bb3b2abb73ad6",
                        "bytes":  7872
                    }
