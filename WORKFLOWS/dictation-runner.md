@@ -69,7 +69,7 @@ phone/desktop --Dropbox--> _DICTATION INBOX/<clip>.{m4a | txt,md}
   files DEV/_intake/ notes ("capture the dev") - each on its own trigger.
 ```
 
-**Why polling, not triggers:** every "who fires whom" hand-off was the brittle part and impossible to drive from a phone. A single scheduled task watching one folder removes them all. **Transport is Dropbox:** the vault lives in Dropbox, so a file the phone drops into `_DICTATION INBOX/` is already visible to the runner's sandbox mount.
+**Why polling, not triggers:** every "who fires whom" hand-off was the brittle part and impossible to drive from a phone. A single scheduled task watching one folder removes them all. **Transport CUTOVER 2026-07-10 (`^backlog-server-transport`): phone capture now rides Nextcloud, not the Dropbox app.** Phone drops go to `VAULT TRANSPORT/_DICTATION INBOX` (Nextcloud app → aegis-moon → desktop Nextcloud client), and the desktop scheduled task **`vault-transport-sweep`** (`SYSTEM/maintenance/sweep-transport.ps1`, every 5 min, idle-≥60s guard, moves logged to `transport-sweep.log`) moves them into the vault's `_DICTATION INBOX/` — where this runner picks them up exactly as before. Drop zone, runner.py, and the scheduled-task prompt are all UNCHANGED (the sweep lives desktop-side because the Cowork sandbox can't see the Nextcloud folder). Dropbox remains the vault's own sync, and desktop drops straight into `_DICTATION INBOX/` still work.
 
 ## The fork (classify_route, Stage A detail)
 

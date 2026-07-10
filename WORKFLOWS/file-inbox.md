@@ -62,7 +62,7 @@ phone / desktop (any file) --Dropbox--> _FILE INBOX/<file>
   (decoupled) the inbox-router files any INBOX summaries on its own schedule.
 ```
 
-**Why polling, not triggers:** same reason as the voice pipeline — every "who fires whom" hand-off is brittle and can't be driven from a phone. One scheduled task watching one folder removes them all. **Transport is Dropbox:** the vault lives in Dropbox, so a file dropped into `_FILE INBOX/` is already visible to the runner's sandbox mount.
+**Why polling, not triggers:** same reason as the voice pipeline — every "who fires whom" hand-off is brittle and can't be driven from a phone. One scheduled task watching one folder removes them all. **Transport CUTOVER 2026-07-10 (`^backlog-server-transport`): phone capture now rides Nextcloud, not the Dropbox app.** Phone drops go to `VAULT TRANSPORT/_FILE INBOX` (Nextcloud app → aegis-moon → desktop Nextcloud client), and the desktop scheduled task **`vault-transport-sweep`** (`SYSTEM/maintenance/sweep-transport.ps1`, every 5 min, idle-≥60s guard, moves logged to `transport-sweep.log`) moves them into the vault's `_FILE INBOX/` — where this runner picks them up exactly as before (first proof: `Women - Charles Bukowski.mobi`, phone → server → desktop → vault, 2026-07-10). Drop zone, runner.py, and the scheduled-task prompt are all UNCHANGED (the sweep lives desktop-side because the Cowork sandbox can't see the Nextcloud folder). Dropbox remains the vault's own sync, and desktop drops straight into `_FILE INBOX/` still work.
 
 ## The fork (Stage A `propose_domain`, then Stage B rules)
 

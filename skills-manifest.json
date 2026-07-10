@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-10T08:33:41.9361860-07:00",
+    "generated":  "2026-07-10T12:00:08.3088606-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -45,6 +45,20 @@
                        "bytes":  3522
                    },
                    {
+                       "name":  "day-launch",
+                       "package":  "WORKFLOWS/skills/day-launch.skill",
+                       "sha256":  "12b974f03b5993e26a6fb23ccc21795cce82fa055169ebd2b9d5d5a12f199643",
+                       "content_sha256":  "38ccd815ba83f6909cb40ed493c2fd94153f39257f68e83d3dc73a968fc5c79f",
+                       "bytes":  4051
+                   },
+                   {
+                       "name":  "decision-helper",
+                       "package":  "WORKFLOWS/skills/decision-helper.skill",
+                       "sha256":  "aa4753a52b49d3acc1ed763492b8c0ef2155c95b4798727d587c67a57de8ace3",
+                       "content_sha256":  "81418d6253908719e303067ef3da889cbd2ab6b152bcf0b18a9043080fa5193c",
+                       "bytes":  6814
+                   },
+                   {
                        "name":  "dev-capture",
                        "package":  "WORKFLOWS/skills/dev-capture.skill",
                        "sha256":  "c3ebfe3ca13bfba88fd52d61e874d7ace6fddf20602a04b354ce95b87a7e0ba6",
@@ -54,9 +68,9 @@
                    {
                        "name":  "dev-capture-audit",
                        "package":  "WORKFLOWS/skills/dev-capture-audit.skill",
-                       "sha256":  "3975fb9b25416cc0b623cee815d786f8771e1b84c0910a35ff6b96738f050de0",
-                       "content_sha256":  "3c7dcbae570d80a57244073b009a33a61da5c4280530a33197b9437c3af5a1af",
-                       "bytes":  7633
+                       "sha256":  "e3140d031fef040fa7d49e6bc1d2f79614e2215f10445369a1300816aba6d358",
+                       "content_sha256":  "f0499c456d2250a7f1f9b2690581291aad2cd8aa28758602ce2664fe2900ba16",
+                       "bytes":  7858
                    },
                    {
                        "name":  "dev-readiness",

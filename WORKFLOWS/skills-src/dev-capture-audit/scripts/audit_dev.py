@@ -251,13 +251,19 @@ def main():
                 add("WARN", p, f"dangling wikilink [[{raw}]] — no DEV file/heading/alias '{base}' (or an intentional future-entry candidate).")
 
     # -- 11. Thin stubs + 12. Provenance footer (standard entries) --
+    # Provenance is a SHAPE, not a verb whitelist (^obs-154): any italic footer line that
+    # sources the entry `from` an _intake/_audit/ floor counts — "Routed", "Scaffolded",
+    # "Captured", "Entried", "Addition", "Re-captured", "Recovered + filed", or whatever
+    # verb the next poetics promotion coins. Legacy "Routed (…)" forms stay accepted.
+    prov_re = re.compile(r"(?mi)^\*.*\bfrom\b.*\[\[_intake/_audit/")
     for p in standard:
         _, body = split_frontmatter(texts[p])
         if len(body.strip()) < THIN_CHARS:
             add("WARN", p, f"thin entry ({len(body.strip())} chars) — possible empty/fabricated stub or missing taste.")
-        if ("Routed (" not in texts[p] and "*Routed" not in texts[p]
-                and "Scaffolded from" not in texts[p]):
-            add("INFO", p, "no 'Routed (…)' or 'Scaffolded from …' provenance footer.")
+        if not (prov_re.search(texts[p])
+                or "Routed (" in texts[p] or "*Routed" in texts[p]
+                or "Scaffolded from" in texts[p]):
+            add("INFO", p, "no provenance footer (an italic '… from [[_intake/_audit/…]]' line, or a legacy 'Routed (…)' / 'Scaffolded from …' form).")
 
     # ---- Report ----
     order = {"ERROR": 0, "WARN": 1, "INFO": 2}
