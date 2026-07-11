@@ -71,6 +71,10 @@ Ledger at vault root `DECISIONS/` (one ledger, both lanes — cross-lane pattern
 - **Quick:** one line to `DECISIONS/_QUICK LOG.md` (`date | decision | pick | basis | ruling`). Below-trivial: no log.
 - **In-depth:** one entry `DECISIONS/YYYY-MM-DD <slug>.md` — goals, criteria + weights, options **incl. discards with reasons**, receipts, recommendation + basis, ruling, `review-date`.
 
+## Step 5b — Discharge the ruling (the no-stranded-rulings rule, 2026-07-11)
+
+A ratified pick that implies **work** is not done at the log line. Before the session moves on: if the pick is a build/action, emit its queue item — a `_BACKLOG` anchor (OS/skill builds) or a `TASKS/TASKS.md` line (CRE to-dos) — and stamp the ledger row/entry with a pointer to it. If the pick explicitly defers the un-chosen branch ("later"), that branch ALSO gets a queue item or a named revisit condition — parked visibly, not dropped. A ruling with no downstream artifact is a leak (`^obs-164`: the 2026-07-10 AI-Helper-Targets picks left two of three targets stranded in the note — captured, scored, ratified-adjacent, queued nowhere). week-shape reads the queues, so this rule is what connects a ruling to a week.
+
 ## Step 6 — Review & weight learning
 
 Weights update **at review time, not decision time**. "Review decisions" (or a due review-date) → pull due entries, ask outcomes, fill `outcome`. Pattern findings surface as **proposals CRE ratifies** — never silently adjusted; ratified blocks land in `DECISIONS/_WEIGHTS.md` (each citing its entry IDs).

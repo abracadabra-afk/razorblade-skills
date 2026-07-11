@@ -3,7 +3,7 @@ type: workflow
 name: task-audit
 trigger: audit the task prompts
 aliases: [check task-prompt drift, are my scheduled tasks in sync, run the task doctor, which task prompts are stale, task prompt audit]
-inputs: [the live scheduled-task SKILL.md prompts (via list_scheduled_tasks), WORKFLOWS/<name>.md canon docs]
+inputs: [the live scheduled-task SKILL.md prompts (via list_scheduled_tasks), WORKFLOWS/[name].md canon docs]
 outputs: [a read-only drift report (chat or SYSTEM/reports/), a punch list of prompts to re-sync]
 lane: meta
 status: draft
