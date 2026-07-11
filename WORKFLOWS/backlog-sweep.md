@@ -4,10 +4,10 @@ name: backlog-sweep
 trigger: sweep the backlog
 aliases: [clean the backlog, tidy the backlog, backlog maintenance, dedupe the backlog]
 inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md)]
-outputs: [a tidied _BACKLOG.md, archived-completed entries in _CHANGELOG.md, a sweep report, a gated "Needs CRE ruling" bin]
+outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates]
 lane: writing-ops
 status: active
-last_updated: 2026-06-14
+last_updated: 2026-07-10
 ---
 
 # WORKFLOW: backlog-sweep
@@ -25,15 +25,16 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 ## Outputs
 
 1. A tidied `_BACKLOG.md` with safe ops applied.
-2. Completed (`- [x]`) and canceled (`- [-]`) items moved to `_CHANGELOG.md` (honoring the backlog convention: *"When completing a task, move it to _CHANGELOG instead of leaving it checked here."*).
+2. Completed (`- [x]`) and canceled (`- [-]`) items archived **verbatim** to a dated `SYSTEM/history/_BACKLOG-archive-<date>.md`, with a one-line pointer in `_CHANGELOG.md` — full narratives no longer paste into the live changelog (2026-07-10 hygiene rule, [[SYSTEM/reports/2026-07-10-os-audit-improvements]]).
 3. A **"Needs CRE ruling"** bin appended at the end of `_BACKLOG.md` listing every gated judgment call, one line each with the proposed action + reason.
-4. A short sweep report (counts: archived / deduped / reformatted / gated) appended to `_CHANGELOG.md`.
+4. A short sweep report (counts: archived / deduped / reformatted / gated / graduation candidates) appended to `_CHANGELOG.md`.
+5. **Observation-graduation candidates** (Step 4b) — proposed directive text for CRE to ratify; never auto-written to `_DIRECTIVES`.
 
 ## Write-mode policy (the core of this workflow)
 
 **AUTO-APPLY (safe ops) — do these without asking:**
 
-- **Archive closed items.** Move every `- [x]` (done) and `- [-]` (canceled) line out of `_BACKLOG.md` into a dated `_CHANGELOG.md` entry. Preserve the item's text, anchor, and any "done YYYY-MM-DD" note verbatim. Do NOT archive open `- [ ]` items.
+- **Archive closed items.** Move every `- [x]` (done) and `- [-]` (canceled) line out of `_BACKLOG.md` into `SYSTEM/history/_BACKLOG-archive-<date>.md` (create it, or append if this date's archive exists), preserving the item's text, anchor, and any "done YYYY-MM-DD" note **verbatim**; leave a one-line pointer in the sweep's `_CHANGELOG.md` entry. Do NOT archive open `- [ ]` items.
 - **Merge exact duplicates.** When two `- [ ]` items are textually identical (or identical modulo whitespace/punctuation), keep one, delete the rest. Preserve the surviving line's anchor(s); if duplicates carried different anchors, keep all anchors on the survivor.
 - **Normalize formatting.** Fix checkbox glyphs (`[ ]`/`[x]`/`[-]`), collapse stray blank lines, repair obviously mojibaked characters, and ensure each item sits under the correct lane heading (OS/Meta · Fiction · Writing Ops). Move a clearly-misfiled item to its right lane.
 - **Fix priority-tag drift.** De-duplicate repeated tags on one line (e.g. `#p1 #p1` → `#p1`). Do NOT invent or change a priority that isn't there.
@@ -45,6 +46,8 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 - **Dropping / canceling an open item** that looks stale, obsolete, or superseded (e.g. its `^obs` is graduated to a directive, its workflow shipped, its referenced file is gone). Propose; let CRE rule `[x]`/`[-]`.
 - **Re-prioritizing** (adding/raising/lowering `#p1`/`#p2`/`#p3`).
 - Splitting one overloaded item into several, or rewriting an item for clarity.
+- **Compressing an oversized item** (over ~150 words — the 2026-07-10 *state + next action + pointers* format rule): propose the compressed text in the bin; CRE ratifies before it replaces the original.
+- **Graduating an observation into a directive** (Step 4b output): always a proposal; `_DIRECTIVES.md` is never written by the sweep.
 - Anything that touches a `#blocked`/`#waiting` item's meaning.
 
 Rule of thumb: if the operation is reversible and loses no author intent, auto-apply it; if it requires judging whether CRE still wants something, gate it.
@@ -65,6 +68,9 @@ Execute every AUTO-APPLY operation from the policy above. Edit `_BACKLOG.md` wit
 
 ### Step 4 — Assemble the gate bin
 Append a `## Needs CRE ruling (backlog-sweep YYYY-MM-DD)` section to the bottom of `_BACKLOG.md`. One line per gated call: the item, the proposed action, and the one-clause reason. If a prior sweep's gate bin still has unruled lines, fold them in rather than stacking a second bin.
+
+### Step 4b — Observation-graduation candidates (the learning-loop cadence, 2026-07-10)
+Read `_OBSERVATIONS.md` entries newer than the last sweep, plus any older entry whose **Candidate directive** field remains unactioned. For each viable candidate, add a proposal line to the gate bin: drafted directive text + scope + source `^obs` anchor. Multiple observations pointing at the same rule merge into one proposal. Also surface here: `DECISIONS/` entries whose `review-date` has passed, and pending `_WEIGHTS.md` proposals. **Never write `_DIRECTIVES.md`** — graduation is CRE's manual ruling (the `_OBSERVATIONS` header rule); on ratify, the directive lands in a follow-up attended edit. This step replaces the retired `_SESSION START` §5 brain-curation prompt ([[SYSTEM/reports/2026-07-10-os-audit-improvements]], item 4).
 
 ### Step 5 — Report + log
 Append a one-line dated entry to `_CHANGELOG.md` under writing-ops: counts archived / deduped / reformatted / gated, plus anything notable. File any new fragility to `_OBSERVATIONS.md` with a `^obs-NNN` anchor. If nothing changed since the last sweep, say so in one line and keep the run read-only.

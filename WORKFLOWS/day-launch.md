@@ -35,7 +35,7 @@ CRE's pattern map ([[LIFE/MENTAL HEALTH/ADHD Patterns]]) is the spec:
 - **Vault sentinel** (`^obs-004`) before any write.
 - **File tools only** for `TASKS.md` + `TODAY.md` edits, verify by re-read (DIR-005 / `^obs-014`). Frontmatter kept to flat scalars (DIR-004 posture).
 - **Dual-writer split:** the unattended morning run owns the fresh `TODAY.md` proposal; daytime edits are CRE's; close-out is attended. Never rewrite a `TODAY.md` CRE has touched today — append/mark only.
-- **Odysseus discipline inherited from [[WORKFLOWS/odysseus-tasks]]:** pushes are attended by default; the ONLY unattended push allowed is the fixed pair of standard check-in nudges (CRE opted in 2026-07-10). Item-level timed reminders wait for his morning ratify. Idempotent via `<!-- ody: … -->` stamps; secrets never in titles (DIR-001).
+- **Odysseus discipline inherited from [[WORKFLOWS/odysseus-tasks]]:** pushes are attended by default; the ONLY unattended pushes allowed are the fixed set of standard nudges — the two check-ins plus the evening close reminder (CRE opted in to the check-ins 2026-07-10; evening close added 2026-07-10). Item-level timed reminders wait for his morning ratify. Idempotent via `<!-- ody: … -->` stamps; secrets never in titles (DIR-001).
 - **"dispatch" stays reserved** for `_BACKLOG` proposals — day-launch never answers it.
 
 ## The file: `TASKS/TODAY.md`
@@ -73,7 +73,7 @@ status: proposed
 3. **Propose 3–5.** Hard cap 5. Selection: (a) anything time-bearing today, (b) carry-overs before new, (c) one item advancing Current focus, (d) always include one **small win** (finishable <30 min — the validation point), (e) designate the **first domino**: the item with the lowest activation energy, stated as a physical first action ("open X and read the last paragraph"), never as an outcome.
 4. **Gate.** Attended: show the list + first domino + any parsed times; CRE ratifies/edits in one pass. Unattended (scheduled run): write the proposal to `TODAY.md` tagged `status: proposed` and stop — the plan is ready when he sits down; ratifying it IS the initiation ritual.
 5. **Write + verify.** `TODAY.md` per template, file tools, re-read to verify.
-6. **Arm the accountability layer.** (a) Unattended-allowed: the two standard check-in nudges → Odysseus (`POST /api/codex/todos`, titles "Check: what am I doing right now? → TODAY.md", due ~10:30 and ~14:30; skip if already stamped today). (b) Attended-only: one Odysseus reminder per timed item CRE ratified, verbatim time phrase as `due_date`, stamp the `TODAY.md` line `<!-- ody: <id> -->` (the odysseus-tasks Step-4 mechanics exactly). (c) **Odysseus unreachable** (env unset, 403, connection refused): never fabricate a push, never block the launch — flag the un-armed nudges in one line (chat if attended, an HTML comment in `TODAY.md` if not) and move on; no `ody:` stamp without a real returned id. (d) **Windows call mechanics (proven live 2026-07-10, aegis-moon instance):** never pass a JSON body to `odysseus_api.py` through PowerShell args — PS 5.1 mangles embedded quotes into invalid JSON (sometimes silently). Use `Invoke-RestMethod` with a `ConvertTo-Json` body. Add: `action=add, title, due_date` (verbatim natural-language phrase — "in 10 minutes" parsed live). Delete: `action=delete, id` (NOT `note_id`). User-scope env vars may be stale in a long-running shell host — read via `[Environment]::GetEnvironmentVariable(...,'User')`.
+6. **Arm the accountability layer.** (a) Unattended-allowed: the standard nudges → Odysseus (`POST /api/codex/todos`; skip any already stamped today) — the two check-ins (title "Check: what am I doing right now? → TODAY.md", due ~10:30 and ~14:30) plus the evening close reminder (title "Close: run day-launch close-out → TODAY.md", due ~21:00). The close reminder pings CRE to close while he still remembers what he did — it does NOT auto-close (that stays the attended close-out / next-morning staleness sweep); its purpose is to keep the tally accurate. (b) Attended-only: one Odysseus reminder per timed item CRE ratified, verbatim time phrase as `due_date`, stamp the `TODAY.md` line `<!-- ody: <id> -->` (the odysseus-tasks Step-4 mechanics exactly). (c) **Odysseus unreachable** (env unset, 403, connection refused): never fabricate a push, never block the launch — flag the un-armed nudges in one line (chat if attended, an HTML comment in `TODAY.md` if not) and move on; no `ody:` stamp without a real returned id. (d) **Windows call mechanics (proven live 2026-07-10, aegis-moon instance):** never pass a JSON body to `odysseus_api.py` through PowerShell args — PS 5.1 mangles embedded quotes into invalid JSON (sometimes silently). Use `Invoke-RestMethod` with a `ConvertTo-Json` body. Add: `action=add, title, due_date` (verbatim natural-language phrase — "in 10 minutes" parsed live). Delete: `action=delete, id` (NOT `note_id`). User-scope env vars may be stale in a long-running shell host — read via `[Environment]::GetEnvironmentVariable(...,'User')`.
 
 ## During the day
 
@@ -94,7 +94,7 @@ Every ~2 weeks, or when CRE asks "how's day-launch working": read the receipts +
 
 - Invent tasks, generate CRE's prose, or schedule the *content* of his fiction
 - Guilt, streaks, "you said you would," or any shame framing — restarts are the design, not the failure
-- Push item-level Odysseus reminders unattended (the fixed check-in pair is the sole opt-in exception)
+- Push item-level Odysseus reminders unattended (the fixed standard nudges — two check-ins + the evening close reminder — are the sole opt-in exceptions)
 - Answer "dispatch" (that's `_BACKLOG`) or triage decisions (that's `decision-helper`)
 - Exceed 5 items, ever — an overfull list is an unstarted list
 
@@ -104,4 +104,4 @@ Every ~2 weeks, or when CRE asks "how's day-launch working": read the receipts +
 - A body-double "work with me" live session mode — v2 candidate once the morning loop is proven
 - Auto-ingesting `_BACKLOG` items — TASKS is the boundary; the router owns crossings
 
-<!-- v1 authored 2026-07-10 per ^backlog-task-initiation-helper (ratified decision, DECISIONS/_QUICK LOG.md 2026-07-10). Anchor time 7:00–7:30 + Odysseus check-in opt-in ruled by CRE 2026-07-10. -->
+<!-- v1 authored 2026-07-10 per ^backlog-task-initiation-helper (ratified decision, DECISIONS/_QUICK LOG.md 2026-07-10). Anchor time 7:00–7:30 + Odysseus check-in opt-in ruled by CRE 2026-07-10. Evening close reminder (~21:00) added 2026-07-10 per CRE — third unattended-allowed nudge; reminds-to-close, never auto-closes. -->

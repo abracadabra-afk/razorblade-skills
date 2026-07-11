@@ -176,6 +176,36 @@ if (Test-Path $clog) {
   }
 }
 
+# ---- brain-doc size stamp (^backlog-logrotate-exact-size / ^obs-090) ----
+# The sandbox's log-rotate pass cannot size the brain docs byte-exactly: the file tools
+# expose only line/token counts and bash `wc -c` on the mount serves stale partials
+# (^obs-084). This desktop run has authoritative file access, so it stamps byte-exact
+# sizes for every brain doc into SYSTEM/reports/brain-doc-sizes.json on each daily sync.
+# log-rotate Step 1 reads the stamp (if fresh) instead of the token->char proxy.
+# Serialized via ConvertTo-Json (DIR-004 discipline); wrapped so it can never break the sync.
+try {
+  $sizes = [ordered]@{
+    generated = (Get-Date -Format 'o')
+    source    = 'seed-repo.ps1 (desktop, authoritative filesystem)'
+    note      = 'bytes = UTF-8 file length; >= char count, so banding on bytes errs toward rotating early (safe). Written every daily Git Bridge sync.'
+    files     = [ordered]@{}
+  }
+  foreach ($f in $brain) {
+    $src = Join-Path $Vault $f
+    if (Test-Path $src) { $sizes.files[$f] = (Get-Item $src).Length }
+  }
+  # per-project backlog shards (in log-rotate's measured set since 2026-06-29)
+  Get-ChildItem (Join-Path $Vault 'WRITING\PROJECTS\*\backlog.md') -ErrorAction SilentlyContinue | ForEach-Object {
+    $rel = $_.FullName.Substring($Vault.Length + 1).Replace('\','/')
+    $sizes.files[$rel] = $_.Length
+  }
+  $reportsDir = Join-Path $Vault 'SYSTEM\reports'
+  New-Item -ItemType Directory -Force -Path $reportsDir | Out-Null
+  Write-Utf8NoBom (Join-Path $reportsDir 'brain-doc-sizes.json') ($sizes | ConvertTo-Json -Depth 4)
+} catch {
+  Write-Warning ("brain-doc size stamp failed: " + $_.Exception.Message + " - continuing with the sync")
+}
+
 # ---- razorblade-os (PRIVATE, full mirror) ----
 Write-Host "== razorblade-os (private) ==" -ForegroundColor Cyan
 foreach ($f in $brain) {

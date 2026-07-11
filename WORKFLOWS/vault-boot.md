@@ -7,8 +7,10 @@ inputs: [none — reads the four loading-order anchors from the vault]
 outputs: [a confirmed bootstrap (brief summary of each anchor), then awaits a task]
 lane: meta / os
 status: active
-last_updated: 2026-06-15
+last_updated: 2026-07-10
 ---
+
+> **Canonical-boot-doc rule (`^obs-160`, 2026-07-10):** `CLAUDE.md` at the vault root is the canonical bootstrap; this workflow, the `vault-boot` skill, the `mount-the-vault` scheduled prompt, the Cowork userPreferences block, and `_SESSION START.md` are all derived surfaces regenerated from it. If any of them and `CLAUDE.md` disagree, `CLAUDE.md` wins.
 
 # WORKFLOW: Vault Boot (the manual mount)
 
@@ -20,7 +22,7 @@ CRE says **"mount the vault"** (or "boot the vault" / "boot my OS" / "load my OS
 
 ## Inputs
 
-None. The workflow reads four files from the vault via the Obsidian MCP (or the file tools).
+None. The workflow reads `CLAUDE.md` plus the four anchors **with the file tools on the mounted vault folder** (the default read path, DIR-005); the Obsidian MCP is an optional read-only alternative — never block on it being down.
 
 ## Outputs
 

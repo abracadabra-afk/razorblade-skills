@@ -35,7 +35,7 @@ Rotation keeps each live file small enough that a file-tool **top-insert stays s
 | WARN | 150K–200K | report + recommend rotation next run |
 | ROTATE | ≥ 200K | act per the per-file policy below |
 
-Measure with the **file tools** (read to EOF), **never** bash `wc -c` — on a large file the bash mount can serve a stale, truncated partial that understates size and would corrupt any carve range (`^obs-014` / `^obs-084`). Defaults chosen 2026-06-15; tune in this table, not in the scheduled task.
+Measure from the desktop-written `SYSTEM/reports/brain-doc-sizes.json` stamp when fresh (byte-exact — see Step 1), else with the **file tools** (read to EOF), **never** bash `wc -c` — on a large file the bash mount can serve a stale, truncated partial that understates size and would corrupt any carve range (`^obs-014` / `^obs-084`). Defaults chosen 2026-06-15; tune in this table, not in the scheduled task.
 
 ## Per-file policy (the core of this workflow)
 
@@ -61,7 +61,7 @@ Growth here is open items; the right tool is `backlog-sweep` (archives closed it
 Confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). If it fails, **halt and report** — do not edit (`^obs-004`).
 
 ### Step 1 — Measure
-Measure each file with the **file tools** (read to EOF / file-size) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`. **Do not size with bash `wc -c`** — on a large file the bash mount may return a truncated partial (`^obs-084`: on the first live run it understated `_CHANGELOG` by ~16K and ended mid-entry). Record each file's band.
+**Preferred (byte-exact): read `SYSTEM/reports/brain-doc-sizes.json`** — a size stamp written by the desktop Git Bridge sync (`seed-repo.ps1`, daily ~12:00) with authoritative filesystem access; it carries byte lengths for every brain doc + the project backlog shards (`^backlog-logrotate-exact-size` / `^obs-090`). Use it when its `generated` timestamp is **≤ 36 h old**; bytes ≥ chars, so banding on bytes errs toward rotating early (safe). If the stamp is missing or stale, **fall back** to the file-tools token→char proxy: measure each file with the **file tools** (read to EOF / file-size) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`, and treat a band call that sits right at a threshold as ambiguous (report, don't act). **Never size with bash `wc -c`** — on a large file the bash mount may return a truncated partial (`^obs-084`: on the first live run it understated `_CHANGELOG` by ~16K and ended mid-entry). Record each file's band + which measurement path was used.
 
 ### Step 2 — Report
 Emit a one-table report: file · size · band · recommended action. If all GREEN, say so and **stop here** (read-only run).

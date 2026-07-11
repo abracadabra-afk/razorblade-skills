@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-10T12:00:08.3088606-07:00",
+    "generated":  "2026-07-10T19:54:59.7356350-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -124,9 +124,9 @@
                    {
                        "name":  "log-rotate",
                        "package":  "WORKFLOWS/skills/log-rotate.skill",
-                       "sha256":  "932ea7e344945b8598cdce5e3947625f3f0835404ee0209cdd58791a4701d356",
-                       "content_sha256":  "3dd93e2f4a05fb4b4bc62837fa966344afe875349860f4b110cc91196fd975d4",
-                       "bytes":  3731
+                       "sha256":  "0afb92c07b07c6c54095bf5872f871d5a0c81ff694fd4f41e30758cc2aff2f94",
+                       "content_sha256":  "ef93ff7ff6d1e9417266394e1f4a229d965aacfef93ae81726b551a72f667661",
+                       "bytes":  3963
                    },
                    {
                        "name":  "loop-clearer",
@@ -215,9 +215,9 @@
                    {
                        "name":  "vault-boot",
                        "package":  "WORKFLOWS/skills/vault-boot.skill",
-                       "sha256":  "6b05f2272e21058b0060f414c536cc225115366eac4f0344e928e0a415798006",
-                       "content_sha256":  "f5e964965858809c3c8826e5a5e9deb38307dee7dfce39eb278d9464148bdd05",
-                       "bytes":  1575
+                       "sha256":  "6057fa8e642dee9e124732ca5b402652033bfa5e3ce8a689311426e91fed7480",
+                       "content_sha256":  "dcd8207ac026d4f325147970621bfdbba8449fadb555f0b6a0b35d28e9440728",
+                       "bytes":  1221
                    },
                    {
                        "name":  "workshop-chapter",

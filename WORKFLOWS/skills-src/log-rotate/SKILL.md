@@ -24,7 +24,7 @@ Canonical reference: `WORKFLOWS/log-rotate.md`. This is the AI-trigger surface; 
 Confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). If it fails, **halt and report** — do not edit.
 
 ## Step 1 — Measure
-Measure each of `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md` with the **file tools** (read to EOF / file-size). **Do not size with bash `wc -c`** (`^obs-084`). Record each file's band:
+**Preferred (byte-exact):** read `SYSTEM/reports/brain-doc-sizes.json` — the size stamp the desktop Git Bridge sync (`seed-repo.ps1`, daily ~12:00) writes with authoritative filesystem access (`^backlog-logrotate-exact-size` / `^obs-090`). Use it when its `generated` timestamp is ≤ 36 h old; bytes ≥ chars, so banding on bytes errs toward rotating early (safe). If missing or stale, **fall back**: measure each of `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md` with the **file tools** (read to EOF / file-size), treating an at-threshold call as ambiguous (report, don't act). **Do not size with bash `wc -c`** (`^obs-084`). Record each file's band + which measurement path was used:
 
 | Band | Size | Action |
 |---|---|---|
