@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-13T12:00:10.1873341-07:00",
+    "generated":  "2026-07-13T15:56:13.8465192-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -45,6 +45,13 @@
                        "bytes":  3522
                    },
                    {
+                       "name":  "comp-sweep",
+                       "package":  "WORKFLOWS/skills/comp-sweep.skill",
+                       "sha256":  "9385fad7fab205aef00d2ab39022a2ec8130f782e27e974cfded1af76511f1a8",
+                       "content_sha256":  "134b23e4dfff08d41ed59a39f87a4890ef11cc7fb8f8306820d6883b9779283b",
+                       "bytes":  3374
+                   },
+                   {
                        "name":  "day-launch",
                        "package":  "WORKFLOWS/skills/day-launch.skill",
                        "sha256":  "a25292bd2c3d0ce30d5b80c8c164c5ed44b2c9ce2786d08eac07526176b18c9f",
@@ -71,6 +78,13 @@
                        "sha256":  "e3140d031fef040fa7d49e6bc1d2f79614e2215f10445369a1300816aba6d358",
                        "content_sha256":  "f0499c456d2250a7f1f9b2690581291aad2cd8aa28758602ce2664fe2900ba16",
                        "bytes":  7858
+                   },
+                   {
+                       "name":  "dev-draft-audit",
+                       "package":  "WORKFLOWS/skills/dev-draft-audit.skill",
+                       "sha256":  "4c53de81d9fe52acefe00c7b0ecd98f4006a255dccc854e14c5a7e3f94cb9034",
+                       "content_sha256":  "df9ed4f5e091b867a0bd0b56a462a1ed1aeb37482f6af07360bf0967c0d5899d",
+                       "bytes":  3619
                    },
                    {
                        "name":  "dev-readiness",
@@ -187,9 +201,9 @@
                    {
                        "name":  "skill-audit",
                        "package":  "WORKFLOWS/skills/skill-audit.skill",
-                       "sha256":  "fdfa22fcbb9997c936014a2bf16db296634e7282e2c1d24e0bee68c7852ddd5a",
-                       "content_sha256":  "5639edc9eefa38bc6377dc0c7a20db7a5375850049f4c4f48271ef944ab1c135",
-                       "bytes":  6460
+                       "sha256":  "32562acf42d85414d064ad1f29a5ca6b453ba42f197e39e733ddc60f87f5e172",
+                       "content_sha256":  "63d148505007ab0bc8fbbef9adb12306a7b62aedc3f49edb00b2b036078e8518",
+                       "bytes":  9447
                    },
                    {
                        "name":  "spec-passes",

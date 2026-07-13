@@ -21,33 +21,35 @@ You **cannot** fix layers 2 or 3 from here: rebuilding is skill-creator's job, a
 
 The gate every skill in this family shares (`^obs-004`). From the mounted vault root, read `_DIRECTIVES.md` and confirm its YAML frontmatter contains both `type: ai-os-brain` and `file: directives`. Missing or mismatched → halt and ask which folder is the intended vault. Write nothing.
 
-## Step 1 — Resolve the three roots
+## Step 1 — Resolve the three roots — and DO NOT read the installed cache through a mount
 
-Determine, from your environment (the "Shell access" section of the system prompt lists the bash paths for each mounted folder):
-
-- `VAULT` — the mounted vault root (e.g. the Dropbox-synced folder).
-- `INSTALLED` — the installed skills directory (the read-only `.claude/skills` mount / `skills-plugin/.../skills`).
+- `VAULT` — the mounted vault root (the Dropbox-synced folder). Reading this via bash is fine for *discovery*.
+- `INSTALLED` — the installed skills directory. **This must be a REAL, LOCAL path, not a sandbox mount.** On CRE's machine it is the AppData path: `C:\Users\Chad\AppData\Roaming\Claude\local-agent-mode-sessions\skills-plugin\<a>\<b>\skills`.
 - `WORKFLOWS` — defaults to `VAULT/WORKFLOWS`.
 
-If you cannot identify `INSTALLED`, ask CRE rather than guessing — auditing the wrong tree is worthless.
+**The hard rule (`^obs-183`).** The sandbox bash mount of the installed cache (`/sessions/<id>/mnt/.claude/skills/`) serves **stale partials** — it has reported an old `SKILL.md` alongside a freshly-installed `references/` file *in the same directory*, and produced two false "stale install" findings that a desktop probe disproved minutes later. **Never justify a drift verdict from a mounted read.** The script enforces this: it **hard-fails (exit 2)** on a mounted `--installed` path. Run it on the **desktop** — via `windows-cli` (`mcp__windows-cli__execute_command`) or a local python — pointed at the real AppData path.
 
-## Step 2 — Run the audit script
+`--allow-mount` exists as an escape hatch and downgrades **every** drift verdict to `UNCERTAIN`, because that is all a mounted read can honestly support.
+
+> **Why the old `^obs-014` double-read guard did not save us.** It read each file twice and compared size + line count — which detects a **torn** read, not a **stale** one. A stale read is perfectly self-consistent: read it twice, get the same wrong bytes, report "coherent" with total confidence. That guard is retired; the mount refusal replaces it.
+
+## Step 2 — Run the audit script (on the desktop)
 
 ```
-python skill_audit.py --vault <VAULT> --installed <INSTALLED> [--workflows <WORKFLOWS>] [--json]
+python skill_audit.py --vault <VAULT> --installed <INSTALLED> [--workflows <WORKFLOWS>] [--json] [--allow-mount]
 ```
 
 The bundled `skill_audit.py` enumerates all three layers, matches them by frontmatter `name:`, and for each skill checks:
 
 - **Structural integrity** of the installed copy and the package: frontmatter parses (name + description present); the file ends with a trailing newline (a missing one = mid-write truncation, the `^obs-018` signature); last line isn't a bare mid-word cut. A package or installed copy failing this is BROKEN.
-- **installed == package?** SHA of the installed `SKILL.md` vs the package's inner `SKILL.md`. Mismatch ⇒ the running skill is stale ⇒ **REINSTALL**. The script also reports any `##` sections the installed copy is missing relative to the package (how truncation shows up).
+- **installed == package, across the WHOLE TREE** (`^obs-183`) — not just `SKILL.md`. Both sides are enumerated in full (the installed dir walked recursively; every zip entry read) and compared three ways: files **packaged but never installed**, files **installed but not packaged** (stale leftovers), and files present on both sides whose **shas diverge**. Any of these ⇒ **REINSTALL**, with the offending paths named. This is the check that was missing: the old audit compared only `SKILL.md`, so a skill whose `references/` or `scripts/` never reached the cache read as **OK**.
 - **doc vs package** (heuristic): if the doc was edited after the package was last built ⇒ **REBUILD** candidate. Exact if the package frontmatter carries a `source_sha` of the doc; otherwise mtime-based and labelled a heuristic.
 
-Verdicts: `OK` · `REINSTALL` (rebuild fine, install stale/broken) · `REBUILD` (doc newer than build, or package broken) · `UNBUILT` (doc but no `.skill`) · `EXTERNAL` (installed but no vault source — not vault-managed, informational) · `BROKEN-PKG`.
+Verdicts: `OK` · `REINSTALL` (rebuild fine, install stale/broken/incomplete) · `REBUILD` (doc newer than build, or package broken) · `UNBUILT` (doc but no `.skill`) · `UNCERTAIN` (mounted read — advisory only) · `EXTERNAL` (installed but no vault source — not vault-managed; **also how the DIR-009 raw-doc install bypass shows up**) · `BROKEN-PKG`.
 
-## Step 3 — Coherence guard (`^obs-014`)
+## Step 3 — The failure mode no file check can see
 
-The bash mount of the Dropbox-synced tree can serve a **stale or incoherent copy** (this bit us: same byte size, conflicting line counts, mid-file tail — which read as "install failed" when it had actually succeeded). The script reads each installed `SKILL.md` twice and flags `UNCERTAIN` if size or line-count disagree. For any skill the script marks UNCERTAIN — or any time a verdict would gate an action CRE is about to take — **re-read that installed `SKILL.md` through the file tools (live store)** and trust that over the shell read before reporting. Shell reads are for discovery, not for justifying a conclusion.
+**A Save-skill is not live until the Cowork session restarts.** The skill list is snapshotted at boot, so a *correct* install still runs the *old* copy in the session that performed it — which reads exactly like "the fix didn't work." Whenever the report contains an install action, say this out loud. It is the third independent reason an install looks unfixed (the other two: the lying mount, and genuine drift).
 
 ## Step 4 — Report
 
