@@ -41,10 +41,11 @@ This is the middle layer of the productivity spine ([[SYSTEM/reports/2026-07-11-
 3. **Propose the week — one screen:**
    - **Morning lane (resident story):** the week's creative target in pipeline terms ("dictate SEQ 61–63" / "CH2 S12 promote + CH8 brief"), derived from where the pipeline actually sits.
    - **Ops lane (afternoons):** ONE theme from the flagship ("Substack: name the pub, port the content plan, draft post 1") + at most 2 batch items behind it.
+   - **Personal window (late afternoon / early eve):** the week's `win:personal` items (family, health, personal admin, appointments), placed by their `due:` dates so a deadline lands in the right week rather than surfacing late. Pull any `win:personal` item whose `due:` falls in or near the week; flag any carrying `due:?` for a `triage-the-tasks` pass. *(Added 2026-07-14, task-scheduling layer — [[TASKS/TASK-SCHEMA]].)*
    - **1–3 milestones** for the week — concrete, receipt-checkable.
    - **Flags** (if any): residency seam approaching, a #p1 blocker (e.g., credential rotation before ads work), calendar collisions (once the calendar increment lands).
 4. **Gate.** CRE ratifies / edits in one pass. 15-minute total cap includes this.
-5. **Seed `TASKS.md`.** Write the ratified items under `## Active` (source-tagged `<!-- week-shape YYYY-MM-DD -->`), each phrased day-launch-ready: concrete, starting-action-shaped, one per work session where possible. Update a small `## This week` header block (week of, lanes, milestones). Verify by re-read.
+5. **Seed `TASKS.md`.** Write the ratified items under `## Active` (source-tagged `<!-- week-shape YYYY-MM-DD -->`), each phrased day-launch-ready: concrete, starting-action-shaped, one per work session where possible, and **schema-tagged per [[TASKS/TASK-SCHEMA]]** (`win:`, `#p`, and `due:` where the item has a real date; `due:?` if a deadline is known but undated). Update a small `## This week` header block (week of, lanes, milestones). Verify by re-read.
 6. **Stop.** No Odysseus pushes (day-launch owns the accountability layer), no portfolio edits, no backlog dispatch.
 
 ## Fortnight review hook

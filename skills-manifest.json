@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-14T12:00:08.4252200-07:00",
+    "generated":  "2026-07-14T15:31:37.2877352-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -225,6 +225,13 @@
                        "sha256":  "582d66fa8a232a134f1581413453cf5ef7fa0d5298a498db5ad64638f575b6cd",
                        "content_sha256":  "e4b500d6b0e7421dfef3f8fbfbd1a78eff92233762478e3edfc8d4d8df393e14",
                        "bytes":  8978
+                   },
+                   {
+                       "name":  "triage-the-tasks",
+                       "package":  "WORKFLOWS/skills/triage-the-tasks.skill",
+                       "sha256":  "7838754529f16c0720937b2845797f8d6d2149092c18903693545eef2ecccfff",
+                       "content_sha256":  "b7881af47a81651d9e27e9f50194de8de582306294e89cd6155ef45b7fa2fe18",
+                       "bytes":  2467
                    },
                    {
                        "name":  "vault-boot",

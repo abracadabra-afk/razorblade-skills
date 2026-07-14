@@ -60,7 +60,7 @@ For each item, assign the best-fit book using the routing table, with a **confid
 ### Step 4 — File (confident items)
 Append each high-confidence item to its target's intake zone, preserving CRE's wording:
 - **Vibes** → under `VIBES/CAPTURE.md` "⚡ Inbox" (verbatim, no inline tag — the weave anchors it later).
-- **Tasks** → under `TASKS/TASKS.md` "⚡ Inbox" as `- [ ] <item>`.
+- **Tasks** → under `TASKS/TASKS.md` "⚡ Inbox" as `- [ ] <item>`, **schema-stamped** per [[TASKS/TASK-SCHEMA]]: prepend an inferred `win:` (domain → `win:morning` fiction drafting / `win:ops` business·site·marketing·admin / `win:personal` family·health·personal-admin) and a default `#p3` (`#p2` only on a clear flagship / blocker / money signal). If the item carries **deadline language** ("before X", "by Friday", "next week", "starts", "due", "expires", "renewal", a bare date), also stamp `due:?` — **never guess a hard date unattended** — and add it to the run report's **"needs triage (date)"** list so the next `triage-the-tasks` (or `week-shape`) resolves it. Result shape: `- [ ] #p3 win:personal due:? <item>`.
 - **Workflows** → under `WORKFLOWS/_WORKFLOWS.md` "⚡ Intake" as `- <idea>`.
 - **Life** → the right `REFERENCE/` note (create + link from `_REFERENCE` if a new category) or the matching domain folder.
 - **Knowledge** → the matching `KNOWLEDGE/<area>/` note (create + note in the report if a new area).
@@ -72,7 +72,7 @@ Remove filed items from INBOX's Inbox.
 Leave low-confidence / unsplittable items in INBOX's **🔍 Needs review**, each with: the item, the 2 candidate books, and one line on why it's ambiguous. Don't auto-file these.
 
 ### Step 6 — Log + report
-Append a dated line to INBOX's **Sort log** (counts per book). Bump `last_updated` on every file touched. Report to CRE a compact table: *item → book* for everything filed, plus the Needs-review list to rule on. If anything went to Vibes, note it'll be picked up by the next weave (manual "weave the vibebook" or the scheduled weave task).
+Append a dated line to INBOX's **Sort log** (counts per book). Bump `last_updated` on every file touched. Report to CRE a compact table: *item → book* for everything filed, plus the Needs-review list to rule on, plus any **needs-triage (date)** tasks stamped `due:?` (so a deadline never sits silently untimed — Pattern #15). If anything went to Vibes, note it'll be picked up by the next weave (manual "weave the vibebook" or the scheduled weave task).
 
 ## Stop conditions
 - Inbox empty → "nothing to sort," stop.
