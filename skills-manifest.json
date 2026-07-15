@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-14T15:31:37.2877352-07:00",
+    "generated":  "2026-07-14T18:04:29.0317452-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -54,9 +54,9 @@
                    {
                        "name":  "day-launch",
                        "package":  "WORKFLOWS/skills/day-launch.skill",
-                       "sha256":  "a25292bd2c3d0ce30d5b80c8c164c5ed44b2c9ce2786d08eac07526176b18c9f",
-                       "content_sha256":  "faf1c30360bd426fde6b7b1e6f08543cf7ac85dd61addc85b92715d7a71f34f6",
-                       "bytes":  5296
+                       "sha256":  "6e40a7f0c7cab0e41421400dc9dfaf17731ca499f40ba10fcc0a1d4100985199",
+                       "content_sha256":  "5d9fc52970874dde28033e297aec4def8a6de924a2a9785e1f5ce8f80d7cf731",
+                       "bytes":  5740
                    },
                    {
                        "name":  "decision-helper",
