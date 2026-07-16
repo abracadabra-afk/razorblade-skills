@@ -40,6 +40,7 @@ The target project's `DEV/` tree:
 - `_POETICS.md` — how CRE develops (context only; never a gap)
 - `_DEV_MAP.md` — the tree's own profile (short/novella/novel may legitimately lack rungs)
 - **`DECISIONS/` parked entries for this project** (`type: decision`, `status: parked`, `project:` matching) — the forks dev-reconcile banked; triaged by the wake convention (see Steps)
+- **`DEV/_AUTHOR FLAGS.md`** (where present) — CRE's held-concerns ledger ([[WORKFLOWS/author-flags]]); parked design sessions + un-harvested flags whose wake conditions match the gated descent surface at Step 5b alongside the forks
 
 ---
 

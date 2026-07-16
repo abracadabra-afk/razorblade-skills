@@ -21,7 +21,7 @@ A normal short-story workshop holds craft. This holds five things a craft worksh
 2. **Ear-first** — the story is *narrated solo*, with little to no dialogue
 3. **YouTube TOS band** — free-tier safe vs. age-restricted (age restriction kills reach + monetization)
 4. **Tier routing** — full episode · YouTube-safe cut · paywall-only tease
-5. **Container** — 800–1,200 words ≈ 5–8 min at ~130–140 wpm
+5. **Container** — 2,000–2,800 words ≈ 15–20 min at ~130–140 wpm (two-band rule, re-ruled 2026-07-15 — strategy §3b; 4,000+ routes out at conception)
 
 Canonical strategy: [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]]. Premise source: [[WRITING/SHORTS/PREMISES]].
 
@@ -32,7 +32,7 @@ WRITING/SHORTS/EPISODES/EP NN - <TITLE>/
 ├── premise.md      Pass-1 output — knot · constraint · topical peg · TOS band · tier routing
 ├── runway.md       Pass-2 output — the speaking outline CRE dictates from
 ├── draft.md        CRE's dictated prose (cleaned via dictation-cleanup; NEVER authored here)
-└── production.md   Pass-3 output — title · thumbnail line · description + content advisories · tier · publish slot
+└── production.md   Pass-3 output — title · thumbnail line · description + content advisories · tier · publish slot · Short-cut spec · series/playlist slot · paid author's-note flag
 ```
 
 ---
@@ -64,7 +64,7 @@ WRITING/SHORTS/EPISODES/EP NN - <TITLE>/
 
 > **The rhythm this protects:** ~6–7 FULL + 1–2 TEASE per month. That rhythm is only executable if routing happens **before** drafting. Routing after the fact is how a schedule becomes a hope. It is also how the **paid tier gets deliberately fed** rather than fed by accident.
 
-**d. Container.** Does this idea fit 800–1,200 words? A premise that needs 4,000 is a different product — say so, and route it to SHORTS proper or the Substack long-form, not to an episode.
+**d. Container — the two-band gate (re-ruled 2026-07-15, strategy §3b).** Does this idea fit the **standard band, ~2,000–2,800 words ≈ 15–20 min**? A premise that needs **4,000+** is not a weekly episode — say so at conception, and route it: two-parter, TEASE/paywall long-form, or SHORTS proper / Substack long-form. Like tier routing, this call is made **now**, never after drafting.
 
 **Pass-1 output:** `premise.md` + a **GO / RESHAPE / NOT-AN-EPISODE** call. CRE rules. **The gate never smooths a premise into shape by writing it — it names what's missing and hands it back.**
 
@@ -81,7 +81,7 @@ Structure only. **Zero prose.** Same discipline as `runway-builder`: each beat i
 - **Logic beats** — the forensic spine, GOAL → BUT → THEREFORE, front to back.
 - **The ear-first constraints, as flow conditions** (see below).
 - **The turn** — the beat where the knot breaks or holds.
-- **Word budget per movement** — so the 800–1,200 container is hit by dictating, not by cutting afterward.
+- **Word budget per movement** — so the 2,000–2,800 container is hit by dictating, not by cutting afterward. (At CRE's 5,000+/hr dictation pace, the runway *is* the container control — the budget lines carry the whole discipline.)
 
 ### The ear-first constraint block (the thing a normal workshop never checks)
 
@@ -102,10 +102,11 @@ Runs on `draft.md` **after** dictation (and after `dictation-cleanup`, which is 
 1. **Cold open test** — is sentence one **both flat and wrong**? Flat-but-not-wrong = setting. Wrong-but-not-flat = the narrator is doing the reader's work (register violation).
 2. **The never-open-with list** — waking up · weather · a room · name-and-job · backstory.
 3. **Ear read** — the constraint block above, checked against the actual prose.
-4. **Container** — word count vs. 800–1,200; runtime at ~130–140 wpm.
+4. **Container** — word count vs. 2,000–2,800; runtime at ~130–140 wpm. A draft that landed 4,000+ triggers a **routing re-call** (two-parter / TEASE / route out), not a trim-to-fit.
 5. **TOS re-check** — the draft can drift past the band the gate cleared. Re-read it. If it drifted, the routing call gets re-made, not ignored.
+6. **Short cut point** — identify which 30–45 sec stands alone as the anomaly Short (strategy §3c.1): usually the anomaly line + first beat, hard cut mid-fall, loop-friendly. **Diagnostic only — the pass proposes the cut point with a one-line basis; the cut is CRE's call.** The Short must not pre-spend the turn.
 
-**Pass-3 output:** `production.md` — title, thumbnail line, description + **content advisories** (they live in the description, never spoken aloud — reading them out spoils the story and pays a retention cost at the worst possible moment), tier, publish slot.
+**Pass-3 output:** `production.md` — title, thumbnail line, description + **content advisories** (they live in the description, never spoken aloud — reading them out spoils the story and pays a retention cost at the worst possible moment), tier, publish slot, **Short-cut spec** (in/out points + the wrong fact the Short carries), **series/playlist slot** (which playlist + end-screen target, strategy §3c.2), and the **paid author's-note flag** (Substack post carries the below-the-fold note per §3c.4 — the note itself is CRE's, never drafted here).
 
 ---
 

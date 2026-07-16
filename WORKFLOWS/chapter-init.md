@@ -7,7 +7,8 @@ inputs: [project (defaults to the only project with a CHAPTERS/ dir), chapter nu
 outputs: [a complete per-chapter folder with stamped frontmatter, a seeded brief.md, init entries in the chapter changelog + pipeline board]
 lane: fiction
 status: active
-last_updated: 2026-06-19
+last_updated: 2026-07-15
+revision_note: 2026-07-15 — Step 4b added (CRE-ratified): when the shape-the-part descent has run, the brief seed also pulls beats/plants/seals from the chapter's mapped DEV/scenes entries (the brief-fill seam now has an owner).
 ---
 
 # WORKFLOW: chapter-init
@@ -27,7 +28,7 @@ A new chapter is starting and its folder doesn't exist yet. Trigger phrases: "sc
 
 ```
 CHAPTER N - <TITLE>/
-├── brief.md          status: unfilled, spec_material: true; weight: standard (CRE confirms at S2 — see [[WORKFLOWS/chapter-weight]]); "Payoffs due" pre-seeded from REFERENCE/threads.md open threads (proposals, tagged for CRE)
+├── brief.md          status: unfilled, spec_material: true; weight: standard (CRE confirms at S2 — see [[WORKFLOWS/chapter-weight]]); "Payoffs due" pre-seeded from REFERENCE/threads.md open threads (proposals, tagged for CRE); beats/plants/seals pre-seeded from mapped DEV/scenes entries when the descent has run (Step 4b, proposals likewise)
 ├── envelope.md       blank segment template (dictation-preflight fills it at S4)
 ├── changelog.md      carries the S1 init entry
 ├── draft.md          status: scaffold, placeholder body
@@ -57,6 +58,13 @@ Create the folder and all files from the templates (canonical copies live in the
 
 ### Step 4 — Seed brief.md (proposal only)
 Read `REFERENCE/threads.md`. For each thread not yet `PAID`/closed, add one line under the brief's **Payoffs / advances due**: `- **T<NN> <name>** — open since CH<M>; <one-line state>. <<PROPOSED — CRE to rule: pays / advances / dormant>>`. Everything else in the brief stays template. Stamp `weight: standard` in the brief frontmatter as the safe default (see [[WORKFLOWS/chapter-weight]]) — CRE confirms or changes it (`load-bearing` / `bridge`) at S2. `status: unfilled` — S2 (with CRE) flips it to `drafted`/`confirmed`. No `REFERENCE/threads.md`? Skip, note it.
+
+### Step 4b — Seed from the scene rung (the brief-fill seam; only when the descent has run)
+If the project's `DEV/scenes/` holds entries mapped to this chapter (the [[WORKFLOWS/shape-the-part]] **chapter map**), seed the brief from them in addition to the threads harvest:
+- **Beats to hit** ← one line per mapped scene: the scene's **job** + its beats-so-far, with the `[[SC NN]]` link kept (provenance travels with the beat).
+- **Setups to plant / Seal schedule** ← the plants/payoffs/seals the scene entries carry (e.g. a `PLANT:`-flagged beat like the true-strike at SEQ 18 grain) — these are the lines the runway's `PLANT:` flags depend on downstream; dropping one here is how a battery-locked setup gets improvised away at the mic.
+- Every seeded line is a **proposal**: `<<PROPOSED — from [[SC NN]]; CRE to rule>>`. The seed is an inventory of CRE's own ruled scene shapes — it recombines nothing, invents nothing, and S2 stays CRE's (the brief author is still him). Wording stays the scene entries' own language, never sharpened here.
+No mapped scenes (project has no descent, or the part's shape hasn't run) → skip, note it — Step 4's threads harvest alone is the original mode.
 
 ### Step 5 — Log (record the ruling in the same gesture, `^obs-012`)
 - Chapter `changelog.md`: init entry (what was scaffolded, what was seeded, open S2 gate).

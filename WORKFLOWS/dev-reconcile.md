@@ -112,7 +112,7 @@ Run dev-readiness on the layer: descent verdict + mandatory blind-spot caveat, p
 The run's **final output is the handoff**: the ripe calls listed by dec-id, the articulation asks named, the dormant forks left sleeping. The next session starts from the handoff, not from rediscovery in chat. (Run 1's handoff: ripe → `dec-009`; articulation → `dec-010`; dormant → `dec-011`/`dec-012`/`dec-013`.) The same triage is `dev-readiness`'s job when it runs standalone later — see its doc.
 
 ### Step 7 — Log
-`_CHANGELOG` entry (fiction lane); observations to `_OBSERVATIONS`; follow-ups to `_BACKLOG`. The changelog entry's **Open loops** line repeats the ripe-fork handoff (dec-ids + their wake states) so the pickup brief carries it.
+`_CHANGELOG` entry (fiction lane); observations to `_OBSERVATIONS`; follow-ups to `_BACKLOG`. The changelog entry's **Open loops** line repeats the ripe-fork handoff (dec-ids + their wake states) so the pickup brief carries it. **Close with the gloss question** — *"anything you glossed?"* — answers feed `DEV/_AUTHOR FLAGS.md`; inside sessions only, never scheduled (CRE-ratified 2026-07-15).
 
 ## Bounded-gate rule (load-bearing)
 
@@ -136,6 +136,8 @@ The pass is **1–2 sessions per layer, with a defined exit** (the Step-6 verdic
 ## Packaging plan
 
 Attended manual runs from this doc first. After 2–3 live runs prove the bins and the walk: author `skills-src/dev-reconcile/SKILL.md`, pack via desktop `pack-skills.ps1`, sha-verify, Save-skill (DIR-009). Tracked: `^backlog-dev-reconcile-pilot`.
+
+**Run 2 — 2026-07-16, Witchwood Part-2 SCENE layer (the shape-the-part run-1 handoff — the lean "reconcile and rule 2" profile): the bins held on the small shape.** Bounded to SC 01–17 same-session with the descent; arc lens folded in as a sweep source (no separate leg), author-flags cue-harvest only (CRE: nothing glossed), readiness inline. Sheet: **zero QUICK/STRUCTURAL/PARK — one stale-sync batch of 5** (two `^af` carries onto SC 12, two Cleave held-question closures, the Moon Magic dec-010 sync, one held-fork carry to SC 10), ratified en bloc. Verdict READY; the `^af-002` Knots-ladder wake fired and was handed off (before dictation, CRE's discretion). **Profile datum for packaging: a same-day mechanical descent yields a sync-only sheet — the lean profile is right-sized; a cold-context sweep remains the stronger check when time has passed.**
 
 **Run 1 — 2026-07-15, Witchwood Parts/Acts (attended, full seven steps): the bins held.** ~30 findings ruled in one bounded session; QUICK/STRUCTURAL/PARK needed no fourth bin, one live rebin (QUICK→STRUCTURAL) worked as designed; forks parked as `dec-009`–`dec-013`; exit verdict *clear to descend*. What run 2 should prove: the bins on a **different layer shape** (a sequence→scene descent milestone, or another project's first layer) — run 1 was the largest, most flag-rich case the workflow will likely ever see. Everything above tagged "run 1" is candidate SKILL.md content at packaging.
 

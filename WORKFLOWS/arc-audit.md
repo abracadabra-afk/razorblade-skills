@@ -59,7 +59,7 @@ Report → `SYSTEM/reports/<date>-<project>-arc-contour-report.md`. **The report
 Same discipline as dev-reconcile Step 4: **batch the ratifies** (design-confirmation QUICKs go en-bloc with a pull-out option), walk STRUCTURAL finds individually **with the evidence quoted** (an unrulable flag is an under-evidenced flag). Expect rebins. Nothing writes until ruled.
 
 ### Step 5 — Write ruled state
-Ruled annotations into the touched reads (file tools; notes ABOVE the provenance footer, `^obs-187`); the report updated to its ruled state; parked forks → `DECISIONS/` in the wake convention (`decision-helper (ripe)` / `CRE-articulation` / `milestone: <name>`); watch items recorded with their named prose-time recipient. `_CHANGELOG` entry; observations; backlog follow-ups.
+Ruled annotations into the touched reads (file tools; notes ABOVE the provenance footer, `^obs-187`); the report updated to its ruled state; parked forks → `DECISIONS/` in the wake convention (`decision-helper (ripe)` / `CRE-articulation` / `milestone: <name>`); watch items recorded with their named prose-time recipient. `_CHANGELOG` entry; observations; backlog follow-ups. **Close with the gloss question** — *"anything you glossed?"* — answers feed `DEV/_AUTHOR FLAGS.md`; inside sessions only, never scheduled (CRE-ratified 2026-07-15).
 
 ## Scope guards (must-not)
 

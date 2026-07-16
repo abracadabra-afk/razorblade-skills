@@ -35,6 +35,8 @@ dev-reconcile (seams) → arc-audit (shape) → AUTHOR-FLAGS (the head) → dev-
 
 **2. The harvest interview (the skill, at boundaries).** The pass ASKS — *"what did you gloss over to keep moving on this layer?"* — then works the accumulated + newly-spoken list. Interview discipline: open questions, one at a time, never leading; CRE's phrasing is the record.
 
+**3. The session-close micro-harvest (CRE-ratified 2026-07-15).** Every dev/battery session (dev-capture, dev-reconcile, arc-audit, shape-the-part) closes with one line — *"anything you glossed?"* — and any answer lands in the ledger verbatim (`^af-NNN`). Rationale: pilot run 1 showed 6 of 10 flags were **uncaptured answers** that aged ~3 weeks because the "flag —" cue misses answers spoken mid-flow. Inside sessions only — this is a closing line in work already underway, never a scheduled prompt (the never-nag rule holds).
+
 ## Per-flag processing (the pipeline each flag runs)
 
 1. **Capture verbatim** → `^af-NNN` (his words, never paraphrased into blandness).
