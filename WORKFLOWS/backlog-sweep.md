@@ -3,11 +3,11 @@ type: workflow
 name: backlog-sweep
 trigger: sweep the backlog
 aliases: [clean the backlog, tidy the backlog, backlog maintenance, dedupe the backlog]
-inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md)]
-outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates]
+inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TASKS/TASKS.md (open items — changelog-derive), _CHANGELOG.md (derive evidence)]
+outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates]
 lane: writing-ops
 status: active
-last_updated: 2026-07-10
+last_updated: 2026-07-17
 ---
 
 # WORKFLOW: backlog-sweep
@@ -17,6 +17,8 @@ last_updated: 2026-07-10
 Maintenance pass over `_BACKLOG.md` to keep it lean and trustworthy. Triggered by **"sweep the backlog"** / **"clean the backlog"** / **"tidy the backlog"**, and by the weekly `backlog-sweep` scheduled task (Mondays, after `skills-sweep`). It removes accumulated cruft — completed items left checked in place, exact duplicates, malformed entries, drifted priority tags — and consolidates near-duplicate items, **gating every judgment call for CRE** rather than guessing.
 
 This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon): a derive-and-tidy pass with the house **"additions/safe-ops write; contradictions/judgment-calls gate"** discipline. It runs *after* `skills-sweep` on Mondays because `skills-sweep` appends follow-ups to `_BACKLOG.md`; the sweep then absorbs and normalizes them.
+
+**Since 2026-07-17 the sweep also carries the changelog-derive over the open task list** (Step 3b): day-launch's derive pass only audits items *proposed into TODAY.md*, and week-shape derives only at re-shape, so work done outside a day plan never got its task checked off. The 07-17 ad-hoc sweep caught **5 stale-open items** this way (dec-002, og:image, two umbrellas, the WIW line). This step closes that gap on a weekly cadence.
 
 ## Inputs
 
@@ -38,6 +40,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 - **Merge exact duplicates.** When two `- [ ]` items are textually identical (or identical modulo whitespace/punctuation), keep one, delete the rest. Preserve the surviving line's anchor(s); if duplicates carried different anchors, keep all anchors on the survivor.
 - **Normalize formatting.** Fix checkbox glyphs (`[ ]`/`[x]`/`[-]`), collapse stray blank lines, repair obviously mojibaked characters, and ensure each item sits under the correct lane heading (OS/Meta · Fiction · Writing Ops). Move a clearly-misfiled item to its right lane.
 - **Fix priority-tag drift.** De-duplicate repeated tags on one line (e.g. `#p1 #p1` → `#p1`). Do NOT invent or change a priority that isn't there.
+- **Derived task closures (Step 3b, decisive evidence only).** Check off an open `TASKS/TASKS.md` or `_BACKLOG.md` item when `_CHANGELOG.md` records its deliverable shipped/ruled **with named artifacts** (a commit, a file, a decision entry, a verified deploy). Append the evidence + a `closed via backlog-sweep changelog-derive` provenance comment to the closed line. This mirrors day-launch's derive-pass precedent — artifact-backed closures are safe-ops even unattended.
 - **Refresh frontmatter** `last_updated`.
 
 **GATE (judgment calls) — never apply; list in the "Needs CRE ruling" bin:**
@@ -48,6 +51,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 - Splitting one overloaded item into several, or rewriting an item for clarity.
 - **Compressing an oversized item** (over ~150 words — the 2026-07-10 *state + next action + pointers* format rule): propose the compressed text in the bin; CRE ratifies before it replaces the original.
 - **Graduating an observation into a directive** (Step 4b output): always a proposal; `_DIRECTIVES.md` is never written by the sweep.
+- **A derive closure that requires judgment** (Step 3b): the evidence is partial, the item would close as *superseded* rather than *done*, the completion is an off-vault hand action with no artifact, or an umbrella has open legs. Propose in the bin with the evidence cited; never guess a completion.
 - Anything that touches a `#blocked`/`#waiting` item's meaning.
 
 Rule of thumb: if the operation is reversible and loses no author intent, auto-apply it; if it requires judging whether CRE still wants something, gate it.
@@ -65,6 +69,15 @@ Tag each as: ARCHIVE (closed) · EXACT-DUP · REFORMAT · STALE? (open but possi
 
 ### Step 3 — Apply safe ops
 Execute every AUTO-APPLY operation from the policy above. Edit `_BACKLOG.md` with the **file tools (Read/Write/Edit), not `patch_vault_file`** (`^obs-020`/`^obs-014`). Move archived items into a single dated `_CHANGELOG.md` entry.
+
+### Step 3b — Changelog-derive over the open task list (added 2026-07-17, CRE-ratified)
+Read every `_CHANGELOG.md` entry dated since the last sweep **in full** (the day-launch 07-14 hardening: read before counting — summaries lie). Cross-reference each entry's shipped artifacts against every open `- [ ]` item in `TASKS/TASKS.md` (all sections) and `_BACKLOG.md`:
+
+- **DECISIVE** (the changelog names the item's deliverable as shipped/ruled, with artifacts) → check off with provenance (safe-op, per the policy above).
+- **PARTIAL / SUPERSEDED / JUDGMENT** (open legs remain, closure-as-superseded, off-vault hand action with no artifact) → one line in the gate bin with the evidence cited.
+- **No evidence** → leave untouched; never infer completion from silence or plausibility.
+
+Scope note: this derives *closures only* — it never edits an open item's text, priority, or scope (those remain Step 2/4 territory), and it never touches `TASKS/TODAY.md` (day-launch owns it).
 
 ### Step 4 — Assemble the gate bin
 Append a `## Needs CRE ruling (backlog-sweep YYYY-MM-DD)` section to the bottom of `_BACKLOG.md`. One line per gated call: the item, the proposed action, and the one-clause reason. If a prior sweep's gate bin still has unruled lines, fold them in rather than stacking a second bin.
