@@ -4,10 +4,10 @@ name: backlog-sweep
 trigger: sweep the backlog
 aliases: [clean the backlog, tidy the backlog, backlog maintenance, dedupe the backlog]
 inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TASKS/TASKS.md (open items — changelog-derive), _CHANGELOG.md (derive evidence)]
-outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates]
+outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps]
 lane: writing-ops
 status: active
-last_updated: 2026-07-17
+last_updated: 2026-07-19
 ---
 
 # WORKFLOW: backlog-sweep
@@ -42,6 +42,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 - **Fix priority-tag drift.** De-duplicate repeated tags on one line (e.g. `#p1 #p1` → `#p1`). Do NOT invent or change a priority that isn't there.
 - **Derived task closures (Step 3b, decisive evidence only).** Check off an open `TASKS/TASKS.md` or `_BACKLOG.md` item when `_CHANGELOG.md` records its deliverable shipped/ruled **with named artifacts** (a commit, a file, a decision entry, a verified deploy). Append the evidence + a `closed via backlog-sweep changelog-derive` provenance comment to the closed line. This mirrors day-launch's derive-pass precedent — artifact-backed closures are safe-ops even unattended.
 - **Refresh frontmatter** `last_updated`.
+- **Apply observation triage stamps (Step 4b).** Stamp `PARKED` / `NOT A RULE` on `_OBSERVATIONS.md` entries the sweep has considered and is not proposing. These record *that the sweep looked*, not a CRE ruling, so they are safe. `GRADUATED` stamps are NOT safe — they follow a CRE ruling and land in the same attended edit that writes the directive.
 
 **GATE (judgment calls) — never apply; list in the "Needs CRE ruling" bin:**
 
@@ -82,8 +83,25 @@ Scope note: this derives *closures only* — it never edits an open item's text,
 ### Step 4 — Assemble the gate bin
 Append a `## Needs CRE ruling (backlog-sweep YYYY-MM-DD)` section to the bottom of `_BACKLOG.md`. One line per gated call: the item, the proposed action, and the one-clause reason. If a prior sweep's gate bin still has unruled lines, fold them in rather than stacking a second bin.
 
-### Step 4b — Observation-graduation candidates (the learning-loop cadence, 2026-07-10)
-Read `_OBSERVATIONS.md` entries newer than the last sweep, plus any older entry whose **Candidate directive** field remains unactioned. For each viable candidate, add a proposal line to the gate bin: drafted directive text + scope + source `^obs` anchor. Multiple observations pointing at the same rule merge into one proposal. Also surface here: `DECISIONS/` entries whose `review-date` has passed, and pending `_WEIGHTS.md` proposals. **Never write `_DIRECTIVES.md`** — graduation is CRE's manual ruling (the `_OBSERVATIONS` header rule); on ratify, the directive lands in a follow-up attended edit. This step replaces the retired `_SESSION START` §5 brain-curation prompt ([[SYSTEM/reports/2026-07-10-os-audit-improvements]], item 4).
+### Step 4b — Observation-graduation candidates (the learning-loop cadence, 2026-07-10; hardened 2026-07-19)
+
+**This is the promotion pass. It runs here, weekly, on a cadence — not on request.** Read `_OBSERVATIONS.md` entries newer than the last sweep, **plus every entry carrying no triage stamp** (see below). For each viable candidate, add a proposal line to the gate bin: drafted directive text + scope + source `^obs` anchor. Also surface here: `DECISIONS/` entries whose `review-date` has passed, and pending `_WEIGHTS.md` proposals. **Never write `_DIRECTIVES.md`** — graduation is CRE's manual ruling (the `_OBSERVATIONS` header rule); on ratify, the directive lands in a follow-up attended edit. Replaces the retired `_SESSION START` §5 brain-curation prompt ([[SYSTEM/reports/2026-07-10-os-audit-improvements]], item 4).
+
+**Triage stamps — the binding surface (added 2026-07-19, DIR-014).** The pass was previously unbounded and therefore skippable: "any older entry whose Candidate directive remains unactioned" is not computable without re-reading 600+ lines, so in practice only the since-last-sweep window got read, and older entries aged out silently. `^obs-014` sat ungraduated for **seven weeks** while `^obs-183` and `^obs-187` independently rediscovered the same finding. Every entry the sweep considers now gets one machine-visible stamp as its own last line, making "unactioned" a grep, not a judgment:
+
+- `**GRADUATED <date> (CRE-ruled):** landed as DIR-NNN …` — promoted; never re-proposed.
+- `**PARKED <date> — <recurrence condition>**` — deliberately not promoted, with the condition that would change that ("graduate if this recurs a third time", "graduate once the Phase 3 operator is live"). Most "none yet" candidate fields are really this.
+- `**NOT A RULE <date> — <reason>**` — a method note, per-draft cleanup item, or code-level fix that will never be a directive.
+- *no stamp* — never triaged; **always in scope for the next sweep.**
+
+Apply stamps as a **safe op** (they record that the sweep looked, not what CRE ruled). Only `GRADUATED` requires a CRE ruling first.
+
+**Two checks a single-window read cannot make** — run both against the *whole* file, not just the new entries:
+
+1. **Recurrence check.** For each `PARKED` entry, test whether any newer observation satisfies its stated condition. If yes, it is no longer parked — propose it, and cite the recurrence. (`^obs-189` was a textbook recurrence of `^obs-185` and would have been caught this way.)
+2. **Cluster check.** Test whether two or more untriaged entries describe the **same underlying failure**, however differently worded. A cluster is far stronger evidence than any single entry and should be proposed as one directive with all sources named. (`^obs-183` + `^obs-187` + `^obs-014` were one finding across seven weeks; `^obs-132` + `^obs-136` + `^obs-137` were one rule that no entry owned, two of them deferring to it as "already covered" — **that phrase is itself a cluster signal: it means the rule is unwritten.**)
+
+**Bounded output.** Propose at most **5** directives per sweep, ranked by evidence strength (cluster or recurrence first, single-instance last), and state how many untriaged entries remain. An unbounded proposal list is one CRE will not read — which is how this step failed the first time.
 
 ### Step 5 — Report + log
 Append a one-line dated entry to `_CHANGELOG.md` under writing-ops: counts archived / deduped / reformatted / gated, plus anything notable. File any new fragility to `_OBSERVATIONS.md` with a `^obs-NNN` anchor. If nothing changed since the last sweep, say so in one line and keep the run read-only.
