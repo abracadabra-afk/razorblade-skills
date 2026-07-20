@@ -32,7 +32,7 @@ Typical sandbox use:
   python3 build.py verify --root /tmp/rs
   python3 build.py audit  --root /tmp/rs        # auto-detects the installed cache
 """
-import sys, os, io, json, hashlib, zipfile, pathlib, argparse, datetime
+import sys, os, io, re, json, hashlib, zipfile, pathlib, argparse, datetime
 
 def sha256(b): return hashlib.sha256(b).hexdigest()
 
@@ -78,11 +78,25 @@ def parse_frontmatter(skill_md: bytes):
     return {"name": name, "description": desc, "body": body}, None
 
 TRUNC_OK_END = tuple(".!?)\"'`*_:>0123456789")  # 'looks complete' last chars
+# A body whose FINAL line is structured (bullet / ordered item / table row / heading /
+# blockquote) is treated as complete even without terminal punctuation: markdown list
+# items routinely end on a bare word by house style, and the pure last-character test
+# flagged them as truncated on every sweep (^obs-174 / ^backlog-looks-truncated-heuristic
+# -- reproduced 2026-07-20 on day-launch, week-shape AND comp-sweep, all three verified
+# intact through the file tools). Honest recall trade: a cut landing mid-bullet no longer
+# trips THIS tripwire. Acceptable because it is the weakest of the three truncation
+# guards -- `mount_suspect()` (NUL / replacement byte / installed-is-a-prefix-of-package)
+# and the content-hash comparison both still fire, and neither has a punctuation blind
+# spot. Prose tails, where real truncation has actually shown up here (^obs-089's
+# inbox-router.md cut mid-Step-4), are still checked exactly as before.
+_STRUCTURED_LINE = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s|\||#{1,6}\s|>)")
 def looks_truncated(body: str):
     if not body: return True
     s = body.rstrip()
     last = s[-1]
-    return (last not in TRUNC_OK_END) and last.islower() and s[-2:].isalpha()
+    if (last in TRUNC_OK_END) or (not last.islower()) or (not s[-2:].isalpha()):
+        return False
+    return not _STRUCTURED_LINE.match(s.rsplit("\n", 1)[-1])
 
 def mount_suspect(pkg_d: dict, inst_d: dict):
     """Detect a poisoned/truncated INSTALLED-side read (obs-014/obs-070/obs-073).
