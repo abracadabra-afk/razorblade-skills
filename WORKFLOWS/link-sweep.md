@@ -45,9 +45,15 @@ Born 2026-07-16: dec-016 re-enabled Ingram print + relisted the ebook wide via D
 | Apple Books | ebook | via B2R, then direct listing | D2D relisted, propagating |
 | B&N Nook | ebook | via B2R, then direct listing | D2D relisted, propagating |
 | Libraries (OverDrive et al.) | ebook | via B2R | D2D relisted, propagating |
-| B&N print | print | ISBN 9781735676926 | dormant record — watch for buy button |
-| Walmart | print | ISBN 9781735676926 | dormant record — watch for buy button |
-| Bookshop.org | print | ISBN 9781735676926; affiliate URL once enrolled | Ingram re-enabled 07-16 |
+| B&N print | print | ISBN 9781735676920 | dormant record — watch for buy button |
+| Walmart | print | ISBN 9781735676920 **+ title+author search** | **LIVE 2026-07-21** — new copy $16.99, sold+shipped by Walmart.com (item 647899467) |
+| Bookshop.org | print | ISBN 9781735676920; affiliate URL once enrolled | Ingram re-enabled 07-16 |
+
+<!-- link-sweep 2026-07-21 (run 1): the watch-set print ISBN read 9781735676926 — an invalid ISBN-13
+     (ISBN-10 1735676926 with a 978 prefix and no recomputed check digit). Bookshop.org returned
+     ZERO results on it and the live product on 9781735676920. Corrected to 9781735676920, verified
+     off three independent loaded pages (B&N ean=, Bookshop ean=, Walmart's ISBN-10/13 pairing).
+     Left uncorrected this would have failed every Bookshop/Walmart probe forever. -->
 
 Live set (regression check each run): Amazon ebook `B08H4ZWB5R` · Amazon paperback `1735676926` · Audible `B0BTQ6G9YX` · Godless `godless.com/products/ghost-river-by-chad-ryan` · B2R `books2read.com/ghostriver`.
 
@@ -56,6 +62,8 @@ Live set (regression check each run): Amazon ebook `B08H4ZWB5R` · Amazon paperb
 **Step 0 — cheap check.** Load the B2R page; diff its retailer buttons against the registry. Nothing new + watch set unchanged → report "no movement," stop.
 
 **Step 1 — probe the movers.** For each channel B2R newly shows, and each dormant print record: load the listing, apply the live-buy-button test, capture the URL off the page.
+
+> **Never probe a retailer on ISBN alone (`^obs-205`, run 1).** Walmart's ISBN search returned only the third-party *pre-owned* record while the first-party "Sold and shipped by Walmart.com" new copy sat at the top of a **title + author** search — so the sweep reported the channel dark when it was live. Run both keys (`?q=<ISBN>` *and* `?q=<title> <author>`) before recording any channel dark, and confirm the item is CRE's off the product page (author line + ISBN, never the title alone — "Ghost River" collides heavily). A **thin or wrong-item** result is as untrustworthy as a null one, and more dangerous: it looks like a successful probe.
 
 **Step 2 — write the registry** (safe-op, additions only): new live link under the book's section with an HTML provenance comment (`<!-- link-sweep YYYY-MM-DD -->`). Dead-link findings go to the report as flags, not edits.
 
