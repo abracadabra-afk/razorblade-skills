@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-20T12:00:08.2860789-07:00",
+    "generated":  "2026-07-21T06:33:46.7628692-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -148,6 +148,13 @@
                        "sha256":  "d5db057b4259d09b194d23437a28f6d205e6d438ea755e642badf0ed19d0fa6e",
                        "content_sha256":  "112e8173133c61b40b49239d94468f90cae9b3b2f069a339e1598c8cc57df709",
                        "bytes":  3487
+                   },
+                   {
+                       "name":  "project-plan",
+                       "package":  "WORKFLOWS/skills/project-plan.skill",
+                       "sha256":  "48a93d714a989ceadc0739183b9717618cf86163ecc1bcb6bd18efc9ef8f12a5",
+                       "content_sha256":  "02b5d15f0e066b29bcc90fd480ea4ffeefc8ae5d9ce3bd2835ce1b6886bcd85e",
+                       "bytes":  2465
                    },
                    {
                        "name":  "promote-revision",
