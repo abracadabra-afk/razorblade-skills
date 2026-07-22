@@ -47,7 +47,18 @@ Born 2026-07-16: dec-016 re-enabled Ingram print + relisted the ebook wide via D
 | Libraries (OverDrive et al.) | ebook | via B2R | D2D relisted, propagating |
 | B&N print | print | ISBN 9781735676920 | dormant record — watch for buy button |
 | Walmart | print | ISBN 9781735676920 **+ title+author search** | **LIVE 2026-07-21** — new copy $16.99, sold+shipped by Walmart.com (item 647899467) |
-| Bookshop.org | print | ISBN 9781735676920; affiliate URL once enrolled | Ingram re-enabled 07-16 |
+| Bookshop.org | print | ISBN 9781735676920; affiliate URL once enrolled | **LIVE 2026-07-21** — $18.99; on the UBL (B2R injected its own affiliate 120955 — swap on enrollment) |
+| Google Play | ebook | via B2R, then direct listing | **added 2026-07-21** — D2D distributes; UBL slot empty, never captured — probe |
+| Waterstones | print | ISBN 9781735676920 | **added 2026-07-21** — CRE's #2 converting store (30 clicks); on UBL, confirm live buy button |
+| Booktopia · Blackwell's · BAM | print | ISBN 9781735676920 | **added 2026-07-21** — on UBL via D2D/Ingram; confirm live buy buttons |
+| Scribd/Everand · Thalia · Smashwords · Angus & Robertson · Vivlio · Fable | ebook | via B2R | **added 2026-07-21** — on UBL via D2D; confirm live |
+| Amazon hardcover | print (hardcover) | ASIN TBD | **added 2026-07-21** — public page renders a hardcover button; confirm the edition exists |
+
+<!-- 2026-07-21 watch-set expansion (CRE-ruled, UBL analytics pass): the eleven channels B2R's UBL
+     already carries plus Google Play were promoted from Needs-review to the watch set after the UBL
+     dashboard showed Waterstones as CRE's #2 converting store (30 clicks, ahead of Amazon paperback).
+     Rule: they earn, so they belong on the board. Walmart stays print-watched but is NOT a B2R store —
+     site-grid only. -->
 
 <!-- link-sweep 2026-07-21 (run 1): the watch-set print ISBN read 9781735676926 — an invalid ISBN-13
      (ISBN-10 1735676926 with a 978 prefix and no recomputed check digit). Bookshop.org returned
