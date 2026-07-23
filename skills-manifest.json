@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-23T12:00:07.6577091-07:00",
+    "generated":  "2026-07-23T12:38:00.1319988-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -113,6 +113,13 @@
                        "sha256":  "9b3b2d0afb0d0c3cfab63fc6e43edbf64a1bfe7ce74c79569b6e624cf7f3d2ab",
                        "content_sha256":  "a0d75b684ce06823b60d857afbbb32ee30b00af3f35f85882773670f8b697941",
                        "bytes":  10656
+                   },
+                   {
+                       "name":  "episode-feedback",
+                       "package":  "WORKFLOWS/skills/episode-feedback.skill",
+                       "sha256":  "4172886bcb6a5853090f0c96d9e2d0fb2b58c0f58a9683f53e06c8f8e0b63d81",
+                       "content_sha256":  "cf70a631aead2c2370469fcafe7fa778988090c8841042d97cc9b9aa556bafb8",
+                       "bytes":  3437
                    },
                    {
                        "name":  "file-inbox",
