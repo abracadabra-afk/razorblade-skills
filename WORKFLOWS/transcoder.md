@@ -7,14 +7,26 @@ inputs: [raw dictation text from speech-to-text, perceptual envelope (POV + cond
 outputs: [clean rough-draft prose, cut log, synthesis ledger, leaves-left audit]
 lane: fiction
 status: active
-last_updated: 2026-06-13
-scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood.
+last_updated: 2026-07-22
+scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood. v5.1 adds standalone/episode mode (envelope derivable from ruled canon with provenance) — first adopter WRITING/SHORTS/EPISODES.
 pipeline_position: upstream of [[WORKFLOWS/dictation-cleanup]]
 ---
 
-# WORKFLOW: Dictation Transcoder (v5)
+# WORKFLOW: Dictation Transcoder (v5.1)
 
 > Generative pass that converts raw dictation into a clean rough-draft slate. **Rewrite-allowed.** Pairs with [[WORKFLOWS/dictation-cleanup]] downstream, which is the protective copy-edit pass the v5 spec refers to as the "separate, protective pass… later."
+
+## v5.1 changelog (2026-07-22 — amended off the EP 01 DOOMSCROLLER live test)
+
+Live test: two passes on `WRITING/SHORTS/EPISODES/EP 01 - DOOMSCROLLER` (slate/2026-07-22-01 and -02). Six amendments, all live in `skills-src/dictation-transcoder/SKILL.md` (repack + Save-skill pending, DIR-009):
+
+1. **Standalone/episode mode.** The convention gate halted on a valid target (an episode folder with the envelope fully ruled in runway §A + dec-017). New rule: if the folder's own canon rules the envelope facts, derive `envelope.md` with per-segment provenance + `status: derived — author confirms`, create `slate/`, proceed (attended only). DIR-011 applied to a gate: a halt the tree can answer is noise. Never fabricate unruled envelope facts.
+2. **`frame` cut reason + summary-mode conversion.** The v5 reason set (unperceived/too-fine/narrator-injection/modifier) named almost nothing that actually needed cutting on real dictation — the artifacts were frame-talk ("the story opens with," "In this video," "The End"), which had no reason code. Added `frame` + the rule: summary-mode dictation renders as scene, not report. Exception: author shorthand that works as free indirect ("same cycle") stays as the carrier.
+3. **Tense normalization, declared.** Dictation drifts tense; v5 was silent. Detect dominant tense; conform to a project ruling if one exists, else normalize to dominant and surface the choice as an open ledger question. Never re-tense a ruled line; leave the seam visible.
+4. **Ruled-line guard (DIR-014).** Sweep folder canon for author-ruled verbatim lines before synthesis; carry byte-exact; ledger-list under "Ruled lines — preserved"; collisions flag, never fix. (Pass 1 re-tensed a ruled blind-read line — caught in evaluation; the guard exists so it can't recur.)
+5. **Two-lane garble policy.** Mechanical single-reading STT errors (`unkept`→`unkempt`) fix silently, reason `mechanical`; meaning-splitting garbles (`layer`/`lair`) keep the dictated form and ask. A rescue may ask a question; it may never make a decision.
+6. **Intentional-repetition exception** to the shortest-form challenge: a repeated structure that carries escalation/ritual/ear-order (the swipe-refusal loop) is payload — compress within each repeat, never across the run. Load-bearing for audio-first shorts.
+7. **Capture-then-tag inversions (added same day, from CRE's own account of his mic process).** Forward-only dictation invents content first and labels it after — *"Everything is terrible, the next title"* ("I see it in real time, I capture and tag"). A trailing appositive naming the just-spoken span is a tag, not narration: never cut as frame, never read as garble; fold into reading order or keep the inversion where it carries rhythm; reattach a drift-separated tag to its content before flagging anything as garbled. First suspect on any garbled span containing a naming word (title/caption/called/tagged) — the EP 01 "It's titled, still, avoiding…" span was exactly this.
 
 ## When to use
 

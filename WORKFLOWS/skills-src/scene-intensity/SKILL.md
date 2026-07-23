@@ -30,6 +30,14 @@ in `reference/scene-intensity-rubric.md`. Read it before scoring a new project.
 1. **Segment.** Cut the chapter into scenes — a new scene starts at a shift in POV,
    time, or location, or an explicit break. Cross-cut threads = separate scenes.
 
+   **Single-location / screen-mediated stories (2026-07-22, from the EP 01 DOOMSCROLLER
+   run):** the mechanical rule collapses when one POV never leaves one room (a
+   doomscroll story, a phone-call story, found-footage). When the project has ruled
+   that the perceptual envelope IS a feed/screen, treat **each served item + its
+   real-world aftermath as one scene** — the clip is a location shift in the world the
+   reader actually inhabits — plus every physical move (window, yard, power-down) as
+   its own boundary. State the convention in the report so reruns segment identically.
+
 2. **Score the judgment dims** for each scene, with a quote/count as evidence
    (0–3 each):
    - **D1 Stakes** — risk to the POV or a *bound* party (kin/ward/ally), present on the page.
@@ -63,6 +71,44 @@ in `reference/scene-intensity-rubric.md`. Read it before scoring a new project.
    (monotony), a long BUILD run with no REST/PEAK (the sag), and wide local↔reader gaps
    (scenes running on earned dread). At work level, chart per-chapter median + peak +
    mean dread-gap.
+
+   **Check ruled intent before reporting a contour defect (DIR-011, 2026-07-22).** A
+   missing PEAK or a deep valley is only a *defect* if the author didn't rule it. Before
+   flagging, sweep the project's own canon — runway close rules, premise register flags,
+   rulings blocks. EP 01's contour has no PEAK on either track; its runway rules "ends
+   flat on the wrong fact — no punishment scene," so the correct verdict was **"matches
+   ruled design — confirm,"** not a climax defect. Same for a valley the premise placed
+   on purpose (a silence beat rendered at REST). Report the mechanical lever anyway
+   (what would move the band) so the author rules with the tradeoff visible.
+
+## Calibrate mode (v2.2, 2026-07-22) — build the config from the material, gated
+
+Trigger: "build the intensity config" / "calibrate the intensity config" / "calibrate the rubric for <project>". Two legs, then a gate:
+
+1. **Deterministic leg:** `python scene_intensity.py calibrate <scenes.json> [more.json ...] [--out path]`
+   scans every scene's prose, measures the somatic-density and fragment-fraction
+   distributions, and proposes `d5_bins`/`d6_bins` **only where a real cluster gap
+   exists** — it refuses on small/uniform corpora and warns when an "upper cluster"
+   is a single scene. The proposal embeds its full `_evidence` block (corpus, n,
+   distributions, notes) so the config carries its own cause (DIR-013: a ruling is
+   contingent on its cause). It never proposes `band_edges` or `weights` — those move
+   only via hand-scored anchor scenes. It never overwrites an existing config
+   without `--force`: **a ratified config is frozen.**
+2. **Judgment leg (you):** audit the proposal against known register anchors before
+   adopting. The trap is noise-slicing: a body-quiet corpus with no crisis cluster
+   will yield "gaps" inside the calm band that score calm scenes hot (first live run:
+   EP 01's max density 2.4/250 is calm-range; the auto-fit 0.69/1.9 edges were
+   rejected and witchwood-inherited bins adopted instead). Also propose
+   `somatic_extra` candidates you noticed while reading — body-signal vocabulary the
+   base lexicon misses. Record every amendment in a `_judgment_note`.
+3. **Gate:** the author ratifies; the config lands in the work folder as
+   `intensity_config.json` with `_status`, `_judgment_note`, `_evidence`, and a
+   `revisit_when` condition. Unattended runs propose only (DIR-012).
+
+**Circularity guard:** never re-fit the config inside a scoring run, and never
+calibrate from a single work then treat its contour as validated — bands fitted to
+one story make every story look well-shaped. Recalibrate only over the project's
+full scored corpus, on the `revisit_when` trigger, deliberately.
 
 ## Calibrating a new project
 

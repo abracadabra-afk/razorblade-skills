@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-22T12:00:08.7020403-07:00",
+    "generated":  "2026-07-23T12:00:07.6577091-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -96,9 +96,9 @@
                    {
                        "name":  "dictation-cleanup",
                        "package":  "WORKFLOWS/skills/dictation-cleanup.skill",
-                       "sha256":  "7e2e5b370ee1f6d5f5b38bfa782f15c4ec2f7328a7b66b1195ed6e1a77b3598b",
-                       "content_sha256":  "f2efa6513d315f4ceed55cb6baccc1b21af98710c47ed091828a97f90d233c77",
-                       "bytes":  3365
+                       "sha256":  "6a66896078b64d997cbbf91227851ebaa40343b45c03ef909e3c5beff8c69a1a",
+                       "content_sha256":  "6836c261fa31432176f2dab726b1c553913c8ed988768c3d2835342cfb54249a",
+                       "bytes":  4813
                    },
                    {
                        "name":  "dictation-preflight",
@@ -110,9 +110,9 @@
                    {
                        "name":  "dictation-transcoder",
                        "package":  "WORKFLOWS/skills/dictation-transcoder.skill",
-                       "sha256":  "5044aa3cc7e0cecde8b447d9ce0889e9d6bd7daa1a5af67d7664267a2bdea822",
-                       "content_sha256":  "4b6fe2a90f39aef623f28f3b50d8adc9b5f3f11966e976c599115c4c62edc64b",
-                       "bytes":  8391
+                       "sha256":  "9b3b2d0afb0d0c3cfab63fc6e43edbf64a1bfe7ce74c79569b6e624cf7f3d2ab",
+                       "content_sha256":  "a0d75b684ce06823b60d857afbbb32ee30b00af3f35f85882773670f8b697941",
+                       "bytes":  10656
                    },
                    {
                        "name":  "file-inbox",
@@ -201,9 +201,9 @@
                    {
                        "name":  "scene-intensity",
                        "package":  "WORKFLOWS/skills/scene-intensity.skill",
-                       "sha256":  "55869893fe8e81d0260fdf887a117d919341eb7fd08485be86715e665bc6dbb7",
-                       "content_sha256":  "e02639c62771bebdad0b6ff0f6a0ef81218fd893daf8a293a2a534eb87e6ca82",
-                       "bytes":  18805
+                       "sha256":  "f1c59a690ac4f4ea98dff7bf7d44686e29b167197d29ab663d5f1e60039f3817",
+                       "content_sha256":  "419bcb3f12b75c0fd7e81a1072bdcc25bc35573aad48a468ad190a8aa057c6c2",
+                       "bytes":  22282
                    },
                    {
                        "name":  "skill-audit",

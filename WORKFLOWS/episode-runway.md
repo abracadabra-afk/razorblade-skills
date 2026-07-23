@@ -5,6 +5,7 @@ status: spec — run by hand/in chat; graduates to a packed skill after 2–3 li
 triggers: ["workshop this episode", "run the episode gate", "build the episode runway", "gate this premise"]
 lane: 5 (writing-ops) + 1 (fiction)
 created: 2026-07-13
+amended: 2026-07-23 — v2, CRE-ruled off the EP 01 live run. Pass 1 (the gate) moved to [[WORKFLOWS/episode-init]] at conception; Pass 2 repositioned post-synthesis and re-specced to the lightweight carve (design principle D, EP 01 chad's notes §D); transcoder + scene-intensity ruled INTO the route (overturning v1's exclusion); blind read moved post-slate. Folder convention v2 lives in episode-init.
 ---
 
 # episode-runway
@@ -25,19 +26,25 @@ A normal short-story workshop holds craft. This holds five things a craft worksh
 
 Canonical strategy: [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]]. Premise source: [[WRITING/SHORTS/PREMISES]].
 
-## Episode folder convention
+## Episode folder convention — v2 (moved)
+
+**The convention is now owned by [[WORKFLOWS/episode-init]]** (convention v2: adds `notes.md`, `envelope.md`, `dictation/`, `slate/` — the transcoder-route surfaces EP 01 grew organically). This doc's passes write into that folder; they no longer define it.
+
+## Pipeline position — the episode route v2
 
 ```
-WRITING/SHORTS/EPISODES/EP NN - <TITLE>/
-├── premise.md      Pass-1 output — knot · constraint · topical peg · TOS band · tier routing
-├── runway.md       Pass-2 output — the speaking outline CRE dictates from
-├── draft.md        CRE's dictated prose (cleaned via dictation-cleanup; NEVER authored here)
-└── production.md   Pass-3 output — title · thumbnail line · description + content advisories · tier · publish slot · Short-cut spec · series/playlist slot · paid author's-note flag
+S0 feeling capture → S1 episode-init (gate + scaffold) → S2 sit (notes.md) →
+S3 episode-feedback → S4 RUNWAY CARVE (this doc, Pass 2) →
+S5 drafting engine: mic → runner → cleanup → transcoder → scene-intensity → land draft.md →
+S6 finish arc: blind read → dev fixes → register pass → CRE's passes →
+S7 PASS 3 (this doc) → production.md
 ```
 
 ---
 
-## Pass 1 — THE GATE (idea stage, *before* a word is drafted)
+## Pass 1 — THE GATE *(moved to episode-init, v2)*
+
+> **v2 (2026-07-23):** the gate now runs inside [[WORKFLOWS/episode-init]] at conception — one trigger takes an idea from feeling to gated, scaffolded folder. **The tables below remain the canonical constraint reference** the builder executes; they are kept here, not duplicated there.
 
 **Input:** CRE talks the idea. Anything — a premise line, a fragment, an image, a `PREMISES.md` entry.
 
@@ -70,18 +77,20 @@ WRITING/SHORTS/EPISODES/EP NN - <TITLE>/
 
 ---
 
-## Pass 2 — THE RUNWAY (the artifact CRE dictates from)
+## Pass 2 — THE RUNWAY CARVE (v2: runs at S4, *after* the sit + episode-feedback synthesis)
 
-Structure only. **Zero prose.** Same discipline as `runway-builder`: each beat is a plain action line plus GOAL → BUT → THEREFORE. If a line could be read aloud in the finished story, it does not belong in the runway.
+> **Timing re-ruled (v2):** v1 built the runway immediately after the gate; EP 01 proved that's too early — CRE's thinking kept developing through the sit and three feedback runs, and the heavy runway had to be carved down to speaking shape afterward. v2 builds it **once, late, lightweight**, from the settled premise.
 
-`runway.md` carries:
+**Format: the carve (design principle D — EP 01 `chad's notes.md` §D, CRE-ruled 2026-07-21).** The runway is a **flow kickstarter, not a spec**:
 
-- **Flow conditions block** — POV, tense, the narrating voice, who's in the room, what the reader is allowed to know and when.
-- **The anomaly-line slot** — the cold open is CRE's sentence. The runway holds `[ANOMALY LINE — CRE]` and states the **wrong fact** the line must land, flat, in sentence one. **The gate does not write the line.** It can restate the premise's own wrong fact back to CRE (his words, from `PREMISES.md`) as the thing the line must carry.
-- **Logic beats** — the forensic spine, GOAL → BUT → THEREFORE, front to back.
-- **The ear-first constraints, as flow conditions** (see below).
-- **The turn** — the beat where the knot breaks or holds.
-- **Word budget per movement** — so the 2,000–2,800 container is hit by dictating, not by cutting afterward. (At CRE's 5,000+/hr dictation pace, the runway *is* the container control — the budget lines carry the whole discipline.)
+- **One-line summary** of the story at the top (the settled spine, from the amended premise).
+- **Movements, not beat trees** — `m1…mN`, each **one memorizable sentence** + a word budget `(~450)`. Portable: CRE must be able to read a beat on a walk and work it in his head. GOAL → BUT → THEREFORE is derivation discipline, not shipped format — if it can't collapse into the one sentence, the movement isn't settled yet.
+- **Word budget per movement** — the 2,000–2,800 container is hit by dictating, not by cutting afterward. At CRE's 5,000+/hr pace, the budget lines carry the whole container discipline.
+- **The opener slot** — the anomaly line is CRE's sentence; the runway banks his candidate verbatim if one exists (`Opener you banked: "…"`), else holds `[ANOMALY LINE — CRE]` + the wrong fact it must land.
+- **Ear-first flags** (block below) — carried as flags on the relevant movements, not as a wall of instructions. Embedded instruction is implicit distrust and costs flow.
+- **Zero prose, still.** If a line could be read aloud in the finished story, it does not belong in the runway.
+
+**The runway is spent the moment dictation starts.** Divergence is a win; **nothing downstream may grade the draft against the runway** — every later pass reconciles against the draft. The one thing that should survive divergence is the *feeling*, and CRE notices that at the mic, not a pass.
 
 ### The ear-first constraint block (the thing a normal workshop never checks)
 
@@ -95,9 +104,9 @@ The story is **narrated solo by its author**, with little to no dialogue. So the
 
 ---
 
-## Pass 3 — THE CHECK (after CRE dictates)
+## Pass 3 — THE CHECK (v2: runs at S7, after the finish arc)
 
-Runs on `draft.md` **after** dictation (and after `dictation-cleanup`, which is word-preserving). Diagnostic only — **it flags, CRE fixes.**
+Runs on the **finished** `draft.md` — after the drafting engine (mic → runner → cleanup → **transcoder** → **scene-intensity** → expansion/compression → land) and the finish arc (blind read → dev fixes → register pass → CRE's passes). Diagnostic only — **it flags, CRE fixes.** First live run owed: EP 01 (`^backlog-ep01-tos-rerule` is exactly this pass's item 5).
 
 1. **Cold open test** — is sentence one **both flat and wrong**? Flat-but-not-wrong = setting. Wrong-but-not-flat = the narrator is doing the reader's work (register violation).
 2. **The never-open-with list** — waking up · weather · a room · name-and-job · backstory.
@@ -119,7 +128,9 @@ Runs on `draft.md` **after** dictation (and after `dictation-cleanup`, which is 
 
 ## Relationship to the rest of the OS
 
-- **Upstream:** [[WRITING/SHORTS/PREMISES]] (the feed) · [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]] (the constraints)
-- **Sibling:** [[WORKFLOWS/runway-builder]] (chapters) — same architecture, novel-scale
-- **Downstream:** [[WORKFLOWS/dictation-cleanup]] (word-preserving polish of the dictated draft)
-- **Not this:** `workshop-chapter` (novel chapters, read-only) · `dictation-transcoder` (generative slate — **deliberately not in this route**; CRE's episode prose is dictated, cleaned, and published as his)
+- **Upstream:** [[WORKFLOWS/episode-init]] (S1 gate + scaffold; owns the folder convention) → the sit → [[WORKFLOWS/episode-feedback]] (S3 synthesis)
+- **Constraints canon:** [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]]
+- **Sibling:** [[WORKFLOWS/runway-builder]] (chapters) — same derivation discipline, novel-scale; note the episode carve is deliberately lighter (no continuity debt)
+- **Downstream (the drafting engine, sequential):** [[WORKFLOWS/dictation-runner]] → [[WORKFLOWS/dictation-cleanup]] (word-preserving; the "telling" preserved) → [[WORKFLOWS/transcoder]] (**ruled INTO the route, CRE 2026-07-23** — "critical; it turns my telling the story to myself into prose"; v5.1 episode mode, envelope derives from the carved runway at slate time) → `scene-intensity` on the slate (expansion/compression contour; re-runnable, so it precedes the one-shot blind read) → land `draft.md` (single editable copy; landing retires the source transcript)
+- **Finish arc (post-slate):** `blind-read` (one-shot, spent on prose) → dev fixes (CRE-ruled) → register pass against `WRITING/SHORTS/REFERENCE/register.md` (v1 built 2026-07-23; CRE-ratify pending, `^backlog-wiw-register`) → CRE's passes → back here for Pass 3
+- **Not this:** `workshop-chapter` (novel chapters, read-only) · `canon-sync`/`storyline-sync`/`promote-revision`/`reconcile` (novel apparatus a short doesn't carry)

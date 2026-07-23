@@ -293,6 +293,12 @@ def cmd_score(a):
         terms = BASE_SOMATIC + list(cfg.get("somatic_extra", []))
         cfg["_somatic_re"] = re.compile(r"\b(?:%s)\b" % "|".join(terms), re.I)
         cfg["_max_raw"] = sum(w * 3 for w in cfg["weights"].values())
+        # provenance fix (2026-07-22): the merge branch never updated _source, so the
+        # banner claimed "built-in defaults" while a per-file config was silently live.
+        # A silent fallback/misreport is worse than a crash (DIR-013) — name the source.
+        base = cfg.get("_source")
+        cfg["_source"] = ("per-file config block in %s" % a.path) + (
+            " (over %s)" % base if base else "")
     recs = [score_scene(s, cfg) for s in data["scenes"]]
     print("# config: %s" % cfg.get("_source", "built-in defaults"))
     print("# bands: " + "  ".join("%s<%g" % (n, e) for n, e in zip(cfg["band_names"], cfg["band_edges"] + [100]))
@@ -302,6 +308,84 @@ def cmd_score(a):
         print(emit_yaml(r, cfg)); print()
     print("# --- contour ---")
     print(contour(recs))
+
+def _gap_edges(vals, lo_label, hi_label):
+    """Sort values, find the two largest gaps, propose bin edges at gap midpoints.
+    Returns (edges, note). Small-corpus honest: if a gap structure isn't there
+    (uniform spread, or too few points), say so instead of inventing edges."""
+    v = sorted(vals)
+    n = len(v)
+    if n < 4 or v[-1] - v[0] < 1e-9:
+        return None, "corpus too small/uniform (%d scenes, range %.2f-%.2f) — keep defaults" % (n, v[0] if v else 0, v[-1] if v else 0)
+    gaps = [(v[i + 1] - v[i], (v[i] + v[i + 1]) / 2.0) for i in range(n - 1)]
+    gaps.sort(reverse=True)
+    g1, g2 = gaps[0], (gaps[1] if len(gaps) > 1 else None)
+    spread = v[-1] - v[0]
+    if g1[0] < spread * 0.25:
+        return None, "no clear cluster gap (largest gap %.2f over spread %.2f) — keep defaults" % (g1[0], spread)
+    edges = sorted([round(g1[1], 2)] + ([round(g2[1], 2)] if g2 and g2[0] >= spread * 0.15 else []))
+    note = "edge(s) placed in measured gap(s); %s cluster %.2f-%.2f, %s cluster %.2f-%.2f" % (
+        lo_label, v[0], max(x for x in v if x < edges[0]),
+        hi_label, min(x for x in v if x > edges[-1]), v[-1])
+    upper = [x for x in v if x > edges[-1]]
+    if len(upper) < 2:
+        note += "; WARNING: upper cluster is a single scene — edge statistically unreliable, judgment leg must audit against known register anchors before adopting"
+    if len(edges) == 1:
+        note += "; SECOND edge unexercised in this corpus (bimodal) — provisional, keep default upper edge"
+    return edges, note
+
+def cmd_calibrate(a):
+    """Evidence-first config proposal from one or more scenes.json corpora.
+    Mechanical bins only (d5/d6) — band_edges and weights move ONLY via
+    hand-scored anchor scenes (the judgment layer + the author), never here.
+    Never overwrites an existing config without --force: a ratified config is
+    frozen (re-pin is a deliberate act, not a side effect of rescoring)."""
+    cfg = load_config(a.config)
+    dens, frags, dlg, corpus, n = [], [], [], [], 0
+    for path in a.paths:
+        data = json.load(open(path, encoding="utf-8"))
+        for s in data.get("scenes", []):
+            if not s.get("prose"):
+                continue
+            m = mechanical_dims(s["prose"], cfg)["metrics"]
+            dens.append(m["somatic_per_250"])
+            frags.append(m["narration_fragment_pct"] / 100.0)
+            dlg.append(m["dialogue_pct"] / 100.0)
+            n += 1
+        corpus.append(os.path.basename(path))
+    if n == 0:
+        print("calibrate: no scenes with prose found", file=sys.stderr); return 2
+    d5_edges, d5_note = _gap_edges(dens, "calm", "crisis")
+    d6_edges, d6_note = _gap_edges(frags, "ruminative", "staccato")
+    prop = {
+        "_status": "proposed — author ratifies; frozen after ratify (re-pin deliberately, never auto)",
+        "_evidence": {
+            "date": __import__("datetime").date.today().isoformat(),
+            "corpus": corpus, "n_scenes": n,
+            "somatic_per_250": [round(x, 2) for x in sorted(dens)],
+            "narr_frag_frac": [round(x, 3) for x in sorted(frags)],
+            "dialogue_frac": [round(x, 3) for x in sorted(dlg)],
+            "d5_note": d5_note, "d6_note": d6_note,
+            "band_edges_note": "NOT auto-fit — edges move only via hand-scored anchor scenes (rubric: place edges in gaps between anchor clusters, then keep fixed)",
+        },
+    }
+    if d5_edges:
+        bins = [[d5_edges[0], 1]] + ([[d5_edges[1], 2]] if len(d5_edges) > 1 else [[DEFAULTS["d5_bins"][1][0], 2]])
+        prop["d5_bins"] = bins
+    if d6_edges:
+        bins = [[d6_edges[0], 1]] + ([[d6_edges[1], 2]] if len(d6_edges) > 1 else [[DEFAULTS["d6_bins"][1][0], 2]])
+        prop["d6_bins"] = bins
+    if max(dlg) >= DEFAULTS["dialogue_dominated_frac"]:
+        prop["_evidence"]["dialogue_note"] = "max dialogue share %.2f — re-fit dialogue_dominated_frac against a calm-talky anchor" % max(dlg)
+    out = a.out or "intensity_config.json"
+    if os.path.exists(out) and not a.force:
+        print("calibrate: %s already exists — a ratified config is frozen; use --force to re-pin" % out, file=sys.stderr)
+        print(json.dumps(prop, indent=2))
+        return 1
+    json.dump(prop, open(out, "w", encoding="utf-8"), indent=2)
+    print("# proposed config written to %s (status: proposed — ratify before relying on it)" % out)
+    print(json.dumps(prop, indent=2))
+    return 0
 
 def cmd_initcfg(a):
     print(json.dumps(DEFAULTS, indent=2))
@@ -358,6 +442,13 @@ def cmd_selftest(a):
                        "juxtaposition_dread": True, "juxtaposition_source": "off-page death of a bound party"}, cfg)
     check("juxtaposition_dread surfaces without changing band",
           jxr.get("juxtaposition_dread") is True and jxr["reader_band"] == jxr["band"])
+    # calibrate: bimodal data -> edge in the gap; uniform/small data -> refuse
+    e_bi, _ = _gap_edges([1.5, 1.7, 2.0, 1.8, 9.5, 10.2], "calm", "crisis")
+    check("calibrate: bimodal corpus places an edge inside the gap",
+          e_bi is not None and 2.0 < e_bi[0] < 9.5)
+    e_uni, note_uni = _gap_edges([1.0, 1.1, 1.2], "a", "b")
+    check("calibrate: small/uniform corpus refuses to invent edges",
+          e_uni is None and "defaults" in note_uni)
     print("\nSELFTEST:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -366,12 +457,14 @@ def main():
     sub = ap.add_subparsers(dest="cmd")
     p = sub.add_parser("metrics"); p.add_argument("path"); p.add_argument("--config")
     p = sub.add_parser("score");   p.add_argument("path"); p.add_argument("--config")
+    p = sub.add_parser("calibrate"); p.add_argument("paths", nargs="+"); p.add_argument("--config"); p.add_argument("--out"); p.add_argument("--force", action="store_true")
     sub.add_parser("init-config")
     sub.add_parser("init")
     sub.add_parser("selftest")
     a = ap.parse_args()
     if a.cmd == "metrics": cmd_metrics(a)
     elif a.cmd == "score": cmd_score(a)
+    elif a.cmd == "calibrate": sys.exit(cmd_calibrate(a))
     elif a.cmd == "init-config": cmd_initcfg(a)
     elif a.cmd == "init": cmd_init(a)
     elif a.cmd == "selftest": sys.exit(cmd_selftest(a))

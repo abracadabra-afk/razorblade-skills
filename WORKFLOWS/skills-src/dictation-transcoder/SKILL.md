@@ -3,7 +3,9 @@ name: dictation-transcoder
 description: Convert raw dictation into a clean rough-draft slate of close third-person prose. This is the **generative** stage of fiction dictation cleanup — Cut detail to the character's perceptual envelope, then Synthesize the survivors into compressed prose. Use this skill whenever the user asks to "slate this dictation," "transcode this," "run the slate," "transcoder v5," "slate it," or otherwise asks for rough-draft prose to be produced from a raw speech-to-text transcript inside a vault that uses the per-chapter folder convention (envelope.md + dictation/ + slate/). Use even if the user only says something like "turn this dictation into a draft" or "give me the slate for chapter X." Do NOT use for polishing already-drafted prose, copy-editing, or revision — that is the protective downstream pass (dictation-cleanup). If the user asks for word-preserving cleanup, route there instead.
 ---
 
-# Dictation Transcoder (v5)
+# Dictation Transcoder (v5.1)
+
+> v5.1 (2026-07-22): standalone/episode mode; `frame` + `mechanical` cut reasons; tense normalization; ruled-line guard (DIR-014); garble policy; intentional-repetition exception. Amended off the EP 01 DOOMSCROLLER live test — see `WORKFLOWS/transcoder.md` changelog.
 
 You are converting raw dictation into a clean first draft of close third-person prose. This is **pre-prose becoming a draft**, not a draft becoming polished. You are therefore **generative**: you may rewrite, fuse, and regenerate clean sentences. You are not protecting the author's wording — the author was talking, not writing, and expects to receive prose, not their transcript marked up.
 
@@ -43,7 +45,9 @@ You cannot run without these. If either is missing, stop and ask before doing an
 └── revisions/        one-way door out of this workflow; never read
 ```
 
-If the user gave you a chapter name without a path, search the vault for a folder matching it that contains `envelope.md`. If multiple match, ask. If none match, the project hasn't adopted the per-chapter folder convention — do not fabricate one; tell the user and stop.
+If the user gave you a chapter name without a path, search the vault for a folder matching it that contains `envelope.md`. If multiple match, ask.
+
+**Standalone/episode mode (v5.1).** If the target folder does not follow the convention (an episode/short folder, or any folder the user explicitly pointed you at), do NOT refuse outright. Check whether the project's own canon already rules the envelope facts — a runway ruled-facts table, a premise sheet, a decisions ledger, dated rulings blocks in the folder. If it does: derive `envelope.md` from those rulings **with provenance on every segment** and a `status: derived — author confirms` header, create `slate/`, and proceed (attended runs only — unattended, defer per DIR-012). This is DIR-011 applied to the gate: a halt the tree can answer is noise. If the canon does NOT rule the envelope facts, the original rule stands — never fabricate an envelope; tell the user and stop.
 
 **2. The perceptual envelope.** Read `<chapter>/envelope.md`. It states:
 
@@ -51,7 +55,7 @@ If the user gave you a chapter name without a path, search the vault for a folde
 - **In what conditions** (place, weather, light, time)
 - **In what state** (what they're doing, carrying, suffering — what consumes their attention)
 
-The envelope is the test the Cut operation runs against. Without it you have nothing to test, so do not guess one. If `envelope.md` is missing or empty, halt and ask.
+The envelope is the test the Cut operation runs against. Without it you have nothing to test, so do not guess one. If `envelope.md` is missing or empty, halt and ask — unless standalone/episode mode (above) can derive it from ruled canon with provenance.
 
 **3. The dictation file.** From `<chapter>/dictation/`, pick the **newest file by mtime** that does not yet have a matching `<chapter>/slate/YYYY-MM-DD-NN/` produced from it. Name the file you picked in your output so a misfire is immediately visible. If the dictation file points at a specific envelope segment in its own header or frontmatter, respect that pointer.
 
@@ -81,6 +85,24 @@ Do not segment by maturity — only by envelope. Every segment is equally rough.
 
 ---
 
+## Dictation-mode artifacts (v5.1) — handle before and during the Cut
+
+The EP 01 live test showed the four perceptual reason codes can cover *none* of what a real dictation needs cut. Four artifact classes recur in any spoken draft; each has a rule:
+
+**1. Frame-talk → cut, reason `frame`.** Story-about-story narration: "Okay, so the story opens with…", "In this video…", "cut to…", "The End", mid-dictation self-repairs ("considers, or had considered"), and stage-direction summary. Related: **summary-mode dictation** ("we see X do Y", "the story shows…") converts to scene — render the event, never the report of the event. The author was pitching to the mic; the reader gets the movie, not the pitch. Exception: if the author's shorthand phrase itself works as free indirect voice in POV (EP 01's "same cycle"), keep it as the carrier and note it in the ledger — his words doing the work beat invented narration.
+
+**2. Tense drift → normalize, and declare.** Dictation drifts between present and past. Detect the dominant tense. If the project has ruled tense, conform to the ruling. If the ruling is open, normalize to the dominant tense, state the choice in the clean-draft frontmatter, and list it as an open question in the ledger. Never re-tense a ruled line (see the ruled-line guard below); where normalized narration meets a ruled line in the other tense, leave the seam visible and surface it — a visible seam is the author's decision to make, an invisible one is a decision you made for him.
+
+**3. Capture-then-tag inversions (forward-only dictation) → reattach, don't flag.** The author dictates in one direction while watching the story in real time, so invented content often arrives BEFORE its label: *"Everything is terrible, the next title."* — content first, tag after (vs. written order: "The next title: Everything Is Terrible."). CRE's own description: *"I see it in real time, I capture and tag."* Rules: (a) a trailing appositive that labels the span just spoken ("…, the next title", "…, the caption", "…, he calls it", "…, that was the thumbnail") is a **tag, not narration** — never cut it as frame and never read it as garble; (b) fold the tag into reading order where the reader needs the label, OR keep the inversion verbatim when it carries rhythm (content-then-tag is often the stronger beat — it makes the reader see it in real time too); note the call in the ledger either way; (c) when narration drift separates a tag from its content (the tag lands a clause late, tangled with the next sentence), **reattach it to its content** and re-read the tangled span with the tag removed — what remains is usually clean narration, not garble. This pattern is the first suspect on any "garbled" span that contains a naming word (title, caption, called, tagged).
+
+**4. STT garbles → two-lane policy.** *Mechanical* garbles with exactly one plausible reading ("unkept" → "unkempt", "worse of all" → "worst of all") fix silently, logged with reason `mechanical`. *Meaning-splitting* garbles — homophones or displaced phrases where two readings both parse ("layer" / "lair") — keep the dictated form in the draft and surface the choice as a ledger question. A rescue may ask a question; it may never make a decision (DIR-014). A displaced comma or garble on a **load-bearing climax line** is always flag-don't-fix.
+
+## Ruled-line guard (v5.1, DIR-014)
+
+Before synthesis, sweep the chapter/episode folder's own canon — premise, runway, blind-read resolution blocks, notes, rulings tables — for lines the author has **ruled verbatim** (e.g., a blind-read flag resolved "applied to draft.md verbatim"). Carry every such line into the slate **byte-exact**: never cut, re-tense, compress, or "improve" it. List them in the ledger under "Ruled lines — preserved." If a ruled line collides with a register invariant or the tense choice, flag the collision — do not resolve it.
+
+---
+
 ## Operation 1 — Cut to the perceptual envelope
 
 Run one test on every span, down to the modifier level: **would this character perceive or register this detail, here, in this exact moment?**
@@ -104,6 +126,8 @@ Work on what remains after the cut. Find clusters — runs of adjacent spans ser
 1. **Extract the payload.** Ask: what is this trying to tell the reader? State it in one plain phrase ("movement is brutally obstructed"; "the boy is fragile but still alive").
 2. **Draft a carrier** — one image or sentence delivering that payload. You may invent language; that is the point of this step.
 3. **Challenge it against its shortest viable form.** Before accepting any carrier, ask: can this payload survive one fewer beat? If the carrier still has two clauses doing the same job (two near-synonymous assaults, two ways of saying "buried"), it has not been compressed — it has been thinned. Cut to the single sharpest instance and keep cutting until removing one more beat would lose payload. More verbs do not mean more force; past a point they blunt it. Default suspicion: a multi-clause carrier is one clause too long until proven otherwise.
+
+   **Exception — repetition that IS the payload (v5.1).** When a repeated structure carries escalation, ritual, or ear-order (a swipe-refusal loop, an incantation, a knock repeated), the repetition is the communicative function — flattening it to one instance destroys the payload. Keep the run, apply the shortest-form challenge *within* each repeat instead of across them, and note the kept repetition in the ledger. Audio-first material leans on this hard: a listener cannot glance back, so pattern is how the ear holds order.
 
 **Governing value, in order:** payload-fidelity first, economy second, concrete/visual language third. Concreteness is a preference, not a law — if an abstract gauge ("a hundred times harder") carries the payload more economically than a literal image, take it. Do not over-prune a phrase for being non-visual when it is doing the work.
 
@@ -172,7 +196,7 @@ Where the register-repair direction was genuinely ambiguous and you produced bot
 
 ### `cut-log.md`
 
-Each cut span and the one-word reason it failed the envelope. One per line. Reasons: `unperceived`, `too-fine`, `narrator-injection`, `modifier`. Terse. This is so the author can re-add anything load-bearing on the next dictation.
+Each cut span and the one-word reason it failed the envelope. One per line. Reasons: `unperceived`, `too-fine`, `narrator-injection`, `modifier`, `frame` (dictation meta-narration, v5.1), `mechanical` (single-reading STT fix, v5.1). Terse. This is so the author can re-add anything load-bearing on the next dictation.
 
 ```
 - "the black ice glinting on the threshold" — too-fine
@@ -215,7 +239,7 @@ The slate is the proposal. The author owns the judgment calls that act on it.
 
 - **Vault sentinel fails** (Step 0). Halt. Ask which folder is the vault.
 - **No envelope provided** or `envelope.md` is empty. Halt. Ask for the envelope.
-- **Chapter folder doesn't follow the convention** (no `envelope.md`, no `dictation/`, no `slate/`). Halt. Tell the user the project hasn't adopted the per-chapter folder convention and ask whether they want to fall through to a word-preserving cleanup pass (dictation-cleanup) instead.
+- **Chapter folder doesn't follow the convention AND no ruled canon can derive the envelope** (standalone/episode mode inapplicable). Halt. Tell the user, and ask whether they want to fall through to a word-preserving cleanup pass (dictation-cleanup) instead.
 - **Cluster meaning is genuinely unrecoverable.** Don't guess — surface to the synthesis ledger with an explicit "unrecoverable from cluster, author judgment needed" note, and continue past it.
 
 ---

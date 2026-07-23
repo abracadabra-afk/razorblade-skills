@@ -11,7 +11,7 @@ created: 2026-07-16
 
 The **author's-feedback reconciliation pass** for the Writing Is War episode battery. Takes CRE's notes file in the episode folder (`chad's notes.md` or `notes.md`), reconciles it against the gated `premise.md` + `runway.md`, and — **after CRE rules** — writes the sharpened artifacts back with provenance. Concepts in, concrete storytelling out; the episodic shape exits tight.
 
-**Position: Pass 2.5** — between the runway build (Pass 2) and dictation. Architecturally it is the episode-lane sibling of `blind-response` (two-phase gated response pass) crossed with `reconcile` (the ruling walk). It exists because CRE's thinking keeps developing after the artifacts land: without a sanctioned pass, his notes either sit unreconciled (the runway drifts stale) or get folded in silently (ratified rulings overwritten without anyone noticing). This pass makes every collision explicit and the sharpening cheap.
+**Position: S3 in the episode route v2** *(re-slotted 2026-07-23 — was "Pass 2.5, between runway and dictation")* — between the sit-with-it period (S2, notes accumulating in `notes.md`) and the runway carve (S4). In v2 the runway is built **after** this synthesis, from the settled premise — so this pass's primary write target is `premise.md`; a `runway.md` exists at this stage only on a re-run after the carve. Architecturally it is the episode-lane sibling of `blind-response` (two-phase gated response pass) crossed with `reconcile` (the ruling walk). It exists because CRE's thinking keeps developing after the artifacts land: without a sanctioned pass, his notes either sit unreconciled (the runway drifts stale) or get folded in silently (ratified rulings overwritten without anyone noticing). This pass makes every collision explicit and the sharpening cheap.
 
 ## The authority rule (the design principle)
 
@@ -53,8 +53,8 @@ Segment the notes. Route every item into one of three bins:
 
 ## Relationship to the rest of the OS
 
-- **Upstream:** [[WORKFLOWS/episode-runway]] Passes 1–2 (the artifacts this amends)
-- **Downstream:** dictation → [[WORKFLOWS/dictation-cleanup]] → episode-runway Pass 3
+- **Upstream:** [[WORKFLOWS/episode-init]] (S1 — gate + scaffold; `premise.md` carries the ratified rulings) → the sit (S2)
+- **Downstream:** [[WORKFLOWS/episode-runway]] v2 Pass 2 (the S4 carve, built from the premise this pass settles) → the drafting engine (mic → runner → cleanup → transcoder → scene-intensity) → the finish arc → Pass 3
 - **Siblings (same two-phase gated architecture):** [[WORKFLOWS/spec-check]] (`blind-response`, `reconcile`) · [[WORKFLOWS/loop-clearer]]
 - **Not this:** `episode-runway` (builds the artifacts; this sharpens them) · `decision-helper` (general ledger — this pass's rulings live in the episode folder) · `workshop-chapter` (novel lane, read-only)
 
