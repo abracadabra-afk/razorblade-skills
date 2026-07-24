@@ -2,9 +2,9 @@
 type: workflow-reference
 name: pipeline
 purpose: The canonical description of how the fiction workflows chain — the pipeline-relationship canon carved out of _SKILLS MAP (2026-07-10 slim) so the boot payload stays lean. Load when doing fiction pipeline work.
-lane: fiction
+lane: fiction + writing-ops (episode route added 2026-07-23)
 status: active
-last_updated: 2026-07-10
+last_updated: 2026-07-23
 ---
 
 # The pipeline (how the fiction workflows chain)
@@ -22,3 +22,22 @@ dictation-preflight is the upstream prep (queued dictation → filled `envelope.
 ## Three REFERENCE checks for the revision lane (per project, archive salvage `^obs-053`)
 
 `register.md` = how to revise (authority) · `voice-spec.md` = the empirical voice fingerprint the prose should match (measured target) · `contamination-checklist.md` = the named AI failure modes to scan for at the generative steps (guard). voice-spec + contamination run as soft checks in register-pass Step 2.5 and the transcoder; both flag for CRE, neither overrides the register.
+
+---
+
+## The episode route (Writing Is War shorts) — v2, compiled 2026-07-23
+
+> The shorts sibling of the chapter pipeline above, compiled from the EP 01 DOOMSCROLLER live run. Canon per stage lives in [[WORKFLOWS/episode-init]] / [[WORKFLOWS/episode-feedback]] / [[WORKFLOWS/episode-runway]]; this table is the **what-do-I-say-and-when** reference. Register: `WRITING/SHORTS/REFERENCE/register.md`. What the route deliberately drops from the novel lane: brief/envelope-preflight, canon-sync, storyline-sync, promote-revision, reconcile — a short carries no continuity debt, which is also why **divergence from the runway is a win and nothing grades the draft against it.**
+
+| Stage | You say | What runs | What you get back |
+|---|---|---|---|
+| **S0 — feeling capture** | *(no trigger — dictate the feeling, or drop prose/ideas)* | `dictation-runner` files it; candidates land in `WRITING/SHORTS/CANDIDATES/<title>/triage.md`; premise lines in `PREMISES.md` | A felt-source transcript or a triaged candidate |
+| **S1 — gate + scaffold** | **"build episode N"** / "episode builder" | `episode-init` — the Pass-1 gate (knot·peg·TOS·tier·container) + folder scaffold. At the gate it can hand a fork to **"help me decide"** (decision-helper) or a stall to **"help me work through"** (work-through) | `EP NN` folder with gated `premise.md`; GO / RESHAPE / NOT-AN-EPISODE |
+| **S2 — sit** | *(nothing — time)* | You, in `notes.md` | Your notes, untouched by anything |
+| **S3 — synthesis** | **"reconcile my notes"** / "sharpen the episode" | `episode-feedback` — two-phase gated; collisions with your own gate rulings surfaced, never silently folded | Sharpened `premise.md` + rulings block |
+| **S4 — runway carve** | **"build the episode runway"** | `episode-runway` Pass 2 — the lightweight carve (one-line movements + word budgets + your banked opener) | Portable `runway.md` you dictate from |
+| **S5 — drafting engine** | mic → drop the audio; then **"clean up this dictation"** → **"slate this dictation"** → **"score scene intensity"** | runner → `dictation-cleanup` (the telling, word-preserving) → `dictation-transcoder` v5.1 episode mode (telling → close-third prose) → `scene-intensity` on the slate | Slate + intensity contour; you rule expansion/compression; ratified slate **lands as `draft.md`** (telling retires to `dictation/` — no live fork) |
+| **S6 — finish arc** | **"blind read"** (once, only ever on prose) → rule its flags → **"run the register"** → your passes | `blind-read` clean-room → CRE-ruled fixes → register pass against the WIW register → your read-aloud/edit passes | Revision in `revisions/` + editorial note; **you** land it into `draft.md` |
+| **S7 — production** | "run Pass 3" / "production check" | `episode-runway` Pass 3 — cold-open test, ear read, container, **TOS re-check → routing re-call**, Short-cut spec | `production.md` — title, advisories, tier, publish slot, Short cut |
+
+**Iron rules that ride the whole route:** the AI never writes your prose (anomaly line, beats, expansion — all yours) · tier/TOS/container move by your ruling, never by edit · the blind read is one-shot per story — spend it after the transcoder · `draft.md` is the sole editable copy once a slate lands · every pass reconciles against the draft, never the runway.
