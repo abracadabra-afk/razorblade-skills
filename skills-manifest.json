@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-28T07:49:40.0496666-07:00",
+    "generated":  "2026-07-28T12:00:07.9554083-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -54,9 +54,9 @@
                    {
                        "name":  "day-launch",
                        "package":  "WORKFLOWS/skills/day-launch.skill",
-                       "sha256":  "740fad85feae7e6ba31619bbfdb0840bdc214930cc9bdcdf6f14ee3aaaff0ae0",
-                       "content_sha256":  "9cec6e0270af03bb8d9fd0468cda4ec835d9f84e93d7c518ee0a93889bf58ab9",
-                       "bytes":  8368
+                       "sha256":  "ea82040af38510da20dba7f6f4973577e33928996fb2da2db00dddeeefac95bb",
+                       "content_sha256":  "691fb43d8d4379a9033a04880fc8860b7a7bfab73163e97e3c0e064dfb664333",
+                       "bytes":  9031
                    },
                    {
                        "name":  "decision-helper",
@@ -257,9 +257,9 @@
                    {
                        "name":  "week-shape",
                        "package":  "WORKFLOWS/skills/week-shape.skill",
-                       "sha256":  "e0e6e813d2d419c2feeda40e4e18ab6930ac152ea332f2db1d88622c42d692e6",
-                       "content_sha256":  "b6803e0413ad6e2bb9557777528ecbe422d7d66a5badbeb64a9912d89bcd557f",
-                       "bytes":  3470
+                       "sha256":  "3e6c1b17f2960537b715fcb9c9910f27dd6d067896e2b0be919bd0e8016b0713",
+                       "content_sha256":  "795816eb90d82d8d21c50304ed69fbd08c31ddfdd66fbc11ffe52b28388802fc",
+                       "bytes":  3921
                    },
                    {
                        "name":  "workshop-chapter",

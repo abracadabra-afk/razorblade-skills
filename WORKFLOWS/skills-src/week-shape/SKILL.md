@@ -34,6 +34,10 @@ Canonical doc: `WORKFLOWS/week-shape.md`. Spec: `LIFE/MENTAL HEALTH/ADHD Pattern
 5. **Seed `TASKS.md`.** Ratified items land under `## Active`, source-tagged `<!-- week-shape YYYY-MM-DD -->`, each phrased day-launch-ready (concrete, starting-action-shaped, one per work session where possible) and schema-tagged per `TASKS/TASK-SCHEMA.md` (`win:`, `#p`, `due:`; `#growth` on flagship marketing/readership/income items; `#quick` on obvious <10-min items). Update the `## This week` header block (week-of, lanes, milestones — the cascade order day-launch v2.1 pulls from). Verify by re-read.
 6. **Stop.** No notifications, no portfolio edits, no backlog dispatch, no second pass.
 
+## Unattended mode — propose-only (the `week-shape-runner` scheduled task, Sun ~18:00)
+
+Per DIR-012: **Steps 1–3 run; Steps 4–5 defer.** The derive pass writes its safe-ops (derived checks + receipts roll-up); the full proposal — chunk-supply seed included — lands rendering-visible as the `## This week` block in `TASKS.md`, stamped **`(PROPOSED — ratify at Monday's launch)`**, replacing the stale header. **NO Active items are seeded unattended.** Monday's board carries the standing `every:mon` "Ratify the week" task (`TASKS.md`, #p1 win:ops #quick — a first-class task on the normal recurrence machinery, so it reaches CRE even with every cadence unattended); day-launch's v2.9 staleness escalation is the backstop (same item, deduped). On CRE's attended one-pass go, the seeds land per Step 5 and the PROPOSED stamp drops. A quiet Sunday still writes the proposal — a fresh menu costs one block; a dead feeder costs a week (the 15-day starvation of 07-13→07-28 is the founding defect).
+
 ## Fortnight review hook
 
 Every ~2 weeks (rides the day-launch fortnight review): surface ONE receipts-based tuning as a proposal CRE ratifies ("themes that fit 3 afternoons ship; 5-afternoon themes stall"). Ratified findings append to the canon doc's changelog block.

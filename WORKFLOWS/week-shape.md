@@ -7,7 +7,7 @@ inputs: [TASKS/PORTFOLIO.md, TASKS/TASKS.md open items, TASKS/TODAY.md receipts 
 outputs: [TASKS/TASKS.md seeded with the week's items, a ratified week header block in TASKS/TASKS.md]
 lane: life
 status: draft
-last_updated: 2026-07-11
+last_updated: 2026-07-28
 ---
 
 # WORKFLOW: week-shape
@@ -47,6 +47,15 @@ This is the middle layer of the productivity spine ([[SYSTEM/reports/2026-07-11-
 4. **Gate.** CRE ratifies / edits in one pass. 15-minute total cap includes this.
 5. **Seed `TASKS.md`.** Write the ratified items under `## Active` (source-tagged `<!-- week-shape YYYY-MM-DD -->`), each phrased day-launch-ready: concrete, starting-action-shaped, one per work session where possible, and **schema-tagged per [[TASKS/TASK-SCHEMA]]** (`win:`, `#p`, and `due:` where the item has a real date; `due:?` if a deadline is known but undated). Update a small `## This week` header block (week of, lanes, milestones). Verify by re-read.
 6. **Stop.** No Odysseus pushes (day-launch owns the accountability layer), no portfolio edits, no backlog dispatch.
+
+## Unattended mode — propose-only (2026-07-28, CRE-ratified; the cadence fix)
+
+Runs on the **`week-shape-runner` scheduled task (Sunday ~18:00)** so the weekly feeder can never silently die again (the founding defect: the week of 07-13's seeds were spent day one and no re-shape came for 15 days — day-launch starved down to a WIW monopoly). Unattended rules, per DIR-012:
+
+1. **Steps 1–3 run; Steps 4–5 defer.** The derive pass writes its safe-ops (derived checks with provenance stamps, the receipts roll-up); the proposal is composed in full — including the chunk-supply sweep seed and lane targets — but **NO Active items are seeded and nothing is ratified.**
+2. **The proposal lands rendering-visible** as the `## This week` header block in `TASKS.md`, stamped **`(PROPOSED — ratify at Monday's launch)`**, replacing the stale week header. Prose, never an HTML comment (DIR-012 cl. 4).
+3. **Monday's day-launch closes the loop:** the standing **`every:mon` "Ratify the week" task in `TASKS.md`** (`#p1 win:ops #quick`, CRE-ratified 2026-07-28) surfaces on Monday's board through the normal recurrence machinery — a first-class task, so it reaches CRE's board and phone even with every cadence running unattended; day-launch's v2.9 staleness escalation is the backstop (same item, deduped). On CRE's go — attended, one pass — the seeds land in Active per Step 5 and the block drops its PROPOSED stamp.
+4. The 15-minute cap, the one-screen rule, and every never-does above apply unchanged. A Sunday where nothing changed still writes the proposal — a fresh menu costs one block; a dead feeder costs a week.
 
 ## Fortnight review hook
 
