@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-28T06:05:59.2726859-07:00",
+    "generated":  "2026-07-28T07:49:40.0496666-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -54,9 +54,9 @@
                    {
                        "name":  "day-launch",
                        "package":  "WORKFLOWS/skills/day-launch.skill",
-                       "sha256":  "972d96f2a4d0b0b2b45e0c0f3b111050c71b0d3ad621dd38e54df4366ef6f67f",
-                       "content_sha256":  "822586d38b5b505be6df418b11b6116eefc7c92139c812b3d97f538d7f574624",
-                       "bytes":  6672
+                       "sha256":  "740fad85feae7e6ba31619bbfdb0840bdc214930cc9bdcdf6f14ee3aaaff0ae0",
+                       "content_sha256":  "9cec6e0270af03bb8d9fd0468cda4ec835d9f84e93d7c518ee0a93889bf58ab9",
+                       "bytes":  8368
                    },
                    {
                        "name":  "decision-helper",
@@ -201,9 +201,9 @@
                    {
                        "name":  "runway-builder",
                        "package":  "WORKFLOWS/skills/runway-builder.skill",
-                       "sha256":  "bf08f8d544cc51ffc266e6c1b5cdab596d364a04926d50a74aeabd84c0a2de8a",
-                       "content_sha256":  "e7da8b04a50fa2e2a52ac475d29d22c811d447266c53b01557d2cce1e7bbe94e",
-                       "bytes":  8682
+                       "sha256":  "c39213d0cf7858aaf988d4401d364fe6fd62b35426d9c58e3fed65e7f6400878",
+                       "content_sha256":  "038e0bce4f1a051da978ad4202f2cc5b86abed846ccfea8c05ba486b1eb980b8",
+                       "bytes":  6153
                    },
                    {
                        "name":  "scene-intensity",
@@ -257,9 +257,9 @@
                    {
                        "name":  "week-shape",
                        "package":  "WORKFLOWS/skills/week-shape.skill",
-                       "sha256":  "c7b195e50761924b1b56e28be3b656f9a0b62bc6e010aa0b58a2e4efc62b454c",
-                       "content_sha256":  "0a6b1733c5e0c44061c2ee9b9d2fc0570193f513c8f07a8a2020a1a667b79d9b",
-                       "bytes":  2937
+                       "sha256":  "e0e6e813d2d419c2feeda40e4e18ab6930ac152ea332f2db1d88622c42d692e6",
+                       "content_sha256":  "b6803e0413ad6e2bb9557777528ecbe422d7d66a5badbeb64a9912d89bcd557f",
+                       "bytes":  3470
                    },
                    {
                        "name":  "workshop-chapter",

@@ -1,18 +1,18 @@
 ---
 name: runway-builder
 description: >-
-  Build a chapter's dictation "runway" — read its brief.md and write a runway.md into the chapter folder: a scene-segmented forensic logic-beat speaking outline (each beat a plain action line + GOAL→BUT→THEREFORE, never prose), with [SEALED] lines from the seal schedule and PLANT flags for brief-mandated setups, wrapped in a flow-conditions block and a receipts close. Use whenever the author asks to "build the runway," "build the runway for chapter N," "make the runway," "derive the runway," "prep the runway," or "runway from the brief" for a chapter using the per-chapter folder convention. The Construction-to-forensic-draft seam — the artifact the author dictates FROM. Do NOT use it to fill the envelope (dictation-preflight, "prep the envelope") or to slate/transcode (dictation-transcoder, "slate this dictation"). Derives structure only, not sensation; never generates prose.
+  Build a chapter's dictation runway — read its brief.md and write a runway.md into the chapter folder: the v3 chronological-spine speaking outline. Entry state, then per scene a one-line what-happens, a story goal, and plain chronological beats shaped to the tension curve (lead-in, escalation, climax, dip, hook — no BUT/THEREFORE labels), with PLANT and [SEALED] flags, SET & LORE one-liners, a DIALOGUE BANK (conversations, never lines — Critical and tree-sourced Recommended), slim register reminders, and a Your-notes section: the doc is the author's workspace to annotate and rearrange. Use whenever the author asks to "build the runway," "make the runway," "derive the runway," "prep the runway," or "runway from the brief" on the per-chapter folder convention. Do NOT use it to fill the envelope (dictation-preflight) or to slate/transcode (dictation-transcoder). Structure only; never generates prose.
 ---
 
-# Runway Builder (brief → dictation speaking outline)
+# Runway Builder (brief → dictation speaking outline, v3 chronological spine)
 
-You are building the thin artifact the author actually dictates *from*: a **speaking outline** — the scene's causal skeleton in delivery order, not a script. You read the chapter's `brief.md`, re-cut its beats into **forensic logic-beats** (a plain action line + GOAL→BUT→THEREFORE), and write a `runway.md` into the chapter folder.
+You are building the artifact the author dictates *from* — and annotates as **his own**. You read the chapter's `brief.md`, re-cut its beats into a **chronological spine** (plain sentences stating what happens and why, in order), and write a `runway.md` into the chapter folder.
 
-You do **one** thing: derive and write the runway. You do **not** write prose, dialogue, or narration. You do **not** fill the envelope, slate, or transcode. Every beat is a **plain forensic action line + GOAL→BUT→THEREFORE lifted from the brief's structure** — never finished prose, and never pre-loaded sensation, imagery, or register colour. The moment a beat reads as prose or reaches for a chosen image you have failed the pass: pre-baking the author's creative material (a) puts his words in his mouth and (b) compresses into riddles he must decode before he can speak (tested 2026-06-19 on "The Strand", `^obs-108`). The scaffold hands him **structure**; he supplies all the **skin** live.
+You do **one** thing: derive and write the runway. You do **not** write prose, dialogue lines, or narration. You do **not** fill the envelope, slate, or transcode. Beats are plain declarative sentences lifted from the brief's structure — **no flourish, no chosen imagery, no adjectival colour, no pre-baked sensation**: emotion is carried by the action, never labelled. The skin is the author's, spoken live. But unlike older forms, a beat may plainly state what is happening *and why* — keyword compression that makes the author decipher his own story at the mic is the failure state this form replaced (CRE-ruled 2026-07-28).
 
-## Why the artifact is shaped the way it is
+## Why v3 is shaped this way
 
-This skill codifies three findings (KNOWLEDGE/RESEARCH, 2026-06-15): (1) dictation belongs to the *forensic* layer — beats, not voice; (2) flow is *triggered* by stacking conditions — one clear goal, a pre-committed stop, inputs removed, a forward warm-up — and the off-ramp matters as much as the on-ramp; (3) the thing that gives "runway" is a **speaking outline of forensic logic-beats** (structure, not the author's words), not a script, so working memory stays externalized and the author never stalls mid-sentence hunting a word. The runway file is those three things made into one per-session sheet.
+The v2 forensic form (GOAL→BUT→THEREFORE per beat) validated on a test scene but failed at live chapter scale — task-initiation impasses, "deciphering on the fly," no ownership. The author's own wins came from plain chronological bullets he annotates and rearranges: *"I go in there and add my notes and arrange it the way I want to — that creates an ownership."* v3 merges that plainness with the survivors of the old form (entry state, story goal, plants, seals) plus two new sections (set & lore, dialogue bank). The but/therefore causal logic survives as **your shaping discipline** — it never appears as notation on the page. The doc has two co-equal jobs: a starting stone for dictation, and a workspace the author marks up as he sees opportunities to enhance the story.
 
 ---
 
@@ -30,199 +30,158 @@ Hard gate. Pass it before reading any chapter.
 
 ## Required inputs
 
-**1. The chapter folder** (per-chapter convention). The file you read is `brief.md`; the file you write is `runway.md`:
+**1. The chapter folder** (per-chapter convention). You read `brief.md`; you write `runway.md`:
 
 ```
 <chapter>/
-├── brief.md          <- YOU read this (the source of truth for the runway)
+├── brief.md          <- YOU read this (the source of truth)
 ├── runway.md         <- YOU write this (the only substantive output)
-├── envelope.md       (read-only — segment short-names, when present)
+├── envelope.md       (read-only — segment names + roster, when present)
 ├── changelog.md      chapter-level history (you append a log line)
-├── draft.md          (you do NOT touch)
-├── _status.md        (you do NOT touch)
-├── dictation/  slate/  revisions/  (you do NOT touch)
-└── open-loops.md  continuity.md  notes.md  (you do NOT touch)
+├── draft.md  _status.md  dictation/  slate/  revisions/   (you do NOT touch)
+└── open-loops.md  continuity.md  notes.md                 (you do NOT touch)
 ```
 
-If the author gives a chapter name without a path, search the vault for a folder matching it that contains `brief.md`. If several match, ask. If none follow the convention, do not fabricate one — tell the author the project hasn't adopted the per-chapter folder convention and stop.
+If the author gives a chapter name without a path, search the vault for a folder matching it that contains `brief.md`. If several match, ask. If none follow the convention, do not fabricate one — say so and stop.
 
-**2. A brief with beats.** `<chapter>/brief.md` must have a **Beats to hit** section. If the brief is `status: unfilled` (an empty scaffold with no beats), **halt** — there is nothing to derive from. Tell the author to fill the brief first (the workshop / pipeline S2 step). If `status: drafted` (not yet `confirmed`), proceed but note in your reply that the runway inherits intent the author hasn't ruled final.
+**2. A brief with beats.** `brief.md` must have a **Beats to hit** section. `status: unfilled` → **halt**; tell the author to fill the brief first (workshop / pipeline S2). `status: drafted` (not `confirmed`) → proceed, but note the runway inherits unconfirmed intent.
+
+**3. The prior chapter's `continuity.md` + `open-loops.md`** — for the Entry state.
+
+**4. Reference material as needed:** `REFERENCE/threads.md` (thread labels, dialogue-bank sourcing), `REFERENCE/bible.md` + the project DEV tree (set & lore, Recommended dialogue — **tree-sourced only**).
 
 ---
 
 ## Step 1 — Read the brief, classify it
 
-Read all of `brief.md`. The sections you use:
+Sections you use: **Beats to hit** (the spine), **Seal schedule → "Must NOT yet learn"** (seals), **Setups to plant / Payoffs due** (PLANT flags + thread lookups), **Register / tempo notes** (the register reminders + the cut), frontmatter **`weight`** (depth scaling, Step 6).
 
-- **Beats to hit** — the spine. Each beat becomes one forensic logic-beat.
-- **Seal schedule → "Must NOT yet learn"** — what to seal (Step 3).
-- **Register / tempo notes** — for the "Cut on:" line and the pacing note in the guardrails block.
-- **Setups to plant / Payoffs due** — only to resolve a `T##` thread label if a beat references one (look it up in `REFERENCE/threads.md`); never expand these into prompts of their own.
-- Frontmatter **`weight`** — scopes depth in Step 5.
-
-If a `runway.md` already exists in the folder, **stop and ask** whether to replace it or write a versioned copy. Never overwrite silently.
+If a `runway.md` already exists, **stop and ask** whether to replace or version it. Never overwrite silently.
 
 ---
 
-## Step 2 — Group beats into scenes, derive the prompts
+## Step 2 — Entry state
 
-**Group** the brief's beats into scenes — runs of beats sharing one location / continuous time. Most load-bearing chapters in this world are one or two scenes. If `envelope.md` is already authored, borrow its segment short-names so the runway and the envelope agree.
-
-**Derive**, per scene, turning each beat into one forensic logic-beat.
-
-> **Dictation-route form.** The per-scene output is the **forensic logic-beat runway** — a plain forensic action line + GOAL→BUT→THEREFORE per beat — which **supersedes** the older keyword-prompt / `[cold]`-temperature form. Build the scenes per **"Forensic logic-beat runway — the GOAL→BUT→THEREFORE spine"** below; that section is the authoritative shape. The grouping rule here (single-location runs of beats; borrow `envelope.md` segment names when present) still holds; the per-beat surface does not.
-
-This is re-cutting, not authoring. You are lifting and compressing the brief's structure, not generating the author's fiction.
+From the prior chapter's `continuity.md` + `open-loops.md`: 2–4 lines on where the story stands entering this chapter — position, who carries what, the operative emotional state, and any carried loop worth a warning flag (a thread gone dark, a state the previous chapter left implicit that this one inherits). Orientation, not recap — only what the author needs to hold to start talking.
 
 ---
 
-## Step 3 — Seal, and the one write-in-full
+## Step 3 — Scenes: what happens, story goal, chronological beats
 
-**`[SEALED]` line (per scene that needs it).** From the brief's **Seal schedule → "Must NOT yet learn"**, write a `[SEALED]` line naming what to *enact and withhold* — never narrate. Carry the brief's own framing (e.g. "enact the everything-given-away and the lean-in; do not narrate the second bead / death-intent, even in her POV; reveal is CH7's"). The seal is the author's discipline made visible on the sheet.
+**Group** the brief's beats into scenes (single-location / continuous-time runs; borrow `envelope.md` segment names when present). Per scene:
 
-**`★` write-in-full (at most one per scene).** Dictation tempts the author to pre-write prose; one sanctioned slot vents that without surrendering the draft to polish. If the brief already names a specific line of dialogue or a concrete image the author "already hears," lift **exactly one** into the `★` slot, verbatim from the brief. If the brief names none, leave the slot present but empty for the author to fill. Do **not** invent a line to fill it.
+- **Header:** scene name · POV · present (roster + carried state, one line).
+- **What happens:** one plain sentence — the whole scene at a glance.
+- **Story goal:** what the **story** needs this scene to accomplish — the arc moved, the reversal landed, the plant set. Not the POV character's want; that lives inside the beats.
+- **Beats:** plain declarative sentences, **chronological**, stating what happens and why when the why matters. Shape them to the tension curve: **lead-in (current state) → escalating beats → climax → dip for reflection or decision → hook.** The escalation lives in the shaping — cost rising beat to beat, the dip doing its work (absorb → decide → the decision fires the hook) — **never** as labels, contour tags, or temperature marks on the page. A sagging run means soft resistance: strengthen the obstacle in the beats' content.
+- **Every present character acts.** A present character with a live arc who does nothing is decor — the character-level UNDRAMATIZED failure. Their actions appear in the chronology; no per-character notation.
+- Beat count comes from the scene's job, not a fixed number. A harrowing scene earns more beats; a connective scene stays sparse. Large beats may break into sub-beats that choreograph the moment.
 
----
-
-## Step 4 — Scaffold the conditions block and the close (blank)
-
-These are the author's per-session fills — the flow stack and the receipts. Write them as **blank scaffold**, not derivations:
-
-- **① Conditions:** medicated-window gate, skeleton-locked gate, single-next-goal line (blank), pre-committed stop (blank — timer or prompt #), inputs-killed checklist, capture path (`_DICTATION INBOX` → dictation-runner). Add the 5-minute forward warm-up reminder.
-- **④ Close:** output banked (min / prompts / words), worked-or-didn't line, and the `★` pre-write-tomorrow's-first-prompt line.
-
-Pre-fill only what the brief makes unambiguous — most usefully the **"Cut on:"** value from the brief's curtain instruction, and the one-line pacing note in the guardrails block (e.g. "let ask 2 carry the hermit's hardest resistance"). Everything else stays blank.
+This is re-cutting, not authoring. You lift and shape the brief's structure; you never generate the author's fiction.
 
 ---
 
-## Step 5 — Write `runway.md` (weight-scaled), then report
+## Step 4 — Plants + seals
 
-Write `<chapter>/runway.md` using the structure below. Scale depth by the brief's `weight`:
+From the brief's **Seal schedule**, write a `[SEALED]` line where it applies: name what to *enact and withhold* — never narrate. Carry the brief's own framing. Add `PLANT:` only on beats carrying a brief-mandated setup / payoff / seal, indented under the beat. With sensation improvised live, a required setup can get improvised away — these flags keep continuity safe while the spine stays clean.
 
-- **`load-bearing`** → full runway, every scene; beats ratchet as long as the tension needs.
+---
+
+## Step 5 — Set & lore, dialogue bank, register reminders
+
+- **SET & LORE** — one line per setting / set piece: what it is and why it matters to the story. No description paragraphs. Sourced from the brief, bible, threads, and DEV tree only.
+- **DIALOGUE BANK** — conversations, **never lines**. Each entry: who · about what · what must change hands. Two tiers:
+  - **Critical** — key emotional moments between characters that push arcs forward. Derived from the brief's mandated beats and the thread schedule.
+  - **Recommended** — flavor, character, worldbuilding. **Tree-sourced only** (threads, DEV entries, prior continuity — e.g. a thread checkpoint due for revival). If the tree is silent, leave the tier empty for the author's own notes. **Never invent a conversation the tree doesn't name** (organic-process guard, CRE-ruled 2026-07-28).
+- **REGISTER REMINDERS** — a short glance-then-ignore list: only the **elective-restraint commitments** this chapter specifically tests (seal discipline, POV interiority limits — e.g. "stay inside her fog; the narrator may not outrun her"). Never mechanical fixes register-pass will catch downstream.
+
+---
+
+## Step 6 — Write `runway.md` (weight-scaled), then report
+
+Close the doc with a **Your notes** section and the standing invitation (mark this file up — arrange, annotate, cut, add; this file is yours). Scale depth by the brief's `weight`:
+
+- **`load-bearing`** → full treatment, every scene.
 - **`standard`** → default.
-- **`bridge`** → lean: a sparse beat run, often a single scene block; the conditions + close still scaffold in.
+- **`bridge`** → lean: may collapse to one scene block; set & lore + dialogue bank optional.
 
-For anything you could not resolve confidently — an ambiguous scene boundary, a thread label with no match, a beat you can't compress without guessing — write your best attempt tagged inline `<<UNCERTAIN: best guess — reason; confirm?>>` and collect those into a short list in your reply. A tagged guess the author can fix in one line beats both a halt and a silent wrong guess.
+For anything you could not resolve confidently, write your best attempt tagged inline `<<UNCERTAIN: best guess — reason; confirm?>>` and collect those into a short list in your reply. A tagged guess the author can fix in one line beats both a halt and a silent wrong guess.
 
 ### The `runway.md` structure to write
 
 ```markdown
 ---
 type: dictation-runway
+form: v3-chronological-spine
 chapter: <CHAPTER N - TITLE>
-derived_from: brief.md (status <…>, <date>) — Beats to hit + Seal schedule
+derived_from: brief.md (status <…>, <date>) — Beats to hit + Setups + Seal schedule; entry state from CH<N-1> continuity.md
 weight: <load-bearing | standard | bridge>
 last_updated: <today>
 ---
 
 # Runway — <CHAPTER N - TITLE>
 
-> Derived from the brief. <one-line scene/tempo summary>. Cut on: <curtain>.
+> <one-line orientation: scenes + the cut>
+> Mark this file up — arrange, annotate, cut, add. This file is yours.
 
-## ① CONDITIONS  (set before you talk, ≤2 min)
-- Medicated window?  ☐ yes  ☐ no → defer / type
-- Skeleton locked (brief confirmed)?  ☐ yes
-- Single next goal (one line): ______
-- Stop, pre-committed:  ☐ timer __ min  ☐ through prompt #__
-- Inputs killed:  ☐ phone away  ☐ apps off  ☐ walk route
-- Capture: voice memo → _DICTATION INBOX → dictation-runner
-- Warm-up: 5 min forward-only junk on this scene. "Supposed to be bad."
+## ENTRY STATE  (from CH<N-1> continuity)
+- <where the story stands — 2–4 lines>
+- ⚠️ <carried loop worth flagging, if any>
 
-## ② THE RUNWAY
-SCENE — <name>   POV: <who>   present: <roster + carried state>   Cut on: <curtain>
-GOAL: <reason the POV character is here — character goal / story goal>
-──────────────────────────────────────────────
-LEAD IN: <plain forensic action — beat 1>
-   → BUT <resistance>
-   → THEREFORE <consequence that carries forward>
-TRANSITION: <plain forensic action — next beat>
-   → BUT <resistance>
-   → THEREFORE <consequence>
-   PLANT: <only if the brief mandates a setup/payoff/seal here>
-TRANSITION: <another present character's thread — same GOAL/BUT/THEREFORE shape>
-   → BUT <resistance>   → THEREFORE <what it costs / the parallel>
-GOAL: <restate only when the goal shifts>
-TRANSITION: <plain forensic action>
-   → BUT <resistance>   → THEREFORE <consequence>
-END: <the closing action>
-★ Write-in-full (one, optional): "<lifted line, or blank>"
-[SEALED] <what to enact-and-withhold, from the brief's seal schedule>
+## SCENE <n> — <name>   POV: <who>   present: <roster + carried state>
+**What happens:** <one plain sentence>
+**Story goal:** <what the story needs this scene to do>
 
-## ③ DURING — guardrails
-Screen off · one pass no stopping · structure not voice (speak the skin live) · glance don't stare. <one-line pacing note from the brief>
+- <plain chronological beat — what happens, and why when it matters>
+- <beat>
+   - PLANT: <only if the brief mandates a setup/payoff/seal here>
+- <climax beat>
+- <dip beat — reflection / decision>
+- <hook beat> *(hook → next scene / the cut)*
+- [SEALED] <what to enact-and-withhold, per the seal schedule>
 
-## ④ CLOSE  (last act)
-- Banked: __ min · prompts __–__ · ~__ words
-- Worked / didn't: ______
-- ★ Tomorrow's first prompt: ______
+## SET & LORE
+- <setting / set piece> — <why it matters to the story>
+
+## DIALOGUE BANK  (conversations, never lines)
+- **Critical** — <who + about what>. What changes hands: <the arc movement>.
+- **Recommended** — <who + about what — tree-sourced (thread/dev/continuity ref)>.
+
+## REGISTER REMINDERS  (glance before you start, then ignore)
+- <elective-restraint commitment for this chapter>
+
+## Your notes
+<!-- arrange, annotate, cut, add — this file is yours -->
 ```
 
-Legend to include once near the top of the file: `GOAL:` the reason the POV character is here (restate only when it shifts) · `LEAD IN:` / `TRANSITION:` / `END:` the plain forensic action lines · `→ BUT` resistance · `→ THEREFORE` the cost that hinges into the next beat · `PLANT:` a brief-mandated setup/payoff/seal to protect · `[SEALED]` enact-don't-narrate · `★` one optional write-in-full · say "bracket fix this bracket" to mark a misspeak and keep going. **No temperature/contour tags** — the escalation lives in how the beats ratchet, not as a label on the page.
-
-Close your reply with a **derivation note**: which beats mapped to which prompts, the `weight` you scaled to, anything tagged `<<UNCERTAIN>>`, and any place the brief's beats and its seal schedule pulled against each other.
+Close your reply with a **derivation note**: which brief beats mapped to which scenes, the `weight` you scaled to, anything tagged `<<UNCERTAIN>>`, dialogue-bank sources cited, and any place the brief's beats and its seal schedule pulled against each other.
 
 ---
 
-## Forensic logic-beat runway — the GOAL→BUT→THEREFORE spine
+## Dictation is protected — DIR-17 posture
 
-> **Supersedes the 2026-06-18 "beat-envelope / temperature-tag" form** (and the 3–5-keyword cap in Step 2). Tested 2026-06-19 on the throwaway scene "The Strand": the keyword + temperature-tag beats read as **riddles** — CRE had to *decode* each beat before he could speak it, because they pre-loaded compressed sensation (his creative material) instead of structure. The forensic logic-beat form dictated clean. (`^obs-108`.)
+- **The runway is a flow-kickstarter, not a spec.** Density scales to how much the author must re-load (a novel chapter re-loads canon; a short holds in working memory), never to the work's importance. Craft rules never gate dictation as preconditions.
+- **Divergence from the runway is a win.** No downstream pass grades the finished draft against the plan.
+- **No editing during dictation.** The mic is forward-only; if a beat is friction the author can't move past, that is a runway-format signal, not a cue to edit at the mic.
+- **Let dictation run warm.** A plain scaffold producing warm, interior prose is the division of labour working. The final register is decided downstream in register-pass — do not tune the runway to suppress warmth.
 
-On the dictation route the runway carries the **causal skeleton** of the scene — goal, obstacle, consequence — and *nothing else*. It does **not** pre-load sensation, imagery, or register colour: that is the dictation's job, and pre-baking it (a) puts CRE's creative material in his mouth and (b) compresses into riddles he must decode before he can speak. The scaffold hands him **structure**; he supplies all the **skin** live. It remains the beat rung of the Fractal Envelope Model, materialized transiently — but the Register Legend (`KNOWLEDGE/STYLE/REGISTER LEGEND`) is the spine for `register-pass` *downstream*, not for the runway surface.
-
-### Scaffold register — forensic, emotion implied through action
-Write every scaffold line in the **forensic register**: simple, to-the-point action, like an incident report — *she does X, but Y, therefore Z*. The emotional undercurrent is carried by the action itself, **never labelled**. No flourish, no chosen imagery, no adjectival colour — those are the lines CRE will speak, and pre-deciding them is the failure the test exposed. If a scaffold line reaches for a sensory image or a feeling-word, cut it back to the bare action.
-
-### Granularity — scene-level beats, count from the scene's goal (no cap)
-Segment the chapter into **scenes** (from `envelope.md` segments / the brief's locations) and decompose each into its **beats** — one line per beat, and **the beat count comes from the scene's goal, not a fixed number.** (The old "3–5 prompts" was a chapter-level vestige; at scene scope it crushes a struggle into montage.) Read the scene's **goal** (character goal + story goal, from the chapter envelope) and build the beats that satisfy it:
-- **Connect beats with *but* / *therefore*, never *and then*** (the But-and-Therefore method). A struggle or peak scene **ratchets** through as many try-fail beats as the tension needs; each beat should *cost* something. An "and then" between two beats is the failure state — make it a complication (*but*) or a consequence (*therefore*), or fold them.
-- **Large beats break into sub-beats** that choreograph the moment (the fall: dropped → snow in his cloak → digs him out → his warmth fainter).
-- **"Tight, no gaps" means *adjacency*, not brevity.** A harrowing scene should feel harrowing — more beats, not fewer. A cold connective scene stays sparse; a peak scene earns its length.
-
-### Each beat = forensic action + GOAL→BUT→THEREFORE
-- Open the scene with the **GOAL** — the *reason the POV character is there* at the start (character goal / story goal). It orients the whole scene.
-- Each beat is one **plain forensic action line** — `LEAD IN:` for the first beat, `TRANSITION:` for each beat after (the entry sentence into the beat) — followed by `→ BUT <resistance>` and `→ THEREFORE <consequence that carries forward>`. **BUT/THEREFORE is regular on every beat:** the *but* is the resistance, the *therefore* is the cost it exacts and the hinge into the next beat.
-- **Re-state the GOAL only when it shifts.** The opening goal carries until the scene turns it; surface the drift, never repeat an unchanged goal. (On the test scene the goal drifted *find him → looking is all one can do → the wish* — that drift is the scene's arc.)
-- Keep each line a **trigger, not finished prose** — bare action CRE speaks *from*, not a sentence he keeps. If a beat reads as completed prose, cut it back. Close the scene with an `END:` action line.
-
-### Plants — protect brief-mandated setups
-With sensation improvised live, a setup the **brief requires** (an object that pays off later, a reveal, a seal) can get improvised away. Add a `PLANT: <thing>` note on **only** the beats carrying a brief-mandated setup / payoff / seal — kept separate from the logic line. The spine stays clean; continuity stays safe.
-
-### No contour tags, no temperature on the surface
-Drop the `[cold]/[warm]/[HOT]` tags and the contour header from the page — tested 2026-06-19 as clutter CRE reads past. The escalation still has to **exist** in how the beats ratchet (the cost rising beat to beat), but it does that work in the *shaping*, not as a label on the page. (Supersedes the 2026-06-18 temperature-on-surface design.)
-
-### Scene vs. sequel — pick the template by contour position
-Per the Tension & Transformation Framework, every scene is one of two shapes, **selected from its place on the contour**:
-- **Scene (proactive)** — `goal → conflict → disaster`. A peak; beats ratchet to a worse-than-it-started turn.
-- **Sequel (reactive)** — `reaction → dilemma → decision`. The modulation beat *after* a peak — absorb, process, a new goal crystallizes; its closing **decision** closes an escape and fires the next scene (the staircase).
-
-Right after a high point, run a **sequel** (the reader's numb; the floor needs resetting). Don't stack peaks (plateau fatigue) or sequels (slack) — the contour says which comes next. **Want vs. resistance is the but/therefore engine:** the *but* is the resistance, the *therefore* the cost it exacts; a sagging beat means soft resistance — strengthen the obstacle or deepen the want.
-
-### Every present character is an agent — no decor
-Build from the scene's **roster** (the chapter envelope lists who's present + each one's carried state, read from `arcs.md` / prior `continuity.md` / the **working-canon overlay**). **Every present character with a live arc gets their own *but/therefore* thread** — their struggle, successes, failures — interleaved with the POV character's. A present character given no thread is **decor**, the character-level UNDRAMATIZED failure — flag it. (The hound on the storm-trek is not set dressing: he entered overriding his fear with the doll in his maw, so he drops it, she says "leave it," he retrieves it — she delivers the boy, he delivers the doll.)
-
-### Let dictation run warm — restraint is `register-pass`'s job
-The forensic *scaffold* does not force forensic *output*. On the test the lean skeleton produced **warmer, more interior** prose than the scaffold (explicit interiority, remembered detail) — that is the division of labour working, not a leak. Do **not** tune the runway to suppress it: the runway's job is flow; the final register is decided downstream in `register-pass`. The runway is a roadmap, not a cage — CRE overrides any beat live.
-
-The Form is the `## ② THE RUNWAY` block in the `runway.md` structure above. Everything else (`[SEALED]`, the one optional `★`, the conditions block, the close, never-overwrite, weight-scaling) is unchanged.
+---
 
 ## Files this skill writes — and the ones it must not
 
-**Writes:**
-- `<chapter>/runway.md` — the speaking outline (never-overwrite; ask first if one exists).
-- `<chapter>/changelog.md` and vault `_CHANGELOG.md` — a session log line (see Logging).
+**Writes:** `<chapter>/runway.md` (never-overwrite; ask first), `<chapter>/changelog.md` + vault `_CHANGELOG.md` (session log line).
 
-**Never writes:** `brief.md` (read-only source), `envelope.md`, `draft.md`, `_status.md`, `dictation/`, `slate/`, `revisions/`, `open-loops.md`, `continuity.md`, `notes.md`. You produce no prose. The runway is forensic logic-beats only — structure, never the skin.
+**Never writes:** `brief.md` (read-only source), `envelope.md`, `draft.md`, `_status.md`, `dictation/`, `slate/`, `revisions/`, `open-loops.md`, `continuity.md`, `notes.md`. You produce no prose and no dialogue lines.
 
 ---
 
 ## Stop conditions
 
 - **Vault sentinel fails** (Step 0). Halt; ask which folder is the vault.
-- **No per-chapter folder / no `brief.md`.** Halt; tell the author the project hasn't adopted the convention (or point them at chapter-init).
-- **Brief has no beats** (`status: unfilled`). Halt; tell the author to fill the brief first.
-- **A `runway.md` already exists.** Stop; ask whether to replace or version it.
-- **A beat is genuinely uncompressible without inventing content.** Don't fabricate — tag it `<<UNCERTAIN>>` and surface it.
+- **No per-chapter folder / no `brief.md`.** Halt; point at chapter-init.
+- **Brief has no beats** (`status: unfilled`). Halt; the brief fills first.
+- **A `runway.md` already exists.** Stop; ask replace-or-version.
+- **A beat, set-piece, or dialogue entry cannot be derived without inventing story content.** Don't fabricate — tag `<<UNCERTAIN>>` or leave the slot empty and surface it.
 
 ---
 
@@ -231,9 +190,9 @@ The Form is the `## ② THE RUNWAY` block in the `runway.md` structure above. Ev
 Non-trivial session — honor DIR-003. Append the chapter-scoped detail to `<chapter>/changelog.md`. For the vault `_CHANGELOG.md`, append a newest-first entry **via the file tools (top-insert), never `patch_vault_file` or a whole-file MCP rewrite** (DIR-005). Suggested entry:
 
 ```
-## YYYY-MM-DD — [fiction] runway built for <chapter>
+## YYYY-MM-DD — [fiction] runway built for <chapter> (v3)
 **Ran:** runway-builder on <chapter> from brief.md (status <…>, weight <…>)
-**Shipped:** runway.md — <N> scene(s), <N> forensic logic-beats; <N> PLANT flags; <N> [SEALED] lines; write-in-full <lifted | left blank>; <N> UNCERTAIN tags
+**Shipped:** runway.md — <N> scene(s), <N> beats; <N> PLANT flags; <N> [SEALED] lines; <N> dialogue-bank entries (sources cited); <N> UNCERTAIN tags
 **Open loops:** <the uncertain tags the author still needs to confirm>
 **Observed:** <anything notable>
 ```

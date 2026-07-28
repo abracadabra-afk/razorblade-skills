@@ -32,6 +32,8 @@ Live test: two passes on `WRITING/SHORTS/EPISODES/EP 01 - DOOMSCROLLER` (slate/2
 
 When CRE provides raw dictation for a chapter that is using the per-chapter folder convention (envelope.md present). Trigger phrases: "slate this dictation," "transcode this," "run the slate." Do NOT trigger this on a project that hasn't adopted the folder structure — fall back to [[WORKFLOWS/dictation-cleanup]] in that case.
 
+**Banked prose does not come through the mic (`^obs-221`, CRE-nominated 2026-07-26).** Dictation is a forward-only generative motion for producing *new* material. Prose CRE has already written (e.g. the ~30 banked/ingested Witchwood chapters) must be routed through the **revision pipeline** — `register-pass` → canon — not re-dictated from or hand-edited at the mic. Re-dictating existing material invites editing-during-dictation, which CRE has ruled a mistake that runs *lengthier* than just hand-editing the work directly. If the input is dictation *against* already-written prose rather than fresh generation, that is not a slate job.
+
 ## Inputs
 
 - Raw dictation text.

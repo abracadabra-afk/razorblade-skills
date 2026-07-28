@@ -2,7 +2,7 @@
 type: workflows-anchor
 purpose: The automations book — built workflows, the skills built from them, and an intake for raw automation ideas.
 status: active
-last_updated: 2026-06-15
+last_updated: 2026-07-28
 ---
 
 # WORKFLOWS
@@ -30,6 +30,9 @@ The workflow docs in this folder are the canonical source for each automation; [
 - idea: Build an auto researcher skill/trigger <!-- routed from INBOX 2026-06-15 -->
 - idea: Build a "Closing Ritual" skill — end-of-day check-in where CRE reports accomplishments (words dictated, scenes edited, project progress, what worked / what didn't, what to remember for tomorrow); creates a daily log of productivity/progress/methodology reinforcement + positive reinforcement, tracking running metrics (word counts, streaks) writers like to watch grow <!-- routed from INBOX 2026-06-15 -->
 - idea: Beat-based dictation runway from the briefing files — after a chapter is scaffolded through the workshop, derive an ADHD-friendly, light-touch "breadcrumb" runway from its brief: just the notes/key beats to keep in mind so the story can breathe while still hitting the beats already decided. Not heavy-handed with instruction <!-- routed from INBOX 2026-06-15 -->
+- ✅ graduated 2026-07-28 → **day-launch v2.7** (lane quotas + the growth split, CRE-ratified live: Creative 1–2 · Growth 1–2 · Admin 0–2 · Personal 1–2, cap 7; `#growth` marker added to [[TASKS/TASK-SCHEMA]]; growth serves before admin in the afternoon window — a fourth *time* window was considered and declined, lanes are board sections not clock blocks). Original idea kept below for provenance.
+- idea *(graduated, see above)*: Restructure day-launch's TODAY brief into distinct lanes rather than one flat 3–5 list — CRE's own words: "I do think the today brief needs some adjustment, as [Witchwood] wasn't even on there as the first project that should have been completed as I did. Perhaps breaking the day into different lanes: the creative lane, my morning, where my creative energy is at its highest and I'd rather do writing and deep work; then an operational lane for marketing and projects that are related to the acquisition of readers and branding etc; and then a personal lane where I have my appointments and projects that need to be done on a personal level. I know we're limiting the total list to five or so, but I think having two or three in each lane is good. That way I can work through multiple tasks if they are available to me." Note: day-launch v2 already has energy-mapped windows (win:morning/ops/personal) with a hard cap of 5 total — this proposes going further, a per-lane sub-cap (2–3 each) rather than one global 5-item cap. <!-- routed from INBOX 2026-07-28; from 2026-07-27 check-in, intent: workflow / day-launch lane restructuring -->
+
 - ✅ graduated 2026-06-15 → [[WORKFLOWS/vault-boot]] (trigger "mount the vault"). The "mount vault" bootstrap is now a built workflow + Cowork skill, not a `prompts/` asset — the on-demand sibling of the `mount-the-vault` scheduled task. The verbatim prompt lives in the workflow doc + `skills-src/vault-boot/SKILL.md`.
 
 ## Rules
