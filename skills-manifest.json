@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-07-28T12:00:07.9554083-07:00",
+    "generated":  "2026-07-29T12:00:09.2793110-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -136,6 +136,13 @@
                        "bytes":  4032
                    },
                    {
+                       "name":  "line-edit",
+                       "package":  "WORKFLOWS/skills/line-edit.skill",
+                       "sha256":  "4d79a4a025d320b50b7184290062b514372e151d6c271ab3967a28e0b17b8152",
+                       "content_sha256":  "92bc627dcd50af2c5fbdc6bb271b0f8e53beba46319c8999558c10b50bc7f58a",
+                       "bytes":  3954
+                   },
+                   {
                        "name":  "link-audit",
                        "package":  "WORKFLOWS/skills/link-audit.skill",
                        "sha256":  "cdd451bef9a960758e652b7673d139f32404bbcffaadfd879371e133db98adb4",
@@ -176,6 +183,13 @@
                        "sha256":  "1f681d7730d02c56aff52d3fdb56b5b886216679db46f390039c1038c5362bf6",
                        "content_sha256":  "aaf2ce5442970f7bceee625c3427ea6ae03883ea183f7c91bbec1dcac22952f1",
                        "bytes":  3943
+                   },
+                   {
+                       "name":  "record-script",
+                       "package":  "WORKFLOWS/skills/record-script.skill",
+                       "sha256":  "20500d3d6cffc4af28ff4c65a54ed80f267320702040a94a0cc1b215f083a300",
+                       "content_sha256":  "e65c144425a46fa2daaef45d3bc93e11a1a3a7208c7eb965616d1bd7428bc59e",
+                       "bytes":  3492
                    },
                    {
                        "name":  "register-pass",
