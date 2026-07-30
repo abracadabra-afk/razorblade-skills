@@ -66,6 +66,17 @@ Born 2026-07-16: dec-016 re-enabled Ingram print + relisted the ebook wide via D
      off three independent loaded pages (B&N ean=, Bookshop ean=, Walmart's ISBN-10/13 pairing).
      Left uncorrected this would have failed every Bookshop/Walmart probe forever. -->
 
+<!-- link-sweep 2026-07-30 (run 3): resolved 8 more watch-set channels to the registry —
+     Google Play (direct, NOT on UBL), Everand/Scribd, Bookshop.org EBOOK (new — was paperback only),
+     Smashwords, Fable, Thalia (ebook); Booktopia, Blackwell's (paperback). All verified off their own
+     loaded product pages (no CAPTCHAs this run). STILL OPEN → run 4: Angus & Robertson (UBL button
+     404s on ebook ISBN 9781735676937), Vivlio (UBL search on that ISBN returns no results),
+     Libraries/OverDrive (no UBL button). CLOSEABLE: Amazon hardcover — no hardcover edition exists
+     (format strip Kindle/Audiobook/Paperback only); drop the row. Walmart "ebook" = the existing
+     paperback item 647899467, not a separate channel. Ebook ISBN is 9781735676937 (print is
+     9781735676920). Cadence: 3 low-value channels left — recommend monthly, park when A&R/Vivlio
+     resolve or are ruled abandoned. Full report: SYSTEM/reports/2026-07-30-link-sweep.md. -->
+
 Live set (regression check each run): Amazon ebook `B08H4ZWB5R` · Amazon paperback `1735676926` · Audible `B0BTQ6G9YX` · Godless `godless.com/products/ghost-river-by-chad-ryan` · B2R `books2read.com/ghostriver`.
 
 ## Procedure
