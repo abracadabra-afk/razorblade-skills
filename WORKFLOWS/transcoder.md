@@ -3,18 +3,31 @@ type: workflow
 name: transcoder
 trigger: slate this dictation
 aliases: [transcode this, run the slate, transcoder v5, slate it]
-inputs: [raw dictation text from speech-to-text, perceptual envelope (POV + conditions + state), the contamination checklist at REFERENCE/contamination-checklist.md (optional)]
-outputs: [clean rough-draft prose, cut log, synthesis ledger, leaves-left audit]
+inputs: [raw dictation text from speech-to-text, perceptual envelope (POV + conditions + state), the floor register canon at KNOWLEDGE/PROSE FRAMEWORK/narrator-rules.md, the contamination checklist at REFERENCE/contamination-checklist.md (optional)]
+outputs: [floor-draft prose (cold register), cut log, synthesis ledger (incl. floor ledger + heat bank), leaves-left audit]
 lane: fiction
 status: active
-last_updated: 2026-07-22
+last_updated: 2026-08-01
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood. v5.1 adds standalone/episode mode (envelope derivable from ruled canon with provenance) — first adopter WRITING/SHORTS/EPISODES.
-pipeline_position: upstream of [[WORKFLOWS/dictation-cleanup]]
+pipeline_position: upstream of [[WORKFLOWS/prose-expansion]] (via the spine-review gate) and [[WORKFLOWS/dictation-cleanup]]
 ---
 
-# WORKFLOW: Dictation Transcoder (v5.1)
+# WORKFLOW: Dictation Transcoder (v6)
 
 > Generative pass that converts raw dictation into a clean rough-draft slate. **Rewrite-allowed.** Pairs with [[WORKFLOWS/dictation-cleanup]] downstream, which is the protective copy-edit pass the v5 spec refers to as the "separate, protective pass… later."
+
+## v6 changelog (2026-08-01 — the cold-floor recalibration, CRE-ratified)
+
+Source: `SYSTEM/reports/2026-08-01-transcoder-v6-proposal.md` (all five rulings taken at recommended defaults). The problem fixed: register breaches native to dictation (hedges, editorial descriptors, filters, glossing) passed the perceptual cut, survived synthesis, and were verdicted `left-for-later` — riding the slate into revision and making register-pass the heavy repair stage. v6 normalizes register at the one stage already licensed to rewrite. **Repack + Save-skill pending (DIR-009); pilot on next fresh Witchwood dictation before repack.**
+
+1. **Operation 3 — Normalize to floor.** New third operation after Cut and Synthesize: enforce the [[KNOWLEDGE/PROSE FRAMEWORK/narrator-rules]] deny-lists over the whole draft. Every normalization lands in the **floor ledger**.
+2. **`left-for-later` retired for register breaches.** A named load-bearing emotion or narrator editorial in the floor is a defect, not a deferral (see amended verdict set below).
+3. **Heat bank.** Dictated warm/hot language stripped by floor normalization is banked per beat, verbatim, in the synthesis ledger. Expansion step 7 re-selects from CRE's own words; the machine flags gaps, never invents heat.
+4. **Spine-review gate.** The floor draft + ledgers + developmental-seam flags are presented to CRE before any expansion pass runs (see section below).
+5. **Narrator baseline: rules-within-ruled-POV.** The floor honors each project's ruled POV (Witchwood: close third); the deny-lists are POV-agnostic and apply within it.
+6. **Slate contract unchanged.** Same four files; `clean-draft.md` is now the floor draft; floor ledger + heat bank are sections of the synthesis ledger.
+
+Expansion (framework steps 4–7) lives downstream in [[WORKFLOWS/prose-expansion]] — POV tags and temperature tags are machine passes; sentence restructure and temperature word choice are **CRE's** (ownership CRE-ruled 2026-08-01).
 
 ## v5.1 changelog (2026-07-22 — amended off the EP 01 DOOMSCROLLER live test)
 
@@ -56,7 +69,7 @@ Ambiguous register-repair calls and image-doubling questions go to `<chapter>/op
 
 You are converting raw dictation into a clean first draft of close third-person prose. This is **pre-prose becoming a draft**, not a draft becoming polished. You are **generative**: you may rewrite, fuse, and regenerate clean sentences. You are not protecting the author's wording — the author was talking, not writing, and expects to receive prose, not their transcript marked up.
 
-You perform exactly two operations, in this order: **Cut**, then **Synthesize**. Nothing else. You do not assess quality, hunt for telling beyond the one register invariant below, or polish. The protective pass ([[WORKFLOWS/dictation-cleanup]]) does that later. Your only job is to hand back a clean, registrally and directionally correct slate.
+You perform exactly three operations, in this order: **Cut**, then **Synthesize**, then **Normalize to floor**. Nothing else. You do not assess quality beyond the floor register rules, and you do not polish. The protective pass ([[WORKFLOWS/dictation-cleanup]]) does that later. Your only job is to hand back a registrally and directionally correct **floor draft** — cold observational narration per [[KNOWLEDGE/PROSE FRAMEWORK/narrator-rules]], the substrate the expansion passes build on.
 
 ## Maturity is fixed — do not classify it
 
@@ -119,7 +132,31 @@ Leave a span untouched if it already stands alone as a clean, single-payload sen
 
 ---
 
+## Operation 3 — Normalize to floor (v6)
+
+Run the [[KNOWLEDGE/PROSE FRAMEWORK/narrator-rules]] deny-lists over the full draft — every kept line and every invented carrier. This is deny-list enforcement, near-deterministic; it adds no new generative license beyond replacing the flagged span with its floored form.
+
+**The deny-lists, in priority order:**
+
+1. **Seam-breaks** — narrator hedges ("seemed to," "as if," "she must have imagined") and alarm-labels ("horrifying," "grotesque," "monstrous"). Highest priority.
+2. **Filter verbs** — saw/heard/felt/noticed/watched/realized/thought/wondered + "she knew that / he decided that" frames. Cut the verb, land the object. Exception: keep when the perceiving *is* the event.
+3. **Editorial descriptors** — narrator-stance modifiers (*brutal* white, *cruel* winter, *noble* gaze).
+4. **Narrator glossing** — naming what a moment means, clinical/therapeutic diagnosis, telling the reader how to feel, interiority that reinstates what the page already shows.
+5. **Non-functional setting** — setting admitted only at the moment of action or use.
+
+**POV baseline (CRE-ruled 2026-08-01): rules-within-ruled-POV.** The floor honors the project's ruled POV — Witchwood floors in close third. The deny-lists are POV-agnostic and apply within whatever camera the project has ruled. Never re-rig a project's camera.
+
+**Floor ledger.** Every normalization is logged in the synthesis ledger: original span → floored span → rule cited. Nothing is silently lost.
+
+**Heat bank.** When floor normalization strips dictated warm/hot language (an editorializing verb, a hot descriptor, a named-feeling line that carried real charge), bank the original **verbatim, per beat**, in a `## Heat bank` section of the synthesis ledger. This is CRE's raw material for expansion step 7 — his heat survives; only its placement in the floor is deferred. The machine never discards banked heat and never invents replacement heat.
+
+**Cold hand, warm wound.** Floor normalization strips the narrator's *labels*, never the image's charge. Statement imagery stays hot; only naming and interpretation are withheld. Do not flatten affect — a floored line that lost its image has been over-cut; restore the image, cut only the label.
+
+---
+
 ## Register invariants (apply during generation, not as a separate pass)
+
+> v6 note: these invariants apply *while inventing carriers* in Operation 2; Operation 3 then enforces the full Narrator Rules over everything. They overlap by design — cheaper to generate clean than to repair after.
 
 - **Never name the load-bearing emotion.** Render fear, grief, love, hope structurally — through the body, the action, the object — never by stating the feeling.
   - **Register-repair resolves to options, not output, when direction is ambiguous.** If the original could plausibly point in more than one direction, give both carriers, name the reading behind each, and let the author choose via `open-loops.md`. Committing to a direction you've flagged as uncertain is the exact failure to avoid. Only resolve it yourself when the surrounding action makes the direction unambiguous.
@@ -137,8 +174,11 @@ In every segment, including ones with no perceptual cuts, locate each span that 
 
 - **incidental** — minor color, not load-bearing; naming is harmless.
 - **dialogue** — spoken by a character; out of your scope.
-- **left-for-later** — load-bearing named emotion, but rewriting is the protective pass's job.
+- **floored** — normalized in Operation 3 (appears in the floor ledger; heat banked if it carried charge).
+- **optioned** — direction genuinely ambiguous; both carriers given, author chooses via `open-loops.md`.
 - **repaired** — you rendered it structurally (then appears in the synthesis ledger).
+
+> **v6: `left-for-later` is retired for register breaches.** A load-bearing named emotion or narrator editorial left standing in the floor is a defect, not a deferral — floor it (Operation 3) or option it. Deferring register to downstream passes is the exact friction v6 exists to remove.
 
 **Group a repeated named state.** If the same interior state is named 3+ times in a segment, do not list its instances separately — that hides the real problem. Collapse into one entry: name the state, count, strongest instance, verdict `dilution — keep [strongest], the other namings thin it`.
 
@@ -148,10 +188,22 @@ A permissive segment with zero named-emotion spans listed is a segment you must 
 
 ## Output format
 
-1. **Clean draft** — transcoded prose, nothing else in this section.
+1. **Floor draft** (`clean-draft.md`, name kept for convention continuity) — transcoded prose in the floor register, nothing else in this section.
 2. **Cut log** — each cut span + one-word reason (`unperceived`, `too-fine`, `narrator-injection`, `modifier`).
 3. **Synthesis ledger** — for each collapsed cluster: payload extracted → carrier written. Surface interpretation. If a beat fell to the shortest-form challenge, note what and why. If a dead modifier was cut or a verb changed, note it. If an image was carried twice across lines, present both and ask which to keep. **Register-repair lines get their own flag** — any carrier inventing prose to render an unnamed emotion is the riskiest output. Mark explicitly. If direction was ambiguous, give both carriers and leave a clearly-marked slot in the clean draft pointing to `open-loops.md`. **If a contamination pattern was caught and removed from an invented carrier** (elevation, euphemism, internal gesture, beautified ugliness, clever close — see `REFERENCE/contamination-checklist.md`), note it here in one line.
 4. **Leaves left** — per segment, every named-emotion or dissolved-telling span you chose not to touch, each with its verdict. Must be present for every segment. A 3+-instance state appears as one grouped entry.
+
+The synthesis ledger additionally carries (v6): a **`## Floor ledger`** section (original span → floored span → rule cited, one line each) and a **`## Heat bank`** section (dictated warm/hot language banked verbatim, per beat).
+
+## Spine-review gate (v6 — after the slate, before any expansion)
+
+The floor draft is a diagnostic surface: cold and condensed, it exposes developmental seams at their cheapest read-length. On completing the slate:
+
+1. Present CRE the floor draft, the floor ledger, the heat bank, and any **developmental-seam flags** — a missing causal link, an unplanted payoff, a beat with no function, a spine that skips a step the scene needs. Flags are observations on the floor, never proposed fixes (the organic-process guard); research each against the chapter's brief/canon before raising it (DIR-011).
+2. CRE rules the seams — re-dictate, restructure, or accept.
+3. Only after CRE clears the gate do the expansion passes ([[WORKFLOWS/prose-expansion]], framework steps 4–7) run. **No expansion pass ever runs on an ungated floor.**
+
+Unattended runs (DIR-012): produce the slate + flags, defer the gate to CRE — never self-clear it.
 
 ## Stop conditions
 
