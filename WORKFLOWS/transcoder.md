@@ -45,7 +45,7 @@ Live test: two passes on `WRITING/SHORTS/EPISODES/EP 01 - DOOMSCROLLER` (slate/2
 
 When CRE provides raw dictation for a chapter that is using the per-chapter folder convention (envelope.md present). Trigger phrases: "slate this dictation," "transcode this," "run the slate." Do NOT trigger this on a project that hasn't adopted the folder structure — fall back to [[WORKFLOWS/dictation-cleanup]] in that case.
 
-**Banked prose does not come through the mic (`^obs-221`, CRE-nominated 2026-07-26).** Dictation is a forward-only generative motion for producing *new* material. Prose CRE has already written (e.g. the ~30 banked/ingested Witchwood chapters) must be routed through the **revision pipeline** — `register-pass` → canon — not re-dictated from or hand-edited at the mic. Re-dictating existing material invites editing-during-dictation, which CRE has ruled a mistake that runs *lengthier* than just hand-editing the work directly. If the input is dictation *against* already-written prose rather than fresh generation, that is not a slate job.
+**Banked prose does not come through the mic (`^obs-221`, CRE-nominated 2026-07-26).** Dictation is a forward-only generative motion for producing *new* material. Prose CRE has already written (e.g. the ~30 banked/ingested Witchwood chapters) must be routed through the **revision pipeline** — not re-dictated from or hand-edited at the mic. Re-dictating existing material invites editing-during-dictation, which CRE has ruled a mistake that runs *lengthier* than just hand-editing the work directly. If the input is dictation *against* already-written prose rather than fresh generation, that is not a slate job. **Two sanctioned revision routes for existing prose (v6, 2026-08-01):** (a) `register-pass` against the project register, the standing route; (b) the **floor sheet** — this workflow's Operation 3 run *diagnostically* over the existing draft, gated per-item — via [[WORKFLOWS/prose-expansion]] **Entry mode B** ("floor the draft"), when the goal is conformance to the cold floor. Neither ever comes back through the mic.
 
 ## Inputs
 
@@ -140,7 +140,7 @@ Run the [[KNOWLEDGE/PROSE FRAMEWORK/narrator-rules]] deny-lists over the full dr
 
 1. **Seam-breaks** — narrator hedges ("seemed to," "as if," "she must have imagined") and alarm-labels ("horrifying," "grotesque," "monstrous"). Highest priority.
 2. **Filter verbs** — saw/heard/felt/noticed/watched/realized/thought/wondered + "she knew that / he decided that" frames. Cut the verb, land the object. Exception: keep when the perceiving *is* the event.
-3. **Editorial descriptors** — narrator-stance modifiers (*brutal* white, *cruel* winter, *noble* gaze).
+3. **Editorial descriptors** — narrator-stance modifiers (*brutal* white, *cruel* winter, *noble* gaze). **Adverb Law refinement (2026-08-01):** manner adverbs are cut by the **camera test**, not wholesale — feeling-adverbs ("angrily") floor automatically; physical-fact adverbs ("dryly") are compressed sensing and SURVIVE; agency-implying line-sitters ("carefully," "weakly") flag as judgment calls, never auto-cut. Full law in the narrator-rules doc.
 4. **Narrator glossing** — naming what a moment means, clinical/therapeutic diagnosis, telling the reader how to feel, interiority that reinstates what the page already shows.
 5. **Non-functional setting** — setting admitted only at the moment of action or use.
 

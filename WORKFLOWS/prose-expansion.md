@@ -2,7 +2,7 @@
 type: workflow
 name: prose-expansion
 trigger: expand the prose
-aliases: [run the expansion, tag the spine, expansion passes]
+aliases: [run the expansion, tag the spine, expansion passes, floor the draft, run the floor sheet]
 inputs: [a CRE-gated floor draft (transcoder v6 slate, spine-review gate cleared), the synthesis ledger's heat bank, the chapter envelope/runway tension curve, KNOWLEDGE/PROSE FRAMEWORK/ canon (sentence-structure.md + temperature.md + narrator-rules.md)]
 outputs: [POV-tagged spine, temperature-tag proposal sheet, CRE's restructured/heated draft]
 lane: fiction
@@ -31,9 +31,13 @@ For a landed draft that predates the v6 floor (its spine and beats exist; regist
 
 The sheet doubles as the spine-review surface for existing work — the cold diff exposes the same developmental seams the floor draft would.
 
+**Reference implementation:** EP 01 *Happening Near You*, 2026-08-01 — full traversal in one day: floor sheet (F1–F10) → landed draft 4 → POV tags → assist walk under the non-regression gate (W1–W4) → landed draft 5 → motion-seam check (M1/M2 graduated to protected_patterns) → temperature dial ratified. The expansion/ folder of that episode is the worked example for every artifact this workflow produces.
+
 ## Step 4 — POV tagging (machine, annotation only)
 
 Tag every spine sentence/cluster against the [[KNOWLEDGE/PROSE FRAMEWORK/sentence-structure]] taxonomy: **SENSING** / **DOING** / **THINKING-FEELING** / **SPEAKING**. Output is a tagged copy of the floor (inline tags or a margin map — whichever CRE ruled for the project; default inline `[S]/[D]/[T]/[SP]` markers). No prose is touched. Ambiguous spans get a dual tag + one-line note, never a guess presented as a ruling.
+
+**Transition tags (Motion Laws, CRE-ratified 2026-08-01).** Every envelope/beat boundary additionally gets **[TR-jarring]** or **[TR-flowing]** from the envelope delta — did the character keep their grip across the seam? Step 5 inherits its entry grammar from the boundary tag: jarring → fragmented recalibration into re-flow; flowing → flow carried across (subject to the filled-flow guard). The step-5 assist's conformance gate checks entry grammar against the boundary tag the same way it checks cluster shape against the cluster tag.
 
 ## Step 5 — Sentence restructure (**CRE's move**)
 
@@ -44,6 +48,7 @@ CRE restructures against the tag rules: sensing → short fleeting fragments; do
 1. **Conformance gate.** Before offering anything, check every tagged cluster's current shape against its tag rule. **Conforming clusters get no options** — a cluster already in rule-compliant form has nowhere to go but down. CRE walks only the nonconforming clusters.
 2. **Visible skip list.** Skipped clusters are listed one line each (cluster + rule satisfied) — a silent skip is an invisible deferral. CRE can pull any skipped cluster into the walk with a word.
 3. **Nonconforming ≠ must change.** Divergence can be deliberate staging (the rules' own carve-outs: captivated attention, contrast beats, enacted time). Every item ships with a keep-as-is option and the argument for it; apparent violations the intent-record answers resolve to "conforming by design — confirm" (DIR-011), never an open item.
+4. **Ruled divergences graduate to the piece's protected surface (DIR-014 — CRE-ruled 2026-08-01).** When CRE rules KEEP on a law-divergence, the pass writes it into the piece's frontmatter `protected_patterns` **with its reading** — not just "don't touch the span" but *why the divergence is the design* (e.g. "the missing jolt is the anesthesia") — so future passes inherit the interpretation, not merely the prohibition. Every conformance gate in this workflow (assist walk, motion-seam check, and any future law check) reads `protected_patterns` before flagging: a graduated divergence is never re-raised as an open item — at most a one-line resolved-confirm when a check's scope demands the span be accounted for. A ruling that lives only in a dated report or the changelog is a ruling the next pass will re-litigate.
 
 ## Step 6 — Temperature tagging (machine proposes, CRE ratifies one-pass)
 
