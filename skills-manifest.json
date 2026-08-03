@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-08-03T13:06:12.3464984-07:00",
+    "generated":  "2026-08-03T15:03:37.6927180-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -89,9 +89,9 @@
                    {
                        "name":  "dev-readiness",
                        "package":  "WORKFLOWS/skills/dev-readiness.skill",
-                       "sha256":  "ec55b859b65957a742dae39d83246cb291c18846e0734906e1ce0921ed42fcc8",
-                       "content_sha256":  "a031ea086c2a226d0e72dbb7e0f01f0f1d675a6cb27ea2b4e782838144df93bd",
-                       "bytes":  4396
+                       "sha256":  "409df0b206ab5eb90741c16c900dd3bdf9f3aa3db817cfc135c292b8f36a9bff",
+                       "content_sha256":  "1bc652f57c087ea8b2993ac232faaab52795a304cf8bb959542e609f7143f473",
+                       "bytes":  5428
                    },
                    {
                        "name":  "dictation-cleanup",

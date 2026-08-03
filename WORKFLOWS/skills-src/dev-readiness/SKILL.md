@@ -28,9 +28,14 @@ Read, never write:
 - `_intake/_LEDGER.md` — banked-material collisions
 - `_POETICS.md` — how CRE develops (context only; never a gap)
 - `_DEV_MAP.md` — the tree's own profile; note it so a legitimately-absent rung (short = no `sequences/`) is not flagged as a gap.
+- **`DECISIONS/` parked entries for this project** (`type: decision`, `status: parked`, `project:` matching) — the forks dev-reconcile banked; triaged by the `parked-until` wake convention (Step 4b).
+- **`DEV/_AUTHOR FLAGS.md`** (where present) — CRE's held-concerns ledger (`author-flags`); parked design sessions + un-harvested flags whose wake conditions match surface at Step 4b alongside the forks.
 
 ## Step 2 — Detect gaps (referenced-only)
 Walk every entry: harvest dangling wikilinks, empty registry buckets, an empty `project.md` **Shape**, empty descent layers, and each `_DEV.md` **Open question** still open. Cross-reference `_LEDGER.md` for any banked-material collision touching a gap. **Detection is referenced-only** — you can only see what the tree already names. A load-bearing piece that exists solely in CRE's head and was never captured or linked is **invisible** to this scan; that is a structural blind spot, reported every run, never silently absent.
+
+## Step 2b — Resolve-before-present (`^obs-188` / DIR-011)
+Before any detected flag reaches the punch list, **research it against the tree** — registry entries, `_audit/` rulings floors, `DECISIONS/`, the ruled-terms table. A flag the tree decisively answers is **not a gap**: report it under a separate "RESOLVED AGAINST THE TREE — confirm" line (sourced, one tap), never as a blocker, and note the stale flag for a safe-ops sync. Only tree-silent questions rank as gaps. *(Source instance: the Nameless/Last Mountain "slip" presented as a start-gate blocker while both entries sat complete in the registry.)*
 
 ## Step 3 — Score each gap (four-signal rubric)
 A gap lighting up more signals ranks higher. Record which fired (that is the *why* shown to CRE):
@@ -43,6 +48,9 @@ A gap lighting up more signals ranks higher. Record which fired (that is the *wh
 
 ## Step 4 — Triage by descent-readiness
 Sort each gap into BLOCKERS / LOAD-BEARING / DEFERRABLE, ordered by CRE's current top-down position (about to descend into a sequence? a scene?). Within BLOCKERS, mark each **[start-gate]** (blocks the *opening* of the next descent — can't begin the outline without it) or **[late-beat]** (blocks a specific *later* beat). The verdict's "gated by" count includes **start-gate blockers only**, so the headline number always matches the start-gate set; late-beat blockers are surfaced but excluded from the gate.
+
+## Step 4b — Triage the parked forks (the dev-reconcile handoff, 2026-07-15)
+Read the project's parked `DECISIONS/` entries and classify each by its `parked-until` wake convention: **`decision-helper (ripe)`** → lead the punch list with the literal call (*"run the decision helper on dec-NNN"*); **`CRE-articulation`** → surface as an articulation ask (CRE names branches; not measurable yet); **`milestone: <name>`** → report as sleeping under its named milestone, **never wake it early.** A ripe fork adjacent to a start-gate blocker outranks everything — it is a decision already prepared, waiting only to be run. (Same guard as ever: name the fork, never invent its branches.)
 
 ## Step 5 — Present the punch list in chat
 Lead with the one-line descent-readiness verdict, follow it immediately with the **mandatory blind-spot caveat line**, then the tiers (Output format below). **Never propose the content of any gap.**
@@ -57,6 +65,11 @@ Only if CRE asks: write `SYSTEM/reports/dev-readiness-<project>-<date>.md` (neve
 DEV-READINESS — <PROJECT> · <date>
 Descent verdict: <ready / not-ready> to drop to <sequence|scene> level — gated by: <the START-GATE blockers only, 1–3 items>
 Blind spot: this audit only sees what the tree already references — pieces you've discussed but not yet captured won't appear here. Run dev-capture to enter them before they can rank.
+
+RIPE FORKS (decisions prepared and waiting — run these)
+- dec-NNN <one-line fork> — "run the decision helper on dec-NNN"
+- dec-NNN <one-line fork> — awaits your candidate branches (articulation ask)
+(sleeping: dec-NNN under <milestone> — not woken)
 
 BLOCKERS (flesh out before the descent)
 - [start-gate] <gap> — signals: <which fired> · adjacent open question: <id/none> · blocks the OPENING of the descent: <one line>
@@ -100,4 +113,5 @@ Each line names the gap and *why it ranks* — never a proposed answer. The verd
 ## Build status
 - Canon doc shipped 2026-06-23 at `WORKFLOWS/dev-readiness.md` (status: draft); first-run shakedown refinements (referenced-only blind-spot caveat + start-gate vs late-beat split) folded.
 - This source authored from that doc (source-ahead of any install).
+- **2026-08-03 mirror (attended):** canon's 2026-07-15 additions folded in — Step 2b resolve-before-present (`^obs-188`/DIR-011), Step 4b parked-fork triage (the dev-reconcile v1.2 handoff), RIPE FORKS output block, and the `DECISIONS/` + `_AUTHOR FLAGS` inputs. The 07-15 canon edit had never been mirrored here, so the 08-03 pack run no-op'd on stale content (`^backlog-dev-readiness-fork-triage`; the `^obs-227`/DIR-009 announce-the-gap class).
 - Propagation to the installed skill = desktop `pack-skills.ps1` + Save-skill, then register the trigger row in `_SKILLS MAP` via the file tools (same path as `dev-capture` / `dev-capture-audit`). Trigger row already present in `_SKILLS MAP`.

@@ -7,7 +7,7 @@ inputs: [the mounted vault root]
 outputs: [a categorized punch list of dangling links / broken anchors / broken headings; optional brain-log entries]
 lane: meta
 status: active
-last_updated: 2026-06-15
+last_updated: 2026-08-03
 ---
 
 # WORKFLOW: link-audit (the link doctor)
@@ -31,7 +31,11 @@ Scans every note for `[[wikilinks]]`, `![[embeds]]`, and `[md](links)` and resol
 
 ## Steps
 1. **Vault sentinel** — confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`); the `^obs-004` guard. Write nothing.
-2. **Run** the bundled resolver: `python3 link_audit.py --vault <VAULT>` (add `--all` to include the quarantined zones, `--ambiguous` to show the info tier, `--json` for machine output). **Strongest read freshness:** pass `--rest-base http://127.0.0.1:27123 --rest-key <Local REST API key>` (or env `OBSIDIAN_REST_BASE`/`OBSIDIAN_API_KEY`) to read every target from Obsidian's **live in-memory view** instead of the bash/Dropbox mount — immune to mount staleness, falls back to disk per-file on any API error (the `^obs-073` / `^link-audit-mount-staleness` fix).
+2. **Run** the bundled resolver: `python3 link_audit.py --vault <VAULT>` (add `--all` to include the quarantined zones, `--ambiguous` to show the info tier, `--json` for machine output).
+
+   > ⚠️ **The `--rest-base` / `--rest-key` path is RETIRED (corrected 2026-08-03).** This step used to recommend reading targets through Obsidian's Local REST API for freshness. **That plugin was removed from the vault on 2026-07-13** under DIR-001 — its `data.json` held a 64-char `apiKey` granting full read/write over the vault plus a TLS private key, and removal (not rotation) was the ruled fix, since `CLAUDE.md` makes the file tools the default read path. **Do not pass `--rest-base`/`--rest-key`, do not set `OBSIDIAN_REST_BASE`/`OBSIDIAN_API_KEY`, and never go looking for that key** — retrieving it would re-introduce the exact secret DIR-001 had removed. The flags remain in the script for a future sanctioned freshness source; they have no live backend today.
+   >
+   > **The freshness mitigation is therefore Step 3 alone**: `SUSPECT-STALE` self-flagging, a fresh session, and file-tool confirmation of any surprising DANGLING before it is reported as real. Treat mount staleness as *present and unmitigated*, not solved.
 3. **Apply the `^obs-014`/`^obs-073` guard** — a flagged-missing file can be a stale-mount artifact, and a recently-written file can read back **truncated** (the bash mount serves stale/partial views of files written/moved/deleted that session; a file-tools write does not heal it). Mitigations: prefer `--rest-base` (Step 2); truncated reads self-flag as `SUSPECT-STALE` + a banner; still **run in a FRESH session** and confirm any surprising DANGLING via the file tools before reporting it as real.
 4. **Categorize, don't dump.** Separate the punch list into: genuine breakage (fix), the vault's **folder-link convention** (links pointing at folders rather than notes — pre-existing style, not breakage), and resolver-soft cases (heading-fragment near-misses). Present the actionable list; quarantine GRAVEYARD / `evals/` / `_CHANGELOG` / `_OBSERVATIONS` noise.
 5. **Hand off.** Fixes are manual or a separate pass — this skill never edits a note.

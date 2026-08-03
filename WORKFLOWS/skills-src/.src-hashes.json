@@ -36,7 +36,7 @@
     "task-audit":  "8f77c8c7e95dd3d95cfc9497f79e2f6494b12c88ed625c91a45ac30debd7763f",
     "line-edit":  "92bc627dcd50af2c5fbdc6bb271b0f8e53beba46319c8999558c10b50bc7f58a",
     "chapter-pipeline":  "975ace78b126dbf207062defdbfcf805b9998f2ba1828d41a0e6eab23708319a",
-    "dev-readiness":  "a031ea086c2a226d0e72dbb7e0f01f0f1d675a6cb27ea2b4e782838144df93bd",
+    "dev-readiness":  "1bc652f57c087ea8b2993ac232faaab52795a304cf8bb959542e609f7143f473",
     "reconcile":  "aaf2ce5442970f7bceee625c3427ea6ae03883ea183f7c91bbec1dcac22952f1",
     "promote-revision":  "08a940d084ea201e546e2b3a1fc484df468536369f553835821ed4b59f55016a"
 }

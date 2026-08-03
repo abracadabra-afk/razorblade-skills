@@ -4,10 +4,10 @@ name: backlog-sweep
 trigger: sweep the backlog
 aliases: [clean the backlog, tidy the backlog, backlog maintenance, dedupe the backlog]
 inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TASKS/TASKS.md (open items — changelog-derive), _CHANGELOG.md (derive evidence)]
-outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps]
+outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps, a Standing queue block in _BACKLOG.md (lane counts + ranked-3 attended serving + agent-toggle recommendation), one replaced serving seed in TASKS/TASKS.md]
 lane: writing-ops
 status: active
-last_updated: 2026-07-19
+last_updated: 2026-08-03
 ---
 
 # WORKFLOW: backlog-sweep
@@ -31,6 +31,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 3. A **"Needs CRE ruling"** bin appended at the end of `_BACKLOG.md` listing every gated judgment call, one line each with the proposed action + reason.
 4. A short sweep report (counts: archived / deduped / reformatted / gated / graduation candidates) appended to `_CHANGELOG.md`.
 5. **Observation-graduation candidates** (Step 4b) — proposed directive text for CRE to ratify; never auto-written to `_DIRECTIVES`.
+6. A **Standing queue** block near the top of `_BACKLOG.md` (Step 4c) — lane counts, a ranked serving of 3 attended items, and the `vault-backlog-agent` toggle recommendation — plus **one** replaced serving seed in `TASKS/TASKS.md` so the serving reaches a surface CRE actually opens.
 
 ## Write-mode policy (the core of this workflow)
 
@@ -42,6 +43,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 - **Fix priority-tag drift.** De-duplicate repeated tags on one line (e.g. `#p1 #p1` → `#p1`). Do NOT invent or change a priority that isn't there.
 - **Derived task closures (Step 3b, decisive evidence only).** Check off an open `TASKS/TASKS.md` or `_BACKLOG.md` item when `_CHANGELOG.md` records its deliverable shipped/ruled **with named artifacts** (a commit, a file, a decision entry, a verified deploy). Append the evidence + a `closed via backlog-sweep changelog-derive` provenance comment to the closed line. This mirrors day-launch's derive-pass precedent — artifact-backed closures are safe-ops even unattended.
 - **Refresh frontmatter** `last_updated`.
+- **Regenerate the Standing queue block (Step 4c).** Counts and the ranked serving are *derived* — they lose no author intent and are fully reversible, so they write. **Replace the existing block; never append a second one.** The block *recommends* the `vault-backlog-agent` toggle and never performs it (a schedule change is `#gated` by this file's own Conventions).
 - **Apply observation triage stamps (Step 4b).** Stamp `PARKED` / `NOT A RULE` on `_OBSERVATIONS.md` entries the sweep has considered and is not proposing. These record *that the sweep looked*, not a CRE ruling, so they are safe. `GRADUATED` stamps are NOT safe — they follow a CRE ruling and land in the same attended edit that writes the directive.
 
 **GATE (judgment calls) — never apply; list in the "Needs CRE ruling" bin:**
@@ -100,11 +102,43 @@ Apply stamps as a **safe op** (they record that the sweep looked, not what CRE r
 
 1. **Recurrence check.** For each `PARKED` entry, test whether any newer observation satisfies its stated condition. If yes, it is no longer parked — propose it, and cite the recurrence. (`^obs-189` was a textbook recurrence of `^obs-185` and would have been caught this way.)
 2. **Cluster check.** Test whether two or more untriaged entries describe the **same underlying failure**, however differently worded. A cluster is far stronger evidence than any single entry and should be proposed as one directive with all sources named. (`^obs-183` + `^obs-187` + `^obs-014` were one finding across seven weeks; `^obs-132` + `^obs-136` + `^obs-137` were one rule that no entry owned, two of them deferring to it as "already covered" — **that phrase is itself a cluster signal: it means the rule is unwritten.**)
+3. **Wording-vs-state check (added 2026-08-03, CRE-ruled — DIR-009's announce-the-gap clause, `^obs-230`).** An open item's own worded state ("packaging pending", "install remaining", "blocked on X") is a snapshot nothing re-checks. Where the item names a checkable artifact — a `.skill` in the manifest, an installed skill, a scheduled task, a file — test the wording against the disk/manifest state and flag every contradiction as its own report line: *"item says X, disk says Y."* Six instances of this class were closed in one attended sweep (2026-08-03) after accumulating silently; the flag makes the class visible weekly instead.
 
 **Bounded output.** Propose at most **5** directives per sweep, ranked by evidence strength (cluster or recurrence first, single-instance last), and state how many untriaged entries remain. An unbounded proposal list is one CRE will not read — which is how this step failed the first time.
 
+### Step 4c — Standing queue + serving block (added 2026-08-03, CRE-ratified)
+
+**Why this step exists.** The queue taxonomy in `_BACKLOG.md` § Conventions (`#unattended` / `#unattended-confirm` / `#gated` / `#desktop`, with `#gated` as the default for an untagged item) has always been *computable* — nobody ever computed it. So no surface ever told CRE what workload was waiting for which writer, and the standing question *"is it worth switching the unattended agent on?"* stayed a manual guess. This step answers both from tags that already exist. **It adds no new tagging burden.**
+
+**Compute (open `- [ ]` items only, this file + every project shard):**
+
+| Lane | Definition |
+|---|---|
+| **Agent** | `#unattended` + `#unattended-confirm` |
+| **Attended** | everything else — explicit `#gated` **plus untagged items** (the stated default) |
+| **Desktop** | `#desktop` — a **sub-count of Attended**, not a third lane; report it inside the attended figure, never added alongside it |
+
+Do not double-count: `#desktop` items frequently also carry `#gated`.
+
+**Rank the attended bucket by `(priority, age)`.** `#p1` → `#p2` → `#p3` → untagged; within each band, **oldest first**, using the `, YYYY-MM-DD` date carried in the item's anchor parenthetical. Age needs no new tag — it is already in every item. This exists because priority alone has stopped discriminating: at the 2026-08-03 measurement `#p2` held **63 of 131** open items against **4** `#p1`, so a serving ranked on `#p` alone is effectively unordered. **Exclude `#blocked` / `#waiting` items from the serving** (they are not actionable), but keep them in the counts.
+
+**Serve exactly 3.** Not the ranked list — three items, each as: anchor · one-line what-it-is · **the next physical action already recorded in the item**. Never invent a next action; if an item's next action is missing, skip to the next candidate and note the gap. Three is the cap for the same reason day-launch caps its board — an unbounded serving is one CRE will not work.
+
+**Emit the agent-lane line (rewired 2026-08-03 — `vault-backlog-agent` retired, CRE-ruled `^backlog-vaultbacklogagent-nodoc`).** There is currently **no unattended backlog executor**: the task was deleted 2026-08-03 (superseded; this sweep owns the maintenance half). Report the Agent-lane count as information only — *"Agent lane: N items tagged `#unattended`/`#unattended-confirm`; no executor exists."* If the lane grows enough to matter, flag it as a CRE decision (re-introduce an executor as a doc-backed task authored fresh — never resurrect the retired prompt). Do not recommend enabling a task that does not exist; probe live task state before writing any toggle line (DIR-010).
+
+**Write it to two places:**
+
+1. A `## Standing queue (backlog-sweep YYYY-MM-DD)` section in `_BACKLOG.md`, placed **immediately below § Project pointers** so it reads before the lane headings. **Replace** the prior block wholesale — never stack.
+2. **One** seed item in `TASKS/TASKS.md`: `- [ ] Walk the backlog serving — 3 attended picks + N agent-lane ready (see _BACKLOG § Standing queue) win:ops #p2`. **Replace the existing seed if one is present; never append a second.** This is the surfacing half — a block only in `_BACKLOG` is a deferral onto a channel CRE does not routinely open (DIR-012 clause 4).
+
+**Placement in the maintenance window (CRE-ruled 2026-08-03 — the wrinkle is closed).** The window moved from Monday to **Sunday afternoon** precisely so this serving lands *upstream* of the planning surfaces instead of a day late. Live order:
+
+`skills-sweep` 13:05 → `task-audit` 13:53 → **`backlog-sweep` 14:38** → `vault-health` 15:39 → `link-audit` 16:21 → *(`week-shape-runner` 18:00)* → *(Monday `day-launch` 07:08)*
+
+So the Standing queue block and its `TASKS.md` seed are both written **before** `week-shape-runner` composes the week proposal and well before Monday's `day-launch` builds the board — the serving reaches CRE on the surfaces he already opens, on the same cycle it was computed. **Two dependencies this ordering creates:** the sweep must still run *after* `skills-sweep` (it absorbs the follow-ups that run appends), and *before* `vault-health` (which rotates the brain docs this sweep reads). Do not re-time this task unattended — a schedule change is `#gated`; if the window has drifted, report it rather than fixing it.
+
 ### Step 5 — Report + log
-Append a one-line dated entry to `_CHANGELOG.md` under writing-ops: counts archived / deduped / reformatted / gated, plus anything notable. File any new fragility to `_OBSERVATIONS.md` with a `^obs-NNN` anchor. If nothing changed since the last sweep, say so in one line and keep the run read-only.
+Append a one-line dated entry to `_CHANGELOG.md` under writing-ops: counts archived / deduped / reformatted / gated, **plus the Step 4c lane counts and the three served anchors**, plus anything notable. File any new fragility to `_OBSERVATIONS.md` with a `^obs-NNN` anchor. If nothing changed since the last sweep, say so in one line and keep the run read-only.
 
 ## Stop conditions
 
