@@ -4,13 +4,13 @@ name: skills-manager
 trigger: manage the skills
 aliases: [run the skills manager, skills manager, what skills need work, refresh the skill registry, skills sweep]
 inputs: [a race-free clone of razorblade-skills (git), its skills-manifest.json, WORKFLOWS/git-bridge/build.py, skills-src/ (editable skill sources), the installed skills cache, skill-audit (reporter), skill-creator (authoring)]
-outputs: [a refreshed skills-manifest.json (the registry), an Install queue (the only manual surface left for CRE), repackaged .skill files where the source moved ahead, a desktop push of the repos, _CHANGELOG/_OBSERVATIONS/_BACKLOG entries]
+outputs: [a status view joining skills-manifest.json with the audit, an Install queue (the only manual surface left for CRE), a Repackage handoff for SOURCE-AHEAD skills (the desktop does the build+push, never the sweep), _CHANGELOG/_OBSERVATIONS/_BACKLOG entries]
 lane: meta
-status: re-scoped (pending build)
-last_updated: 2026-06-14
+status: active
+last_updated: 2026-08-03
 scope: Vaults using the Git Bridge (a versioned razorblade-skills repo + skills-manifest.json) that install skills into Cowork. Orchestration-only — holds no scan, build, or hash logic of its own; it sequences build.py and skill-creator and surfaces the result.
 pipeline_position: The management layer ABOVE the bridge tooling. build.py is the mechanical engine (verify/package/audit/manifest); skill-creator is the authoring half; skill-audit is the reporter. skills-manager sequences them and surfaces the one irreducibly-manual step (Save-skill) as a queue.
-git_bridge: Re-scoped onto the Git Bridge 2026-06-14 (see [[WORKFLOWS/git-bridge-proposal]] / `^obs-063`–`^obs-067`). The bridge DELETED most of the original design's machinery (see "What the bridge retired"). Build pending — do not implement the pre-bridge version.
+git_bridge: Re-scoped onto the Git Bridge 2026-06-14 (see [[WORKFLOWS/git-bridge-proposal]] / `^obs-063`–`^obs-067`). The bridge DELETED most of the original design's machinery (see "What the bridge retired"). Never implement the pre-bridge version. Live corrections from the `skills-sweep` runs (`^obs-073` / `^obs-080` / `^obs-087`) folded in 2026-08-03 — before that date this doc was ~7 weeks behind its own executing task prompt.
 ---
 
 # WORKFLOW: Skills Manager (the skill control tower) — Git Bridge edition
@@ -46,10 +46,33 @@ Read `_DIRECTIVES.md`; confirm `type: ai-os-brain` + `file: directives`. Mismatc
 `git clone --depth 1 https://github.com/abracadabra-afk/razorblade-skills.git /tmp/rs`, then `build.py verify` + `build.py audit` (`skill-audit` Steps 1–3). All reads of the canonical side come from the clone, never the Dropbox mount. Honor the installed-side file-tools confirmation for any STALE (`^obs-066`).
 
 ### Step 2 — Build the status view
-Join `skills-manifest.json` with the audit result: per skill, installed verdict (`current` / `STALE` / `not-installed`), source-vs-package check (exact: does `content_hash(skills-src/<name>/)` equal the manifest `content_sha256`? — `SOURCE-AHEAD` if not), pending action, and whose-move. Present it as a table; persist nothing new (the manifest is the ledger).
+Join `skills-manifest.json` with the audit result: per skill, installed verdict (`current` / `STALE` / `not-installed`), the source-vs-package check, pending action, and whose-move. Present it as a table; persist nothing new (the manifest is the ledger).
+
+**Two path/field corrections — both live, both `^obs-087` (2026-07 sweep):**
+
+- **The manifest carries no `content_sha256`.** The committed `skills-manifest.json` holds only the zip `sha256`, so the literal *"compare `content_hash(skills-src/<name>/)` to the manifest `content_sha256`"* check this doc used to specify **cannot be run** — it yields a crash or a false "no drift" across every skill. Compute `SOURCE-AHEAD` by **content-hashing each source dir directly against its built package**.
+- **Sources are at `WORKFLOWS/skills-src/`, not `<root>/skills-src/`.** `build.py`'s own `package` / `extract` read `<root>/skills-src`, so from the repo root they see sources as **absent**. Always use the `WORKFLOWS/skills-src/` location for the source-vs-package compare. (Tracked for a real fix at `^backlog-buildpy-skillssrc-path`.)
 
 ### Step 3 — Repackage what's automatable — **desktop build leg (`pack-skills.ps1`)**
-The source→package→push leg is wired (`^git-bridge-delivery-leg`, 2026-06-15) and it runs on the **desktop**, not the sandbox — writing a `.skill` into Dropbox is safe from the desktop (an ordinary local write), whereas a *sandbox* write is the `^obs-058`/`^obs-062` hazard and the sandbox holds no push PAT. So for any `SOURCE-AHEAD` row, the **sandbox sweep diagnoses it and hands off** (Step 4); the rebuild itself is `WORKFLOWS/git-bridge/pack-skills.ps1` on the desktop — it builds `.skill` from `skills-src/<name>/` into the vault (change-detected: only rebuilds what actually changed, no churn), and the existing `seed-repo.ps1` pushes it. `build.py audit` (content-hash) confirms the installed copies afterward. The sandbox never builds or pushes; it only pulls + audits.
+The source→package→push leg is wired (`^git-bridge-delivery-leg`, 2026-06-15) and **delivery** runs on the **desktop**, not the sandbox — writing a `.skill` into Dropbox is safe from the desktop (an ordinary local write), whereas a *sandbox* write into the mounted `WORKFLOWS/skills/` is the `^obs-058`/`^obs-062` hazard, and the sandbox holds no push PAT (DIR-001). So for any `SOURCE-AHEAD` row, the **sandbox sweep diagnoses it and hands off** (Step 4); the rebuild that ships is `WORKFLOWS/git-bridge/pack-skills.ps1` on the desktop — it builds `.skill` from `skills-src/<name>/` into the vault (change-detected: only rebuilds what actually changed, no churn), and the existing `seed-repo.ps1` pushes it. `build.py audit` (content-hash) confirms the installed copies afterward.
+
+**The sandbox build line — CRE-ruled 2026-08-03: BUILD IS PERMITTED, DELIVERY IS NOT.** The pre-2026-08 text of this doc read *"the sandbox never builds or pushes; it only pulls + audits,"* which contradicted the live `skills-sweep` prompt (it grants a candidate build). The ruling settles it as **gate-and-report only**:
+
+- The sandbox **MAY** build a candidate `.skill` from source **in `/tmp`, inside the clean git clone** — never on the Dropbox mount (DIR-007) — solely to run it through the gate.
+- **The gate** = `build.py verify` clean (frontmatter parses, body not truncated, not materially SHORTER than the prior package) · rebuilt content hash == source content hash · Step 3.5's regression suite green for the skills it covers.
+- The sandbox **MAY NOT** install/Save-skill (the trust boundary), push (no PAT), or write a `.skill` back into the Dropbox-mounted `WORKFLOWS/skills/` (`^obs-062`). `seed-repo.ps1` mirrors from the **Dropbox vault**, not from the `/tmp` clone, so a sandbox build can never reach delivery anyway (`^obs-080`) — which is exactly why it is safe to allow, and why it is only ever a pre-flight.
+- **DO NOT run `build.py package` in the sandbox** until `^backlog-buildpy-skillssrc-path` is fixed. It rebuilds from its `<root>/skills-src` path — which is absent (see Step 2) — **and rewrites the whole manifest**, so running it as-is writes an **EMPTY manifest**. This is destructive, not cosmetic. Build candidates by direct invocation against the real `WORKFLOWS/skills-src/` path instead.
+
+### Step 3.5 — Regression gate (deterministic skills)
+When gating a candidate rebuild, run the deterministic-skill regression suite against the **rebuilt `/tmp` packages** (never the live installed copies):
+
+```
+python3 /tmp/rs/WORKFLOWS/evals/regression-suite/run_suite.py --skills-dir /tmp/rs/WORKFLOWS/skills
+```
+
+It golden-tests the bundled scripts of the scaffolders/resolvers (chapter-init, book-ingest, skill-audit, link-audit, storyline-sync) against the logged `^obs-NNN` failure modes (`^autoresearch-regression-suite` / `^obs-030`). Exit 0 = green (XFAILs are tracked-open defects, fine); exit 1 = a FAIL or XPASS → the candidate does **not** pass the gate; hand the suite's FAIL/XPASS lines to CRE in Step 5.
+
+**`^obs-073` mount guard:** the bash/Dropbox mount can serve a TRUNCATED `run_suite.py` on a recently-edited copy — a stale-mount artifact, NOT a regression. Running from the `/tmp` git clone avoids this; if the script still won't parse/import, re-materialize it via the file tools before trusting any non-green result. Never let a truncated read masquerade as a FAIL *or* a green.
 
 ### Step 4 — Emit the Install queue + Repackage handoff (🧑)
 List exactly the `.skill` files now `STALE`: one line each — *"Save-skill `<name>.skill` — \<one-clause reason\>."* For any `SOURCE-AHEAD` row, emit a **Repackage handoff**: *"run `pack-skills.ps1` on the desktop, then `seed-repo.ps1`"* (the build is a desktop action by design — `^obs-058`). That list is CRE's whole job.
@@ -57,8 +80,16 @@ List exactly the `.skill` files now `STALE`: one line each — *"Save-skill `<na
 ### Step 5 — Hand back the CRE-only content work
 Anything requiring authoring or ruling — a **new skill from scratch**, a **behavior change**, a **description/trigger-text** change (route to the `^obs-030` eval harness; rulings are CRE's), a **drifted `WORKFLOWS/<name>.md` doc** — is summarized as a handoff, never auto-authored. (Mirrors `_ME` "AI executes; CRE creates": the manager moves bytes and runs deterministic builds, it does not author skill content or creative procedure.)
 
-### Step 6 — Log
-On a real management run, append a one-line `_CHANGELOG` entry naming what was repackaged and what's queued for install, and file any new fragility to `_OBSERVATIONS`. A quick status check stays read-only.
+### Step 6 — Log (and the write mechanics that make logging possible)
+
+**Connect the vault FIRST, before the bootstrap reads (`^obs-087`).** In an unattended run the file tools cannot reach the Dropbox vault unless the folder is connected — and without them, DIR-005-compliant self-logging is impossible (the OS docs are top-insert; the MCP write tools are forbidden for them). Call `request_cowork_directory` with `C:\Users\Chad\Dropbox\razorblade_mermaid` and verify by `Read`-ing `_DIRECTIVES.md` at that path.
+
+- **Connected** → use the file tools (Read/Edit/Write) for ALL vault reads and writes for the rest of the run.
+- **Not connected** → continue **read-only**: read via the Obsidian MCP, run the full audit, and at close emit the `_CHANGELOG` / `_OBSERVATIONS` / `_BACKLOG` entries **verbatim in the report** for CRE to paste at the desk. Never patch/append into the top-insert OS docs via the MCP.
+
+**ALWAYS log — even a clean run gets a one-line entry (DIR-003).** The former *"a quick status check stays read-only"* carve-out is retired: it made a no-change run indistinguishable from a run that never fired. Append a dated `_CHANGELOG.md` entry (meta lane) naming what's queued for install, any `SOURCE-AHEAD` repackage handoffs, and what failed a gate; file new fragility to `_OBSERVATIONS.md` (`^obs-NNN`); follow-ups to `_BACKLOG.md`. If nothing moved since last run, the one-line clean entry suffices.
+
+**Write hygiene (DIR-005, non-negotiable):** TOP-INSERT new entries via a targeted Edit (anchor on the `---` → first-entry boundary; `_CHANGELOG` and `_OBSERVATIONS` are both newest-first), and verify every write by re-reading **through the file tools**, never a bash/mount read. NEVER `patch_vault_file`; NEVER a whole-file MCP rewrite on these docs — both have silently truncated canon here.
 
 ## Automation boundaries (what stays manual, and why)
 
@@ -68,7 +99,9 @@ On a real management run, append a one-line `_CHANGELOG` entry naming what was r
 | Maintain the registry (manifest) | ✅ fully (build.py) | 🤖 |
 | Repackage a `.skill` from an **intact source** | ✅ desktop (`pack-skills.ps1`, change-detected) | 🤖 desktop |
 | Push the skills to GitHub | ✅ fully (`seed-repo.ps1` / `razorblade-os-sync`) | 🤖 |
-| Build/push from the **sandbox** | ❌ by design — sandbox only pulls + audits (`^obs-058`) | — |
+| **Candidate**-build in the sandbox `/tmp` clone (gate-and-report) | ✅ permitted — pre-flight only, never delivered (CRE-ruled 2026-08-03) | 🤖 |
+| Run `build.py package` in the sandbox | ❌ writes an EMPTY manifest until `^backlog-buildpy-skillssrc-path` is fixed | — |
+| **Deliver** from the sandbox (write a `.skill` to the vault / push) | ❌ by design — `^obs-058` / `^obs-062` / `^obs-080`; no PAT (DIR-001) | — |
 | **Ship a rebuild that fails the verify/hash gate** | ❌ never auto-ship | 🧑 CRE |
 | **Install (Save skill)** | ❌ trust boundary | 🧑 CRE |
 | **Author / change skill content** | ❌ canonical content | 🧑 CRE + skill-creator |
@@ -78,7 +111,7 @@ The design automates everything up to two hard lines — the **install trust bou
 
 ## Cadence
 
-The weekly **`skills-sweep`** scheduled task (Mondays) runs this manager unattended: clone → `build.py verify`+`audit` → file-tools-confirm any STALE → report the Install queue (+ a Repackage handoff — *run `pack-skills.ps1` on the desktop* — for `SOURCE-AHEAD` rows). The sweep stays diagnose-and-report **by design**: the build+push leg runs on the desktop (`pack-skills.ps1` → `seed-repo.ps1`), never in the sandbox. This kills the `^obs-055` stale-open class — the manifest is always current, so a backlog line can never quietly claim "rebuild needed" after it already shipped. The backlog carries only *"CRE: clear the Install queue"* when non-empty.
+The weekly **`skills-sweep`** scheduled task (Mondays) runs this manager unattended: connect the vault folder → clone → `build.py verify`+`audit` → file-tools-confirm any STALE → optionally candidate-build + gate (Steps 3/3.5) → report the Install queue (+ a Repackage handoff — *run `pack-skills.ps1` on the desktop* — for `SOURCE-AHEAD` rows) → self-log. The sweep stays **diagnose, gate, and report** by design: the build that actually *ships* runs on the desktop (`pack-skills.ps1` → `seed-repo.ps1`), never in the sandbox. This kills the `^obs-055` stale-open class — the manifest is always current, so a backlog line can never quietly claim "rebuild needed" after it already shipped. The backlog carries only *"CRE: clear the Install queue"* when non-empty.
 
 ## Rulings (CRE, 2026-06-13) — with 2026-06-14 bridge mapping
 
@@ -91,7 +124,7 @@ The weekly **`skills-sweep`** scheduled task (Mondays) runs this manager unatten
 
 - **`SKILLS/REGISTRY.md`** → replaced by `skills-manifest.json` (and the stale `SKILLS/` path is gone — packages live in `WORKFLOWS/skills/`).
 - **mtime staleness heuristic + `source_sha` stamping** → replaced by exact content-hash compare (source↔package↔installed). Git already content-addresses everything.
-- **`NUL-PAD` cleaning + `^obs-062` de-hydration discipline + build-in-temp-then-verify gymnastics** → moot: builds run in the sandbox from a clean git clone, not on the Dropbox mount, so atomic-write NUL padding and cloud-only de-hydration don't occur.
+- **`NUL-PAD` cleaning + `^obs-062` de-hydration discipline + build-in-temp-then-verify gymnastics** → moot for the *candidate* build, which runs in the sandbox from a clean git clone in `/tmp` rather than on the Dropbox mount, so atomic-write NUL padding and cloud-only de-hydration don't occur there. (The shipping build is `pack-skills.ps1` on the desktop — an ordinary local write, same immunity.)
 - **The mtime-driven "rebuild step never fired" failure (`^obs-060` #1)** → cannot recur: staleness is content, not timestamps.
 
 What stayed: the **Install queue**, the **automation-boundary discipline**, the **weekly cadence**, and the **verify/hash ship gate** (simplified). Those were the genuinely valuable parts; the rest was scaffolding against a substrate the bridge replaced.

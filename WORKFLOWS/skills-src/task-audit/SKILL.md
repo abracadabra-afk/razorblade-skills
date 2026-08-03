@@ -19,9 +19,20 @@ skill is the catch.
 
 **The three prompt shapes (`^obs-124`) — what predicts drift:**
 
-- **doc-deferring** — "Read `WORKFLOWS/<name>.md` and follow it"; logic read at runtime. **Drift-resistant.**
+- **doc-deferring** — "Read `WORKFLOWS/<name>.md` and follow it"; logic read at runtime. **Drift-resistant** *in shape* — but see the warning below.
 - **inline-behavior** — procedure baked into the `SKILL.md` body. **Drift-prone** (both real hits).
 - **runner-staged** — logic in a `runner.py` staged each run; prompt drift **cosmetic**.
+
+**⚠️ `CLEAN` is a SHAPE verdict, not a CONTENT verdict (`^obs-236`, 2026-08-03).** Doc-deferring
+prompts almost all ship an **"In brief:" / "Summary of what to do:"** block for orientation, and
+that block rots silently while the shape verdict stays `CLEAN` — so it never reaches the Step-4
+semantic pass. **The audit's one clean row is the one nothing ever reads.** Live instance:
+`vault-health` passed `CLEAN` while its summary instructed an in-sandbox `_CHANGELOG` carve that
+`log-rotate.md` explicitly forbids (`^obs-083`/`^obs-084`). The run that night was saved only by
+correctly preferring the doc over its own summary — the guardrail held on judgment, not
+instruction. **So: a doc-deferring prompt with a summary block and no `tracks:` stamp routes to
+`REVIEW`.** Close it by stamping, by deleting the summary (the true loader shape), or by ruling it
+clean at Stage B.
 
 ## Step 0 — Vault sentinel (`^obs-004`)
 
@@ -56,14 +67,37 @@ NUL-padded copy that crashes python (`source code string cannot contain null byt
    ```
 
 The script classifies each prompt's shape, runs the **convention lint** (stale book names, wrong
-scheduler path, `_CHANGELOG` foot-append, missing NUL-guard — extend the `LINT` list as new retired
-conventions appear), and, when a prompt carries a `<!-- tracks: WORKFLOWS/<doc> sha:… -->` stamp,
-compares it to the doc's current sha for an **exact** verdict. Run `--selftest` first if you've
-touched the script.
+scheduler path, `_CHANGELOG` foot-append, dated-snapshot reads, missing NUL-guard — extend the
+`LINT` list as new retired conventions appear), and, when a prompt carries a
+`<!-- tracks: WORKFLOWS/<doc> sha:… -->` stamp, compares it to the doc's current sha for an
+**exact** verdict. Run `--selftest` first if you've touched the script.
+
+**Two lint traps, both graduated from live false results — read before adding a signal:**
+
+- **Negation-awareness is mandatory, and it does not inherit.** A *corrected* prompt still contains
+  the forbidden string ("never a foot-append"; "do NOT use the old VIBEBOOK/… paths"), so a naive
+  match flags the fix as the defect. `CHANGELOG-FOOT-APPEND` learned this in `^obs-143` and
+  `STALE-BOOK-NAME` did **not** inherit it — it fired on the prohibition clause while being
+  case-sensitive, hence blind to the real mixed-case drift beside it (`^obs-232`). **When you touch
+  one lint, audit its siblings for the same blind spot in the same session**, and give every
+  exception a *paired* selftest (must-hit + must-clear) — a one-sided test cannot catch a matcher
+  that is simultaneously too broad and too narrow.
+- **Widen the EXACT layer, never a fuzzy threshold** (DIR-014's corollary). `LOADER_RX` originally
+  matched only a bare `Read WORKFLOWS/x.md` and missed every backticked or other-verb loader; the
+  fix added quoting/verb tolerance while keeping the path match literal, so no false-positive
+  surface was created.
+
+**`STALE-SNAPSHOT` (MED)** fires when a prompt measures or decides off a dated artifact — a
+`SYSTEM/reports/*.json` stamp, a cached scan — with no freshness notion. The bar is deliberately
+*both* an age test **and** a has-anything-written-since test: the `vault-health` instance sat well
+inside its documented ≤ 36 h window, fully compliant, and was still ~13.5 K stale on `_CHANGELOG`
+because one session had written to all three brain docs within the window. **An age window cannot
+see intra-window writes.** DIR-010 at the artifact layer — a stamp is a dated claim, not a probe.
 
 **Verdicts:** `CLEAN` · `DRIFT-MECH` (a lint signal fired — mechanical, certain) · `DRIFT-EXACT`
-(stamp sha ≠ doc sha) · `REVIEW` (inline, no stamp — needs a semantic read) · `BROKEN-REF` (loader
-points at a missing doc) · `NO-DOC` (inline, no mapped doc) · `INFO` (runner-staged, cosmetic).
+(stamp sha ≠ doc sha) · `REVIEW` (inline with no stamp, **or doc-deferring with an unstamped
+summary block** — needs a semantic read) · `BROKEN-REF` (loader points at a missing doc) ·
+`NO-DOC` (inline, no mapped doc) · `INFO` (runner-staged, cosmetic).
 
 ## Step 3 — Coherence guard (`^obs-014` / `^obs-084`)
 
@@ -72,6 +106,10 @@ host `SKILL.md` (or the script) through the **file tools** (cloud-authoritative)
 over a bash read before reporting. Shell reads are for discovery, not for justifying a conclusion.
 
 ## Step 4 — Semantic pass on the REVIEW rows (the Stage-B judgment)
+
+**Includes doc-deferring rows flagged for an unstamped summary block** — do not skip one because
+its shape looks right. That is exactly the `^obs-236` hole: the shape was right and the summary was
+wrong, and nothing read it.
 
 The script's shape label is best-effort — the `doc-deferring`/`inline` boundary is genuinely fuzzy
 for hybrid prompts (e.g. `research-runner` carries a loader *and* inline steps). For each `REVIEW`

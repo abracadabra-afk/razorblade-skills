@@ -38,6 +38,60 @@ def _writes_changelog(body):
 _NEG = re.compile(r"\b(never|not|rather than|do not|don't|avoid|instead of|no longer)\b", re.I)
 _FOOT = re.compile(r"foot-?append|append\s+(?:it\s+)?(?:safely\s+)?(?:at|to)\s+the\s+(?:foot|end|bottom)", re.I)
 
+# STALE-BOOK-NAME had the mirror-image of the ^obs-143 problem, in BOTH directions (2026-08-03):
+#   (a) it was CASE-SENSITIVE (`VIBEBOOK|TASKBOOK|DOBOOK|DoBook|LIFEBOOK`, no re.I), so the live
+#       drift — "note it for Taskbook", "weave Vibebook's fragments" — was INVISIBLE to it; while
+#   (b) it fired on the prompt's own PROHIBITION clause ("do NOT use the old VIBEBOOK/... paths"),
+#       i.e. the one sentence that proves the prompt is correct. A false positive on the fix.
+# Same shape as _foot_append_authorized: match case-insensitively, then discount any occurrence on
+# a line that RETIRES the name rather than using it. Line-scoped, not a 30-char lookbehind, because
+# the retirement marker often trails the name ("Vibebook, Taskbook — are dead: never use them").
+_BOOKS = re.compile(r"\b(VIBEBOOK|TASKBOOK|DOBOOK|LIFEBOOK)\b", re.I)
+_RETIRED_MARKER = re.compile(
+    r"\b(never|not|no longer|retired|renamed|the old|old \w+ paths|dead|do not exist|"
+    r"deprecated|forbidden|legacy|instead of|→|->)\b|→", re.I)
+
+def _stale_book_name(body):
+    for line in body.splitlines():
+        if _BOOKS.search(line) and not _RETIRED_MARKER.search(line):
+            return True   # a live use of a retired root name, not a prohibition against it
+    return False
+
+
+# STALE-SNAPSHOT (2026-08-03). A prompt that measures or decides off a DATED artifact — a
+# SYSTEM/reports/*.json size stamp, a cached scan, any "report written by <the desktop sync>" —
+# is reading a claim, not probing a state (DIR-010). The live instance: vault-health measured off
+# `brain-doc-sizes.json` 43 min old, inside its documented <=36h window and fully compliant, yet
+# already ~13.5K stale on _CHANGELOG because ONE session had written to all three brain docs in
+# between. An age window is necessary and NOT sufficient: it cannot see intra-window writes.
+# So the lint asks for BOTH — some age/freshness notion AND some has-anything-changed notion.
+_SNAPSHOT_RX = re.compile(
+    r"SYSTEM/reports/\S+\.json|brain-doc-sizes|size stamp|pre-computed|cached (?:report|scan)"
+    r"|snapshot(?:ted)?\b", re.I)
+_AGE_RX = re.compile(
+    r"\bfresh(?:ness)?\b|\bgenerated\b|timestamp|\bstale\b|\bage\b|hours? old|h old|"
+    r"\bre-?measure\b|written (?:since|after)|newest entry|has (?:anything|written)", re.I)
+
+def _reads_snapshot(body):
+    return bool(_SNAPSHOT_RX.search(body))
+
+def _tests_snapshot_age(body):
+    return bool(_AGE_RX.search(body))
+
+
+# A doc-deferring prompt is supposed to be a LOADER — the doc is the behavior and the prompt
+# carries no procedure of its own. In practice they all ship an "In brief:" / "Summary of what to
+# do:" block, and THAT block silently goes stale while the shape verdict stays CLEAN. This is the
+# hole the 2026-08-03 audit fell into: vault-health was the only deterministically-CLEAN row, so
+# it never went to Stage B, and its summary was instructing an in-sandbox _CHANGELOG carve that
+# the doc explicitly forbids (^obs-083/^obs-084). CLEAN is a SHAPE verdict, not a CONTENT verdict.
+# Fix: an unstamped summary block routes to REVIEW. A `tracks:` stamp clears it, because a stamp
+# turns doc movement into an exact DRIFT-EXACT signal — which is the whole point of stamping.
+SUMMARY_RX = re.compile(
+    r"in brief\b|summary of (?:what|that|the)|the outline below|steps? summar|"
+    r"summary only, the doc wins|orientation only", re.I)
+
+
 def _foot_append_authorized(body):
     if not _writes_changelog(body):
         return False
@@ -53,8 +107,8 @@ def _foot_append_authorized(body):
 # ---------------------------------------------------------------------------
 LINT = [
     dict(id="STALE-BOOK-NAME", sev="HIGH",
-         test=_has(r"\b(VIBEBOOK|TASKBOOK|DOBOOK|DoBook|LIFEBOOK)\b"),
-         blurb="pre-2026-06-14 book/path name (VIBES/TASKS/WORKFLOWS/LIFE now) — the books-daily HIGH hit"),
+         test=_stale_book_name,
+         blurb="live use of a pre-2026-06-14 book name (VIBES/TASKS/WORKFLOWS/LIFE now) — the books-daily HIGH hit; a line that RETIRES the name doesn't count"),
     dict(id="STALE-SCHED-PATH", sev="HIGH",
          test=_has(r"OneDrive[\\/]+Documents[\\/]+Claude[\\/]+Scheduled"),
          blurb="wrong scheduler path — real path is C:\\Users\\Chad\\Claude\\Scheduled (an edit there silently no-ops)"),
@@ -64,11 +118,31 @@ LINT = [
     dict(id="MISSING-NUL-GUARD", sev="ADVISORY",
          test=lambda b: _writes_changelog(b) and not re.search(r"\^obs-084|NUL", b),
          blurb="writes _CHANGELOG but names no ^obs-084 NUL-mount guard (the convention every sibling carries)"),
+    dict(id="STALE-SNAPSHOT", sev="MED",
+         test=lambda b: _reads_snapshot(b) and not _tests_snapshot_age(b),
+         blurb="measures/decides off a dated report or snapshot with no freshness test — an age window alone cannot see writes made after the stamp (the 2026-08-03 vault-health instance)"),
 ]
 
-LOADER_RX = re.compile(r"Read\s+WORKFLOWS/(\S+?\.md)\b", re.I)
+# A loader is "<verb> [`|'|"]WORKFLOWS/<doc>.md". The original pattern matched only a BARE
+# `Read WORKFLOWS/x.md` — no quoting, one verb — and the house convention had since drifted to
+# BACKTICKED paths and other verbs (run / open / execute / at). Result (2026-08-03 audit): five
+# doc-deferring prompts misfiled as inline-behavior, producing 5 spurious REVIEW/NO-DOC rows and
+# 3 bogus SHAPE-CHANGED notes; only the two unbackticked prompts classified correctly.
+#
+# Per DIR-014's corollary this widens the EXACT layer only — the path still has to match
+# literally, so there is no new false-positive surface. Never widen a fuzzy threshold to catch
+# a semantic miss.
+LOADER_VERBS = r"read|run|open|execute|follow|at|per|in|doc|workflow"
+LOADER_RX = re.compile(
+    r"(?:%s)\s+(?:the\s+(?:workflow\s+)?(?:doc\s+)?)?[`'\"\[(]{0,2}"
+    r"(?:\$?VAULT[\\/]+|\.?[\\/])?WORKFLOWS[\\/]+(\S+?\.md)\b" % LOADER_VERBS, re.I)
+# Phrases that mark the prompt as SUBORDINATE to its doc. Extended 2026-08-03 with the house
+# phrasings actually in use ("the doc is the behavior", "the doc wins", "this prompt is a loader")
+# — same exact-layer widening as LOADER_RX; these are literal conventions, not fuzzy signals.
 SUBORDINATE_RX = re.compile(
-    r"follow (?:it|its steps)(?: exactly)?|source of truth|in brief|summary only|see the doc", re.I)
+    r"follow (?:it|its steps|the doc)(?: exactly)?|source of truth|in brief|summary only"
+    r"|see the doc|doc is the behavio|the doc wins|is a loader, not a summary"
+    r"|execute it exactly as written|do not improvise beyond it", re.I)
 RUNNER_RX = re.compile(r"(runner|scaffold_ingest)\.py", re.I)
 STAMP_RX = re.compile(r"<!--\s*tracks:\s*(\S+\.md)\s+sha:([0-9a-f]+)", re.I)
 
@@ -148,7 +222,15 @@ def audit_one(name, body, mapinfo, workflows):
             verdict = "INFO"
             notes.append("logic lives in runner.py (staged each run) — prompt drift is cosmetic")
         elif shape == "doc-deferring":
-            verdict = "CLEAN"
+            # CLEAN is a SHAPE verdict. If the loader also carries a summary block and has no
+            # tracks: stamp, the summary can be stale with nothing to catch it — route to Stage B.
+            if SUMMARY_RX.search(body) and not stamp:
+                verdict = "REVIEW"
+                notes.append("doc-deferring BUT carries an unstamped summary block — the summary "
+                             "can drift from %s with no signal; semantic read needed (Stage B), "
+                             "or add a tracks: stamp, or delete the summary" % ", ".join(docs or ["its doc"]))
+            else:
+                verdict = "CLEAN"
         elif not docs:
             verdict = "NO-DOC"
             notes.append("inline prompt with no mapped doc — author a doc before it can defer (option a)")
@@ -217,17 +299,64 @@ def selftest():
     ONEDRIVE = "edit the prompt at C:\\Users\\Chad\\OneDrive\\Documents\\Claude\\Scheduled\\x\\SKILL.md"
     CLEAN = "Do a thing. Write nothing important. The end."
 
+    # ^obs-NNN (2026-08-03): the loader regex matched only a BARE `Read WORKFLOWS/x.md`, so every
+    # backticked or non-"Read"-verb loader read as inline-behavior. These five guard that fix.
+    TICK_READ = ("Read `WORKFLOWS/day-launch.md` and execute it exactly as written. "
+                 "The doc is the behavior; do not improvise beyond it.\n1. a\n2. b")
+    TICK_RUN = ("THEN run `WORKFLOWS/skills-manager.md` — that doc is the source of truth.\n"
+                "1. a\n2. b\n3. c")
+    TICK_OPEN = ("open `WORKFLOWS/week-shape.md` with the file tools and execute it exactly as "
+                 "written (the doc wins if they differ).")
+    TICK_AT = "run the workflow at `WORKFLOWS/backlog-sweep.md` — follow the doc.\n1. a\n2. b"
+    VERB_EXEC = "STEP 1 — INGEST. Execute WORKFLOWS/inbox-router.md against INBOX.md."
+    VAULTVAR = "canonical doc $VAULT/WORKFLOWS/dev-capture.md — follow its steps exactly.\n1. a"
+
     checks = [
         ("shape runner", classify_shape(RUNNER) == "runner-staged"),
         ("shape defer", classify_shape(DEFER) == "doc-deferring"),
         ("shape inline-loader", classify_shape(INLINE_LOADER) == "inline-behavior"),
         ("shape inline-bare", classify_shape(CLEAN) == "inline-behavior"),
+        ("loader backtick Read", LOADER_RX.findall(TICK_READ) == ["day-launch.md"]),
+        ("loader backtick run", LOADER_RX.findall(TICK_RUN) == ["skills-manager.md"]),
+        ("loader backtick open", LOADER_RX.findall(TICK_OPEN) == ["week-shape.md"]),
+        ("loader backtick at", LOADER_RX.findall(TICK_AT) == ["backlog-sweep.md"]),
+        ("loader verb Execute", LOADER_RX.findall(VERB_EXEC) == ["inbox-router.md"]),
+        ("loader $VAULT prefix", LOADER_RX.findall(VAULTVAR) == ["dev-capture.md"]),
+        ("backtick loader classifies defer", classify_shape(TICK_READ) == "doc-deferring"),
+        ("no loader stays inline", LOADER_RX.findall(CLEAN) == []),
         ("hit research pre", "CHANGELOG-FOOT-APPEND" in [f[0] for f in lint(RR_PRE)]),
         ("research post clean", "CHANGELOG-FOOT-APPEND" not in [f[0] for f in lint(RR_POST)]),
         ("hit books pre", "STALE-BOOK-NAME" in [f[0] for f in lint(BOOKS_PRE)]),
+        # ^obs-143-shaped pair for STALE-BOOK-NAME (2026-08-03): mixed case must HIT, and the
+        # prompt's own prohibition clause must NOT.
+        ("books mixed-case hits",
+         "STALE-BOOK-NAME" in [f[0] for f in lint("Task-guard: pull it out and note it for Taskbook.")]),
+        ("books prohibition clears",
+         "STALE-BOOK-NAME" not in [f[0] for f in lint(
+             "The retired names - Vibebook, Taskbook, LifeBook, DoBook - are dead: never use them.\n"
+             "(The restructure renamed Vibebook to VIBES; the old VIBEBOOK/TASKBOOK paths do not exist.)")]),
         ("hit onedrive", "STALE-SCHED-PATH" in [f[0] for f in lint(ONEDRIVE)]),
         ("nul-guard advisory fires", "MISSING-NUL-GUARD" in [f[0] for f in lint(RR_PRE)]),
         ("nul-guard clears post", "MISSING-NUL-GUARD" not in [f[0] for f in lint(RR_POST)]),
+        # STALE-SNAPSHOT pair (2026-08-03): reading a dated stamp with no freshness notion HITS;
+        # reading it with an age gate AND a has-anything-written-since gate CLEARS.
+        ("stale-snapshot fires",
+         "STALE-SNAPSHOT" in [f[0] for f in lint(
+             "MEASURE from SYSTEM/reports/brain-doc-sizes.json (byte-exact, desktop-written).")]),
+        ("stale-snapshot clears",
+         "STALE-SNAPSHOT" not in [f[0] for f in lint(
+             "MEASURE from SYSTEM/reports/brain-doc-sizes.json. Use it when its generated "
+             "timestamp is <=36h old AND nothing has written since — check _CHANGELOG's newest "
+             "entry against it; if stale, re-measure with the file tools.")]),
+        # CLEAN-is-a-shape-verdict pair: an unstamped doc-deferring summary must route to REVIEW,
+        # a stamped one must not. This is the vault-health hole the 2026-08-03 audit missed.
+        ("summary block routes to REVIEW",
+         audit_one("t", DEFER, {"docs": ["log-rotate.md"], "shape_expect": "doc-deferring"},
+                   None)["verdict"] == "REVIEW"),
+        ("stamped summary stays CLEAN",
+         audit_one("t", DEFER + "\n<!-- tracks: WORKFLOWS/log-rotate.md sha:abc123abc123 -->",
+                   {"docs": ["log-rotate.md"], "shape_expect": "doc-deferring"},
+                   None)["verdict"] == "CLEAN"),
         ("clean is clean", lint(CLEAN) == []),
     ]
     ok = True

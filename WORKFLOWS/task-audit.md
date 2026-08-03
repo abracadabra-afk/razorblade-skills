@@ -36,9 +36,27 @@ doctor", "which task prompts are stale". The detector half of `^backlog-task-pro
 ## The three prompt shapes (`^obs-124`)
 | Shape | Marker | Drift risk | Verdict path |
 |---|---|---|---|
-| doc-deferring | "Read `WORKFLOWS/<name>.md` and follow it", thin body | resistant | `CLEAN` |
+| doc-deferring | "Read `WORKFLOWS/<name>.md` and follow it", thin body | resistant | `CLEAN` — **unless it carries a summary block, see below** |
 | inline-behavior | procedure baked into the body | **prone** (both hits) | `REVIEW` (or `DRIFT-*` if a signal/stamp fires) |
 | runner-staged | logic in `runner.py` staged each run | cosmetic | `INFO` |
+
+> ### ⚠️ `CLEAN` is a SHAPE verdict, not a CONTENT verdict (added 2026-08-03)
+> A doc-deferring prompt is *supposed* to be a bare loader. In practice every one of them ships an
+> **"In brief:" / "Summary of what to do:" / "the outline below"** block for orientation — and that
+> block goes stale silently while the shape verdict stays `CLEAN`, so it never reaches the Step-5
+> semantic pass. **The audit's one deterministically-clean row is the one nothing ever reads.**
+>
+> Live instance: the 2026-08-03 audit passed `vault-health` `CLEAN`. Its summary's Step 3 was
+> instructing an **in-sandbox `_CHANGELOG` carve** — precisely what `log-rotate.md` forbids
+> (`^obs-083`/`^obs-084`, carve is desktop-owned) — and its Step 1 omitted the
+> `brain-doc-sizes.json` measurement path the doc names as preferred. That night's run got it right
+> only by correctly preferring the doc over its own summary; an agent leaning on the summary would
+> have performed the forbidden operation. The guardrail was holding on judgment, not instruction.
+>
+> **Rule:** a doc-deferring prompt with a summary block and **no `tracks:` stamp** routes to
+> `REVIEW`. A stamp clears it, because the stamp converts doc movement into an exact `DRIFT-EXACT`
+> signal — which is the entire purpose of stamping. Three ways to close such a row: add the stamp,
+> delete the summary (the true loader shape), or rule it CLEAN at Stage B.
 
 ## Steps
 1. **Sentinel** (`^obs-004`) — `_DIRECTIVES.md` frontmatter, else halt.
@@ -50,6 +68,8 @@ doctor", "which task prompts are stale". The detector half of `^backlog-task-pro
 4. **Coherence guard** (`^obs-014`/`^obs-084`) — re-read any truncated/NUL-padded copy via the file
    tools before trusting it.
 5. **Semantic pass** — for each `REVIEW`/`DRIFT-EXACT`, read prompt + mapped doc and rule HIT/CLEAN.
+   This now includes doc-deferring rows flagged for an **unstamped summary block** — do not skip
+   them because the shape looks right; that is the `^obs-236` hole.
 6. **Report** — table + punch list + plain next-actions; for every mappable inline task, surface the
    option-(a) doc-deferral recommendation.
 7. **Log** (explicit session only) — `_CHANGELOG` (meta, top-insert), `_OBSERVATIONS` for new
@@ -57,8 +77,29 @@ doctor", "which task prompts are stale". The detector half of `^backlog-task-pro
 
 ## Verdicts
 `CLEAN` · `DRIFT-MECH` (lint signal — certain) · `DRIFT-EXACT` (stamp sha ≠ doc sha) · `REVIEW`
-(inline, no stamp — semantic read) · `BROKEN-REF` (loader doc missing) · `NO-DOC` (inline, unmapped)
-· `INFO` (runner-staged cosmetic).
+(inline with no stamp, **or doc-deferring with an unstamped summary block** — semantic read) ·
+`BROKEN-REF` (loader doc missing) · `NO-DOC` (inline, unmapped) · `INFO` (runner-staged cosmetic).
+
+## Lint signals
+`STALE-BOOK-NAME` (HIGH) · `STALE-SCHED-PATH` (HIGH) · `CHANGELOG-FOOT-APPEND` (MED) ·
+**`STALE-SNAPSHOT` (MED)** · `MISSING-NUL-GUARD` (ADVISORY).
+
+**Two of these are negation-aware, and that is load-bearing.** A *corrected* prompt still contains
+the forbidden string — "never a foot-append", "do NOT use the old VIBEBOOK/… paths" — so a naive
+match flags the fix as the defect. `CHANGELOG-FOOT-APPEND` discounts an occurrence preceded by a
+negation (`^obs-143`); `STALE-BOOK-NAME` discounts one on a line that *retires* the name
+(`^obs-232`). **When you add a lint, check whether its siblings need the same exception**, and give
+every exception a *paired* selftest (must-hit + must-clear) — `STALE-BOOK-NAME` was simultaneously
+too broad (fired on the prohibition) and too narrow (case-sensitive, so blind to the real
+mixed-case drift), and a one-sided test could not have caught that.
+
+**`STALE-SNAPSHOT`** fires when a prompt measures or decides off a **dated artifact** — a
+`SYSTEM/reports/*.json` stamp, a cached scan — without any freshness notion. Note the bar is
+deliberately *both* an age test **and** a has-anything-written-since test: the `vault-health`
+instance was fully compliant with its documented ≤ 36 h window and still measured ~13.5 K stale on
+`_CHANGELOG`, because one session had written to all three brain docs inside the window. An age
+window cannot see intra-window writes. This is DIR-010 at the artifact layer — a stamp is a dated
+claim, not a probe.
 
 ## The provenance stamp (heuristic → exact)
 A one-line comment on an inline prompt:
