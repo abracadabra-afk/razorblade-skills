@@ -4,17 +4,21 @@ name: transcoder
 trigger: slate this dictation
 aliases: [transcode this, run the slate, transcoder v5, slate it]
 inputs: [raw dictation text from speech-to-text, perceptual envelope (POV + conditions + state), the floor register canon at KNOWLEDGE/PROSE FRAMEWORK/narrator-rules.md, the contamination checklist at REFERENCE/contamination-checklist.md (optional)]
-outputs: [floor-draft prose (cold register), cut log, synthesis ledger (incl. floor ledger + heat bank), leaves-left audit]
+outputs: [floor-draft prose (cold register), cut log, synthesis ledger (incl. floor ledger + heat bank + scene map), leaves-left audit]
 lane: fiction
 status: active
-last_updated: 2026-08-01
+last_updated: 2026-08-03
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood. v5.1 adds standalone/episode mode (envelope derivable from ruled canon with provenance) — first adopter WRITING/SHORTS/EPISODES.
 pipeline_position: upstream of [[WORKFLOWS/prose-expansion]] (via the spine-review gate) and [[WORKFLOWS/dictation-cleanup]]
 ---
 
-# WORKFLOW: Dictation Transcoder (v6)
+# WORKFLOW: Dictation Transcoder (v6.1)
 
 > Generative pass that converts raw dictation into a clean rough-draft slate. **Rewrite-allowed.** Pairs with [[WORKFLOWS/dictation-cleanup]] downstream, which is the protective copy-edit pass the v5 spec refers to as the "separate, protective pass… later."
+
+## v6.1 changelog (2026-08-03 — spine-gate dramaturgy eyes, CRE-ratified)
+
+Source: the CH12 readiness-triple. Three readiness-check exchanges (*"Are you sure?"* / *"Are you ready, my love?"* / *"All right now. Are you ready?"* — the last two eighteen lines apart) rode the full v6 → expansion → register chain uncaught, because dialogue is out of every pass's line scope by design, the repetition census is string-level (two of the three share no surface string), and the [SP] rule (attack/defense, potency in subtext) existed in the framework with no pass operationalizing it. One change: **the spine-review gate additionally emits a scene map** (see the gate section) — per-scene derived goal/turn, dialogue-function tags, and a function-level beat census including dialogue. The slate contract stays four files: the scene map is a section of the synthesis ledger. Observations and distributions only, never verdicts (organic-process guard); [[WORKFLOWS/clean-mode]] routes the output. Reader-unit context: [[WORKFLOWS/pipeline]] § QA tiers — this leg exists so the drafting loop needs no reader ceremony to cover the dev layer.
 
 ## v6 changelog (2026-08-01 — the cold-floor recalibration, CRE-ratified)
 
@@ -200,10 +204,17 @@ The synthesis ledger additionally carries (v6): a **`## Floor ledger`** section 
 The floor draft is a diagnostic surface: cold and condensed, it exposes developmental seams at their cheapest read-length. On completing the slate:
 
 1. Present CRE the floor draft, the floor ledger, the heat bank, and any **developmental-seam flags** — a missing causal link, an unplanted payoff, a beat with no function, a spine that skips a step the scene needs. Flags are observations on the floor, never proposed fixes (the organic-process guard); research each against the chapter's brief/canon before raising it (DIR-011).
-2. CRE rules the seams — re-dictate, restructure, or accept.
-3. Only after CRE clears the gate do the expansion passes ([[WORKFLOWS/prose-expansion]], framework steps 4–7) run. **No expansion pass ever runs on an ungated floor.**
+2. **Scene map (v6.1).** With the flags, present the `## Scene map` section of the synthesis ledger, built **from the floor draft alone** — never graded against the runway (DIR-017: divergence from the plan is a win):
+   - **per scene** — one line: what happens, the scene's derived goal, and where it turns (or a flag that it doesn't);
+   - **per exchange** — a function tag against the [[KNOWLEDGE/PROSE FRAMEWORK/sentence-structure]] [SP] rule (*attack / defend / deflect / reinforce / reveal*), with functionless or beat-repeating exchanges flagged as observations;
+   - **function-level beat census** — every beat or exchange whose *function* recurs 3+ times, **dialogue included**, full distribution attached, count never verdict. The string level (n-gram) catches surface repeats; the function level exists because paraphrase hides them — CH12's readiness-triple shared no common string across all three instances.
+   A repeated beat can be design — ritual before a descent, an escalation ladder. The map's job is to make the pattern **rulable**, never to rule it. Under [[WORKFLOWS/clean-mode]]: tree-answered items → `resolved-confirm`; distributional items → LEAN with the census attached; plausibly-deliberate repetition → ASK.
+3. CRE rules the seams and the map — re-dictate, restructure, or accept.
+4. Only after CRE clears the gate do the expansion passes ([[WORKFLOWS/prose-expansion]], framework steps 4–7) run. **No expansion pass ever runs on an ungated floor.**
 
 Unattended runs (DIR-012): produce the slate + flags, defer the gate to CRE — never self-clear it.
+
+**Clean mode (CRE-ratified 2026-08-03 — [[WORKFLOWS/clean-mode]]).** On explicit CRE trigger only, attended or within a CRE-triggered autonomous run ([[WORKFLOWS/chapter-clean]]; never scheduled-unattended): seam flags the tree/brief answers become `resolved-confirm` ledger rows instead of gate stops. Genuine developmental seams, every `optioned` verdict, and garbles remain CRE's unconditionally (the hard-ASK list). Full bin logic, the clean-ledger, and the veto-pass contract live in the clean-mode doc.
 
 ## Stop conditions
 

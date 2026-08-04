@@ -31,6 +31,8 @@ For a landed draft that predates the v6 floor (its spine and beats exist; regist
 
 The sheet doubles as the spine-review surface for existing work — the cold diff exposes the same developmental seams the floor draft would.
 
+**One-sweep runner (CRE-ratified 2026-08-03):** [[WORKFLOWS/chapter-clean]] **mode B** wraps this route into two sittings — floor sheet binned via [[WORKFLOWS/clean-mode]] with the mode-B bias (LEAN-default, the machine never auto-floors finished prose; close calls keep) → Gate A residue → autonomous stretch (steps 4–7 + register) → Gate B + ledger veto.
+
 **Reference implementations.** Two, deliberately different in scale — reach for whichever matches the piece in front of you.
 
 - **Short / Entry mode B — EP 01 *Happening Near You*, 2026-08-01.** Full traversal in one day: floor sheet (F1–F10) → landed draft 4 → POV tags → assist walk under the non-regression gate (W1–W4) → landed draft 5 → motion-seam check (M1/M2 graduated to protected_patterns) → temperature dial ratified. Its `expansion/` folder is the worked example for every artifact this workflow produces.
@@ -64,6 +66,8 @@ CRE restructures against the tag rules: sensing → short fleeting fragments; do
 2. **Visible skip list.** Skipped clusters are listed one line each (cluster + rule satisfied) — a silent skip is an invisible deferral. CRE can pull any skipped cluster into the walk with a word.
 3. **Nonconforming ≠ must change.** Divergence can be deliberate staging (the rules' own carve-outs: captivated attention, contrast beats, enacted time). Every item ships with a keep-as-is option and the argument for it; apparent violations the intent-record answers resolve to "conforming by design — confirm" (DIR-011), never an open item.
 4. **Ruled divergences graduate to the piece's protected surface (DIR-014 — CRE-ruled 2026-08-01).** When CRE rules KEEP on a law-divergence, the pass writes it into the piece's frontmatter `protected_patterns` **with its reading** — not just "don't touch the span" but *why the divergence is the design* (e.g. "the missing jolt is the anesthesia") — so future passes inherit the interpretation, not merely the prohibition. Every conformance gate in this workflow (assist walk, motion-seam check, and any future law check) reads `protected_patterns` before flagging: a graduated divergence is never re-raised as an open item — at most a one-line resolved-confirm when a check's scope demands the span be accounted for. A ruling that lives only in a dated report or the changelog is a ruling the next pass will re-litigate.
+
+**Clean mode (CRE-ratified 2026-08-03 — [[WORKFLOWS/clean-mode]]).** On explicit CRE trigger only, attended or within a CRE-triggered autonomous run ([[WORKFLOWS/chapter-clean]]; never scheduled-unattended), steps 5–6: rule-cited options with no substantive keep-argument APPLY and log; genuine keep-arguments go through the LEAN analysis (close calls keep — the asymmetry principle); census items carry their full census and auto-remove only non-load-bearing restatement; law-divergence KEEPs land provisional and graduate to `protected_patterns` only at CRE's veto pass. Step-6 beats where dial and spend agree self-ratify. CRE's-hand spans, author gaps, and two-way items remain ASK. Bins, ledger, and veto contract: the clean-mode doc.
 
 ### Commit exit gate — diff against source (added 2026-08-03, CH12 run)
 

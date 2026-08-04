@@ -4,7 +4,7 @@ name: pipeline
 purpose: The canonical description of how the fiction workflows chain — the pipeline-relationship canon carved out of _SKILLS MAP (2026-07-10 slim) so the boot payload stays lean. Load when doing fiction pipeline work.
 lane: fiction + writing-ops (episode route added 2026-07-23)
 status: active
-last_updated: 2026-07-23
+last_updated: 2026-08-03
 ---
 
 # The pipeline (how the fiction workflows chain)
@@ -22,6 +22,16 @@ dictation-preflight is the upstream prep (queued dictation → filled `envelope.
 ## Three REFERENCE checks for the revision lane (per project, archive salvage `^obs-053`)
 
 `register.md` = how to revise (authority) · `voice-spec.md` = the empirical voice fingerprint the prose should match (measured target) · `contamination-checklist.md` = the named AI failure modes to scan for at the generative steps (guard). voice-spec + contamination run as soft checks in register-pass Step 2.5 and the transcoder; both flag for CRE, neither overrides the register.
+
+## QA tiers — reader diagnostics scope to the reader unit (CRE-ruled 2026-08-03)
+
+> A blind read is valid *because* the reader has no context. For a WIW episode that maps to reality — the episode **is** the reader unit, complete in itself. For a mid-book novel chapter it is structurally artificial: a real reader arrives carrying every prior chapter, so a per-chapter cold read over-flags planting that earlier chapters already did and cannot see the defects that only exist at book scale (motif fatigue across chapters, pacing plateaus, a stalled arc). Reader diagnostics therefore scope to the **reader unit**, and the drafting loop stays momentum-protected — the DIR-017 principle one level up. **This supersedes any per-chapter blind-read framing elsewhere in the canon** (the `chapter-pipeline` inner loop was rewired same day; the "spec-check between slate and register" framing above predates this ruling — Pass 1 now runs at tier 3/4, Passes 2–5 remain in-route line QA).
+
+- **Tier 1 — in-route, per chapter (the drafting loop).** v6 route: spine-review gate (with the v6.1 scene-map leg) → prose-expansion → register sweep — one-sweep runner: [[WORKFLOWS/chapter-clean]] (two CRE sittings: author gate + end gate). Dictation route: cleanup → Workshop-2 warm read → loop-clearer → line battery. [[WORKFLOWS/clean-mode]] applies on trigger. **No reader-diagnostic ceremony lives in this tier.**
+- **Tier 2 — pull-only, on demand.** `workshop-chapter` (a chapter in progress feels wrong), `choreographer` (an event wants dramaturgy), `scene-intensity` on one chapter, and a blind-read **canary** on a sequence's opening chapter — each on CRE's word, never scheduled, never a gate.
+- **Tier 3 — part boundary (recommended checkpoint).** One blind read of the completed part: big enough to be an honest cold read, early enough that a book-scale defect is caught before more chapters compound it.
+- **Tier 4 — manuscript complete (the reader battery).** CRE's own line pass first, then: blind read of the whole → `panel-read` if the heavier instrument is wanted → `scene-intensity` contour across chapters → spec passes where the reads point.
+- **The episode route is unchanged** — its S6 per-episode blind read is correct as-is; the unit is complete.
 
 ---
 

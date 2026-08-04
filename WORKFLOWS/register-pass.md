@@ -53,8 +53,12 @@ Locate the chapter folder; walk up to the project root and read `REFERENCE/regis
 ### Step 1.5 — Mode select (optional spec-check coupling)
 Look for `<chapter>/spec-check/<slate-run-id>/verdicts.md` matching the slate run. If it exists with `status: ready`, run **execute-only**: apply its MECHANICAL fixes, honor its RULED judgment calls verbatim (don't re-litigate), build its UNDRAMATIZED items, act on its NOTES. Otherwise run **full** discover-and-revise (the default; the battery is optional/selective). A `verdicts.md` whose `slate_run` doesn't match is treated as absent.
 
+**Clean mode (CRE-ratified 2026-08-03 — [[WORKFLOWS/clean-mode]]).** On explicit CRE trigger only, attended or within a CRE-triggered autonomous run ([[WORKFLOWS/chapter-clean]]; never scheduled-unattended): judgment calls run the LEAN analysis inline — decided calls APPLY and log (keeps favored on close calls, the asymmetry principle); still-two-way calls, protected-span cross-reason defects, and mechanical items on CRE's-hand lines remain ASK. Bins, clean-ledger, and veto contract: the clean-mode doc.
+
 ### Step 2 — Run the register
 Execute `register.md`'s instructions against the clean-draft as the "draft." Honor the register's own gear-setting (it decides POLISHED vs ROUGH) and its output contract. In execute-only mode the verdict sheet's rulings win on every span they cover. Treat the slate's `leaves-left.md` verdicts as context: `left-for-later` items are *this pass's* to address; `incidental`/`dialogue` are settled — do not re-litigate them.
+
+**Protected-pattern binding (2026-08-03, `^backlog-protected-patterns-binding` — DIR-014).** Before flagging or revising anything, read the working text's frontmatter `protected_patterns` (and `REFERENCE/protected-patterns.md` where the project keeps one). A protected span is never re-litigated on the grounds it was ruled for; present at most a one-line resolved-confirm. A defect of a *different* class inside a protected span is a judgment call for CRE (the protection's reading does not automatically transfer), never a unilateral edit.
 
 ### Step 2.5 — Soft checks: voice-spec + contamination (optional, skip what's absent)
 Two non-authoritative scans of the **revised** passage, run after the register. Neither rewrites; neither overrules the register or CRE; on any conflict the register wins. Both only flag — for CRE to rule, never a gate.
