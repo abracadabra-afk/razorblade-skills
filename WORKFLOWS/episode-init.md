@@ -23,11 +23,16 @@ S3  SYNTHESIS         episode-feedback ("reconcile my notes")
 S4  RUNWAY CARVE      episode-runway v2 Pass 2 — lightweight, post-synthesis
 S5  DRAFTING ENGINE   mic → dictation-runner → dictation-cleanup → transcoder →
                       scene-intensity on the slate → expansion/compression (CRE) → land draft.md
-S6  FINISH ARC        blind read → dev fixes (CRE-ruled) → register pass (WIW register) → CRE's passes
+S6  FINISH ARC (v3)   dev-edit (blind dev panel → informed walk → roadmap) → CRE's AUTHOR PASS →
+                      panel-read (the pre-publication gate) → panel-response → line passes → record prep
 S7  PRODUCTION        episode-runway Pass 3 — TOS re-check → routing re-call · Short cut · production.md
 ```
 
 Ratified provenance for this order: transcoder ruled **in** the route (CRE, 2026-07-23 — "critical; it turns my telling the story to myself into prose"); scene-intensity sequential after the transcoder (built 2026-07-22, run live on EP 01's pass-2 slate); blind read moved **post-slate** so the one-shot cold reader is spent on prose, not on the raw telling (EP 01's blind read burned flags on STT garbles and cleaner artifacts the transcoder removes).
+
+> **S0 + SIT amendment (2026-08-09, CRE-ruled — premise-forge design session).** S0 is now formalized by [[WORKFLOWS/premise-forge]] (attended, feeling-first premise developer → `CANDIDATES/<title>/triage.md`, pre-answering this workflow's Pass-1 gate — confirm, don't re-derive). And **the SIT is repositioned**: it lives **between rough draft and author pass** (the S5→S6 seam), not between gate and dictation. Bag → gate → runway → mic **same-day is sanctioned**; the sit happens on banked rough drafts, which the steady drafting cadence keeps supplied. The S2 row in the diagram above is superseded accordingly.
+
+> **Route v3 amendment (2026-08-09, CRE-ruled — EP 01 post-mortem).** S6 restructured: [[WORKFLOWS/dev-edit]] (blind dev panel + informed flag-keyed walk) is the first instrument after the drafting engine, producing the roadmap for **CRE's author pass**; the reader panel ([[WORKFLOWS/panel-read]]) moves to the **pre-publication gate** and is never convened on pre-author-pass material. Governing category ruling: CONTENT flags (a beat does no new work) are cured only by the author pass; EXECUTION machinery (choreographer, line queues, panel-response) never runs on a section carrying an open CONTENT flag. Evidence: EP 01's video-2-escalation choreo session died whole with the sorority sequence; CRE's own author-flags D2b predated the panel's C1 by two days. Full provenance in dev-edit.md. `blind-read` stays available as a cheap single cold probe at CRE's call.
 
 ## When to use
 

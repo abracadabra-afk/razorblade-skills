@@ -36,9 +36,12 @@ Canonical strategy: [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]
 S0 feeling capture → S1 episode-init (gate + scaffold) → S2 sit (notes.md) →
 S3 episode-feedback → S4 RUNWAY CARVE (this doc, Pass 2) →
 S5 drafting engine: mic → runner → cleanup → transcoder → scene-intensity → land draft.md →
-S6 finish arc: blind read → dev fixes → register pass → CRE's passes →
+S6 finish arc (v3): dev-edit → CRE's AUTHOR PASS → panel-read (pre-publication gate) →
+   panel-response → line passes → record prep →
 S7 PASS 3 (this doc) → production.md
 ```
+
+> **Route v3 (2026-08-09, CRE-ruled — EP 01 post-mortem):** S6 restructured; [[WORKFLOWS/episode-init]] carries the canonical route block + full amendment, [[WORKFLOWS/dev-edit]] the provenance. This mirror updated same session (DIR-016).
 
 ---
 

@@ -7,7 +7,7 @@ inputs: [the working text (chapter draft, WIW episode, or short), optional CRE-n
 outputs: [one reader report per seated panelist + an attributed synthesis (the Pass-1-tier artifact) in a panel/ run folder]
 lane: fiction
 status: spec
-last_updated: 2026-07-29
+last_updated: 2026-08-09
 scope: any prose unit — Witchwood/Godsrift chapters, WIW episodes, shorts. Generalizes blind-read; the single cold read stays the cheap default for routine chapters.
 pipeline_position: Pass-1 tier (clean room), sibling of blind-read. Upstream of Workshop-2 / blind-response triage. Fan-out mechanics per spec-passes; subagent invocation per the chapter-pipeline Pass-1 delta.
 ---
@@ -19,6 +19,8 @@ pipeline_position: Pass-1 tier (clean room), sibling of blind-read. Upstream of 
 ## When to use
 
 CRE says "run the panel read," "convene the panel," "panel read chapter N." Use when a single cold read isn't enough coverage: load-bearing chapters, openings, WIW episodes pre-production, marketing-serving reads (e.g. Ghost River 2e). For routine chapters, **`blind-read` remains the default Pass 1** — the panel costs 5–8 fresh contexts plus CRE's grading; spend it where it pays.
+
+> **Placement rule (route v3, CRE-ruled 2026-08-09 — EP 01 post-mortem):** on the episode route, the reader panel is the **pre-publication gate** — convened after CRE's author pass, never on pre-author-pass first-draft material. Readers read finished work; first drafts get [[WORKFLOWS/dev-edit]] (the blind dev panel + informed walk). EP 01 evidence: the 07-29 panel ran pre-author-pass and its heaviest downstream work (the video-2 choreo session) died whole when the author pass replaced the scene; the 08-05 panel on the authored draft closed in one tighten.
 
 **Relationship to blind-read:** panel-read does not replace it. `blind-read` is the spec-check battery's canonical Pass 1; panel-read is the expanded instrument CRE invokes deliberately. When a panel run exists for a text, its synthesis **serves as** the Pass-1 artifact downstream (see Handoff).
 

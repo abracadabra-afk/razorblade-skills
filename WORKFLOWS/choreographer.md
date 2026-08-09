@@ -8,7 +8,7 @@ outputs: [a ratified event arc (beat map) written to the chapter folder, an upda
 lane: fiction
 status: spec — packs after 2–3 live runs
 governed-by: DIR-017 (protected forward-flow), DIR-014 (cue binding), DIR-016 (runner wiring)
-last_updated: 2026-07-29
+last_updated: 2026-08-09
 ---
 
 # WORKFLOW: choreographer
@@ -29,6 +29,7 @@ Sits between the slate landing and the gap-fill dictation. It is the desk-side h
 
 ## Position & guards
 
+- **Placement (route v3, CRE-ruled 2026-08-09 — EP 01 post-mortem):** the choreographer is execution-tier machinery and obeys the affirmed-sections gate — **it never runs on a section carrying an open CONTENT flag.** Default home: post-author-pass, nested in [[WORKFLOWS/panel-response]] as ruled 07-29. Pre-author-pass it is available only as a **CRE-triggered call from the [[WORKFLOWS/dev-edit]] walk**, on an event whose content he has ruled (affirmed, or a rework where *what happens* is settled and staging is the open question); the dev-editor may offer, never auto-run. Evidence pair: EP 01's climax-inversion map (content-affirmed) survived to record-ready; its video-2-escalation map (content-contested) died whole with the sorority sequence. A ratified map is a dated authored artifact (DIR-010 corollary) — every pre-author-pass map is a bet the pass won't move the content under it.
 - **Project-fluent, not context-free** — the workshop-chapter loadout, not loop-clearer's. To weigh *stakes where they are in the story* and *the flaws that hold characters back*, it must read the chapter brief, continuity, threads/arcs, and REFERENCE canon before proposing anything.
 - **Conversational and two-phase gated.** It brings an informed read; CRE pushes back; the arc is ratified beat by beat before anything is written. Nothing lands unratified.
 - **Never writes CRE's prose.** No lines, no rendered action, no sample sentences beyond naming a move ("she feints toward the door"). If a beat needs demonstration language, that is a loop-clearer-class structural moment — one demonstration block maximum, original kept, never committed for him.

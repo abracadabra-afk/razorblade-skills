@@ -8,8 +8,8 @@ outputs: [response-rulings.md (the ruled sheet, in the panel run folder), a chor
 lane: fiction (+ writing-ops for WIW episodes)
 status: spec — packs after 2–3 live runs
 governed-by: DIR-011 (resolve before flag), DIR-012 (gates attended), DIR-014 (rulings land on tool-read surfaces), DIR-017 (banked prose never re-dictated; choreo maps exit to revision)
-pipeline_position: Workshop-2 tier — consumes the Pass-1-tier panel synthesis; sits between panel-read and the line passes; nests choreographer between its two phases
-last_updated: 2026-07-29
+pipeline_position: Workshop-2 tier — consumes the Pass-1-tier panel synthesis; sits between panel-read and the line passes; nests choreographer between its two phases. Route v3 (2026-08-09) — on episodes this always post-dates CRE's author pass, since panel-read is the pre-publication gate.
+last_updated: 2026-08-09
 ---
 
 # WORKFLOW: panel-response
@@ -36,6 +36,8 @@ Siblings in the two-phase gated architecture: [[WORKFLOWS/spec-check]] (`blind-r
 CRE says **"respond to the panel"** / **"panel response"** / **"work the panel findings"** — a `panel-read` run has produced `pass-1-panel.md` for a working text (chapter, WIW episode, short) and he wants the findings ruled and the ruled ones built into the draft.
 
 **Not for single blind reads:** when the Pass-1 artifact is `pass-1-blind.md`, `blind-response` remains the canonical route (Witchwood spec-check battery). The two may converge after this pass's live runs prove the shape; until then they stay separate so the battery's canon doesn't churn.
+
+**Not for pre-author-pass material (route v3, CRE-ruled 2026-08-09):** this pass consumes a panel run, and on the episode route the panel is the pre-publication gate — so this machinery only ever meets an authored draft. Hard corollary from the EP 01 post-mortem: **no fix-class routing (choreographer, structural revision, line queue) against a section carrying an open CONTENT flag** — a beat whose story content CRE has not yet affirmed gets his author pass first, per [[WORKFLOWS/dev-edit]]'s affirmed-sections map. EP 01 run 1 executed a full choreo session against exactly such a section (video 2, sorority) and the work died whole with the scene.
 
 ## Phase 1 — RULE & ROUTE (read-only)
 
