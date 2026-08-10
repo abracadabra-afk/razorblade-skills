@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-08-10T07:50:00.4672904-07:00",
+    "generated":  "2026-08-10T08:40:44.8520245-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -250,9 +250,9 @@
                    {
                        "name":  "task-audit",
                        "package":  "WORKFLOWS/skills/task-audit.skill",
-                       "sha256":  "3a8c80be2ec8119884cdcd8de332fc2da05c07d5680810c41ec1be4c73586591",
-                       "content_sha256":  "8f77c8c7e95dd3d95cfc9497f79e2f6494b12c88ed625c91a45ac30debd7763f",
-                       "bytes":  13992
+                       "sha256":  "235cef5bec1566ac07e158c68394f24d52a093901c8256cec076c3e370307fac",
+                       "content_sha256":  "69c6c5539d8eda19838a34a8f3c5a252ea5fc1a844aec89fdea8100a18bbc759",
+                       "bytes":  14023
                    },
                    {
                        "name":  "triage-the-tasks",
