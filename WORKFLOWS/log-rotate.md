@@ -4,10 +4,10 @@ name: log-rotate
 trigger: rotate the logs
 aliases: [log rotate, run the log doctor, vault health, check the brain-doc sizes, rotate the changelog]
 inputs: [_CHANGELOG.md, _OBSERVATIONS.md, _BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md)]
-outputs: [a measured size report, a rotated lean _CHANGELOG.md, dated archive files under SYSTEM/history/, a gated "Needs CRE ruling" bin for risky rotations]
+outputs: [a measured size report, a per-run receipt line in SYSTEM/reports/vault-health-runs.md (every run, incl. no-ops), a rotated lean _CHANGELOG.md, dated archive files under SYSTEM/history/, a gated "Needs CRE ruling" bin for risky rotations]
 lane: meta
 status: active
-last_updated: 2026-06-15
+last_updated: 2026-08-10
 ---
 
 # WORKFLOW: log-rotate
@@ -74,8 +74,18 @@ Confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). 
 
 If the stamp is missing, stale, or fails the write check above, **fall back** to the file-tools token→char proxy: measure each file with the **file tools** (read to EOF / file-size) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`, and treat a band call that sits right at a threshold as ambiguous (report, don't act). **Never size with bash `wc -c`** — on a large file the bash mount may return a truncated partial (`^obs-084`: on the first live run it understated `_CHANGELOG` by ~16K and ended mid-entry). Record each file's band + which measurement path was used.
 
-### Step 2 — Report
-Emit a one-table report: file · size · band · recommended action. If all GREEN, say so and **stop here** (read-only run).
+### Step 2 — Report + receipt (EVERY run, including a no-op)
+Emit a one-table report: file · size · band · recommended action.
+
+**Then write the run receipt — unconditionally, before any early exit (added 2026-08-10, `^obs-246` / `^backlog-vaulthealth-silent-noop`).** Top-insert one line into `SYSTEM/reports/vault-health-runs.md` (create it with a `# vault-health run receipts` heading if absent):
+
+```
+- YYYY-MM-DD HH:MM (attended|scheduled) — bands: CHANGELOG <band> <size> · OBS <band> <size> · BACKLOG <band> <size> · shards <band> — path: <stamp(<generated>, write-check pass|fail)|file-tools> — action: <no-op, all GREEN | gated recommendations | ROTATE delegated to desktop>
+```
+
+Verify the insert by re-reading the top of the file (DIR-005). **Why:** the 2026-08-09 scheduled run exited with zero artifacts while `_CHANGELOG` sat past the ROTATE line, and the next pass in the window wrongly inferred it hadn't run. A silent exit was spec-compliant under the old Step 2. The receipt makes every completed run leave evidence; a missing receipt beside a populated `lastRunAt` now unambiguously means **the run failed**, not "nothing to do."
+
+If all GREEN: write the receipt, say so, and stop. **The receipt is the artifact of record for a no-op run — it replaces the `_CHANGELOG` entry** (DIR-003's trivial carve-out applies to the log, not the receipt), so weekly no-ops don't grow the very file this pass exists to keep small.
 
 ### Step 3 — Rotate `_CHANGELOG` if ROTATE (delegate to the desktop)
 Do **not** carve from the sandbox — the mount is stale (`^obs-084`) and the carve is desktop-owned (`^obs-083`). Report that `_CHANGELOG` is in the ROTATE band and recommend running **`WORKFLOWS/git-bridge/rotate-changelog.ps1`** on the desktop (preview first, then `-Execute`), then `seed-repo.ps1` to commit. Only on a clean, non-sandbox environment with authoritative file access should an agent carve directly — and then only entirely from file-tool reads, verifying both files after.
@@ -84,7 +94,7 @@ Do **not** carve from the sandbox — the mount is stale (`^obs-084`) and the ca
 For `_OBSERVATIONS` / `_BACKLOG` past WARN, assemble a `## Needs CRE ruling (log-rotate YYYY-MM-DD)` bin (append to `_BACKLOG.md`, or surface inline on an attended run): the proposed citation-safe split / backlog-sweep recommendation + reason. Never move their content automatically.
 
 ### Step 5 — Report + log
-Append a dated entry to `_CHANGELOG.md` (meta lane) — **via the file tools, newest-first at the top** (post-rotation the file is lean, so this is safe). Counts: files measured / bands / rotated / archived-to / gated. File any new fragility to `_OBSERVATIONS.md` (`^obs-NNN`, top-insert). Add follow-ups to `_BACKLOG.md`.
+**On any run that acted or gated** (non-GREEN band, rotation recommended, bin emitted): append a dated entry to `_CHANGELOG.md` (meta lane) — **via the file tools, newest-first at the top** (post-rotation the file is lean, so this is safe). Counts: files measured / bands / rotated / archived-to / gated. File any new fragility to `_OBSERVATIONS.md` (`^obs-NNN`, top-insert). Add follow-ups to `_BACKLOG.md`. An all-GREEN run already left its receipt at Step 2 and logs nothing here.
 
 ## Stop conditions
 

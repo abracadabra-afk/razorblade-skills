@@ -92,9 +92,10 @@ Every file stamped `episode: EP NN - <TITLE>` + `last_updated: <today>` — no b
 
 ### Step 5 — Landing rules recorded in the scaffold
 
-Two rules stamped into `draft.md`'s scaffold frontmatter so no future session re-derives them:
+Three rules stamped into `draft.md`'s scaffold frontmatter so no future session re-derives them:
 1. **The ratified slate lands as `draft.md`; from that moment `draft.md` is the only editable copy.**
 2. **Landing retires the source transcript** (stub it in `dictation/` with a pointer) — closes the live-fork foot-gun filed off EP 01 (2026-07-22, `chad's notes.md` §E).
+3. **The derived-artifact inventory includes rule and canon surfaces (added 2026-08-10, `^backlog-protected-span-write-gate` (iii) / `^obs-235` / DIR-010 inventory clause).** Any pass that supersedes draft text and stamps a "these derived artifacts are stale" note must enumerate **every** derived surface — not just the obvious outputs (`record-script.md`, `performance-notes.md`, `choreo/*`, `production.md`) but the **rules files derived from the same text**: the project `REFERENCE/protected-patterns.md` witnesses and any register-sourced per-episode rows. A rules file reads as authority rather than output, which is exactly why it gets omitted — EP 01's frontmatter flagged `record-script` + `performance-notes` as stale while the protected-patterns witnesses, stale from the same rewrite by the same cause, went unlisted. That omission class is the one this rule exists to kill.
 
 ### Step 6 — Log
 - Vault `_CHANGELOG.md`: one session entry (gate verdict + scaffold).

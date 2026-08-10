@@ -7,7 +7,7 @@ inputs: [a CRE-gated floor draft (transcoder v6 slate, spine-review gate cleared
 outputs: [POV-tagged spine, repetition census, temperature-tag proposal sheet, CRE's restructured/heated draft]
 lane: fiction
 status: draft — 2 live runs (EP 01 2026-08-01, WITCHWOOD CH12 2026-08-03); packs after 3
-last_updated: 2026-08-03
+last_updated: 2026-08-10
 scope: Any project on the per-chapter folder convention with a transcoder v6 floor. Framework steps 4-7 (see KNOWLEDGE/PROSE FRAMEWORK/framework.md).
 pipeline_position: downstream of [[WORKFLOWS/transcoder]] (v6, behind the spine-review gate); upstream of [[WORKFLOWS/register-pass]]
 ---
@@ -72,6 +72,8 @@ CRE restructures against the tag rules: sensing → short fleeting fragments; do
 ### Commit exit gate — diff against source (added 2026-08-03, CH12 run)
 
 When the ruled picks are written, **diff the output against the source paragraph-by-paragraph and report the count: N¶ in, N¶ out, exactly K differing, where K is the number of ruled changes.** Any hunk that is not a ruled change is a defect — revert it, do not rationalize it. Verify through the file tools, never a bash/mount read alone (DIR-005).
+
+**And account for the protected spans (added 2026-08-10, `^backlog-protected-span-write-gate` (ii)).** The output artifact's frontmatter carries `protected_spans_touched:` — every span from `REFERENCE/protected-patterns.md` + the piece's `protected_patterns` frontmatter that the commit touched, each `kept` / `reworded → "<new span>"` (witness updated same session) / `dropped — ruled by CRE <date>`; `[]` stated when none. Same logic as the paragraph count, extended from paragraphs to protected spans: the edit moment is the only place "reworded" and "violated" are distinguishable.
 
 *Why.* The CH12 commit silently dropped a single trailing space from two paragraphs — **the only two in the chapter written by CRE's own hand** (the G1 line and the ratified cough), and the two the chapter changelog recorded as nits *deliberately* left for the copy-edit lane. Inert in rendering, and reverted on discovery. The instructive part is that **nothing in the assist's own logic could have caught it**: its internal guarantee — *no image, no beat, no interiority added* — stayed true the entire time the edit was present, because the edit was not of that kind. A whole-file rewrite therefore needs an **external** check on what changed, not an internal promise about what was intended. Applies to any pass here that emits a full-file artifact.
 

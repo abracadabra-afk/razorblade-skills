@@ -15,22 +15,25 @@ tie-break, or path match), plus heading/block-anchor indices. Reports:
   INTEGRITY       - a scanned note's OWN bytes carry NUL / control / trailing-pad bytes
                     (the ^obs-089/103/129/133 trailing-NUL corruption class). SUSPECT
                     under the disk mount (may be a stale partial -> verify via the file
-                    tools / --rest-base, then strip-or-restore); CONFIRMED under
-                    --rest-base. Checked for every .md, incl. the link-quarantined logs
-                    (_CHANGELOG / _OBSERVATIONS), since those are exactly what corrupts.
+                    tools, then strip-or-restore). Checked for every .md, incl. the
+                    link-quarantined logs (_CHANGELOG / _OBSERVATIONS), since those are
+                    exactly what corrupts.
 
 OBS-014 / OBS-073 GUARD: the local bash/Dropbox mount can serve STALE or TRUNCATED
 copies of recently-written/moved files (a file-tools write does not heal the bash
-view mid-session). Mitigations, in order of strength:
-  1. Pass --rest-base http://127.0.0.1:27123 --rest-key <Local REST API key> to read
-     every target from Obsidian's LIVE in-memory view (immune to the mount). Falls
-     back to disk per-file on any API error. (env: OBSIDIAN_REST_BASE/OBSIDIAN_API_KEY)
-  2. Without the API, truncated reads are detected (NUL bytes) and downgraded to
-     SUSPECT-STALE advisories instead of false BROKEN-* findings, and the run prints a
-     top-level "MOUNT MAY BE STALE" banner so you re-run in a fresh session.
-Either way, confirm any surprising DANGLING via the file tools before acting.
+view mid-session). Truncated reads are detected (NUL bytes) and downgraded to
+SUSPECT-STALE advisories instead of false BROKEN-* findings, and the run prints a
+top-level "MOUNT MAY BE STALE" banner so you re-run in a fresh session. Confirm any
+surprising DANGLING via the file tools before acting. (The former --rest-base/--rest-key
+live-view path was REMOVED 2026-08-10 under DIR-001 - the backing plugin was removed
+from the vault 2026-07-13; do not go looking for its key.)
+
+SELF-CHECK (added 2026-08-10, ^backlog-linkaudit-unpack-bug): the run REFUSES to report
+if it scanned 0 (or <50%) of the vault's markdown files - the 2026-08-09 scheduled run
+printed "0 md scanned ... severity: clean" off a call-site arity bug (^obs-245), and a
+clean verdict from an empty scan is worse than a crash.
 """
-import argparse, os, re, json, urllib.parse, urllib.request
+import argparse, os, re, json, sys, urllib.parse
 from collections import Counter
 
 MD = '.md'
@@ -39,13 +42,13 @@ MDLINK   = re.compile(r'(!?)\[[^\]\n]*?\]\(([^)\n]+?)\)')
 HEADING  = re.compile(r'^#{1,6}\s+(.*?)\s*$', re.M)
 BLOCKID  = re.compile(r'(?:^|\s)\^([A-Za-z0-9_-]+)\s*$', re.M)
 SKIPDIRS = {'.git', '.obsidian', '.smart-env', '.trash'}
-QZONES   = ('/GRAVEYARD/', '/evals/')
+QZONES   = ('/GRAVEYARD/', '/evals/', '/SYSTEM/history/')  # history added 2026-08-10 (^backlog-linkaudit-unpack-bug (c)): carved archives hold refs to moved content by design
 QFILES   = ('_CHANGELOG.md', '_OBSERVATIONS.md', 'vault-migration-plan.md')
 
 def quarantined(rel):
     if any(z in '/' + rel for z in QZONES): return True
     b = os.path.basename(rel)
-    return b in QFILES or b.startswith('_pre-migration')
+    return b in QFILES or b.startswith('_pre-migration') or b.endswith('.bak.md')
 
 def strip_code(txt):
     txt = re.sub(r'```.*?```', '', txt, flags=re.S)
@@ -78,15 +81,10 @@ def read_disk(path):
     text = raw.decode('utf-8', errors='replace')
     return text, looks_truncated(raw, text), integrity_metrics(raw)
 
-def read_rest(base, key, rel):
-    url = base.rstrip('/') + '/vault/' + urllib.parse.quote(rel)
-    req = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + key,
-                                               'Accept': 'text/markdown'})
-    with urllib.request.urlopen(req, timeout=10) as resp:
-        raw = resp.read()
-    text = raw.decode('utf-8', errors='replace')
-    # the live API view is authoritative; only a real NUL would be suspect (shouldn't happen)
-    return text, ('\x00' in text)
+# NOTE (2026-08-10, ^backlog-linkaudit-dead-rest-flags): the --rest-base/--rest-key
+# path was REMOVED. The Obsidian Local REST API plugin was removed from the vault
+# 2026-07-13 under DIR-001 (its data.json held an apiKey + TLS private key); the
+# flags had no live backend and invited a future reader to go looking for that key.
 
 def main():
     ap = argparse.ArgumentParser()
@@ -94,14 +92,9 @@ def main():
     ap.add_argument('--json', action='store_true')
     ap.add_argument('--all', action='store_true', help='include GRAVEYARD/evals/history')
     ap.add_argument('--ambiguous', action='store_true', help='show AMBIGUOUS info findings')
-    ap.add_argument('--rest-base', default=os.environ.get('OBSIDIAN_REST_BASE'),
-                    help='Obsidian Local REST API base (live view; bypasses the stale mount)')
-    ap.add_argument('--rest-key', default=os.environ.get('OBSIDIAN_API_KEY'),
-                    help='Obsidian Local REST API bearer key')
     a = ap.parse_args()
     vault = os.path.abspath(a.vault)
-    use_rest = bool(a.rest_base and a.rest_key)
-    rest_failures = 0
+    read_failures = []
 
     files = []
     for root, dirs, fs in os.walk(vault):
@@ -118,24 +111,43 @@ def main():
         by_base_ext.setdefault(base.lower(), []).append(rel)
 
     headings, blocks, content, suspect = {}, {}, {}, set()
+    integrity_findings = []
     for rel in files:
         if not rel.lower().endswith(MD): continue
-        txt, sus = None, False
-        if use_rest:
-            try:
-                txt, sus = read_rest(a.rest_base, a.rest_key, rel)
-            except Exception:
-                rest_failures += 1
-                txt = None
-        if txt is None:
-            try: txt, sus = read_disk(os.path.join(vault, rel))
-            except Exception: continue
+        # read_disk returns a 3-tuple (text, truncated, integrity) — the 2026-08-09
+        # scheduled run proved a 2-var unpack here raises ValueError on EVERY file,
+        # silently skipping the whole vault and printing "0 md scanned ... clean"
+        # (^obs-245 / ^backlog-linkaudit-unpack-bug). Keep the arity in sync with
+        # read_disk, and never blanket-continue: count what could not be read.
+        try:
+            txt, sus, integ = read_disk(os.path.join(vault, rel))
+        except Exception as e:
+            read_failures.append((rel, repr(e)))
+            continue
         content[rel] = txt
         if sus: suspect.add(rel)
+        if integ:
+            integrity_findings.append(('INTEGRITY', rel, '',
+                'own bytes suspect: %d NUL, %d control, %d trailing-pad (of %d)' %
+                (integ['nul'], integ['ctrl'], integ['trail_nul'], integ['bytes'])))
         headings[rel] = {norm_head(h) for h in HEADING.findall(txt)}
         blocks[rel] = set(BLOCKID.findall(txt))
 
-    findings = []
+    # Signature self-check (DIR-013: verify by signature, not absence of error;
+    # DIR-018: a pass-condition must name its blind spot). A run that scanned
+    # nothing or almost nothing must REFUSE to report — "clean" off an empty
+    # scan is the confident-negative failure that shipped 2026-08-09.
+    md_total = sum(1 for r in files if r.lower().endswith(MD))
+    if md_total and (len(content) == 0 or len(content) < md_total * 0.5):
+        sys.stderr.write(
+            "FATAL: scanned %d of %d markdown files - refusing to report.\n"
+            "A scan this incomplete cannot support any verdict, least of all 'clean'.\n"
+            "First read failures (of %d):\n%s\n" % (
+                len(content), md_total, len(read_failures),
+                '\n'.join('  %s: %s' % rf for rf in read_failures[:10])))
+        sys.exit(2)
+
+    findings = list(integrity_findings)
     def resolve(target, ext_hint, src):
         t = target.strip()
         if not t: return ('self', src)
@@ -206,19 +218,20 @@ def main():
     if not a.ambiguous:
         show = [f for f in show if f[0] != 'AMBIGUOUS']
     stale_banner = None
-    if suspect and not use_rest:
+    if suspect:
         stale_banner = ("MOUNT MAY BE STALE: %d target(s) read back truncated (NUL bytes). "
                         "Findings off them are downgraded to SUSPECT-STALE. Re-run in a fresh "
-                        "session or pass --rest-base/--rest-key to read Obsidian's live view." % len(suspect))
+                        "session and confirm surprising findings via the file tools." % len(suspect))
     if a.json:
         print(json.dumps({'shown': show, 'quarantined_count': len(quar),
                           'suspect_count': len(suspect), 'suspect_files': sorted(suspect),
-                          'rest': use_rest, 'rest_failures': rest_failures,
+                          'md_scanned': len(content), 'md_total': md_total,
+                          'read_failures': read_failures,
                           'stale_banner': stale_banner}, indent=2)); return
     if stale_banner: print("[!] " + stale_banner)
-    if use_rest:
-        print("read mode: Obsidian Local REST API (live view)%s"
-              % (" (%d fell back to disk)" % rest_failures if rest_failures else ""))
+    if read_failures:
+        print("[!] %d file(s) could not be read (excluded from scan, NOT evidence of absence):" % len(read_failures))
+        for rf in read_failures[:10]: print("      %s: %s" % rf)
     print("LINK AUDIT  vault=%s\n%d md scanned (of %d files) | %d findings shown, %d quarantined, %d ambiguous-suppressed"
           % (vault, len(content), len(files), len(show),
              len([f for f in findings if quarantined(f[1])]),

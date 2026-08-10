@@ -7,7 +7,7 @@ inputs: [the working text — prefer draft.md when its status marks real content
 outputs: [revised passage in revisions/, editorial-note sidecar in revisions/]
 lane: fiction
 status: active
-last_updated: 2026-06-19
+last_updated: 2026-08-10
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that also keep a project register at REFERENCE/register.md. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]]; the dedicated revision stage out of the slate (closes the "revision-specific workflow TBD" note in each chapter's revisions/README). Optionally downstream of [[WORKFLOWS/spec-check]] — when a ready verdict sheet exists, runs execute-only.
 ---
@@ -41,6 +41,8 @@ The register changes project to project. Witchwood's is "Braided-Register Litera
 | Editorial note (the register's 6-part note) | `<chapter>/revisions/YYYY-MM-DD-<slug>-rev<N>-note.md` |
 
 `<slug>` derives from the slate's `envelope_segments`; `<N>` is the next revision integer for that slug. Material written here has **left the Transcoder workflow** — per each chapter's `revisions/README.md`, the Transcoder never reads from `revisions/` again. The slate stays untouched as the immutable audit trail.
+
+**`protected_spans_touched:` — required frontmatter on every revision note (convention added 2026-08-10, `^backlog-protected-span-write-gate` (ii); serialized per DIR-004).** The note's frontmatter must account for every protected span the revision touched — sourced from `REFERENCE/protected-patterns.md` plus the chapter frontmatter's `protected_patterns` — one entry each, one of three values: `kept` (byte-identical) · `reworded → "<new span>"` (rule intact; update the witness in the same session) · `dropped — ruled by CRE <date>`. Touched none → write `protected_spans_touched: []` explicitly; the empty list is a statement, never an omission. **An unaccounted drop is a defect: revert, don't rationalize.** This field exists because post-hoc span verification is structurally impossible (`^obs-235` / DIR-014's matcher corollary — "reworded" and "violated" leave identical evidence on disk); the moment of the edit is the only place the answer is free.
 
 ## Steps
 

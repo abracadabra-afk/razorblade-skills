@@ -7,7 +7,7 @@ inputs: [the mounted vault root]
 outputs: [a categorized punch list of dangling links / broken anchors / broken headings; optional brain-log entries]
 lane: meta
 status: active
-last_updated: 2026-08-03
+last_updated: 2026-08-10
 ---
 
 # WORKFLOW: link-audit (the link doctor)
@@ -37,6 +37,7 @@ Scans every note for `[[wikilinks]]`, `![[embeds]]`, and `[md](links)` and resol
    >
    > **The freshness mitigation is therefore Step 3 alone**: `SUSPECT-STALE` self-flagging, a fresh session, and file-tool confirmation of any surprising DANGLING before it is reported as real. Treat mount staleness as *present and unmitigated*, not solved.
 3. **Apply the `^obs-014`/`^obs-073` guard** — a flagged-missing file can be a stale-mount artifact, and a recently-written file can read back **truncated** (the bash mount serves stale/partial views of files written/moved/deleted that session; a file-tools write does not heal it). Mitigations: prefer `--rest-base` (Step 2); truncated reads self-flag as `SUSPECT-STALE` + a banner; still **run in a FRESH session** and confirm any surprising DANGLING via the file tools before reporting it as real.
+3b. **Never infer a missed upstream run from absent artifacts — probe the scheduler first (added 2026-08-10, `^obs-246` / `^backlog-vaulthealth-silent-noop`).** This pass runs LAST in the Sunday window and is tempted to reason about the passes before it (esp. `vault-health`, whose rotation changes what this pass sees). An absent report or `_CHANGELOG` entry is **not** evidence a pass didn't run — the 2026-08-09 run inferred exactly that about `vault-health`, reasonably and wrongly, and downgraded its own findings to provisional while `vault-health` had fired and exited silently. Before asserting anything about an upstream pass: (i) probe `lastRunAt` via `list_scheduled_tasks`; (ii) check its receipt surface — `vault-health` writes `SYSTEM/reports/vault-health-runs.md` every run, including no-ops. A populated `lastRunAt` with no receipt means **the run failed**, which is a finding to report, not a reason to downgrade your own.
 4. **Categorize, don't dump.** Separate the punch list into: genuine breakage (fix), the vault's **folder-link convention** (links pointing at folders rather than notes — pre-existing style, not breakage), and resolver-soft cases (heading-fragment near-misses). Present the actionable list; quarantine GRAVEYARD / `evals/` / `_CHANGELOG` / `_OBSERVATIONS` noise.
 5. **Hand off.** Fixes are manual or a separate pass — this skill never edits a note.
 

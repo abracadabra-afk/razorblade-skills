@@ -7,7 +7,7 @@ inputs: [the working text — draft.md when its status marks real content, else 
 outputs: [edit sheet in the chapter/episode folder (Phase 1), ruled-edits revision in revisions/ (Phase 2), rejection-harvest appends to REFERENCE/protected-patterns.md]
 lane: fiction
 status: draft — spec authored 2026-07-29 from [[KNOWLEDGE/RESEARCH/2026-07-29 ai-line-editing-partner-voice]]; packs after 2–3 live runs
-last_updated: 2026-07-29
+last_updated: 2026-08-10
 scope: Any project keeping a REFERENCE/register.md (WIW episodes first adopter; Witchwood chapters when revisions unpause). Requires revisions/ per the folder convention.
 pipeline_position: downstream of [[WORKFLOWS/register-pass]] (register = voice conformance; line-edit = economy + precision inside the ruled voice), upstream of record/bank. Landed by [[WORKFLOWS/promote-revision]]. Never a precondition at the mic (DIR-017).
 ---
@@ -87,7 +87,7 @@ created: YYYY-MM-DD
 **Attended:** present the sheet, CRE rules (per item: accept A/B · reject · override with his own text · protect). **Unattended (DIR-012):** Phase 1 only — the sheet *is* the deferral surface, rendering-visible; stop.
 
 ### Step 3 — Phase 2: commit (only after rulings)
-Apply ruled edits **verbatim** — accepted options exactly as shown, overrides exactly as CRE supplied them. Write the revised passage to `<folder>/revisions/YYYY-MM-DD - line edit rev N.md` with frontmatter carrying `source_sheet` + working-text lineage. Never touch `draft.md` ([[WORKFLOWS/promote-revision]] is the return trip). Mark the sheet `status: ruled`.
+Apply ruled edits **verbatim** — accepted options exactly as shown, overrides exactly as CRE supplied them. Write the revised passage to `<folder>/revisions/YYYY-MM-DD - line edit rev N.md` with frontmatter carrying `source_sheet` + working-text lineage **+ `protected_spans_touched:`** (the revision-note convention, `^backlog-protected-span-write-gate` (ii) — see [[WORKFLOWS/register-pass]] § Outputs: every protected span touched accounted as `kept` / `reworded → "<new span>"` (witness updated same session) / `dropped — ruled by CRE <date>`; `[]` stated explicitly when none; an unaccounted drop is a defect — revert). Never touch `draft.md` ([[WORKFLOWS/promote-revision]] is the return trip). Mark the sheet `status: ruled`.
 
 ### Step 4 — Rejection harvest
 Every rejection/override with a why → append to `REFERENCE/protected-patterns.md` (dated, span it fired on, CRE's reason). Specific constructions only, never vibes — an over-broad shield makes the editor toothless. A "protect" ruling mid-sheet lands the same way.

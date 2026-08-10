@@ -7,7 +7,7 @@ inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TA
 outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps, a Standing queue block in _BACKLOG.md (lane counts + ranked-3 attended serving + agent-toggle recommendation), one replaced serving seed in TASKS/TASKS.md]
 lane: writing-ops
 status: active
-last_updated: 2026-08-03
+last_updated: 2026-08-10
 ---
 
 # WORKFLOW: backlog-sweep
@@ -98,11 +98,13 @@ Append a `## Needs CRE ruling (backlog-sweep YYYY-MM-DD)` section to the bottom 
 
 Apply stamps as a **safe op** (they record that the sweep looked, not what CRE ruled). Only `GRADUATED` requires a CRE ruling first.
 
-**Two checks a single-window read cannot make** — run both against the *whole* file, not just the new entries:
+**Four checks a single-window read cannot make** — run all against the *whole* file, not just the new entries:
 
 1. **Recurrence check.** For each `PARKED` entry, test whether any newer observation satisfies its stated condition. If yes, it is no longer parked — propose it, and cite the recurrence. (`^obs-189` was a textbook recurrence of `^obs-185` and would have been caught this way.)
 2. **Cluster check.** Test whether two or more untriaged entries describe the **same underlying failure**, however differently worded. A cluster is far stronger evidence than any single entry and should be proposed as one directive with all sources named. (`^obs-183` + `^obs-187` + `^obs-014` were one finding across seven weeks; `^obs-132` + `^obs-136` + `^obs-137` were one rule that no entry owned, two of them deferring to it as "already covered" — **that phrase is itself a cluster signal: it means the rule is unwritten.**)
 3. **Wording-vs-state check (added 2026-08-03, CRE-ruled — DIR-009's announce-the-gap clause, `^obs-230`).** An open item's own worded state ("packaging pending", "install remaining", "blocked on X") is a snapshot nothing re-checks. Where the item names a checkable artifact — a `.skill` in the manifest, an installed skill, a scheduled task, a file — test the wording against the disk/manifest state and flag every contradiction as its own report line: *"item says X, disk says Y."* Six instances of this class were closed in one attended sweep (2026-08-03) after accumulating silently; the flag makes the class visible weekly instead.
+   **Read the artifact to EOF before concluding a claimed edit did not land (added 2026-08-10, `^obs-247` / `^backlog-gatebin-reprobe`).** A **partial** write looks exactly like a non-write from the middle of the file: the 08-09 sweep reported the GR 2e shard compression "did not land" when the ratified head sat correctly at the front with the old log concatenated *behind* it — the check read far enough to see log text and stopped. A wording-vs-state verdict of "did not land" is only valid off a full read of the target (file tools, to EOF); anything less reports "state unconfirmed — partial read," never a confident negative (the `^obs-198` shape).
+4. **Carried-forward line re-probe (added 2026-08-10, `^obs-247` / `^backlog-gatebin-reprobe`).** **Every gate-bin line carried forward from a prior bin is re-probed against its own stated condition before re-emission — never inherited on "unchanged, no new evidence."** A bin line is live state too: the 08-09 bin re-emitted "`dev-reconcile-loop` Review unfilled, 12 days overdue" when the Review had been filled 2026-08-03 and its `review-date` cleared — carried from the prior bin without re-reading the file. The probe is cheap (one targeted read of the named surface); a line that fails it is dropped with a note, and a line that cannot be probed says so in its own text.
 
 **Bounded output.** Propose at most **5** directives per sweep, ranked by evidence strength (cluster or recurrence first, single-instance last), and state how many untriaged entries remain. An unbounded proposal list is one CRE will not read — which is how this step failed the first time.
 
