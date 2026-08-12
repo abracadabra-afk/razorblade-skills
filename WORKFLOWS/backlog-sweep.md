@@ -110,28 +110,31 @@ Apply stamps as a **safe op** (they record that the sweep looked, not what CRE r
 
 ### Step 4c — Standing queue + serving block (added 2026-08-03, CRE-ratified)
 
-**Why this step exists.** The queue taxonomy in `_BACKLOG.md` § Conventions (`#unattended` / `#unattended-confirm` / `#gated` / `#desktop`, with `#gated` as the default for an untagged item) has always been *computable* — nobody ever computed it. So no surface ever told CRE what workload was waiting for which writer, and the standing question *"is it worth switching the unattended agent on?"* stayed a manual guess. This step answers both from tags that already exist. **It adds no new tagging burden.**
+**Why this step exists.** The queue taxonomy in `_BACKLOG.md` § Conventions (now `#gated` / `#desktop`, with `#gated` the default for an untagged item) has always been *computable* — nobody ever computed it. So no surface ever told CRE what workload was waiting, at what priority, at what age. This step answers that from tags that already exist. **It adds no new tagging burden.** *(The step originally also answered "is it worth switching the unattended agent on?" — that question died with the agent lane on 2026-08-11; see the retirement note below.)*
 
 **Compute (open `- [ ]` items only, this file + every project shard):**
 
 | Lane | Definition |
 |---|---|
-| **Agent** | `#unattended` + `#unattended-confirm` |
-| **Attended** | everything else — explicit `#gated` **plus untagged items** (the stated default) |
-| **Desktop** | `#desktop` — a **sub-count of Attended**, not a third lane; report it inside the attended figure, never added alongside it |
+| **Attended** | **every open item** — explicit `#gated` plus untagged (the stated default). Since the Agent lane's retirement this is the whole population; state it as one number |
+| **Desktop** | `#desktop` — a **sub-count of Attended**, not a second lane; report it inside the attended figure, never added alongside it |
 
 Do not double-count: `#desktop` items frequently also carry `#gated`.
+
+> **Agent lane retired 2026-08-11 (CRE-ruled, `^obs-250`).** `#unattended` / `#unattended-confirm` are gone from `_BACKLOG.md` § Conventions. **Do not compute or emit an Agent-lane line.** Why: the count was reported as 6 when 2 were real — four items matched the tag string only inside their *prose*, three of those in sentences recording the tag's own **removal**, because `_BACKLOG`'s item convention requires noting a retagging when scope changes. CRE ruled the taxonomy out rather than hardening the matcher, since the tags named a writer that no longer exists (`vault-backlog-agent`, retired 2026-08-03) and both survivors were dormant `#p3`s waiting on nothing.
+>
+> **The matcher lesson survives the tag.** `#desktop` is still derived by string match and is still inflatable by a prose mention. Per DIR-018, **anchor any tag count to the item's trailing `#…` run after its `^anchor`** — never the tag string anywhere in the body — and emit a **"not checked"** line naming what the derivation cannot see. Residual build work at `^backlog-queuetag-derivation`.
 
 **Rank the attended bucket by `(priority, age)`.** `#p1` → `#p2` → `#p3` → untagged; within each band, **oldest first**, using the `, YYYY-MM-DD` date carried in the item's anchor parenthetical. Age needs no new tag — it is already in every item. This exists because priority alone has stopped discriminating: at the 2026-08-03 measurement `#p2` held **63 of 131** open items against **4** `#p1`, so a serving ranked on `#p` alone is effectively unordered. **Exclude `#blocked` / `#waiting` items from the serving** (they are not actionable), but keep them in the counts.
 
 **Serve exactly 3.** Not the ranked list — three items, each as: anchor · one-line what-it-is · **the next physical action already recorded in the item**. Never invent a next action; if an item's next action is missing, skip to the next candidate and note the gap. Three is the cap for the same reason day-launch caps its board — an unbounded serving is one CRE will not work.
 
-**Emit the agent-lane line (rewired 2026-08-03 — `vault-backlog-agent` retired, CRE-ruled `^backlog-vaultbacklogagent-nodoc`).** There is currently **no unattended backlog executor**: the task was deleted 2026-08-03 (superseded; this sweep owns the maintenance half). Report the Agent-lane count as information only — *"Agent lane: N items tagged `#unattended`/`#unattended-confirm`; no executor exists."* If the lane grows enough to matter, flag it as a CRE decision (re-introduce an executor as a doc-backed task authored fresh — never resurrect the retired prompt). Do not recommend enabling a task that does not exist; probe live task state before writing any toggle line (DIR-010).
+**No agent-lane line (retired 2026-08-11, CRE-ruled — supersedes the 2026-08-03 rewiring).** There is no unattended backlog executor (`vault-backlog-agent` deleted 2026-08-03; this sweep owns the maintenance half) **and no longer a lane to count** — the tag family is out of § Conventions. Emit nothing for it: an informational line about an empty taxonomy served by no writer is pure noise, and its last two runs both shipped a wrong number. If an unattended executor is ever wanted again, that is a CRE decision to author a fresh doc-backed task with its own routing — never a revival of this taxonomy or the retired prompt. Probe live task state before writing any toggle line (DIR-010).
 
 **Write it to two places:**
 
 1. A `## Standing queue (backlog-sweep YYYY-MM-DD)` section in `_BACKLOG.md`, placed **immediately below § Project pointers** so it reads before the lane headings. **Replace** the prior block wholesale — never stack.
-2. **One** seed item in `TASKS/TASKS.md`: `- [ ] Walk the backlog serving — 3 attended picks + N agent-lane ready (see _BACKLOG § Standing queue) win:ops #p2`. **Replace the existing seed if one is present; never append a second.** This is the surfacing half — a block only in `_BACKLOG` is a deferral onto a channel CRE does not routinely open (DIR-012 clause 4).
+2. **One** seed item in `TASKS/TASKS.md`: `- [ ] Walk the backlog serving — 3 attended picks (see _BACKLOG § Standing queue) win:ops #p2`. *(The former `+ N agent-lane ready` clause is retired with the lane, 2026-08-11.)* **Replace the existing seed if one is present; never append a second.** This is the surfacing half — a block only in `_BACKLOG` is a deferral onto a channel CRE does not routinely open (DIR-012 clause 4).
 
 **Placement in the maintenance window (CRE-ruled 2026-08-03 — the wrinkle is closed).** The window moved from Monday to **Sunday afternoon** precisely so this serving lands *upstream* of the planning surfaces instead of a day late. Live order:
 
