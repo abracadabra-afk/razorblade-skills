@@ -114,6 +114,8 @@ Sentinel fails · folder exists · no number/title · gate verdict is RESHAPE or
 
 ## Relationship to the rest of the OS
 
+> **Route law (RULED 2026-08-15, dec-028):** every episode this skill gates runs the **shorts battery profile — v3** in [[WORKFLOWS/pipeline]] § Shorts battery profile (one early blind read · scheduled cooling read + premise-alignment probe · structure-lock before any line/derive work · one combined line pass · one late 4-seat panel incl. EAR · protections/derives at the record gate only). Pilot-marked: default until EP 02–03 prove it. When this gate passes GO, remind CRE the profile applies.
+
 - **Upstream:** [[WRITING/SHORTS/PREMISES]] · `WRITING/SHORTS/CANDIDATES/` (triage convention, 2026-07-22) · felt-source dictations via [[WORKFLOWS/dictation-runner]]
 - **Downstream:** [[WORKFLOWS/episode-feedback]] (S3) → [[WORKFLOWS/episode-runway]] v2 (S4 carve + S7 Pass 3)
 - **Callable:** [[WORKFLOWS/decision-helper]] · [[WORKFLOWS/work-through]]
