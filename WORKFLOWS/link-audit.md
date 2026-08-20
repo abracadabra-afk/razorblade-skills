@@ -29,6 +29,11 @@ Scans every note for `[[wikilinks]]`, `![[embeds]]`, and `[md](links)` and resol
 - Links inside inline code or fenced code blocks are **ignored** (so `` `[[wikilinks]]` `` examples in docs don't false-flag).
 - `#heading` / `#^block` fragments are checked only when the target file is readable.
 
+## Ratified house conventions — NOT findings (CRE-ruled 2026-08-19, Monday gate-bin pass)
+
+- **Heading-PREFIX cites on the OS anchors are house style.** `[[_DIRECTIVES#DIR-005]]`, `[[_DIRECTIVES#DIR-015]]`, `[[_SKILLS MAP#Fiction]]`, `[[_SKILLS MAP#Cowork skills]]`, `[[_SKILLS MAP#Cross-cutting rules]]` and their kin cite a heading by its **stable identifier prefix**, not its full text. They render fine; only exact-heading navigation fails. **Do not report them.** Basis for the ruling: the full heading text is long and *gets amended* — DIR-005's heading has been amended four times — so pinning 32 cites to full heading text guarantees they break again on the next amendment. This is DIR-014's own logic (widen the **exact** layer, never chase the drift). Accept a prefix match on `_DIRECTIVES` and `_SKILLS MAP` targets. Closed as `^backlog-heading-prefix-cites`; resolver change tracked at `^backlog-linkaudit-prefix-accept`.
+- **Bare `[[items#…]]` is retired.** All 48 instances were rewritten 2026-08-19 to the vault-root-relative form `[[WRITING/PROJECTS/<PROJECT>/DEV/registry/items#Heading|Heading]]`. A bare `[[items#…]]` is now a **real** finding again — report it.
+
 ## Steps
 1. **Vault sentinel** — confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`); the `^obs-004` guard. Write nothing.
 2. **Run** the bundled resolver: `python3 link_audit.py --vault <VAULT>` (add `--all` to include the quarantined zones, `--ambiguous` to show the info tier, `--json` for machine output).
