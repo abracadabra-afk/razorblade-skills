@@ -84,6 +84,8 @@ S7 PASS 3 (this doc) → production.md
 
 > **Timing re-ruled (v2):** v1 built the runway immediately after the gate; EP 01 proved that's too early — CRE's thinking kept developing through the sit and three feedback runs, and the heavy runway had to be carved down to speaking shape afterward. v2 builds it **once, late, lightweight**, from the settled premise.
 
+> **OPTIONAL FOR SHORTS — RULED 2026-08-23 (CRE).** The carve is a **mic-route instrument**. Every property of the format below exists to serve dictation: portable, memorizable on a walk, word budgets *"hit by dictating, not by cutting afterward,"* a flow kickstarter. On the **desk route** — typed, dialogue-first, edit-in-the-loop, no mic leg (first run: EP 02 HARD LEMONADE, 2026-08-23) — the runway has **no consumer**, and a ~2,600-word short holds in working memory regardless (`^obs-207`: runway density scales to what the writer must re-load, never to the work's importance). So the rule is decidable, not a judgment call per episode: **carve when the draft is going to the mic; skip it when it isn't.** The route picks, not the writer. Recorded with its cause per DIR-013 — if the desk route ever grows a mic leg, this optionality is void and must be re-tested, not inherited.
+
 **Format: the carve (design principle D — EP 01 `chad's notes.md` §D, CRE-ruled 2026-07-21).** The runway is a **flow kickstarter, not a spec**:
 
 - **One-line summary** of the story at the top (the settled spine, from the amended premise).

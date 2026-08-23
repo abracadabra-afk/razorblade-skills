@@ -21,8 +21,12 @@ S1  GATE + SCAFFOLD   ← this workflow
 S2  SIT               CRE's notes accumulate in notes.md — no tooling, just time
 S3  SYNTHESIS         episode-feedback ("reconcile my notes")
 S4  RUNWAY CARVE      episode-runway v2 Pass 2 — lightweight, post-synthesis
-S5  DRAFTING ENGINE   mic → dictation-runner → dictation-cleanup → transcoder →
-                      scene-intensity on the slate → expansion/compression (CRE) → land draft.md
+                      *** OPTIONAL — mic route only (ruled 2026-08-23) ***
+S5  DRAFTING ENGINE   two engines, CRE picks at the gate:
+                      MIC  — mic → dictation-runner → dictation-cleanup → transcoder →
+                             scene-intensity on the slate → expansion/compression → land draft.md
+                      DESK — typed, dialogue-first, edit-in-the-loop, narration layered last;
+                             no runway, no slate; draft.md lands directly (EP 02, 2026-08-23)
 S6  FINISH ARC (v3)   dev-edit (blind dev panel → informed walk → roadmap) → CRE's AUTHOR PASS →
                       panel-read (the pre-publication gate) → panel-response → line passes → record prep
 S7  PRODUCTION        episode-runway Pass 3 — TOS re-check → routing re-call · Short cut · production.md
@@ -124,4 +128,9 @@ Sentinel fails · folder exists · no number/title · gate verdict is RESHAPE or
 
 ## Run log
 
-*(none yet — first live run should be EP 02, off a ruled candidate or fresh feeling)*
+**2026-08-23 — EP 02 - HARD LEMONADE (first live run).** Off the ruled candidate `CANDIDATES/AMENDS/triage.md`. Gate GO; tier **FULL**; TOS free-tier safe with care; container standard-band (draft measured ~3,025 w, over — descriptive per the 07-30 ruling). Title ruled **Hard Lemonade** over the candidate's working title at the gate. Full convention-v2 scaffold written, frontmatter serialized + parse-gated, every file verified by file-tool re-read. Triage stamped `promoted → EP 02`.
+
+Two things this run surfaced that the spec did not anticipate:
+
+- **A gated episode can arrive with its draft already written.** CRE hand-authored this one at the desk (dialogue spine first, narration layer second) across a single attended session, so **S2 / S4 / S5 did not run** — no sit, no runway carve, no mic, no slate. The scaffold absorbed it by N/A-stubbing `runway.md`, `envelope.md`, `dictation/` and `slate/` **with the reason recorded in each**, rather than leaving them empty or omitting them, and by landing the prose as draft 1 directly. Step 4's file list held; only the *fill* changed. Recommend this stay the sanctioned handling — the stub carrying its own reason is what stops a later pass reading the gap as a defect.
+- **Step 3's gate must be run against the current material, not the triage.** Five of this candidate's ruled constructions had been superseded in development before the gate opened (letter never finished · relapse caused by the dinner · **cocaine/nosebleed ending image retired** as incompatible with a plant already load-bearing in the draft · husband cut from the cast · POV register ruled). "Confirm rather than re-derive" (Inputs) is right for a *fresh* candidate and actively wrong for one that has been worked — the TOS read in particular would have banded this episode against content that no longer exists. Suggested amendment: **confirm the triage against the live material first; where they disagree, the material wins and the divergence is recorded in `premise.md`.**
