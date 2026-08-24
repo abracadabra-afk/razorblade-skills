@@ -48,7 +48,7 @@ Write each into its destination using the matching entry template (`templates/_s
 3. Leave a one-line pointer in the entry footer: `superseded prior take: see intake <date>`.
 4. **Taste is first-class** — fill the entry's *What I love / why it matters* field; never discard taste as meta-commentary.
 
-**Authority flows up:** after changing a scene, re-derive the sequence read above it (`sequences/SEQ NN`), and note silently in `project.md` if the macro read may have shifted (no ceremony). Registry entries are **wikilinked** (basename form — `[[Entry]]` / `[[items#Heading]]`) so Obsidian's graph *is* the connection map.
+**Authority flows up:** after changing a scene, re-derive the sequence read above it (`sequences/SEQ NN`), and note silently in `project.md` if the macro read may have shifted (no ceremony). Registry entries are **wikilinked** so Obsidian's graph *is* the connection map. **Heading cites use the ruled vault-root-relative form — `[[WRITING/PROJECTS/<PROJECT>/DEV/registry/items#Heading|Heading]]` — never a bare `[[items#Heading]]`** (retired 2026-08-19; a bare `items#` cite is a reportable finding). Whole-note cites stay basename form (`[[Entry]]`).
 
 **Taste propagates down:** measure each routed scene's taste against `_DEV.md`. If it drifts from the anchor, **surface the drift** for CRE — never rewrite the scene to match.
 

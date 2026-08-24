@@ -20,7 +20,7 @@ pipeline_position: downstream of [[WORKFLOWS/register-pass]] (register = voice c
 
 After the register pass has run (or on a draft CRE calls line-ready), before recording/banking. Triggers: "run the line edit," "line edit this," "trim pass," "polish pass." First-run seeding: "seed the protected patterns."
 
-Do NOT use it to: revise against the register (that is [[WORKFLOWS/register-pass]] — it holds the voice authority this skill only consults); copy-edit raw dictation ([[WORKFLOWS/dictation-cleanup]]); flatten interiority ([[WORKFLOWS/restrained-omniscient-register|restrained-omniscient-register]] — and note the WIW register explicitly bans that stance); run the diagnostic battery (spec-passes); or write new story material — **ever**. EXPAND findings are flags, not prose.
+Do NOT use it to: revise against the register (that is [[WORKFLOWS/register-pass]] — it holds the voice authority this skill only consults); copy-edit raw dictation ([[WORKFLOWS/dictation-cleanup]]); flatten interiority (the `restrained-omniscient-register` skill — and note the WIW register explicitly bans that stance); run the diagnostic battery (spec-passes); or write new story material — **ever**. EXPAND findings are flags, not prose.
 
 ## Key principles (from the research briefing — the load-bearing five)
 

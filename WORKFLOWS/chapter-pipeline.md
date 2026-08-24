@@ -69,7 +69,7 @@ Read `_DIRECTIVES.md` at the mounted root; confirm `type: ai-os-brain` + `file: 
 ### Phase 3 — Develop (per chapter, off-peak)
 5. ~~**blind-read** (subagent, clean room)~~ — **removed 2026-08-03 (QA-tier ruling):** reader diagnostics run at the part/manuscript tier, not per chapter. The pull-only canary on the sequence's opening chapter remains available on CRE's word (writes `spec-check/<run>/pass-1-blind.md` when run; Workshop-2 ingests it if present).
 6. **Workshop-2** ([[WORKFLOWS/workshop-chapter]], prose-read mode, read-only) — warm read against the `brief.md` (+ canary findings if CRE pulled one); CRE rules the triage. Reconcile the chapter `envelope.md` to the actual segments if they drifted. Captures the ruled decisions in `workshop.md`.
-7. **blind-response** ([[WORKFLOWS/blind-response]], execute-only) — apply the Workshop-2-ruled structural/reader-experience fixes → `draft.md` (`status: dev-revised`). Structure only, never line/voice.
+7. **blind-response** (the `blind-response` skill, documented in [[WORKFLOWS/spec-check]]; execute-only) — apply the Workshop-2-ruled structural/reader-experience fixes → `draft.md` (`status: dev-revised`). Structure only, never line/voice.
 8. **loop-clearer** ([[WORKFLOWS/loop-clearer]]) — work `open-loops.md`; in-voice surgical fixes + `<<DEMO>>` structural blocks CRE rules → a `loop-clear` revision in `revisions/`.
 9. **structure-promote** ([[WORKFLOWS/promote-revision]]) — land the loop-clear revision into `draft.md`. Structure is now settled.
 

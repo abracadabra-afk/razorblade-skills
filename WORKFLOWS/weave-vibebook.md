@@ -71,7 +71,7 @@ Bump `last_updated` on every file touched. Tell CRE: how many fragments anchored
 
 ## Notes / fragility
 - Use the **file tools** (Read/Write/Edit) on the mounted folder, not `patch_vault_file`; verify writes via the file tools, not a bash read (`^obs-020` / `^obs-014`).
-- On-demand only — no scheduled pass yet (CRE's choice; revisit when the corpus is large).
+- On-demand **and** on a daily scheduled pass — the `books-daily-ingest-weave` task (07:06) runs the inbox-router, then this workflow, over whatever the router just filed into VIBES. *(Corrected 2026-08-24: this line read "on-demand only — no scheduled pass yet (CRE's choice; revisit when the corpus is large)" while `inbox-router.md` Step 6 already referenced "the scheduled weave task" and the task had been running daily — a doc-side contradiction flagged by `task-audit` 2026-08-23 item 6.)* The unattended run is bound by the same never-does as an attended one: no manufactured synthesis, no re-proposing a rejected connection, and **every constellation stays `status: proposed` — CRE rules each one.*
 
 ## Logging
 On completion, append an entry to [[_CHANGELOG]] under the `vibes` lane.
