@@ -44,6 +44,8 @@ Verify `_DIRECTIVES.md` frontmatter (`^obs-004`). Then **capture CRE's read firs
 
 Clean-room contract inherited whole from [[WORKFLOWS/panel-read]]: each seat is a fresh isolated subagent holding ONLY its seat prompt + the prose. No spec, no register, no premise, no CRE flags. Common report rules also inherited (quote per finding, denominator, strengths mandatory — this is a walk of *strength and weakness*, not a defect hunt). **Findings only, never fixes** — a seat names the weakness; it never authors the solution (organic-process guard).
 
+> ⚠️ **Strip the frontmatter, and hand each seat TEXT rather than a path (`^obs-269` — inherited with the contract, but restated here because this pass fails worse than a panel does).** This pass reads `draft.md` by name, and this doc records elsewhere that `draft.md`'s own frontmatter carries live rulings. That header typically holds an `open_flags` list naming **CRE's live unruled craft worries by name** — which is to say, a substantial overlap with the very Step-0 flags the seats are forbidden to see. A panel that reads the header returns a contaminated read. **This pass returns something worse: manufactured convergence.** Its whole product is the keying at Step 2 — REINFORCES means *"your gut, independently confirmed by N seats."* A seat that read the flags off the header confirms nothing, the desk cannot tell the difference, and the walk sheet banks the false agreement as a ruling that no later pass re-raises. So: the orchestrator extracts the body (everything below the closing `---`) once, before any seat launches, and passes that text. **A seat handed a path, or disclosing that it saw frontmatter, is void — re-run it.**
+
 The three seats differ by **developmental axis** — differentiation is what keeps 3-from-one-model convergence from being an echo:
 
 - **STRUCTURE** `dev-structure.md` — does each beat/scene do new story work; escalation and progression logic; repetition vs. advancement; where the spine sags or steps down. The C1-content class is this seat's home turf.
@@ -102,6 +104,7 @@ Replaces the route-v2 S6 shape (blind read → dev fixes → register → CRE's 
 - No landed post-transcode draft → nothing to edit; this is not a runway or dev-capture instrument.
 - CRE's flags not yet harvested → stop; Step 0 is not skippable (a synthesis keyed to nothing is a verdict sheet, which is the instrument this replaces).
 - Any seat prompt found to contain spec material or CRE's flags → that seat's read is void; rebuild and re-run.
+- Any seat handed a **file path** rather than extracted prose text, or disclosing that it saw the draft's frontmatter → that seat's read is void (`^obs-269`); extract the body and re-run. **If a voided seat's findings already reached a walk sheet, re-key that sheet** — a REINFORCES banked off a contaminated seat is the failure this pass cannot self-detect.
 - A section carrying an open CONTENT flag being routed to choreographer/line machinery → stop; that is the EP 01 category error this workflow exists to prevent.
 
 ## Not this

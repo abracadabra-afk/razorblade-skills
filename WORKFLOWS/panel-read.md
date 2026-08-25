@@ -35,6 +35,7 @@ Costs 3 fresh contexts instead of 7–8 — spend it to confirm a revision lande
 The entire value of a cold read is that the reader has not seen intent. Every panelist inherits blind-read's isolation, enforced by construction:
 
 - **Each panelist is a fresh, isolated subagent** whose context contains ONLY its persona prompt + the prose. No vault bootstrap, no register, no `brief.md`, no runway, no envelope, no `REFERENCE/*`, no threads, no DEV material — all of it is spec material and contaminates exactly like the register does.
+- **"The prose" means the extracted BODY, and the orchestrator hands over TEXT, never a path (`^obs-269`, added 2026-08-24).** The bullet above is a list of *filenames*, which assumes spec lives in sibling files. On the per-chapter and per-episode conventions it does not: `draft.md` and `clean-draft.md` open with YAML carrying the POV ruling, the register version, pointers to numbered premise/brief rulings, cut rationales, and an `open_flags` list naming CRE's **live unruled craft worries by name**. That header is unavoidable if the panelist opens the file itself — reading the prose means opening the file the prose is in. So the orchestrator strips everything from the opening `---` through the closing `---` and passes the remaining text. **Handing a panelist a path re-opens the hole and voids the run** exactly as a spec-built persona does. If a panelist reports that frontmatter reached it anyway, that seat's read is void.
 - **The orchestrating session may be bootstrapped** (this is the chapter-pipeline Pass-1 delta model): contamination stays out because the orchestrator hands each subagent only prose + persona prompt, never its own knowledge.
 - **Persona tuning uses only clean inputs** (Step 0): the prose itself, and comps CRE names at invocation. CRE-named comps are safe — they shape the panelist's *shelf*, not its knowledge of his *intent*. A persona built from spec material is a contaminated reader wearing a costume; that run is void.
 - **The synthesis subagent is also isolated**: it receives the panelist reports + the prose, nothing else. A spec-aware synthesizer would discount findings that contradict intent — which is precisely the signal CRE grades for.
@@ -100,11 +101,13 @@ Core four seats run every panel. Bench seats are seated by need (Step 0 defaults
 
 ### Step 1 — Fan-out (simultaneous, one isolated subagent per seat)
 
-Launch all seated panelists **in parallel**, each a fresh subagent receiving only its persona prompt + the prose. Collect reports; write each to the run folder. Re-run any seat whose report violates the common rules (no quotes, thin denominator, a DNF that neither quits nor names near-misses).
+**Extract the body first.** Strip the target's YAML frontmatter — everything from the opening `---` through the closing `---` — and hold the remaining prose as text. This is the clean-room contract's `^obs-269` clause, and it happens once, here, before any seat is launched.
+
+Launch all seated panelists **in parallel**, each a fresh subagent receiving only its persona prompt + **that extracted text — never a file path**. Collect reports; write each to the run folder. Re-run any seat whose report violates the common rules (no quotes, thin denominator, a DNF that neither quits nor names near-misses), or that discloses having seen frontmatter.
 
 ### Step 2 — Synthesis (one isolated subagent)
 
-The synthesizer receives the panelist reports + the prose (no spec, no vault context) and produces `pass-1-panel.md`:
+The synthesizer receives the panelist reports + **the same extracted prose text** (no spec, no vault context, no path) and produces `pass-1-panel.md`:
 
 - **Lead with the DNF result** — quit point (or nearest misses) up top; it is the single most commercially real finding.
 - **CONSENSUS** — the same element flagged independently by 3+ seats. Highest-confidence defects. Cite each seat's quote.
@@ -148,6 +151,7 @@ For units without the spec-check convention (WIW episodes, shorts): `panel/<date
 
 - No working text → nothing to read.
 - Any persona prompt found to contain spec material → the run is void; rebuild the persona from clean inputs and re-run.
+- Any panelist handed a **file path** rather than extracted prose text, or reporting that it saw the target's frontmatter → that seat's read is void (`^obs-269`); extract the body and re-run the seat.
 - A panelist report with no quotes, or a denominator implausibly thin for the text → re-run that seat before synthesis.
 - A synthesis that averages a SPLIT into a verdict → re-run the synthesis; preserved disagreement is the product.
 

@@ -59,6 +59,8 @@ Keyed to the slate run it diagnosed, kept **out** of the immutable `slate/` tree
 
 `<slate-run-id>` is the slate folder name (e.g. `2026-06-03-01`), so a verdict sheet is always traceable to the exact draft it judged.
 
+**No slate leg? Mint a dated run id (added 2026-08-24).** On the episode route — and any folder whose `slate/` is N/A-stubbed — there is no slate folder to key against, and the target text is `draft.md`. Use `YYYY-MM-DD-NN` (today's date, `NN` from `01`) as the run id, record `slate_run: none — no slate leg`, and name the real file in `source:`. **Never invent a slate path that does not exist.** Where the pass supersedes draft text, snapshot the pre-pass body into the run folder first — on a no-slate project `draft.md` is both source and target, so nothing else preserves the audit trail the `slate/` tree normally provides.
+
 ---
 
 ## Running order and rules
@@ -78,20 +80,26 @@ Keyed to the slate run it diagnosed, kept **out** of the immutable `slate/` tree
 
 ## PASS 1 — BLIND READ (Tier 1, run first, no spec)
 
-> Run via the `blind-read` skill. Paste this with the chapter and NOTHING else.
+> Run via the `blind-read` skill. Paste this with the piece's **prose body** and NOTHING else.
 
-You are reading a chapter of a folk-tale novel cold, as a first-time reader. Do not edit. Do not guess at the author's intentions or themes. Answer only from what is on the page, and quote a specific line for every answer.
+> ⚠️ **Strip the frontmatter before you paste (`^obs-269`, added 2026-08-24).** A mature `draft.md` opens with YAML carrying the POV ruling, the register version, a pointer to a numbered premise/brief ruling, cut rationales, and an `open_flags` list naming your **live, unruled craft worries by name**. Paste from the first line of prose — everything below the closing `---`. The dispatcher owns this strip; handing the reader a *path* re-opens the hole, because it must then open the file itself and meets the header on the way to the prose. On EP 02 the reader obeyed every filename prohibition and was contaminated anyway: the header named the two worries that came back as the read's two load-bearing findings, so their independence could not be established. A guard that checks *"did the reader open the spec files?"* without checking *"did the spec reach the reader?"* has passed on a proxy (DIR-018).
+
+You are reading a piece — a novel chapter or a standalone episode — cold, as a first-time reader. Do not edit. Do not guess at the author's intentions or themes. Answer only from what is on the page, and quote a specific line for every answer.
+
+**Cast mapping — do this first, in one line each.** Questions 2, 3 and 5 turn on two figures. Name them **from the text alone**, before answering: the **central figure** (whoever the narration sits with) and the **significant secondary figure** (whoever applies the most pressure to them). If the piece has no such figure, say so plainly rather than forcing a fit. Never infer these from a title, a filename, or a folder name.
 
 1. **Drift.** Mark the first place, if any, where your attention slipped or you started skimming. Quote the line you were on. If you never drifted, say so.
-2. **The mother's fear.** At what point — if any — did you understand what the mother is most afraid of? Quote the earliest line that gave it to you, and state in one sentence what you think that fear is. If you never formed a clear sense of it, say that plainly.
-3. **Narrator vs. character knowledge.** Is there any point where the narration seems to understand the mother more deeply than she understands herself — where the narrator's knowledge outruns the character's? Quote the earliest such line and say what the narrator seems to know that she doesn't.
-4. **Prediction.** At the end of the chapter, what do you expect to happen next? What is the mother carrying, planning, or hiding that the chapter has set up? List what you can infer and quote what planted it.
-5. **The boy.** Who is the boy to you, on this evidence alone? What is his relationship to the mother — who is taking care of whom?
+2. **The central figure's deepest fear.** At what point — if any — did you understand what they are most afraid of? Quote the earliest line that gave it to you, and state in one sentence what you think that fear is. If you never formed a clear sense of it, say that plainly.
+3. **Narrator vs. character knowledge.** Is there any point where the narration seems to understand the central figure more deeply than they understand themselves — where the narrator's knowledge outruns the character's? Quote the earliest such line and say what the narrator seems to know that they don't.
+4. **Prediction.** At the end, what do you expect to happen next? What is the central figure carrying, planning, or hiding that the piece has set up? List what you can infer and quote what planted it.
+5. **The secondary figure.** Who are they to you, on this evidence alone? What is their relationship to the central figure — who is taking care of whom?
 6. **Earned or asserted.** Name one moment that landed emotionally, and one that felt told-to-you rather than shown. Quote both.
 
 Report only what the text supports. Where it supports nothing, say nothing was there.
 
-*Grading (private, against the spec): if the model named the mother's deepest fear from early narration, or the narrator's knowledge outran hers anywhere before the intended point, your seal leaked there. If its prediction can't reach what you planted, the planting is underbuilt.*
+> **Role-phrased since 2026-08-24.** Questions 2/3/5 previously read "the mother" and "the boy" — correct for the Witchwood chapter they were written against, wrong everywhere else. On EP 02 (a mother, a daughter, no boy) the hardcoding forced a hand-mapping by the dispatcher, which is itself a channel for the dispatcher's assumptions to reach a supposedly blind reader. Witchwood behavior is unchanged; the pass is now portable.
+
+*Grading (private, against the spec): if the model named the central figure's deepest fear from early narration, or the narrator's knowledge outran theirs anywhere before the intended point, your seal leaked there. If its prediction can't reach what you planted, the planting is underbuilt. **Check the sheet's `contaminated:` stamp before you grade — a `partial` read's findings on any primed question carry no evidentiary weight.***
 
 ---
 
@@ -210,7 +218,7 @@ status: ready            # ready = register-pass may execute; draft = still grad
 
 ## NOTES TO THE REGISTER
 - Anything the register should know running execute-only (e.g. "blind read says the
-  mother's fear leaked at line X — tighten the interior there").
+  central figure's fear leaked at line X — tighten the interior there").
 ```
 
 `register-pass` keys off `slate_run`/`status: ready`: when it finds a ready sheet for the slate it's about to revise, it runs the register **execute-only** (applies MECHANICAL, honors RULED calls, builds UNDRAMATIZED, never re-opens settled rulings).

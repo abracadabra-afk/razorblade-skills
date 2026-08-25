@@ -1,13 +1,13 @@
 {
-    "generated":  "2026-08-24T16:00:44.9493033-07:00",
+    "generated":  "2026-08-25T08:52:10.2629446-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
                        "name":  "blind-read",
                        "package":  "WORKFLOWS/skills/blind-read.skill",
-                       "sha256":  "19f96163f6ebea92f81a801c20de52e5d11d5534e83ff806932949c23dc8bf7b",
-                       "content_sha256":  "e2ba4c410abea3c4ca3421675cd62c8aab7fcd1edc219230a00d3eec573968fe",
-                       "bytes":  3367
+                       "sha256":  "221777020726ac81b4d7b21e37665037d52711c9887e28666105445caa81eeb5",
+                       "content_sha256":  "46e4cf8e19b893f0f49ec340439a4ceb100ed9c402fb418821f6695e800ac748",
+                       "bytes":  5165
                    },
                    {
                        "name":  "blind-response",
