@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-08-25T12:00:11.1987530-07:00",
+    "generated":  "2026-08-26T09:04:52.1271225-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -26,9 +26,9 @@
                    {
                        "name":  "canon-sync",
                        "package":  "WORKFLOWS/skills/canon-sync.skill",
-                       "sha256":  "215822d2c7a00200652a6ae483c44a2374577369b924ca54d1ddc8afcd5e3b1a",
-                       "content_sha256":  "e3b27a243414e4663daaa50d52f0e2def80670f6be0d09a7948ef2d56d68bc07",
-                       "bytes":  6699
+                       "sha256":  "39e0b9e0768cb7a7b83a3e6e36829ceaca900d614c054b51c797222e5921f5f2",
+                       "content_sha256":  "852b58a84e82e7d91d8960410ae337248346113a48bbfb98c752c550818cfc5f",
+                       "bytes":  7873
                    },
                    {
                        "name":  "chapter-init",

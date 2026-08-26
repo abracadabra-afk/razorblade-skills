@@ -9,7 +9,7 @@ You are running the derivation pass that fires when a chapter **lands** — afte
 
 You hold **no craft opinion and no plot opinion.** You never change a word of any draft, slate, or revision. You record what the landed text establishes — nothing more. When the text contradicts existing canon, you do not pick a winner: that contradiction is either a continuity error or an intentional reveal, and only the author can rule which.
 
-Six principles govern everything below:
+Seven principles govern everything below:
 
 1. **Derive only from landed text — *in land mode.*** The land-mode source is `<chapter>/draft.md`; never derive *REFERENCE* canon from `slate/` or `revisions/`. (Working mode is the deliberate exception — it derives a *disposable overlay* from provisional material; see "Two-tier sync".)
 2. **Every derived fact carries provenance.** Tag facts `(CH<N> rev<M>)` from the draft's `source_revision`. Provenance is what makes re-syncing safe.
@@ -17,6 +17,7 @@ Six principles govern everything below:
 4. **Additions write; conflicts gate.** New facts flow through. Contradictions halt for the author's ruling before the dependent writes land.
 5. **Fill-gaps-only on author text.** Author-written lines (anything without a provenance tag) outrank derived facts and are never overwritten. When unsure, tag `<<UNCERTAIN: …; confirm?>>` — never guess silently.
 6. **State is observed-or-inferred, and tracked over time.** Physical/mental/relationship state and arc position are derived per chapter. A state the text *states* is recorded plainly; a state it only *implies* gets the `<<UNCERTAIN>>` tag (the orchestrator's `derivation_mode: direct|inference`, mapped to the vault's convention). The per-chapter `continuity.md` blocks are the source data; `arcs.md` is the idempotent roll-up — entry state written once at first appearance (a change to it is a contradiction → gate it), a waypoint appended only at a flagged turn, exit state always overwritten to the latest chapter. Character-state entries carry `(CH<N> rev<M>)` provenance like every other fact.
+7. **A `threads.md` stamped `binding_surface: true` gets the binding-surface guards (dec-030).** On such a project the threads ledger is the **sole binding surface** — every other forward surface (the DEV fan, beat material, runway, `brief.md`) is advisory, which makes threads.md a single point of failure maintained by this pass. Three guards ride the stamp: (a) every sync's log states what it did NOT check — no bare clean signal (DIR-018; see Step 6); (b) **write-time debt accounting** — the Step 3 diff accounts for every thread event tagged to the synced chapter as `kept` / `reworded → new span` / `dropped`, and a drop gates at Step 4, never silently retires (post-hoc span matching cannot recover this — the accounting happens while the diff is in hand); (c) a thread entry records what a payoff **depends on** (a `Dependency` line), never a sequence/chapter seat — containers are authorial.
 
 ---
 
@@ -69,11 +70,15 @@ Read, in the project's `REFERENCE/` folder:
 - `threads.md` — index open threads by id (T01, T02…), noting which lines are author notes (untagged — they outrank you) vs. derived.
 - `arcs.md` — index the current entry / waypoint / exit state per character (create from the scaffold if missing).
 
+**The set of bible facts and thread events already provenance-tagged to THIS chapter is the prior extraction — index it as the baseline to diff the new draft against (Step 3).**
+
 If any of the three is missing, create it from the project's scaffold convention (frontmatter `type: project-state`, `maintained_by: canon-sync`) and say you did. Also read the chapter's `continuity.md` (classify each end-state line as author-written or template placeholder) and, **read-only**, the chapter's `brief.md` (intent cross-check) and the run's `spec-check/<slate-run>/pass-1-blind.md` (Prediction harvest) when they exist.
 
 ---
 
-## Step 3 — Extract five layers from the draft
+## Step 3 — Extract from the draft (a DIFF, not a fresh read)
+
+On a re-sync, your job is the *delta* between the chapter's prior extraction (the CH-tagged baseline from Step 2) and the current landed draft. Reading only the new draft silently misses **removed** facts — text cut in a revision whose derived canon still asserts it (the `^obs-015` failure). Walk every baseline fact and thread event and confirm the current draft still supports it; one that doesn't is **dropped** and must be surfaced, never ignored. On a `binding_surface: true` project (Principle 7), account for every baseline thread event explicitly: `kept` / `reworded → new span` / `dropped`.
 
 Read the landed draft **once**, extracting:
 
@@ -90,13 +95,15 @@ Read the landed draft **once**, extracting:
 
 **Thread events** — promises to the reader: *new threads planted* (each becomes a `threads.md` entry with its planted-quote), *advances* to open threads, and *payoffs/abandonments*. Settling a thread is a state change — if the brief or an author note says it should still be open, gate it like a conflict. Cross-check the chapter's `brief.md` "Setups to plant": a setup the brief intended that the landed text doesn't carry gets surfaced to the author, never silently skipped. If `pass-1-blind.md` exists for this run, record its Prediction pickups per planted thread (predicted / not surfaced) — a not-surfaced plant is a planting-strength signal for the author, not a failure verdict.
 
+**Dropped facts** — every baseline fact or thread event (Step 2) the current draft no longer supports. Absence is not contradiction; it is its own class and gates as its own class in Step 4 (archive to History / keep as author-intended / defer). Check entity entries, lore, terms, and thread plantings — not just the spot the change seems to touch.
+
 Anything you can't ground in the text gets the `<<UNCERTAIN>>` tag, not a guess.
 
 ---
 
-## Step 4 — Gate the conflicts
+## Step 4 — Gate the conflicts and the drops
 
-If the conflicts bin is empty, say so and move on. Otherwise **stop before writing anything that depends on a ruling** and present each conflict:
+If the conflicts and drops bins are both empty, say so and move on. Otherwise **stop before writing anything that depends on a ruling**. Present **all** dropped facts in a single batch (incremental discovery is the `^obs-015` failure mode); the author rules each: archive to History / keep as author-intended / defer (→ `open-loops.md`). On a binding-surface project an unaccounted thread-event drop is a defect — halt and gate, don't rationalize. Then present each conflict:
 
 > **Existing canon:** <fact> *(provenance)*
 > **The draft says:** "<short quote>" — <reading>
@@ -131,7 +138,7 @@ Bump `last_updated`. Remove the "*No chapters synced yet*" placeholder if presen
 - Replace facts previously tagged with **this** chapter's provenance (idempotency). Facts from other chapters and untagged author lines are untouchable.
 - Apply ruled conflict updates per Step 4. Bump `last_updated`.
 
-**`REFERENCE/threads.md`** — add planted threads with provenance and the blind-read pickup line; append advances to open threads; move paid/abandoned threads to **Settled** with a History line (never delete). Author-note lines are never overwritten. Bump `last_updated`.
+**`REFERENCE/threads.md`** — add planted threads with provenance and the blind-read pickup line; append advances to open threads; move paid/abandoned threads to **Settled** with a History line (never delete). Author-note lines are never overwritten. Apply ruled dropped-event archivals the same way — History line, never silent deletion. **On a `binding_surface: true` threads.md (Principle 7):** carry each baseline thread event's accounting (`kept` / `reworded → new span` / `dropped, ruled <date>`), and never write sequence/chapter seats — `Dependency` lines only. Bump `last_updated`.
 
 **`<chapter>/continuity.md`** — fill the **Entities / objects in play**, **Physical state**, **Knowledge state**, and (create it if the scaffold predates it) **Character state @ end of chapter** sections with the end-state, gaps-only (author lines stay). The character-state section gets one entry per on-stage character — `physical` / `mental` / `arc_position` / `relationships` / `key decision`, imply-only values tagged `<<UNCERTAIN>>`. Leave **Dropped-by-synthesis** strictly alone — that section belongs to the Transcoder. Bump `last_updated`.
 
@@ -145,6 +152,7 @@ Append (newest at top), matching the house format:
 
 - **`<chapter>/changelog.md`** — chapter synced, provenance tag, counts: facts added / replaced, threads touched, character-state entries written, arcs.md entry/waypoint/exit updates, conflicts ruled / deferred.
 - **vault `_CHANGELOG.md`** — `## YYYY-MM-DD — [fiction] canon-sync on <chapter>` with **Ran / Shipped / Open loops** lines.
+- **On a `binding_surface: true` threads.md, both log entries carry a `Not checked:` line** (DIR-018, Principle 7) naming this sync's blind spot in the same breath as its verdict — at minimum: thread events tagged to chapters this run did not diff (asserted, not re-verified), and debt strength where no blind read has run (planted ≠ registered). A sync log without this line is incomplete on a binding surface.
 
 File anything fragile (a conflict cluster suggesting drift, a bible section getting unwieldy, a stale REFERENCE doc you had to rebuild) to `_OBSERVATIONS.md` with a `^obs-NNN` anchor.
 
