@@ -7,7 +7,7 @@ inputs: [the working text — draft.md when its status marks real content, else 
 outputs: [edit sheet in the chapter/episode folder (Phase 1), ruled-edits revision in revisions/ (Phase 2), rejection-harvest appends to REFERENCE/protected-patterns.md]
 lane: fiction
 status: draft — spec authored 2026-07-29 from [[KNOWLEDGE/RESEARCH/2026-07-29 ai-line-editing-partner-voice]]; packs after 2–3 live runs
-last_updated: 2026-08-10
+last_updated: 2026-09-01
 scope: Any project keeping a REFERENCE/register.md (WIW episodes first adopter; Witchwood chapters when revisions unpause). Requires revisions/ per the folder convention.
 pipeline_position: downstream of [[WORKFLOWS/register-pass]] (register = voice conformance; line-edit = economy + precision inside the ruled voice), upstream of record/bank. Landed by [[WORKFLOWS/promote-revision]]. Never a precondition at the mic (DIR-017).
 ---
@@ -65,6 +65,8 @@ Do NOT use it to: revise against the register (that is [[WORKFLOWS/register-pass
 ### Step 1 — Resolve
 Locate the chapter/episode folder; walk up to the project root; read `REFERENCE/register.md` (halt if absent — never substitute) and `REFERENCE/protected-patterns.md` (absent → offer **seed** mode first; CRE may waive and run shieldless, noted in the sheet). Pick the working text: `draft.md` when its status marks real content, else newest revision in `revisions/`, else newest slate clean-draft. Name what you picked. Read `premise.md`/ruled facts if present — per-episode rulings override generic classes. **Check for a staged line-edit queue:** if a [[WORKFLOWS/panel-response]] run exists for this text, its `panel/<run>/response-rulings.md` carries a "Line-edit queue" section of CRE-ruled deferrals (DIR-014 binding surface) — load it; queue items are mandatory sheet candidates, and its protected-patterns section extends the shield for this piece. (Added 2026-07-29 after live run 1, where the queue was consumed by same-session context rather than by rule.)
 
+**Supersession triage — before the shield, queue, or premise binds anything (DIR-019, added 2026-09-01).** Every span-naming ruling loaded above (protected-patterns rows, queue items, premise amendments, open-loops resolutions) is checked against the working text first: **span present → carry silently; span gone → moot — stamp the row `superseded_by: <working text> (<date>)` in place, one changelog line, never asked; span reworded-but-surviving → the only case that surfaces**, collected into a single `## Superseded rulings — reworded spans (rule once)` block at the top of the sheet, tree-researched first (DIR-011). Never ask CRE to re-ratify a ruling whose span is intact, and never re-open one his own later draft discharged (DIR-019 §3 — a hand-landed draft is the newest ruling). **Scope lock (§4):** staleness noticed outside the working text and its direct derives is one line in `SYSTEM/drift-ledger.md`, not a sheet item and not a chat aside.
+
 ### Step 2 — Phase 1: build the edit sheet
 Read the whole piece first. Name the strongest 1–3 lines. Then walk the text by class per the active mode, checking every candidate against the protected-patterns list and the register **before** it lands on the sheet (DIR-011 — the tree answers first; a protected hit becomes a QUERY or is dropped). Write the sheet to `<folder>/line-edit-sheet-YYYY-MM-DD.md`:
 
@@ -76,12 +78,13 @@ working_text: <path picked>
 status: awaiting-rulings
 created: YYYY-MM-DD
 ---
+## Superseded rulings — reworded spans (rule once)   ← only if any; moot rows were stamped, not listed
 ## Strongest lines (protected this pass)
 ## MECHANICAL (one tap ratifies all)
 ## PROPOSED — <class>
    N. [span quoted] → option A / option B — rationale (class, principle §, cost)
 ## QUERIES
-## Count — spans examined / proposed / queried; budget state
+## Count — spans examined / proposed / queried; budget state; rulings carried / retired-moot / reworded
 ```
 
 **Attended:** present the sheet, CRE rules (per item: accept A/B · reject · override with his own text · protect). **Unattended (DIR-012):** Phase 1 only — the sheet *is* the deferral surface, rendering-visible; stop.

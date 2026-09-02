@@ -7,7 +7,7 @@ inputs: [record-ready draft.md, wrapper/liturgy reference (optional), performanc
 outputs: [record-script.md in the piece's folder — a one-way derived, prompter-formatted performance script]
 lane: writing-ops
 status: draft
-last_updated: 2026-07-29
+last_updated: 2026-09-01
 ---
 
 # WORKFLOW: record-script
@@ -22,7 +22,7 @@ CRE says "build the record script," "prep the prompter," or names a piece he's a
 
 ## Inputs
 
-1. **The draft** — `<piece>/draft.md`, record-ready (status indicates a final line-level pass: register-pass or line-edit promoted). If status doesn't show a line-level pass, surface that and confirm before building — a record script off an unfinished draft invites edit-at-the-mic.
+1. **The draft** — `<piece>/draft.md`, the current landed text. **It is the authority (DIR-019):** if a `record-script.md` already exists and its `derived_from` predates the draft, the script is stale by definition — regenerate it, don't ask. Whether a line-level pass has run is **stated, not gated**: the script's frontmatter carries a `readiness:` line (which passes have and have not run on this draft — DIR-018) and a `record_licensed: YES | NO — <basis>` field set from the **board's sequencing** (e.g. `TASKS/` chunks ordering line-edit before record), never from a chat confirmation. Build either way; the prompter is disposable and regenerates after the line pass.
 2. **The wrapper** (optional) — the project's locked intro/outro reference (WIW: [[WRITING/SHORTS/REFERENCE/liturgy]]). Filled variables (e.g. the story title) are mechanical fills of defined blanks, not authored prose. No wrapper → story-only script; say so.
 3. **The prep sheet** (optional) — `<piece>/performance-notes.md` or equivalent CRE-ruled mic-side notes. No prep sheet → clean unmarked script; say so.
 
@@ -47,8 +47,8 @@ The *why* never appears inline — it lives in the prep sheet under the same num
 ### Step 0 — Vault sentinel
 Standard gate (`^obs-004`): `_DIRECTIVES.md` frontmatter `type: ai-os-brain` + `file: directives`, else halt and ask.
 
-### Step 1 — Locate + verify record-readiness
-Find the piece's folder, read `draft.md` frontmatter. Confirm a line-level pass in `status`/lineage. Locate wrapper + prep sheet. Name all three files in the reply so a wrong pick is visible.
+### Step 1 — Locate + state record-readiness
+Find the piece's folder, read `draft.md` frontmatter and the piece's `changelog.md` (the changelog is the authority on which passes ran — a `status` field describes one landing and goes stale the moment a later ruling lands, `^obs-279`). Record the readiness facts for the frontmatter; do not gate on them. Locate wrapper + prep sheet. Name all three files in the reply so a wrong pick is visible. **Prep-sheet triage (DIR-019 §2):** a delivery ruling or rehearsal flag whose span is gone from the current draft is moot — stamp it `superseded_by` in the prep sheet, one log line, no mark, no ask; a reworded-but-surviving span goes to `## Proposed marks` at the bottom (gated) rather than being applied blind.
 
 ### Step 2 — Assemble the running order, verbatim
 ```
@@ -73,7 +73,7 @@ Proposed marks (only if any)
 Walk the prep sheet. Each delivery ruling → its bold/cue at the exact spot. Each rehearsal flag → `⚑N` at the paragraph top. Anything the skill *thinks* would help but no ruling covers → `## Proposed marks` at bottom, gated.
 
 ### Step 5 — Frontmatter + provenance
-Simple, safe YAML (DIR-004 spirit — plain scalars, quote anything with apostrophes): `type: record-script`, `derived_from` (draft path + its `source_revision`, wrapper path, prep-sheet path, all with dates), `status: derived — regenerate, never hand-edit`, `last_updated`. Verify the write by re-reading through the file tools (DIR-005).
+Simple, safe YAML (DIR-004 spirit — plain scalars, quote anything with apostrophes): `type: record-script`, `derived_from` (draft path + its `source_revision`, wrapper path, prep-sheet path, all with dates), `readiness:` (passes run / not run on this draft, from the changelog), `record_licensed: YES | NO — <board basis>`, `status: derived — regenerate, never hand-edit`, `last_updated`. Verify the write by re-reading through the file tools (DIR-005).
 
 ### Step 6 — Log
 DIR-003: `_CHANGELOG` entry (writing-ops lane). Piece-level changelog if the folder keeps one.
@@ -82,7 +82,7 @@ DIR-003: `_CHANGELOG` entry (writing-ops lane). Piece-level changelog if the fol
 
 - Sentinel fails → halt.
 - No `draft.md` → halt; nothing to derive.
-- Draft status shows no line-level pass → surface + confirm before building.
+- ~~Draft status shows no line-level pass → surface + confirm before building.~~ **Retired 2026-09-01 (DIR-019):** build anyway; state readiness and set `record_licensed` from the board. A confirm-before-building gate was making CRE ratify a sequencing decision the board already carried.
 - A prep-sheet note requires *changing the text* to execute → that's an edit, not a mark: route it back to the draft pipeline and leave the spot unmarked.
 
 ## What this workflow is NOT

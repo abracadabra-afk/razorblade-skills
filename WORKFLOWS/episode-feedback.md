@@ -5,6 +5,7 @@ status: spec — run by hand/in chat; graduates to a packed skill after 2–3 li
 triggers: ["reconcile my notes", "sharpen the episode", "run the author feedback", "feedback pass"]
 lane: 5 (writing-ops) + 1 (fiction)
 created: 2026-07-16
+last_updated: 2026-09-01
 ---
 
 # episode-feedback
@@ -16,6 +17,8 @@ The **author's-feedback reconciliation pass** for the Writing Is War episode bat
 ## The authority rule (the design principle)
 
 > **CRE's notes are authority over the AI-derived structure — but not silently over his own prior rulings.** When a note collides with something he ratified at the gate (the knot, TOS band, tier, container, the turn), the pass surfaces both states and asks for an explicit re-ruling. No note, however clear, silently overwrites a Pass-1 verdict.
+
+> **Amended 2026-09-01 (DIR-019) — the draft outranks the ruling, and a hand-landed draft *is* a ruling.** Once a `draft.md` exists, a prior ruling is live only if the span or structure it names **still exists in the current draft**. A ruling whose object CRE has already cut or rebuilt in a later draft is **moot, not a collision**: stamp it `superseded_by: draft N (<date>)` in `premise.md` as a safe-op and list it in the batch block as *"retired — superseded by draft N"*, never as a re-ruling. Likewise a note that describes what the current draft already does is *"resolved against draft N — confirm"*, one tap in the batch — CRE is not asked to ratify his own rewrite. The authority rule above still governs the case it was written for: a **note** colliding with a **living** ruling.
 
 ## Inputs
 
@@ -29,7 +32,7 @@ The **author's-feedback reconciliation pass** for the Writing Is War episode bat
 Segment the notes. Route every item into one of three bins:
 
 1. **REFINEMENT** — sharpens a beat, flow condition, or register flag without touching a ratified ruling. → Proposed amendment with a one-line basis; one-tap confirm.
-2. **GATE COLLISION** — contradicts or amends something ruled at Pass 1 or fixed in the runway (the knot, TOS band, tier routing, container, the turn, an established flow condition). → Never silently applied. Presented as an explicit re-ruling showing both states: *"ruled X on DATE; the note implies Y — confirm the amendment or keep the ruling."*
+2. **GATE COLLISION** — contradicts or amends something ruled at Pass 1 or fixed in the runway (the knot, TOS band, tier routing, container, the turn, an established flow condition) **whose object still exists in the current draft** (DIR-019 §2 — check span/structure presence first; a ruling the draft has already outgrown is moot and goes to the batch block as *retired*, not here). → Never silently applied. Presented as an explicit re-ruling showing both states: *"ruled X on DATE; the note implies Y — confirm the amendment or keep the ruling."* `runway.md` is a derive: when the draft has moved past it, stamp it superseded rather than reconciling notes into it.
 3. **DECISION TREE** — branches CRE articulated in the notes ("help me decide" items). → Presented for ruling with a recommendation + one-line basis, decision-helper style. **Never invents branches** (organic-process guard); it measures only the options CRE wrote.
 
 **DIR-011 applies in full:** research every item against the tree (premise, runway, strategy doc, prior rulings) before presenting it. A note the artifacts already carry presents as *"resolved against [[premise]] §x — confirm,"* never as an open flag.

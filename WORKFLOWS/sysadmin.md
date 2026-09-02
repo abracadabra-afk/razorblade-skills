@@ -32,7 +32,7 @@ Five sweepers each defer their judgment calls to a different surface. CRE had to
 
 ## Inputs — where the window's findings already live
 
-**No shared report schema exists and none is needed.** Each sweeper already writes to a known surface; this pass aggregates from those. Read all six:
+**No shared report schema exists and none is needed.** Each sweeper already writes to a known surface; this pass aggregates from those. Read all seven:
 
 | Source | Surface | What it carries |
 |---|---|---|
@@ -42,6 +42,7 @@ Five sweepers each defer their judgment calls to a different surface. CRE had to
 | `link-audit` | `SYSTEM/reports/<date>-link-audit.md` | dangling refs, broken anchors, duplicate-anchor findings |
 | `skills-sweep` | `SYSTEM/reports/<date>-skills-sweep.md` | install queue, repackage handoff, STALE/SOURCE-AHEAD rows |
 | `vault-health` | `_BACKLOG.md` items + `SYSTEM/reports/brain-doc-sizes.json` | rotation bands, desktop carve handoffs |
+| any session (DIR-019 §4 scope lock) | `SYSTEM/drift-ledger.md` § OPEN | out-of-scope staleness noticed mid-task and parked silently — default bin **BATCH-RATIFY** (retire/stamp per DIR-019 §1–2); only a line touching channel/project *law* goes to RULE. Move ruled lines to § CLOSED. (Seventh source, added 2026-09-01.) |
 
 ## Steps
 

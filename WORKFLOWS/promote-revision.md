@@ -2,12 +2,12 @@
 type: workflow
 name: promote-revision
 trigger: promote the revision
-aliases: [promote rev, make the revision the live draft, bring the revision into draft, update the working draft]
+aliases: [promote rev, make the revision the live draft, bring the revision into draft, update the working draft, account the landing]
 inputs: [the chapter's newest revisions/YYYY-MM-DD-<slug>-rev<N>.md, the chapter's current draft.md]
-outputs: [draft.md body replaced with the promoted revision + rewritten lineage frontmatter]
+outputs: [draft.md body replaced with the promoted revision + rewritten lineage frontmatter, supersession stamps on the folder's stale derives + moot rulings (Step 3b)]
 lane: fiction
 status: active
-last_updated: 2026-08-10
+last_updated: 2026-09-01
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). Any project with a revisions/ + draft.md — no register required (the register already ran upstream).
 pipeline_position: the return trip out of [[WORKFLOWS/register-pass]]. register-pass writes revisions/ and deliberately never touches draft.md; this workflow moves the newest revision back into the live draft, closing that gap.
 ---
@@ -57,13 +57,25 @@ Compare the revision's `source_slate` to `draft.md`'s. Match (or draft is a scaf
 ### Step 3 — Promote
 Replace `draft.md`'s body with the revision's prose (keep any `[unclear: …]` marks); rewrite the frontmatter per the mapping (read the rev's `kind`/stage first — the status names where the live text came from: `loop-clear → loops-cleared`, `expansion → expansion-revised`, register-pass/default → `register-revised`). Optionally bump `_status.md` `last_updated`.
 
+### Step 3b — Supersession accounting (DIR-019, added 2026-09-01) — safe-op, logged, never asked
+A promotion is a staleness event for everything that described the previous draft. In the same session, mechanically:
+
+1. **Stamp the derives.** Every derived artifact in the folder whose stamp predates this promotion — `record-script.md`, `performance-notes.md`, `runway.md`, `choreo/*.md`, any `*-sheet` — gets `superseded_by: draft.md (<date>, <rev>)` in frontmatter, **in place, never moved** (pointers and trails survive). Deterministic derives the route needs downstream (StoryLine) regenerate via their own skill; don't hand-edit them here.
+2. **Triage the rulings.** Every span-naming ruling that points at this draft — `open-loops.md` resolutions, `premise.md` amendments, `REFERENCE/protected-patterns.md` rows, board chunks in `TASKS/` naming the chapter — checked by span presence in the promoted text: **present → carry; gone → stamp moot (`superseded_by` + date), one changelog line; reworded-but-surviving → list, one batch, for the next pass that binds them** (not a question for CRE now — the next gated pass surfaces the batch once).
+3. **Update the landed file's own list.** `draft.md`'s `status` / open-items field is rewritten to describe **this** landing — the previous landing's "still open" list dies with the previous draft (`^obs-279`'s recurrence).
+4. **Archive byte-exact.** The superseded `draft.md` body is already preserved by the revision chain in the normal case; on a **hand-landing** (below) write it to `revisions/<date> - draft N superseded.md` first, before anything else touches the folder.
+
+**Hand-landing mode — trigger "account the landing" (DIR-019 §3).** When CRE has landed a draft himself (no rev in `revisions/`, `draft.md` already carries the new prose), Steps 1–2 don't apply: **his landing is the ruling.** Run Step 3b alone — archive first (item 4), then items 1–3. Never ask him to confirm a change he made, never re-open an item his rewrite discharged. Report what was stamped and what was retired, in one block; the reworded batch (if any) travels to the next pass. This closes the gap `^backlog-author-landing-preflight` names: the hand-landing had no accounting step and no archive.
+
+**Scope lock (§4).** Staleness outside this chapter's folder and its `REFERENCE/` rows — a channel-law worked example, another episode's pointer — is one line in `SYSTEM/drift-ledger.md`, not a finding in this session.
+
 ### Step 4 — Log
 Append to the chapter `changelog.md` and vault [[_CHANGELOG]] (fiction lane); file fragilities to [[_OBSERVATIONS]].
 
 ## Stop conditions
 - Vault sentinel fails → halt, ask which folder is the vault.
 - Chapter has no `revisions/` or no `draft.md` → halt, tell CRE (convention not adopted).
-- No `…-rev<N>.md` passage in `revisions/` → halt; nothing to promote.
+- No `…-rev<N>.md` passage in `revisions/` → halt; nothing to promote — **unless** the trigger was "account the landing," in which case run Step 3b alone (hand-landing mode).
 - Revision `source_slate` ≠ draft `source_slate` (and draft isn't a scaffold) → pause, surface, ask.
 
 ## Logging
