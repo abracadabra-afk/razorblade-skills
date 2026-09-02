@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-02T09:31:29.6601530-07:00",
+    "generated":  "2026-09-02T12:00:09.8589358-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -110,9 +110,9 @@
                    {
                        "name":  "dictation-transcoder",
                        "package":  "WORKFLOWS/skills/dictation-transcoder.skill",
-                       "sha256":  "9b3b2d0afb0d0c3cfab63fc6e43edbf64a1bfe7ce74c79569b6e624cf7f3d2ab",
-                       "content_sha256":  "a0d75b684ce06823b60d857afbbb32ee30b00af3f35f85882773670f8b697941",
-                       "bytes":  10656
+                       "sha256":  "11bedeaf35da8fab0c641b23a8fe8b6ef1bc9521b37152df4d8f911237023986",
+                       "content_sha256":  "2cb72f7b2d6355f843798afabae2044fbeedf4fc0b1c63330c76b9f332a40fa0",
+                       "bytes":  22753
                    },
                    {
                        "name":  "episode-feedback",
@@ -232,6 +232,13 @@
                        "sha256":  "32562acf42d85414d064ad1f29a5ca6b453ba42f197e39e733ddc60f87f5e172",
                        "content_sha256":  "63d148505007ab0bc8fbbef9adb12306a7b62aedc3f49edb00b2b036078e8518",
                        "bytes":  9447
+                   },
+                   {
+                       "name":  "skill-review",
+                       "package":  "WORKFLOWS/skills/skill-review.skill",
+                       "sha256":  "cc1a591b37da6641ac4b6244df54c3829b50c57a3af0af390033dd37b065565b",
+                       "content_sha256":  "70784805e7f8f4ffee57025253181fa86d9c53f49a4f65b4805faef24243a7b4",
+                       "bytes":  13058
                    },
                    {
                        "name":  "spec-passes",

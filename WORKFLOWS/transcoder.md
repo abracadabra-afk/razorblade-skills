@@ -7,7 +7,7 @@ inputs: [raw dictation text from speech-to-text, perceptual envelope (POV + cond
 outputs: [floor-draft prose (cold register), cut log, synthesis ledger (incl. floor ledger + heat bank + scene map), leaves-left audit]
 lane: fiction
 status: active
-last_updated: 2026-08-03
+last_updated: 2026-09-02
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood. v5.1 adds standalone/episode mode (envelope derivable from ruled canon with provenance) — first adopter WRITING/SHORTS/EPISODES.
 pipeline_position: upstream of [[WORKFLOWS/prose-expansion]] (via the spine-review gate) and [[WORKFLOWS/dictation-cleanup]]
 ---
@@ -15,6 +15,10 @@ pipeline_position: upstream of [[WORKFLOWS/prose-expansion]] (via the spine-revi
 # WORKFLOW: Dictation Transcoder (v6.1)
 
 > Generative pass that converts raw dictation into a clean rough-draft slate. **Rewrite-allowed.** Pairs with [[WORKFLOWS/dictation-cleanup]] downstream, which is the protective copy-edit pass the v5 spec refers to as the "separate, protective pass… later."
+
+## 2026-09-02 amendment — three pilot defects closed (unblocks the v6.1 repack)
+
+From `^backlog-transcoder-v6-pilot` (a)–(c), found on the CH12 pilot: (a) § Output format's cut-log reason list restored to six — `frame` + `mechanical` re-added; (b) `dilution` added to the leaves verdict list; (c) the filter-verb exception in Operation 3 now carries its discriminator (object-as-event vs registering-as-event). No behavior the CH12/CH13/CH15 runs did not already exercise; this makes the doc say what the runs did. Four further contract rulings (slate frontmatter schema; clean-ledger at chapter root; derived runs write all four files; author gaps into a new derived run) are CRE-ruled 2026-09-02 and land with the skill-source rewrite — see `_BACKLOG` § Needs CRE ruling (skill-review 2026-09-02) and `SYSTEM/reports/2026-09-02-skill-review-dictation-transcoder.md`.
 
 ## v6.1 changelog (2026-08-03 — spine-gate dramaturgy eyes, CRE-ratified)
 
@@ -66,6 +70,8 @@ When CRE provides raw dictation for a chapter that is using the per-chapter fold
 | Leaves left        | `<chapter>/slate/YYYY-MM-DD-NN/leaves-left.md`                                                       |
 
 Ambiguous register-repair calls and image-doubling questions go to `<chapter>/open-loops.md`. Anything synthesis dropped that a later section will need goes to `<chapter>/continuity.md`. Accepted clean-draft text gets stitched into `<chapter>/draft.md`.
+
+**The slate contract (CRE-ruled 2026-09-02) — `skills-src/dictation-transcoder/references/slate-contract.md` is the single statement; `scripts/slate_scaffold.py` writes and checks it.** In brief: one frontmatter schema in all four files (`source_dictation`, `envelope_segments` as a list, `generated`, `transcoder_version`, `tense`, `status`, optional `supersedes`/`derived_from`; every other key retired); **exactly four files every run, derived runs included**; **every run immutable** — gate rulings, restored carriers, and **CRE's own author-gap words** go into a new derived run (`slate_scaffold.py derive`), never into a written run and never straight into `draft.md`; **`clean-ledger.md` lives at `<chapter>/clean-ledger.md`**, never inside a slate run.
 
 ---
 
@@ -143,7 +149,7 @@ Run the [[KNOWLEDGE/PROSE FRAMEWORK/narrator-rules]] deny-lists over the full dr
 **The deny-lists, in priority order:**
 
 1. **Seam-breaks** — narrator hedges ("seemed to," "as if," "she must have imagined") and alarm-labels ("horrifying," "grotesque," "monstrous"). Highest priority.
-2. **Filter verbs** — saw/heard/felt/noticed/watched/realized/thought/wondered + "she knew that / he decided that" frames. Cut the verb, land the object. Exception: keep when the perceiving *is* the event.
+2. **Filter verbs** — saw/heard/felt/noticed/watched/realized/thought/wondered + "she knew that / he decided that" frames. Cut the verb, land the object. Exception: keep when the perceiving *is* the event. **Discriminator (2026-09-02, `^backlog-transcoder-v6-pilot` defect c):** ask *does the object's arrival or absence constitute the event, or does the character's registering of it?* If the object — "the bark came from beyond the wall" — cut the verb and land the object. If the registering — she has been listening for it and the moment is that she finally hears — the perceiving is the event; keep the verb and log it in the floor ledger as `filter-kept: registering is the event`. Sustained attention on a person (the captivated-attention carve-out in the sentence-structure rule) resolves the same way.
 3. **Editorial descriptors** — narrator-stance modifiers (*brutal* white, *cruel* winter, *noble* gaze). **Adverb Law refinement (2026-08-01):** manner adverbs are cut by the **camera test**, not wholesale — feeling-adverbs ("angrily") floor automatically; physical-fact adverbs ("dryly") are compressed sensing and SURVIVE; agency-implying line-sitters ("carefully," "weakly") flag as judgment calls, never auto-cut. Full law in the narrator-rules doc.
 4. **Narrator glossing** — naming what a moment means, clinical/therapeutic diagnosis, telling the reader how to feel, interiority that reinstates what the page already shows.
 5. **Non-functional setting** — setting admitted only at the moment of action or use.
@@ -181,6 +187,7 @@ In every segment, including ones with no perceptual cuts, locate each span that 
 - **floored** — normalized in Operation 3 (appears in the floor ledger; heat banked if it carried charge).
 - **optioned** — direction genuinely ambiguous; both carriers given, author chooses via `open-loops.md`.
 - **repaired** — you rendered it structurally (then appears in the synthesis ledger).
+- **dilution** — the grouped verdict for a state named 3+ times in a segment (see below): one entry, `dilution — keep [strongest], the other namings thin it`. (Added to this list 2026-09-02 — the grouping rule instructed it but the list never carried it, `^backlog-transcoder-v6-pilot` defect b.)
 
 > **v6: `left-for-later` is retired for register breaches.** A load-bearing named emotion or narrator editorial left standing in the floor is a defect, not a deferral — floor it (Operation 3) or option it. Deferring register to downstream passes is the exact friction v6 exists to remove.
 
@@ -193,7 +200,7 @@ A permissive segment with zero named-emotion spans listed is a segment you must 
 ## Output format
 
 1. **Floor draft** (`clean-draft.md`, name kept for convention continuity) — transcoded prose in the floor register, nothing else in this section.
-2. **Cut log** — each cut span + one-word reason (`unperceived`, `too-fine`, `narrator-injection`, `modifier`).
+2. **Cut log** — each cut span + one-word reason (`unperceived`, `too-fine`, `narrator-injection`, `modifier`, `frame`, `mechanical`). The last two are the v5.1 dictation-artifact reasons (frame-talk; single-reading STT fix) — the v6 rewrite of this section dropped them by accident (restored 2026-09-02, `^backlog-transcoder-v6-pilot` defect a).
 3. **Synthesis ledger** — for each collapsed cluster: payload extracted → carrier written. Surface interpretation. If a beat fell to the shortest-form challenge, note what and why. If a dead modifier was cut or a verb changed, note it. If an image was carried twice across lines, present both and ask which to keep. **Register-repair lines get their own flag** — any carrier inventing prose to render an unnamed emotion is the riskiest output. Mark explicitly. If direction was ambiguous, give both carriers and leave a clearly-marked slot in the clean draft pointing to `open-loops.md`. **If a contamination pattern was caught and removed from an invented carrier** (elevation, euphemism, internal gesture, beautified ugliness, clever close — see `REFERENCE/contamination-checklist.md`), note it here in one line.
 4. **Leaves left** — per segment, every named-emotion or dissolved-telling span you chose not to touch, each with its verdict. Must be present for every segment. A 3+-instance state appears as one grouped entry.
 
