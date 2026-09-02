@@ -1,168 +1,122 @@
 ---
 name: register-pass
-description: Revise a chapter's newest slate clean-draft against the project's own register — a project-specific revision prompt kept at REFERENCE/register.md — and write the revised passage plus the register's editorial note into the chapter's revisions/ folder. Use this skill whenever the author asks to "run the register," "revise with the register," "do a register pass," "run the reviser," or otherwise wants a finished slate run through the project register inside a vault that uses the per-chapter folder convention (slate/ + revisions/). This is the DOWNSTREAM revision stage out of the Transcoder — it consumes a slate clean-draft and promotes a revised version into revisions/ (a one-way door). Do NOT use it to produce a slate from dictation (that is dictation-transcoder, "slate this dictation") or to author an envelope (that is dictation-preflight, "prep the envelope"). If the author asks to slate or transcode, route there instead.
+description: Revise a chapter's working text — draft.md when it carries real content, else the newest slate clean-draft — against the project's own register (the revision prompt at REFERENCE/register.md) and write the revised passage plus the register's editorial note into the chapter's revisions/ folder. Use this skill whenever the author asks to "run the register," "revise with the register," "do a register pass," "run the reviser," or wants a chapter run through the project register under the per-chapter folder convention (slate/ + revisions/). This is the DOWNSTREAM revision stage out of the Transcoder and the developmental passes; post-v6 it usually runs as a verification sweep. Do NOT use it to produce a slate from dictation (dictation-transcoder, "slate this dictation"), to author an envelope (dictation-preflight, "prep the envelope"), to promote a revision into draft.md (promote-revision), or for the economy line edit (line-edit, "trim pass"). If the author asks to slate or transcode, route there.
 ---
 
-# Register Pass
+# Register Pass (v2)
 
-You are running a chapter's **slate clean-draft** through the **project register** and promoting the result into the chapter's `revisions/` folder. The slate is the rough draft the Transcoder produced; the register is a project-specific revision prompt that says how this world's prose should be strengthened. Your output is the revised passage plus the register's own editorial note.
+You are running a chapter's **working text** through the **project register** and routing the result into the chapter's `revisions/` folder. The register is a project-specific revision prompt that says how this world's prose should be strengthened. Your output is the revised passage plus the register's own editorial note — or, when the register earns no edit, the note alone.
 
-You hold **no revision philosophy of your own.** The register changes project to project — Witchwood's fuses a child's fairy-tale register with adult material reality; another world's will be something else entirely. Your job is orchestration: find the right register, find the right slate, run the register's instructions faithfully against the slate, route the two outputs to the right files, and log. *How* to revise is the register's call, not yours. Do not import rules from any other skill's revision stance, and do not soften, extend, or "improve on" the register — execute it.
+You hold **no revision philosophy of your own.** The register changes project to project — Witchwood's fuses a child's fairy-tale register with adult material reality; another world's will be something else entirely. Your job is orchestration: find the right register, find the right text, run the register faithfully, route the outputs, log. *How* to revise is the register's call. Do not import rules from any other skill's revision stance, and do not soften, extend, or "improve on" the register — execute it.
 
-You perform four moves, in order: **locate**, **run**, **route**, **log**. Nothing else.
-
----
-
-## Step 0 — Vault sentinel check
-
-Before doing anything else, verify you are pointed at the right vault. The risk: a mounted folder that *looks* empty silently reads as "fresh start-up" and you write a revision into the wrong directory tree.
-
-1. From the mounted folder root, read `_DIRECTIVES.md`.
-2. Confirm its YAML frontmatter contains both `type: ai-os-brain` and `file: directives`.
-3. If `_DIRECTIVES.md` is missing, or the frontmatter doesn't match, **halt and ask** which folder is the intended vault. Do NOT scaffold a bootstrap and do NOT write anywhere.
-
-This is a hard gate. Pass it before locating anything.
+Four moves, in order: **resolve**, **run**, **route**, **log**. The mechanical half of resolve and route is a script; the craft half is yours. Contract: `references/rev-contract.md` — read it once per session before you write anything. Canonical doc: `WORKFLOWS/register-pass.md`; if its head version and this file's disagree, run from the doc and announce the gap (DIR-009).
 
 ---
 
-## Required inputs
+## Step 0 — Vault sentinel
 
-You cannot run without all three. If any is missing, stop and ask before doing anything else.
+Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → **halt and ask** which folder is the vault. Write nothing. (The script repeats this check and exits 2 on failure; the point of doing it first yourself is that a wrong mount looks like an empty vault and an empty vault looks like "fresh start-up.")
 
-**1. The chapter folder.** A folder following the per-chapter convention:
+---
+
+## Step 1 — Resolve (script)
 
 ```
-<chapter>/
-├── envelope.md       (read-only context, if you need POV/conditions)
-├── draft.md          (you do NOT write here)
-├── slate/            YOUR INPUT lives here — the newest run's clean-draft.md
-│   └── YYYY-MM-DD-NN/
-│       ├── clean-draft.md       <- the passage you revise
-│       ├── synthesis-ledger.md  <- prior-pass context (read-only)
-│       └── leaves-left.md       <- prior-pass context (read-only)
-├── revisions/        YOUR OUTPUT goes here (one-way door)
-├── changelog.md      chapter-level history (you append a log line)
-├── open-loops.md / continuity.md / notes.md / _status.md   (you do NOT write here)
-└── dictation/        (not used by this skill)
+python scripts/register_scaffold.py resolve --chapter "<chapter folder>" [--slate NN|YYYY-MM-DD-NN]
 ```
 
-If the author gave a chapter name without a path, search the vault for a folder matching it that contains a `slate/` directory. If several match, ask. If none follow the convention (no `slate/`, no `revisions/`), do not fabricate one — tell the author the project hasn't adopted the per-chapter folder convention and stop.
+Prefer the desktop (`python` via Desktop Commander) over the sandbox — the files are local and current there, and the sandbox bash grant is denied on some seats.
 
-**2. The project register.** Walk up from the chapter folder to the **project root** — the folder whose `CHAPTERS/` directory contains this chapter — and read `<project>/REFERENCE/register.md`. (For Witchwood: `WRITING/PROJECTS/WITCHWOOD/REFERENCE/register.md`.) If it is not there, search upward for the nearest ancestor with a `REFERENCE/register.md`. If you find exactly one, use it and name its path in your output. If you find none, **halt and ask** — the register is project-specific and you must never invent one, substitute another project's register, or fall back to a generic revision prompt. If you find more than one plausible register, ask which.
+It prints a JSON block. Read it instead of re-deriving any of it:
 
-**3. The working text — `draft.md` if it carries real content, else the newest slate clean-draft.** Decide which text you revise in this order:
+- **`register` / `register_title`** — `<project>/REFERENCE/register.md`, found by walking up to the folder whose `CHAPTERS/` holds this chapter. No register → the script halts (exit 1, `REGISTER`). So do you: never invent one, never substitute another project's, never fall back to a generic revision prompt.
+- **`working_text`** — `draft.md` when it carries real content (any status that isn't `not-yet-migrated`, with prose in the body), else `slate/<newest run>/clean-draft.md`. The test is *is there prose here*, not a status whitelist: `dev-revised`, `loops-cleared`, `expansion-revised`, `author-cut …` all mean a downstream pass or CRE's own hand has already moved the text past the slate, and *that* is what the register runs on. Name the pick in your reply so a misfire is visible at a glance.
+- **`source_slate`** — the bare run id (`2026-08-05-01`), normalized from whatever form `draft.md` carried.
+- **`mode`** — `execute-only` when `<chapter>/spec-check/<run>/verdicts.md` exists with `status: ready` and a matching `slate_run`; otherwise `full`. A sheet for a different run is treated as absent — say so in the note rather than applying stale rulings.
+- **`ledgers`** — whether the slate's `synthesis-ledger.md` / `leaves-left.md` exist (Step 2 reads them).
+- **`protected_spans`** — every chapter-level `protected_patterns` span you must account for; **`protected_rules`** — how many project P-rules `REFERENCE/protected-patterns.md` carries.
+- **`soft_checks`** — whether `voice-spec.md` and `contamination-checklist.md` exist (Step 2.5).
 
-   - **Prefer `<chapter>/draft.md`** when its frontmatter `status` marks real content (e.g. `dev-revised`) rather than scaffold (`not-yet-migrated`, or a body that is only the placeholder blockquote). A populated `draft.md` means the developmental pass (`blind-response`) has already revised the chapter from the slate; that revised text — not the raw slate — is what the register should run on.
-   - **Otherwise fall back to the newest slate `clean-draft.md`** — from `<chapter>/slate/`, the latest `YYYY-MM-DD` then highest `NN`. This is the normal path when no developmental pass has run.
+If the author named a slate run, pass `--slate`. If the chapter has neither `slate/` nor `revisions/`, the script halts (`CONVENTION`) — tell the author the project hasn't adopted the folder convention and stop.
 
-   If the author named a specific slate run, use that. Name the working text you picked (draft.md vs. which slate run) in your output so a misfire is immediately visible. When you read from a slate run, also read its `synthesis-ledger.md` and `leaves-left.md` if present — **prior-pass context only** (see below), never the thing you revise. (When working from a populated `draft.md`, the slate ledgers still belong to the slate run named in its `source_slate` frontmatter.)
-
----
-
-## Prior-pass context — how to treat the slate's ledgers
-
-The register may include a clause about running downstream of an earlier pass. The Transcoder's `leaves-left.md` is exactly that earlier pass's record. Use it as input, with this discipline:
-
-- **`left-for-later`** verdicts are load-bearing emotion the Transcoder deliberately deferred to the revision stage. **That stage is you.** These are the register's to address — do not treat them as settled.
-- **`incidental`** and **`dialogue`** verdicts are settled rulings. Do not re-litigate them; leave those spans unless the register's own rules independently touch them.
-- **`synthesis-ledger.md`** flags (`[REGISTER-REPAIR]`, image-doubling questions) point to lines the Transcoder already knows are fragile. Let the register weigh them; surface in your note where you acted on one.
-
-If the slate has no ledgers (older or partial runs), proceed on the clean-draft alone — the ledgers are enrichment, not a requirement.
+**Clean mode** (`WORKFLOWS/clean-mode.md`, CRE-ratified 2026-08-03): on an explicit "… in clean mode" trigger, attended or inside a CRE-triggered `chapter-clean` run — never scheduled — judgment calls get the LEAN treatment: decided calls APPLY and log to the chapter's `clean-ledger.md`; still-two-way calls, protected-span cross-reason defects, and mechanical items on CRE's-hand lines stay ASK. Bins, ledger rows, and the veto contract are the clean-mode doc's, not yours to restate.
 
 ---
 
-## Check for a spec-check verdict sheet — pick the mode
+## Step 2 — Run the register
 
-Before running the register, look for `<chapter>/spec-check/<slate-run-id>/verdicts.md`, where `<slate-run-id>` is the slate run you selected (e.g. `2026-06-03-01`). This is the optional output of the spec-check battery (`WORKFLOWS/spec-check.md`), in which the author has already diagnosed the chapter and **ruled** the judgment calls. Two modes:
+Load `REFERENCE/register.md` and **execute its instructions against the working text as the "draft" it asks you to revise.** Follow it to the letter: honor its gear-setting (it decides POLISHED vs ROUGH — read the whole passage, don't pre-decide); honor its output contract (revised passage, then its structured note with unrecoverable breaks first); do not add, drop, or reorder its rules. Ambiguity for this passage goes into the note, never resolved by importing a rule from elsewhere.
 
-- **Execute-only mode** — a `verdicts.md` exists for this slate run with frontmatter `status: ready`. The diagnostic work is done and the rulings are settled. Run the register in its downstream stance (the register's own closing clause): **do not re-litigate** the author's rulings. Specifically:
-  - Apply every **MECHANICAL** fix as given.
-  - Honor every **RULED JUDGMENT CALL** exactly (KEEP / CUT / REWRITE-as) — do not re-open a call the author has settled, even if the register's rules would tempt you to.
-  - **Build** every **UNDRAMATIZED** item (this is the register's §-style "build, don't cut" work).
-  - Read the **NOTES TO THE REGISTER** and act on them.
-  - Otherwise still apply the register's rules to anything the verdict sheet didn't touch, but the sheet's rulings win on every span it covers.
-- **Full mode** — no `verdicts.md` (or `status:` is not `ready`). Run the register normally: discover and revise from scratch, as the register's own instructions direct. (This is the default; the battery is optional and selective.)
+**Before you flag or revise anything — three bindings, in this order:**
 
-Name which mode you used and (in execute-only) the verdict sheet path in your output, so it's auditable. If a `verdicts.md` exists but its `slate_run` doesn't match the slate you're revising, treat it as **not present** (it belongs to a different draft) and note the mismatch rather than applying stale rulings.
+1. **Supersession triage (DIR-019).** Every span-naming ruling you load — `protected_patterns` rows, verdict-sheet rows, open-loops resolutions — is checked against the working text first: span present → carry silently; span gone → moot, stamp the row `superseded_by: <working text> (<date>)` in place, one changelog line, never asked; span reworded-but-surviving → the only case that surfaces, as one batched `## Superseded rulings — reworded spans` block at the top of the note, tree-researched first (DIR-011). Never ask CRE to re-ratify a ruling whose span is intact, and never re-open one his own later draft discharged (§3 — a hand-landed draft is the newest ruling). Staleness outside the working text and its direct derives is one line in `SYSTEM/drift-ledger.md`, not a note item.
+2. **Protected-pattern binding (DIR-014).** Read the working text's `protected_patterns` and the project's `REFERENCE/protected-patterns.md`. A protected span is never re-litigated on the grounds it was ruled for; present at most a one-line *resolved-confirm*. A defect of a *different* class inside a protected span is CRE's call, never a unilateral edit.
+3. **Verdict sheet (execute-only).** Apply every MECHANICAL fix as given; honor every RULED judgment call exactly (KEEP / CUT / REWRITE-as) — do not re-open a call the author settled, even where the register's rules would tempt you; BUILD every UNDRAMATIZED item; act on the NOTES TO THE REGISTER. The register still applies to anything the sheet didn't touch, but the sheet wins on every span it covers.
 
----
+**Prior-pass context — the slate's ledgers.** `leaves-left.md` is the Transcoder's record of what it deferred. `left-for-later` verdicts are load-bearing emotion deferred to *this* stage — the register's to address, not settled. `incidental` / `dialogue` / `floored` verdicts are settled — leave those spans unless the register's own rules independently touch them. `synthesis-ledger.md` flags (`[REGISTER-REPAIR]`, image-doubling) point at lines the Transcoder already knows are fragile; let the register weigh them and say in the note where you acted on one. No ledgers → proceed on the text alone; they are enrichment, not a requirement.
 
-## Run the register
-
-Load `REFERENCE/register.md` and **execute its instructions against the clean-draft as the "draft" it asks you to revise.** Follow it to the letter:
-
-- **Honor its gear-setting.** If the register sets a maturity gear (e.g. POLISHED vs ROUGH), let *it* decide — read the whole passage and set the gear by its rules. Do not pre-decide. (Note that slate output is rough by construction, but the register's own step decides how to treat it.)
-- **Honor its output contract.** The register specifies exactly what to return — typically the revised passage followed by a structured note (diagnosis, craft changes, mechanical corrections, changes-considered-and-rejected, counts, and unrecoverable breaks listed first). Produce all of it; you will split it across two files in the next move.
-- **Do not add, drop, or reorder the register's rules.** If something in the register is ambiguous for this passage, surface the ambiguity in the note rather than resolving it by importing a rule from elsewhere.
-
-The register is the authority on craft. You are the authority only on *which* register, *which* slate, and *where the outputs go.*
+**Post-v6 stance.** A draft that has been through the transcoder's cold floor and the expansion passes usually arrives close to register. Expect to run as a **verification sweep**: if the register earns no edit, say so and produce the sweep note (Step 3) — do not manufacture changes to justify a rev. `chapter-clean` Leg 7 reads this pass as "rev only if edits earned."
 
 ---
 
-## Route the outputs — write two files to `revisions/`
+## Step 2.5 — Soft checks (flag, never gate; skip what's absent)
 
-The register returns one combined response (revised passage + note). Split it into two files in `<chapter>/revisions/`.
+Two non-authoritative scans of the **revised** passage, after the register. Neither rewrites; on any conflict the register wins; both only flag for CRE.
 
-**Naming.** Per the chapter's `revisions/README.md`, revision files are `YYYY-MM-DD-<slug>-rev<N>.md`.
+- **Voice-spec** (`REFERENCE/voice-spec.md`): measurable drift only — sentence mean/median out of band, lost variance or long-sentence pile-ups, raised filter/telling-word density, metaphors imported out of the world, semicolons introduced (CRE doesn't write them), sensory order disturbed, profanity wrong for the register.
+- **Contamination checklist** (`REFERENCE/contamination-checklist.md`): failure modes the *revision itself* introduced — vocabulary elevation, inserted internal gestures, euphemistic softening, unearned or out-of-world figures, beautified ugliness, performed emotion or literary dialogue tags, symbolic interpretation, declared meaning at the close, smoothed fragments or vernacular.
 
-- `<slug>` — derive from the slate clean-draft's `envelope_segments` frontmatter: join the segment short-names with `+` (e.g. `waking-hearth+the-hunt`). If there is no usable segment list, fall back to a short chapter slug.
-- `<N>` — scan `revisions/` for existing files with the same `<slug>`; use the next integer (start at `1`).
+One short line each into the note's `drift:` field (`voice_spec: in band` / `contamination: 1 elevated verb, 1 internal gesture`). A pattern doing real work for a beat is a keeper — name it, don't flag it.
 
-**File 1 — the revised passage** → `revisions/YYYY-MM-DD-<slug>-rev<N>.md`
-
-Clean revised prose only. Keep any inline marks the register left for unrecoverable text (e.g. `[unclear: "wild-out"?]`) — those are part of the passage, not commentary. Front it with:
-
-```yaml
 ---
-source_slate: slate/YYYY-MM-DD-NN/clean-draft.md
-register: REFERENCE/register.md
-register_title: <the register's own title/version line, e.g. "Braided-Register Literary Fantasy (v3)">
-mode: full | execute-only
-verdicts: spec-check/<slate-run-id>/verdicts.md   # omit in full mode
-maturity_gear: <the gear the register chose>
-generated: YYYY-MM-DD HH:MM
----
+
+## Step 3 — Route (script scaffolds, you fill, script checks)
+
+```
+python scripts/register_scaffold.py new --chapter "<chapter folder>" [--slate …] [--sweep]
 ```
 
-**File 2 — the editorial note** → `revisions/YYYY-MM-DD-<slug>-rev<N>-note.md`
+`new` allocates `YYYY-MM-DD-<slug>-rev<N>` (slug from the slate's `envelope_segments` joined with `+`, else `full-chapter`; N is the next integer for that slug) and writes **two stubs** to `revisions/` with serialized frontmatter (DIR-004 — never hand-type the block): the rev file and its `-note.md` sidecar. With `--sweep` it writes the note alone as `…-sweep<N>-note.md` and consumes no `rev<N>`. It also prints the two changelog stubs for Step 4.
 
-The register's full note, verbatim, in its specified order. Front it with a one-line back-reference to the rev file it explains and the slate it came from. If the register flagged **unrecoverable breaks**, they appear at the top of this note *and* you surface them at the top of your reply to the author — those are the one thing that must not get buried.
+Then fill the stubs — every `<<FILL …>>` marker is yours:
 
-**One-way door.** Material in `revisions/` has left the Transcoder workflow: per the chapter's `revisions/README.md`, the Transcoder never reads from `revisions/` again. The slate you read stays exactly as it was — it remains the immutable audit trail. Do not modify, delete, or "promote out" the slate. In your reply, tell the author plainly that this chapter material has crossed the one-way door.
+- **Rev file:** the revised passage as clean prose. Keep the register's inline marks for unrecoverable text (`[unclear: "wild-out"?]`) — they are part of the passage. Fill `maturity_gear` with the gear the register chose. Nothing else in the frontmatter is yours to change.
+- **Note file:** the register's full note, verbatim, in its own order — unrecoverable breaks first. Then the `protected_spans_touched` rows the script pre-enumerated: one row per chapter span, `state: kept` (byte-identical in the rev), `reworded` + `new:` (rule intact, witness changed — update the witness in the same session), or `dropped` + `ruled:` (date). **An unaccounted drop is a defect: revert, don't rationalize.** `[]` when the chapter has none means "I looked." Then `drift:` from Step 2.5.
+- **Sweep note:** what the register checked, what it found clean, what would have been an edit and why it was not earned. It is the receipt for "the register ran and changed nothing."
 
----
+```
+python scripts/register_scaffold.py check "<revisions/…-rev<N>.md>"      # or the note; it finds the pair
+```
 
-## Files this skill writes — and the ones it must not
+`check` must exit 0 before you report: key set, bare `source_slate`, mode/verdicts agreement, no `<<FILL>>` residue, non-empty rev body, every chapter span accounted, every `kept` claim **byte-verified against the rev — or, on a sweep, against the working text** (RP-Q3 / RP-P1 — a `kept` row whose span is not found verbatim fails; the script never decides whether that means reworded or dropped, it only says the claim is false, and that is your QUERY to resolve before shipping), every `reworded` `new:` present, every `dropped` ruled.
 
-**Writes:**
-- `<chapter>/revisions/YYYY-MM-DD-<slug>-rev<N>.md` — revised passage.
-- `<chapter>/revisions/YYYY-MM-DD-<slug>-rev<N>-note.md` — editorial note.
-- `<chapter>/changelog.md` and vault `_CHANGELOG.md` — a session log line (fiction lane): which slate run was revised, which register + mode, the `rev<N>` files written, and any unrecoverable breaks.
-
-**Must NOT write:**
-- `draft.md` — promoting a revision into the live working draft is `promote-revision`'s job, not this skill's. You write only into `revisions/`.
-- `slate/` (any file) — the slate is the immutable audit trail. Never modify, delete, or "promote out" of it.
-- `envelope.md`, `open-loops.md`, `continuity.md`, `notes.md`, `_status.md` — read-only context here.
-- `REFERENCE/register.md` — you execute the register; you never edit it.
-
-If a span you would revise lives in one of those files, stop — you are in the wrong stage.
+**One-way door.** Material in `revisions/` has left the Transcoder workflow: the Transcoder never reads from `revisions/` again, and the slate you read stays exactly as it was. Say so plainly in your reply. If the register flagged unrecoverable breaks, they lead your reply — that is the one thing that must not get buried.
 
 ---
 
-## Logging
+## Step 4 — Log
 
-On completion, append a one-line entry to the chapter's `changelog.md` and to the vault `_CHANGELOG.md` (fiction lane): the slate run revised, the register title + mode (`full` / `execute-only`), the `rev<N>` files written, and any unrecoverable breaks (surfaced first, never buried). File any new fragility to `_OBSERVATIONS.md`.
+Append the script's two stubs, filled in: one line to the chapter's `changelog.md`, one entry to the vault `_CHANGELOG.md` (fiction lane, top-insert, file tools, verify by re-read — DIR-005): working text, `source_slate`, register title + mode, the files written, span accounting counts, unrecoverable breaks. New fragility → `_OBSERVATIONS.md` (`^obs-NNN`, re-scan the max anchor immediately before writing).
+
+---
+
+## Files this skill writes — and must not
+
+**Writes:** `<chapter>/revisions/YYYY-MM-DD-<slug>-rev<N>.md` + `…-rev<N>-note.md` (or `…-sweep<N>-note.md`); `<chapter>/changelog.md`; vault `_CHANGELOG.md`; `superseded_by:` stamps on moot rows (DIR-019 §1); `<chapter>/clean-ledger.md` rows in clean mode only.
+
+**Must NOT write:** `draft.md` (that is `promote-revision`'s one job); anything under `slate/` (immutable audit trail); `envelope.md`, `open-loops.md`, `continuity.md`, `notes.md`, `_status.md` (read-only context here); `REFERENCE/register.md`, `REFERENCE/protected-patterns.md` beyond a witness refresh you accounted for in the note. If a span you would revise lives in one of those files, stop — you are in the wrong stage.
 
 ---
 
 ## Stop conditions
 
-- Vault sentinel fails → halt, ask which folder is the vault.
+- Sentinel fails → halt, ask which folder is the vault.
 - No `REFERENCE/register.md` for the project → halt, ask; never substitute a generic prompt.
-- No slate `clean-draft.md` in the chapter → halt; nothing to revise (run the Transcoder first).
-- Chapter doesn't follow the per-chapter folder convention (no `slate/`, no `revisions/`) → halt, tell the author.
+- No real `draft.md` and no slate `clean-draft.md` → halt; nothing to revise (run the Transcoder first).
+- Chapter lacks `slate/` and `revisions/` → halt, tell the author.
+- `check` exits non-zero → fix the stub, never the check; report only on exit 0.
 - Register output has unrecoverable breaks → keep them marked inline, list them first, continue.
 
 ---
 
-_Canonical reference for this skill lives at [[WORKFLOWS/register-pass]]. Per [[_SKILLS MAP#Cowork skills]], procedure changes land in the workflow doc first, then propagate here via skill-creator._
+_Canonical reference: [[WORKFLOWS/register-pass]]. Per [[_SKILLS MAP#Cowork skills]], procedure changes land in the workflow doc first, then propagate here via skill-creator. v2 — 2026-09-02: rev contract (dec-033), `register_scaffold.py`, sweep mode, DIR-014 / DIR-019 bindings, Step 2.5 soft checks._

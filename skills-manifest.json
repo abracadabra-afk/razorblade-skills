@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-02T12:00:09.8589358-07:00",
+    "generated":  "2026-09-02T14:09:42.2855288-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -173,9 +173,9 @@
                    {
                        "name":  "promote-revision",
                        "package":  "WORKFLOWS/skills/promote-revision.skill",
-                       "sha256":  "a4954bb3c5ee2381e30badd4868e3bc27e99c87dc2c888460cd9486fe3067c4e",
-                       "content_sha256":  "08a940d084ea201e546e2b3a1fc484df468536369f553835821ed4b59f55016a",
-                       "bytes":  4218
+                       "sha256":  "449ea706324272d710aec43d32155d6b8198c0928db9c7d7312482f4f99c5aab",
+                       "content_sha256":  "46fbff5ae4d2f3458af2e4abcd6444fb5356cf03f1dc6ba30e3cf758c8e1c92b",
+                       "bytes":  4356
                    },
                    {
                        "name":  "reconcile",
@@ -194,9 +194,9 @@
                    {
                        "name":  "register-pass",
                        "package":  "WORKFLOWS/skills/register-pass.skill",
-                       "sha256":  "410f8c31ab4da15a6e97dff671e2944f1894615ba84da879c0fd7d8153b95e08",
-                       "content_sha256":  "330763a87ffa0b2bf0c6a0f2df0aef2cc385e63d817feeed4072d0398f75a3df",
-                       "bytes":  10686
+                       "sha256":  "5a5a8e7154937b11a21a7a5ece42d71211e8cf0648ad474ea072626350e67ebf",
+                       "content_sha256":  "53af6ac3275c9e780a8a48f90b310dca4f97bd222c995729c8a5a18e45004fbb",
+                       "bytes":  23311
                    },
                    {
                        "name":  "research-briefing",

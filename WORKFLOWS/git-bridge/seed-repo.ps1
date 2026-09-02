@@ -18,8 +18,18 @@ $RepoOS     = 'C:\Users\Chad\razorblade-os'       # private full mirror
 $RepoSkills = 'C:\Users\Chad\razorblade-skills'   # public tooling mirror
 $Log        = Join-Path $Vault 'WORKFLOWS\git-bridge\sync.log'
 
-# unattended-run visibility: log any terminating error instead of failing silently
-trap { "$(Get-Date -Format 'o')  ERROR  $($_.Exception.Message)" | Add-Content $Log; break }
+# unattended-run visibility: log any terminating error instead of failing silently.
+# The log write is itself wrapped: sync.log lives on the Dropbox-synced vault and Dropbox
+# takes a transient exclusive lock on it mid-sync. An unwrapped Add-Content failure here
+# REPLACES the real error with an IOException about the log file, hiding the cause
+# (observed 2026-09-02: three runs, same root cause, one of them masked). Console always
+# gets the message even when the log write fails.
+trap {
+  $msg = "$(Get-Date -Format 'o')  ERROR  $($_.Exception.Message)"
+  Write-Host $msg -ForegroundColor Red
+  try { Add-Content -Path $Log -Value $msg -ErrorAction Stop } catch { Write-Host "  (could not write sync.log: $($_.Exception.Message))" -ForegroundColor DarkYellow }
+  break
+}
 
 # Preflight: git MUST be on PATH (^obs-100). The scheduled task has run in a shell
 # where git was absent, turning the push into a logged-but-late failure part-way
@@ -136,8 +146,14 @@ function Write-GitAttributes($repo) {
 function Commit-Push($repo, $msg) {
   Push-Location $repo
   try {
-    git add --renormalize . 2>$null | Out-Null
+    # Stage everything FIRST - including deletions. `--renormalize` re-adds every tracked
+    # path and hard-fails ("unable to stat") on a tracked file that no longer exists on
+    # disk, which aborted the whole sync before `git add -A` could stage the deletion
+    # (2026-09-02: WORKFLOWS/skills-src/register-pass/head.txt, both repos).
     git add -A
+    # Line-ending normalization is a nicety, never a reason to abort a sync.
+    try { git add --renormalize . 2>$null | Out-Null }
+    catch { Write-Warning ("renormalize skipped: " + $_.Exception.Message) }
     if (git status --porcelain) {
       git commit -m $msg | Out-Host
       git branch -M main

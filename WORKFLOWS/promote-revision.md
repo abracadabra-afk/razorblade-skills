@@ -50,7 +50,7 @@ Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brai
 Resolve the chapter folder; pick the newest `…-rev<N>.md` passage (or the named one). No revision present → halt (run `register-pass` first). Name the rev picked.
 
 ### Step 2 — Verify lineage
-Compare the revision's `source_slate` to `draft.md`'s. Match (or draft is a scaffold) → proceed. Mismatch → surface both slates and ask before overwriting — a real divergence should never be buried silently.
+Compare the revision's `source_slate` to `draft.md`'s. **Normalize both sides to the bare run id first** (dec-033, 2026-09-02): strip a leading `slate/` and a trailing `/clean-draft.md`, so `slate/2026-08-05-01/clean-draft.md` and `2026-08-05-01` compare equal — the pre-ruling chapters (CH1/CH2 revs carry the path form; CH12–CH17 the bare form) must never false-trip this ask. The bare form is the ruled canonical; write it on the promoted `draft.md`. Match (or draft is a scaffold) → proceed. Mismatch → surface both slates and ask before overwriting — a real divergence should never be buried silently.
 
 **Fallback when a side lacks `source_slate` (added 2026-08-10, (c) — the v6/expansion route stitched CH12's draft with `provenance:` instead, so this check could not run as written):** verify lineage on `provenance:` (or the rev note's stated source) by confirming both sides name the **same slate run**; on a match, **normalize the draft onto `source_slate`** in the same promotion so the check runs as written next time. Neither field present on one side → treat as a mismatch: surface and ask. Every route that emits a promotable rev should write `source_slate`; a route that can't yet is the defect to file, not a case to wave through.
 

@@ -48,7 +48,7 @@ Name the revision file you picked in your reply, so a wrong pick is immediately 
 `draft.md` is the live working copy. Before replacing its body, run two cheap sanity checks so a promotion can't silently scramble the chapter's history:
 
 1. **Read the revision's frontmatter.** It carries `source_slate` (and, from `register-pass`, `register` / `register_title` / `mode` / `verdicts` / `maturity_gear`). You will carry these forward.
-2. **Read `draft.md`'s current frontmatter.** Compare its `source_slate` to the revision's `source_slate`.
+2. **Read `draft.md`'s current frontmatter.** Compare its `source_slate` to the revision's `source_slate` — **after normalizing both to the bare run id** (strip a leading `slate/` and a trailing `/clean-draft.md`; `slate/2026-08-05-01/clean-draft.md` ≡ `2026-08-05-01`). The bare form is the ruled canonical (dec-033); older revs carry the path form and must not false-trip the ask below. Write the bare form on the promoted draft.
    - **Match** → normal case. The revision was built from the same slate lineage the draft already tracks. Proceed.
    - **Mismatch** → the revision descends from a *different* slate than the current draft claims. This is not necessarily wrong (the author may be re-baselining), but it is exactly the kind of thing that should never happen silently. **Surface it and ask** before overwriting: name both slates and let the author confirm.
    - **Draft is still a scaffold** (`status: not-yet-migrated`, or its body is only the placeholder blockquote) → there is no real content to lose; proceed and say so.

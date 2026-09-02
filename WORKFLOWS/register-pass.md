@@ -4,17 +4,19 @@ name: register-pass
 trigger: run the register
 aliases: [revise with the register, register pass, run the reviser]
 inputs: [the working text — prefer draft.md when its status marks real content (dev-revised or loops-cleared), else the chapter's newest slate clean-draft.md, the project register at REFERENCE/register.md, the project voice spec at REFERENCE/voice-spec.md (optional), the contamination checklist at REFERENCE/contamination-checklist.md (optional)]
-outputs: [revised passage in revisions/, editorial-note sidecar in revisions/]
+outputs: [revised passage in revisions/, editorial-note sidecar in revisions/ — or the sweep note alone when the register earns no edit]
 lane: fiction
 status: active
-last_updated: 2026-08-10
+last_updated: 2026-09-02
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that also keep a project register at REFERENCE/register.md. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]]; the dedicated revision stage out of the slate (closes the "revision-specific workflow TBD" note in each chapter's revisions/README). Optionally downstream of [[WORKFLOWS/spec-check]] — when a ready verdict sheet exists, runs execute-only.
 ---
 
-# WORKFLOW: Register Pass
+# WORKFLOW: Register Pass (v2)
 
-> Revision pass that runs a chapter's newest **slate clean-draft** through the **project register** — a project-specific revision prompt kept at `REFERENCE/register.md` — and writes the revised passage (plus the register's editorial note) into the chapter's `revisions/` folder. This is the documented one-way door out of the Transcoder workflow.
+> Revision pass that runs a chapter's **working text** (`draft.md` when it carries real content, else the newest slate clean-draft) through the **project register** — a project-specific revision prompt kept at `REFERENCE/register.md` — and writes the revised passage (plus the register's editorial note) into the chapter's `revisions/` folder. This is the documented one-way door out of the Transcoder workflow.
+
+> **v2 (2026-09-02, dec-033 + RP-Q2/Q3 — [[SYSTEM/reports/2026-09-02-skill-review-register-pass]]).** The revision contract is now one file — `skills-src/register-pass/references/rev-contract.md` — enforced by `scripts/register_scaffold.py` (`resolve` · `new` · `check`). Ruled: `source_slate` is the **bare run id** (`2026-08-05-01`; `promote-revision` normalizes path↔bare on compare); fixed rev + note key sets; a **`sweep`** mode that writes the note alone and consumes no `rev<N>` when the register earns no edit; `protected_spans_touched` rows are pre-enumerated by the script and every `kept` claim is **byte-verified** (never classified — reworded vs dropped stays the reasoning stage's). Five runs had shipped four schemas before this.
 
 ## When to use
 
@@ -40,7 +42,7 @@ The register changes project to project. Witchwood's is "Braided-Register Litera
 | Revised passage (clean prose, register's inline marks preserved) | `<chapter>/revisions/YYYY-MM-DD-<slug>-rev<N>.md` |
 | Editorial note (the register's 6-part note) | `<chapter>/revisions/YYYY-MM-DD-<slug>-rev<N>-note.md` |
 
-`<slug>` derives from the slate's `envelope_segments`; `<N>` is the next revision integer for that slug. Material written here has **left the Transcoder workflow** — per each chapter's `revisions/README.md`, the Transcoder never reads from `revisions/` again. The slate stays untouched as the immutable audit trail.
+`<slug>` derives from the slate's `envelope_segments` (else `full-chapter`); `<N>` is the next revision integer for that slug. **Sweep mode** writes `YYYY-MM-DD-<slug>-sweep<N>-note.md` alone — no passage, no `rev<N>` consumed — so `land-chapter`'s at-least-one-rev probe stays honest. The script allocates every name; frontmatter is serialized, never hand-typed (DIR-004); `check` must exit 0 before the pass reports. Full key sets and the retired keys: the contract file. Material written here has **left the Transcoder workflow** — per each chapter's `revisions/README.md`, the Transcoder never reads from `revisions/` again. The slate stays untouched as the immutable audit trail.
 
 **`protected_spans_touched:` — required frontmatter on every revision note (convention added 2026-08-10, `^backlog-protected-span-write-gate` (ii); serialized per DIR-004).** The note's frontmatter must account for every protected span the revision touched — sourced from `REFERENCE/protected-patterns.md` plus the chapter frontmatter's `protected_patterns` — one entry each, one of three values: `kept` (byte-identical) · `reworded → "<new span>"` (rule intact; update the witness in the same session) · `dropped — ruled by CRE <date>`. Touched none → write `protected_spans_touched: []` explicitly; the empty list is a statement, never an omission. **An unaccounted drop is a defect: revert, don't rationalize.** This field exists because post-hoc span verification is structurally impossible (`^obs-235` / DIR-014's matcher corollary — "reworded" and "violated" leave identical evidence on disk); the moment of the edit is the only place the answer is free.
 
@@ -50,7 +52,9 @@ The register changes project to project. Witchwood's is "Braided-Register Litera
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Resolve the chapter, the register, and the working text
-Locate the chapter folder; walk up to the project root and read `REFERENCE/register.md`. Pick the **working text**: prefer `draft.md` when its `status` marks real content (e.g. `dev-revised` — the developmental pass has run — or `loops-cleared` — the loop-clearer ran and was promoted); otherwise fall back to the newest slate `clean-draft.md`. Name what you picked so a misfire is visible. Any missing → halt (see Stop conditions).
+`register_scaffold.py resolve --chapter DIR` (desktop `python`) does this deterministically and prints a JSON block: register path + title, working text, bare `source_slate`, mode, ledgers present, protected-span census, soft-check availability. The **working text** is `draft.md` when it carries real content — any status other than `not-yet-migrated`, with prose in the body (`dev-revised`, `loops-cleared`, `expansion-revised`, `author-cut …`); the test is *is there prose here*, not a status whitelist, because the vocabulary grows with every new pass. Otherwise the newest slate `clean-draft.md`. Name what was picked so a misfire is visible. Any missing → halt (see Stop conditions).
+
+**Supersession triage (DIR-019, v2).** Every span-naming ruling loaded (protected-patterns rows, verdict-sheet rows, open-loops resolutions) is checked against the working text first: span present → carry silently; span gone → moot, `superseded_by:` stamp in place, one changelog line, never asked; reworded-but-surviving → the only case that surfaces, one batched block at the top of the note, tree-researched first (DIR-011). Never ask CRE to re-ratify a ruling whose span is intact or re-open one his own later draft discharged (§3). Scope lock (§4): staleness outside the working text and its direct derives → one line in `SYSTEM/drift-ledger.md`.
 
 ### Step 1.5 — Mode select (optional spec-check coupling)
 Look for `<chapter>/spec-check/<slate-run-id>/verdicts.md` matching the slate run. If it exists with `status: ready`, run **execute-only**: apply its MECHANICAL fixes, honor its RULED judgment calls verbatim (don't re-litigate), build its UNDRAMATIZED items, act on its NOTES. Otherwise run **full** discover-and-revise (the default; the battery is optional/selective). A `verdicts.md` whose `slate_run` doesn't match is treated as absent.
@@ -71,7 +75,7 @@ Two non-authoritative scans of the **revised** passage, run after the register. 
 Record any drift as one short line each in the editorial note (e.g. "voice-spec drift: mean sentence 14.2 ↑, 1 semicolon"; "contamination: 1 internal gesture added, 1 elevated verb"); if clean, say "voice-spec: in band / contamination: none." A pattern doing real work for a beat is a keeper — name it, don't flag it.
 
 ### Step 3 — Route the outputs
-Write the revised passage to the rev file (clean prose only; keep any `[unclear: …]` inline marks the register left) and the register's note to the `-note.md` sidecar (append the Step-2.5 voice-spec line to the note if there was drift). Surface unrecoverable breaks at the top of the reply.
+`register_scaffold.py new --chapter DIR [--sweep]` allocates the names and writes the stubs (rev + note, or the sweep note alone) with serialized frontmatter and the `protected_spans_touched` rows pre-enumerated. Fill every `<<FILL>>`: the revised passage as clean prose (keep the register's `[unclear: …]` marks; fill `maturity_gear`), the register's note verbatim with unrecoverable breaks first, each span row's `state` (`kept` / `reworded` + `new:` / `dropped` + `ruled:`), and the Step-2.5 `drift:` lines. Then `register_scaffold.py check FILE` — key set, bare `source_slate`, mode/verdicts agreement, no `<<FILL>>` residue, every chapter span accounted, every `kept` byte-verified, every `reworded` witness present, every `dropped` ruled. Report only on exit 0. Surface unrecoverable breaks at the top of the reply. **No edit earned → `--sweep`**, never a manufactured rev (`chapter-clean` Leg 7: "rev only if edits earned").
 
 ## Stop conditions
 - Vault sentinel fails → halt, ask which folder is the vault.
@@ -79,6 +83,7 @@ Write the revised passage to the rev file (clean prose only; keep any `[unclear:
 - No slate `clean-draft.md` in the chapter → halt; nothing to revise (run the Transcoder first).
 - Chapter doesn't follow the per-chapter folder convention → halt, tell CRE.
 - Register output has unrecoverable breaks → keep them marked inline, list them first, continue.
+- `check` exits non-zero → fix the stub, never the check; a false `kept` claim is a QUERY for the reasoning stage, not a script bug.
 
 ## Logging
 On completion append an entry to [[_CHANGELOG]] (fiction lane) and the chapter's `changelog.md`; file any new fragility to [[_OBSERVATIONS]]. See the skill for the exact log format.

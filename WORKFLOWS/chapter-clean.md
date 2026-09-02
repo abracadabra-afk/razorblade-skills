@@ -34,7 +34,7 @@ GATE A — the author gate           seams · optioned calls · garbles · autho
      Leg 4  promote-revision       expansion rev → draft.md (expansion-revised)
      Leg 5  prose-expansion 6      temperature dial, self-ratifying where dial=spend
      Leg 6  prose-expansion 7      no-op or flag — machine never writes heat; text-change needs → Gate B
-     Leg 7  register-pass          verification sweep, clean bins; rev only if edits earned
+     Leg 7  register-pass          verification sweep, clean bins; rev only if edits earned — else `mode: sweep`, note only, no rev<N> consumed (RP-Q2, 2026-09-02)
      Leg 8  promote-revision       register rev → draft.md (only if Leg 7 wrote one)
 GATE B — the end gate              remaining ASKs + step-7 hand items + clean-ledger veto
                                     [CRE — sitting 2, folded into his line pass; served by land-chapter]
