@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-03T11:12:02.4157185-07:00",
+    "generated":  "2026-09-03T12:00:09.0582413-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -127,6 +127,20 @@
                        "sha256":  "1bffa4972ed269a04e268d93be92ae897aef051d5c1e380db8cb5723cec7ad06",
                        "content_sha256":  "2dad2dbc050d5bab19a1763a6da8d2ea2c321aa40ee058685c7642a17b715f6f",
                        "bytes":  5302
+                   },
+                   {
+                       "name":  "intent-capture",
+                       "package":  "WORKFLOWS/skills/intent-capture.skill",
+                       "sha256":  "04be5d14ab6c087327a8073494b7510a02c8adcedc3f3f016f2e5e83fdc715b5",
+                       "content_sha256":  "ded75ad3d100903cf0ec658a4f4c00b15bc09c1edf7acbdf92c20f481be287b7",
+                       "bytes":  7170
+                   },
+                   {
+                       "name":  "interview-me",
+                       "package":  "WORKFLOWS/skills/interview-me.skill",
+                       "sha256":  "cf0cb8d73e9477e430767ca359211a049a120737a3e3cf62efd768ac4a704672",
+                       "content_sha256":  "2845dd453d8182b432477fb9454e6747102c37045e4d356748221588e974a55f",
+                       "bytes":  3649
                    },
                    {
                        "name":  "land-chapter",

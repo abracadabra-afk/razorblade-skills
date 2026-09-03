@@ -1,7 +1,6 @@
 {
     "dev-draft-audit":  "b63560f18eac25b87b35dbddd4d38e0f49bff0eafd1f3c72c42391d55aecf105",
     "dev-capture-audit":  "93ae08ae50f95052eec8760fce93f764273960115f38219d1e7b81f5c81cfab5",
-    "day-launch":  "691fb43d8d4379a9033a04880fc8860b7a7bfab73163e97e3c0e064dfb664333",
     "scene-intensity":  "419bcb3f12b75c0fd7e81a1072bdcc25bc35573aad48a468ad190a8aa057c6c2",
     "restrained-omniscient-register":  "8d8977aaa4f61e8670e7f33b333e60c79279278768e52af16066882769434f2b",
     "episode-feedback":  "dec52f1663c6e71922f3badb2a3b84b1bbea219f90014a7c4396f60879fb3c25",
@@ -10,6 +9,7 @@
     "loop-clearer":  "cfdf6aa062d6558abd70ca7cda7d37e0ec41cdbf8a988abe851ced0d962ab881",
     "dev-capture":  "80285e041d719e3831b1788265e06232705331da85af2eb242b211d2795be8ca",
     "canon-sync":  "e6f3a3b05b31171caafe915cff037a723b6c9fea979401faabadd7818aa1b522",
+    "intent-capture":  "ded75ad3d100903cf0ec658a4f4c00b15bc09c1edf7acbdf92c20f481be287b7",
     "land-chapter":  "f92a9745153ef039d1f3f98fdeb0a12a98ecdd1376fe1dbefd866f1f30888939",
     "skill-review":  "70784805e7f8f4ffee57025253181fa86d9c53f49a4f65b4805faef24243a7b4",
     "dictation-cleanup":  "6836c261fa31432176f2dab726b1c553913c8ed988768c3d2835342cfb54249a",
@@ -30,14 +30,16 @@
     "dictation-preflight":  "7f90cd0162ecb32e5ba37f8682b034ea5b3da19ced3b67b504ea7d781aca3a4b",
     "decision-helper":  "81418d6253908719e303067ef3da889cbd2ab6b152bcf0b18a9043080fa5193c",
     "book-ingest":  "cde7cdbc28364ecb72b27fe158db127dce0dc2d0b8713c7c5d439a5499b4658a",
+    "interview-me":  "2845dd453d8182b432477fb9454e6747102c37045e4d356748221588e974a55f",
     "blind-read":  "46e4cf8e19b893f0f49ec340439a4ceb100ed9c402fb418821f6695e800ac748",
     "comp-sweep":  "8af8218127c8cc91d7c60032048c5d3cf5d63e37eb9d42608e4516e7ab02b318",
     "research-briefing":  "9ed5a46c417cdc6a5081984ebbaa034015fc5923c9fc76049e570479178ee1ff",
+    "dictation-transcoder":  "0eed527c7125c82f43718833c0a831ca4f2f87b826345ba838cd4eac6800d2e1",
     "task-audit":  "69c6c5539d8eda19838a34a8f3c5a252ea5fc1a844aec89fdea8100a18bbc759",
     "line-edit":  "79e6ac0e0123b8d4a59d00659cbf6697f9d7031a6f561bbc3dec1a6e68e51dc8",
     "record-script":  "da613080c00dcbc0f3d5573e9c980166614bfb4910bdd15027d264af56c158a9",
     "chapter-pipeline":  "d1bcb76d5f943e42018c2a491914c2fb622f999d7a055cba9cbbf9dc502a3d5a",
-    "dictation-transcoder":  "0eed527c7125c82f43718833c0a831ca4f2f87b826345ba838cd4eac6800d2e1",
+    "day-launch":  "691fb43d8d4379a9033a04880fc8860b7a7bfab73163e97e3c0e064dfb664333",
     "reconcile":  "9988e69ef3342d6f77d8ae1756670988a7ddcdd487153049473e0f0e57643727",
     "promote-revision":  "42182d6bf9e4e2d92f139ea0f832105fd174186282acd2976fe5a00a3d3336e6"
 }
