@@ -17,6 +17,8 @@ Four moves, in order: **resolve**, **run**, **route**, **log**. The mechanical h
 
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → **halt and ask** which folder is the vault. Write nothing. (The script repeats this check and exits 2 on failure; the point of doing it first yourself is that a wrong mount looks like an empty vault and an empty vault looks like "fresh start-up.")
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft; CDIR-005/006/008 govern this pass) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ---
 
 ## Step 1 — Resolve (script)
@@ -32,7 +34,7 @@ It prints a JSON block. Read it instead of re-deriving any of it:
 - **`register` / `register_title`** — `<project>/REFERENCE/register.md`, found by walking up to the folder whose `CHAPTERS/` holds this chapter. No register → the script halts (exit 1, `REGISTER`). So do you: never invent one, never substitute another project's, never fall back to a generic revision prompt.
 - **`working_text`** — `draft.md` when it carries real content (any status that isn't `not-yet-migrated`, with prose in the body), else `slate/<newest run>/clean-draft.md`. The test is *is there prose here*, not a status whitelist: `dev-revised`, `loops-cleared`, `expansion-revised`, `author-cut …` all mean a downstream pass or CRE's own hand has already moved the text past the slate, and *that* is what the register runs on. Name the pick in your reply so a misfire is visible at a glance.
 - **`source_slate`** — the bare run id (`2026-08-05-01`), normalized from whatever form `draft.md` carried.
-- **`mode`** — `execute-only` when `<chapter>/spec-check/<run>/verdicts.md` exists with `status: ready` and a matching `slate_run`; otherwise `full`. A sheet for a different run is treated as absent — say so in the note rather than applying stale rulings.
+- **`mode`** — `execute-only` when `<chapter>/spec-check/<run>/verdicts.md` exists with `status: ready` and a matching `slate_run`; otherwise `full`. A sheet for a different run is treated as absent — say so in the note rather than applying stale rulings. **No-slate chapter** (author-direct; `draft.md` has no `source_slate`): the script scans `spec-check/` for the newest ready sheet keyed on a minted run id (`slate_run: none — …`, names `draft.md`) and uses that id as the run — the `NO-SLATE` line says so, and the rev's `source_slate` carries the minted id (contract §2, RP-P3).
 - **`ledgers`** — whether the slate's `synthesis-ledger.md` / `leaves-left.md` exist (Step 2 reads them).
 - **`protected_spans`** — every chapter-level `protected_patterns` span you must account for; **`protected_rules`** — how many project P-rules `REFERENCE/protected-patterns.md` carries.
 - **`soft_checks`** — whether `voice-spec.md` and `contamination-checklist.md` exist (Step 2.5).

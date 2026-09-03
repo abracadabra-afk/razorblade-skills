@@ -17,6 +17,8 @@ You do five moves, in order: **sentinel**, **resolve**, **load the prompts**, **
 
 From the mounted root, read `_DIRECTIVES.md` and confirm its frontmatter has both `type: ai-os-brain` and `file: directives`. If missing or mismatched, **halt and ask** which folder is the vault. (Shared `^obs-004` gate.)
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft; CDIR-004 governs the passes) before opening any project file. The orchestrator reads it; the per-pass subagents stay isolated with only their prompt + the working text. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ---
 
 ## Step 1 — Resolve the chapter, the working text, and the run id

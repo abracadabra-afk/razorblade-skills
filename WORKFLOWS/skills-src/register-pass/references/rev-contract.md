@@ -29,6 +29,8 @@ Why one file: between 2026-06 and 2026-08 five register runs shipped four differ
 
 A `verdicts.md` whose `slate_run` does not match is treated as absent, and the mismatch is named in the note.
 
+**No-slate route (RP-P3, ruled 2026-09-02).** An author-direct chapter has no slate leg, so `draft.md` carries no `source_slate` and its verdict sheet is keyed on a **minted** run id (`spec-check/YYYY-MM-DD-NN/verdicts.md` with `slate_run: none — no slate leg`, per `spec-check.md`'s 2026-08-24 rule). `resolve` scans `spec-check/` for the newest such sheet that is `status: ready` and names `draft.md`; that minted id becomes the run — `mode: execute-only`, and the rev's `source_slate` carries the minted id (it is the run the rev was judged against, and the only lineage key the chapter has). No ready no-slate sheet → `full`, `source_slate` stays a `<<FILL>>` the reasoning stage must resolve. `promote-revision` will see `none` vs the minted id on this route and ask once — a known gate, not a defect (`_BACKLOG` RP-P4).
+
 ## 3. Working text — which prose the register runs on
 
 Prefer `<chapter>/draft.md` when it carries real content; otherwise the newest `slate/YYYY-MM-DD-NN/clean-draft.md` (latest date, then highest NN), unless CRE names a run.

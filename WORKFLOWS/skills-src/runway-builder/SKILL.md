@@ -23,6 +23,7 @@ Before anything else, verify you are pointed at the right vault.
 1. From the mounted folder root, read `_DIRECTIVES.md`.
 2. Confirm its YAML frontmatter contains both `type: ai-os-brain` and `file: directives`.
 3. If it is missing or the frontmatter doesn't match, **halt and ask** which folder is the intended vault. Do not write anywhere.
+4. **Creative-lane load (ratified 2026-09-03):** read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
 
 Hard gate. Pass it before reading any chapter.
 

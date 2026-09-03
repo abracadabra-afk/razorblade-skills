@@ -19,6 +19,8 @@ One invariant makes this safe:
 
 Before anything else (`^obs-004`): read `_DIRECTIVES.md` at the mounted vault root and confirm frontmatter `type: ai-os-brain` + `file: directives`. Missing or mismatched → **halt and ask** which folder is the vault. Never scaffold, never write.
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any piece file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ---
 
 ## Step 1 — Locate the inputs and verify record-readiness

@@ -16,6 +16,8 @@ Generic AI editing measurably flattens authorial voice — even "minimal edit" i
 ## Step 0 — Vault sentinel
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch/missing → **halt and ask**. Never scaffold; never write elsewhere.
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft; CDIR-005/006 govern this sheet) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ## Step 1 — Resolve
 1. Locate the chapter/episode folder (per-chapter folder convention; WIW episodes live in `WRITING/SHORTS/EPISODES/`).
 2. Walk up to the project root; read `REFERENCE/register.md` — **the authority on voice; halt if absent, never substitute a generic prompt.** Read `premise.md` / per-episode ruled facts if present — they override generic classes.

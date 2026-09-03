@@ -7,7 +7,8 @@ register and writes the note:
   resolve --chapter DIR [--slate NN|RUN]
           sentinel · project root · REFERENCE/register.md (+ its title) · working text
           (draft.md if real content, else newest slate) · mode (execute-only when a ready
-          verdicts.md matches the run) · slate ledgers present · protected-span census
+          verdicts.md matches the run; on a no-slate chapter the run is the sheet's minted
+          id — spec-check.md 2026-08-24 rule, RP-P3) · slate ledgers present · protected-span census
           · prints a JSON block the model reads instead of re-deriving any of it
   new     --chapter DIR [--slate NN|RUN] [--sweep] [--date YYYY-MM-DD]
           resolve, then allocate YYYY-MM-DD-<slug>-rev<N> (or -sweep<N>) and write the
@@ -352,16 +353,47 @@ def draft_is_real(draft_path):
     return (len(prose) > 0), fm
 
 
+def no_slate_sheet(chapter):
+    """No-slate route (spec-check.md 2026-08-24 rule; RP-P3, 2026-09-02): a chapter whose draft.md
+    carries no source_slate keys its verdict sheet on a MINTED run id — spec-check/<YYYY-MM-DD-NN>/
+    verdicts.md with `slate_run: none — …` and the sheet naming draft.md as its text. Returns the
+    newest such run id that is `status: ready`, else None. A sheet keyed to a real slate run is
+    never picked here (that is select_mode's job)."""
+    sd = os.path.join(chapter, "spec-check")
+    if not os.path.isdir(sd):
+        return None
+    hits = []
+    for d in sorted(os.listdir(sd)):
+        vp = os.path.join(sd, d, "verdicts.md")
+        if not re.match(r"^\d{4}-\d{2}-\d{2}-\d{2}$", d) or not os.path.isfile(vp):
+            continue
+        fm, _, err = parse_frontmatter(read(vp))
+        if err or not fm:
+            continue
+        sr = str(fm.get("slate_run", "")).strip().lower()
+        names_draft = "draft.md" in (str(fm.get("working_text", "")) + " " + str(fm.get("source", "")))
+        if sr.startswith("none") and names_draft and str(fm.get("status", "")).strip() == "ready":
+            hits.append(d)
+    return hits[-1] if hits else None
+
+
 def pick_working_text(chapter, want_run, f):
-    """Returns dict(kind, path, rel, run, fm) or None."""
+    """Returns dict(kind, path, rel, run, fm, no_slate) or None."""
     draft = os.path.join(chapter, "draft.md")
     if not want_run:
         real, dfm = draft_is_real(draft)
         if real:
             run = bare_run(dfm.get("source_slate"))
+            no_slate = False
             if not run:
-                f.add("WARN", "WORKING", "draft.md has no source_slate; slate ledgers cannot be located")
-            return {"kind": "draft", "path": draft, "rel": "draft.md", "run": run, "fm": dfm}
+                run = no_slate_sheet(chapter)
+                if run:
+                    no_slate = True
+                    f.add("INFO", "NO-SLATE", "draft.md has no source_slate — no-slate route: keyed on spec-check/%s (minted run id); "
+                          "rev source_slate carries it (RP-P3)" % run)
+                else:
+                    f.add("WARN", "WORKING", "draft.md has no source_slate and no ready no-slate verdict sheet; slate ledgers cannot be located")
+            return {"kind": "draft", "path": draft, "rel": "draft.md", "run": run, "fm": dfm, "no_slate": no_slate}
     run = resolve_run(chapter, want_run)
     if not run:
         if want_run:
@@ -376,12 +408,15 @@ def pick_working_text(chapter, want_run, f):
     fm, _, err = parse_frontmatter(read(cd))
     if err:
         f.add("WARN", "WORKING", "slate/%s/clean-draft.md frontmatter: %s" % (run, err))
-    return {"kind": "slate", "path": cd, "rel": "slate/%s/clean-draft.md" % run, "run": run, "fm": fm or {}}
+    return {"kind": "slate", "path": cd, "rel": "slate/%s/clean-draft.md" % run, "run": run, "fm": fm or {}, "no_slate": False}
 
 
-def select_mode(chapter, run, f):
+def select_mode(chapter, run, f, no_slate=False):
     if not run:
         return "full", None
+    if no_slate:
+        # no_slate_sheet already proved: ready, slate_run none, names draft.md (RP-P3)
+        return "execute-only", "spec-check/%s/verdicts.md" % run
     vp = os.path.join(chapter, "spec-check", run, "verdicts.md")
     if not os.path.isfile(vp):
         return "full", None
@@ -455,9 +490,9 @@ def cmd_resolve(a, f, quiet=False):
     wt = pick_working_text(chapter, getattr(a, "slate", None), f)
     if not wt:
         return None
-    mode, verdicts = select_mode(chapter, wt["run"], f)
+    mode, verdicts = select_mode(chapter, wt["run"], f, wt.get("no_slate", False))
     ledgers = {}
-    if wt["run"]:
+    if wt["run"] and not wt.get("no_slate"):
         for n in ("synthesis-ledger.md", "leaves-left.md"):
             ledgers[n] = os.path.isfile(os.path.join(chapter, "slate", wt["run"], n))
     spans, rules = protected_census(root, project, wt, f)
@@ -772,6 +807,24 @@ def selftest():
     if not r or r["mode"] != "full" or not f.has("WARN", "MODE"):
         fails.append("resolve#3b: stale verdicts should be treated as absent")
     write(vp, "---\nstatus: ready\nslate_run: %s\n---\n# v\n" % run)
+    # 3c. NO-SLATE route (RP-P3): draft.md without source_slate + a minted-run sheet
+    #     (slate_run: none, working_text: draft.md, ready) → execute-only keyed on the minted id;
+    #     the slate-keyed sheet for `run` is NOT picked. 3d: same sheet not ready → full + WARN.
+    draft_keep = read(os.path.join(ch, "draft.md"))
+    write(os.path.join(ch, "draft.md"), "---\ntype: chapter-draft\nstatus: author-pass\n---\n\nShe walked.\n")
+    ns = "2026-09-02-01"
+    nvp = os.path.join(ch, "spec-check", ns, "verdicts.md")
+    write(nvp, "---\nslate_run: none — no slate leg\nrun_id: %s\nsource: draft.md (author-pass)\nworking_text: draft.md\nstatus: ready\n---\n# v\n" % ns)
+    f = Findings(); r = cmd_resolve(args(), f, quiet=True)
+    if (not r or r["mode"] != "execute-only" or r["source_slate"] != ns or r["verdicts"] != "spec-check/%s/verdicts.md" % ns
+            or not f.has("INFO", "NO-SLATE") or f.has("WARN", "WORKING")):
+        fails.append("resolve#3c (no-slate): %r %r %s" % (r and r["mode"], r and r["source_slate"], f.items))
+    write(nvp, "---\nslate_run: none — no slate leg\nsource: draft.md\nworking_text: draft.md\nstatus: draft\n---\n# v\n")
+    f = Findings(); r = cmd_resolve(args(), f, quiet=True)
+    if not r or r["mode"] != "full" or r["source_slate"] is not None or not f.has("WARN", "WORKING"):
+        fails.append("resolve#3d (no-slate, not ready): %r %r" % (r and r["mode"], r and r["source_slate"]))
+    os.remove(nvp); os.rmdir(os.path.dirname(nvp))
+    write(os.path.join(ch, "draft.md"), draft_keep)
     # 4. new → rev1 + note, parse back, key set, fills present, spans pre-enumerated
     f = Findings(); r = cmd_new(args(), f)
     if not r or f.worst() == "ERROR":

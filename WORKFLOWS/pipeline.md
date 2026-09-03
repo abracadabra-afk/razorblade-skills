@@ -17,6 +17,8 @@ dictation-preflight is the upstream prep (queued dictation → filled `envelope.
 
 ## Conventions (referenced, not triggered)
 
+- [[_CREATIVE DIRECTIVES]] — CDIR-001–010, how AI behaves around CRE's craft (never author · craft content verbatim · organic-process guard · diagnose never decide · every edit earns its place · protected spans queried never proposed against · evidence before belief · ruled register/POV · instinct outranks analysis · payoff ledger at landing). **Every fiction workflow loads it after `_DIRECTIVES` and before the project entry note** (CLAUDE.md load rule, ratified 2026-09-03); `blind-read` and the panel readers are the clean-room exception. Craft content is the five-layer stack at [[KNOWLEDGE/CRAFT CANON]]. Craft observations go to [[_CREATIVE OBSERVATIONS]] under DIR-003. Installed skills inherit at their next repack (DIR-009).
+
 - [[WORKFLOWS/chapter-weight]] — a one-field tag (`weight: load-bearing | standard | bridge` in `brief.md`, default `standard`) that scopes QA effort: load-bearing chapters get the full spec-check battery + full scene-intensity; bridge chapters get a lean pass (Pass 2 only or straight to the register); the register runs on all of them. **Depth scales, the quality bar never does.** Read by spec-check, scene-intensity, workshop-chapter; seeded by chapter-init. From the archive's scope-based-excellence salvage (`^obs-053`). **status: active** — built 2026-06-13.
 
 ## Three REFERENCE checks for the revision lane (per project, archive salvage `^obs-053`)

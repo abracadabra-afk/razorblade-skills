@@ -31,6 +31,8 @@ This skill resolves author *calls*, so CRE is the decider. Surface each loop wit
 ### Step 0 — Vault sentinel (`^obs-004`)
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault.
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft; CDIR-001's one-demonstration-block clause is this skill's) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ### Step 1 — Resolve the chapter, the loops, and the voice sources
 Locate the chapter folder (CRE names it, or the most recently touched). Read `open-loops.md` and `draft.md`. Walk up to the project root (the folder whose `CHAPTERS/` holds this chapter) and read `REFERENCE/voice-spec.md` + `REFERENCE/register.md` if present, plus `KNOWLEDGE/VOICE SAMPLES`. If `open-loops.md` is missing or has no unresolved entries → halt. Name what you loaded so a misfire is visible.
 

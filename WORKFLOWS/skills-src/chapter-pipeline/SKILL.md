@@ -35,6 +35,8 @@ State the mode at the top of the report.
 ## Step 0 — Vault sentinel (`^obs-004`)
 From the mounted root read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch → halt and ask which folder is the vault. (Each leg runs this too; you run it once up front so the chain fails fast.)
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any project file; every leg except `blind-read` (clean-room) inherits it. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ## Phase 1 — Construct (per sequence, one sitting)
 1. **Workshop-1** (`workshop-chapter`, Mode A / sequence-plan): establish the author's intent for the sequence; author the **sequence envelope** (`<project>/SEQUENCES/SEQUENCE <N> - <NAME>/sequence-envelope.md`); scaffold each chapter via `chapter-init`; **derive each chapter `envelope.md` from the sequence envelope**; seed the `brief.md`s. **Cap: one sequence ahead** — do not plan the next sequence until this one has landed (sequence-type selection keys on the psychological state the prior threshold changed).
 2. **runway-builder**: `brief.md` → `runway.md` per chapter (the speaking outline the author dictates from).

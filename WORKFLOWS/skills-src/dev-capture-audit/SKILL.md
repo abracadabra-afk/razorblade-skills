@@ -14,6 +14,8 @@ Canonical reference: `WORKFLOWS/dev-capture-audit.md`. This is the AI-trigger su
 ## Step 0 — Vault sentinel (^obs-004)
 Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file: directives`. Mismatch/missing → halt and ask which folder is the vault. Write nothing.
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ## Step 1 — Resolve the project
 The target is the folder with `CHAPTERS/` and/or `REFERENCE/` and a `DEV/` sibling. If CRE names one, use it; if exactly one qualifies, use it and say so; else ask. If the project has no `DEV/` tree → halt (this skill audits, it does not scaffold).
 

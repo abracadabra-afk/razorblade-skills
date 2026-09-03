@@ -20,6 +20,8 @@ Five moves, in order: **gate → select → scaffold → derive → verify+log**
 ## Step 0 — Vault sentinel (`^obs-004`)
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch/missing → halt and ask which folder is the vault.
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ## Step 1 — Resolve project + select the next chapter
 Project root is `WRITING/PROJECTS/<PROJECT>/` (ask if ambiguous). The ingest source is the published per-chapter prose (for GHOST RIVER: `GHOST RIVER (FIRST ED)/Chapters/Chapter <N>.md` — **First Edition only**; Second-Ed/Series materials are NOT ingested). The **next chapter** is the lowest-numbered source chapter without a `CHAPTERS/CHAPTER <N>/draft.md`. If all are ingested → report "ingest complete" and stop. **On-entry temp sweep (`^obs-027`):** once the project resolves, delete any stranded atomic-write orphans matching `REFERENCE/*.tmp.*` **via the vault API** (never bash `rm` — a Dropbox lock blocks it); scope strictly to the `*.tmp.<digits>.*` interrupted-write pattern, never a live `.md`, and flag (don't delete) anything that doesn't match.
 

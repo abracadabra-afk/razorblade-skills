@@ -17,6 +17,8 @@ Canonical doc: `WORKFLOWS/episode-feedback.md`. Channel constraints: `BUSINESS/S
 
 From the mounted folder root, read `_DIRECTIVES.md` and confirm frontmatter `type: ai-os-brain` + `file: directives`. Missing or mismatched → **halt and ask** which folder is the vault. Hard gate; never scaffold a bootstrap.
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any episode file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ---
 
 ## Step 1 — Locate the episode and the inputs

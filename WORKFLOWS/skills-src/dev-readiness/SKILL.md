@@ -17,7 +17,7 @@ You **surface gaps and questions; you never fill them.** Say *"the Widowsbane ha
 ---
 
 ## Step 0 — Vault sentinel (^obs-004)
-Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file: directives`. Mismatch/missing → halt and ask which folder is the vault. Then confirm the target project's `DEV/_DEV_MAP.md` exists; if absent, the project has no DEV tree — say so and stop (this skill audits, it does not scaffold).
+Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file: directives`. Mismatch/missing → halt and ask which folder is the vault. **Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft; CDIR-003 is the organic-process guard this skill runs under) before opening any project file; `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both; missing → proceed and note it, it is not a sentinel. Then confirm the target project's `DEV/_DEV_MAP.md` exists; if absent, the project has no DEV tree — say so and stop (this skill audits, it does not scaffold).
 
 ## Step 1 — Read the DEV tree (read-only)
 Read, never write:

@@ -17,6 +17,8 @@ You do four moves, in strict order: **locate**, **triage (gate 1)**, **propose f
 
 Before anything else, from the mounted root read `_DIRECTIVES.md` and confirm its frontmatter has both `type: ai-os-brain` and `file: directives`. If missing or mismatched, **halt and ask** which folder is the vault. Do not scaffold, do not write. (Shared `^obs-004` gate.)
 
+**Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any project file. `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both. Missing → proceed and note it; it is not a sentinel.
+
 ---
 
 ## Required inputs

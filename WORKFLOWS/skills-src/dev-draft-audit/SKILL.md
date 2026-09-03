@@ -23,7 +23,7 @@ The two defaults ARE the trivia-filter: they exist so CRE rules only on genuine 
 ---
 
 ## Step 0 — Vault sentinel + scope
-Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file: directives` (`^obs-004`). Mismatch/missing → halt and ask which folder is the vault. CRE names the part and points at the draft folder. Load the part's `DEV/sequences/` reads (or the `project.md` act-table rows) and note which sequence titles are **router-derived working names** pending CRE — those are harvest targets.
+Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file: directives` (`^obs-004`). Mismatch/missing → halt and ask which folder is the vault. **Creative-lane load (ratified 2026-09-03):** then read `_CREATIVE DIRECTIVES.md` from the mounted root (CDIR-001–010 — how AI behaves around CRE's craft) before opening any project file; `_DIRECTIVES` wins on OS matters, `_CREATIVE DIRECTIVES` on craft-behavior, CRE's instinct over both; missing → proceed and note it, it is not a sentinel. CRE names the part and points at the draft folder. Load the part's `DEV/sequences/` reads (or the `project.md` act-table rows) and note which sequence titles are **router-derived working names** pending CRE — those are harvest targets.
 
 ## Step 1 — Read everything
 Read **all** drafts in the folder. They are short chapters; a partial read misses exactly the gaps this audit exists to find. Note file-ordinal vs chapter-header numbering (header typos happen — ordinals are usually authoritative) and modified dates (vintage decides supersession).

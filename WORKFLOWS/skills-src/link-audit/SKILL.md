@@ -1,6 +1,6 @@
 ---
 name: link-audit
-description: Audit an Obsidian vault for broken references - dangling [[wikilinks]], ![[embeds]] and [md](links), plus broken #headings and ^block-anchors - and print a categorized punch list. Use when CRE asks to "run the link doctor", "check for broken links", "audit the links", "find dangling links/references", "are there broken wikilinks", or after a restructure/move to verify nothing dangles. Read-only - it diagnoses and hands CRE a fix list, never edits a note. Sibling of skill-audit (audits skills) and backlog-sweep. Do NOT use it to FIX links (manual/separate pass), to audit skills (skill-audit), or to sweep the backlog (backlog-sweep).
+description: 'Audit an Obsidian vault for broken references - dangling [[wikilinks]], ![[embeds]] and [md](links), plus broken #headings and ^block-anchors - and print a categorized punch list. Use when CRE asks to "run the link doctor", "check for broken links", "audit the links", "find dangling links/references", "are there broken wikilinks", or after a restructure/move to verify nothing dangles. Read-only - it diagnoses and hands CRE a fix list, never edits a note. Sibling of skill-audit (audits skills) and backlog-sweep. Do NOT use it to FIX links (manual/separate pass), to audit skills (skill-audit), or to sweep the backlog (backlog-sweep).'
 ---
 
 # Link Audit (the link doctor)
