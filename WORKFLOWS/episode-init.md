@@ -5,6 +5,8 @@ status: spec — run by hand/in chat; graduates to a packed skill after 2–3 li
 triggers: ["build episode N", "init the episode", "scaffold the episode", "start a new episode", "episode builder"]
 lane: 5 (writing-ops) + 1 (fiction)
 created: 2026-07-23
+last_updated: 2026-09-04
+revision_note: "2026-09-04 — the EP 02 run-log amendment applied to the doc body at last (it had sat as a recommendation since 2026-08-23). Step 3 now opens with a triage-vs-live reconciliation; where they disagree the live material wins and the divergence is recorded in premise.md. CRE ruled staleness a FLAG, never a RESHAPE — a re-deepen gate in front of the mic is the thing the route exists to avoid. Doc-only; episode-init has no skills-src entry, so no pack is owed."
 ---
 
 # episode-init
@@ -34,7 +36,7 @@ S7  PRODUCTION        episode-runway Pass 3 — TOS re-check → routing re-call
 
 Ratified provenance for this order: transcoder ruled **in** the route (CRE, 2026-07-23 — "critical; it turns my telling the story to myself into prose"); scene-intensity sequential after the transcoder (built 2026-07-22, run live on EP 01's pass-2 slate); blind read moved **post-slate** so the one-shot cold reader is spent on prose, not on the raw telling (EP 01's blind read burned flags on STT garbles and cleaner artifacts the transcoder removes).
 
-> **S0 + SIT amendment (2026-08-09, CRE-ruled — premise-forge design session).** S0 is now formalized by [[WORKFLOWS/premise-forge]] (attended, feeling-first premise developer → `CANDIDATES/<title>/triage.md`, pre-answering this workflow's Pass-1 gate — confirm, don't re-derive). And **the SIT is repositioned**: it lives **between rough draft and author pass** (the S5→S6 seam), not between gate and dictation. Bag → gate → runway → mic **same-day is sanctioned**; the sit happens on banked rough drafts, which the steady drafting cadence keeps supplied. The S2 row in the diagram above is superseded accordingly.
+> **S0 + SIT amendment (2026-08-09, CRE-ruled — premise-forge design session).** S0 is now formalized by [[WORKFLOWS/premise-forge]] (attended, feeling-first premise developer → `CANDIDATES/<title>/triage.md`, pre-answering this workflow's Pass-1 gate). ~~confirm, don't re-derive~~ — **superseded 2026-09-04: confirm the triage against the live material first; where they disagree, the material wins** (Step 3's reconciliation). **Also note:** premise-forge v2 added the S0.5 **DEEPEN** mode, so a picked candidate's triage may now carry an `## Arc chain` — more pre-answers, and more that can have moved by the time the gate opens. And **the SIT is repositioned**: it lives **between rough draft and author pass** (the S5→S6 seam), not between gate and dictation. Bag → gate → runway → mic **same-day is sanctioned**; the sit happens on banked rough drafts, which the steady drafting cadence keeps supplied. The S2 row in the diagram above is superseded accordingly.
 
 > **Route v3 amendment (2026-08-09, CRE-ruled — EP 01 post-mortem).** S6 restructured: [[WORKFLOWS/dev-edit]] (blind dev panel + informed flag-keyed walk) is the first instrument after the drafting engine, producing the roadmap for **CRE's author pass**; the reader panel ([[WORKFLOWS/panel-read]]) moves to the **pre-publication gate** and is never convened on pre-author-pass material. Governing category ruling: CONTENT flags (a beat does no new work) are cured only by the author pass; EXECUTION machinery (choreographer, line queues, panel-response) never runs on a section carrying an open CONTENT flag. Evidence: EP 01's video-2-escalation choreo session died whole with the sorority sequence; CRE's own author-flags D2b predated the panel's C1 by two days. Full provenance in dev-edit.md. `blind-read` stays available as a cheap single cold probe at CRE's call.
 
@@ -44,7 +46,7 @@ CRE brings an episode idea in any form — a feeling he wants to explore, a `CAN
 
 ## Inputs
 
-- **The idea** — anything: a premise line, a fragment, a triage note, a dictation. If it's a `CANDIDATES/` entry, its `triage.md` pre-answers most of the gate; confirm rather than re-derive.
+- **The idea** — anything: a premise line, a fragment, a triage note, a dictation. If it's a `CANDIDATES/` entry, its `triage.md` pre-answers most of the gate — **but confirm the triage against the live material first; where they disagree, the material wins, and the divergence is recorded in `premise.md`** (CRE-ruled 2026-09-04, off the EP 02 run log below). "Confirm rather than re-derive" holds for a *fresh* candidate and is actively wrong for one that has been worked: on EP 02, five ruled constructions had been superseded in development before the gate opened, and the TOS read would have banded the episode against content that no longer existed. A triage is a dated claim about a story, and stories move (DIR-010, DIR-019).
 - **Episode number** — **CRE's scheduling call, always.** Candidates stay unnumbered until he assigns a slot. If N is not (highest existing episode + 1), surface and confirm.
 - **Working title** — from CRE; never invent one.
 
@@ -59,7 +61,24 @@ Verify `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). F
 
 ### Step 3 — THE GATE (Pass 1, moved here from episode-runway v1)
 
-Run the four checks in order, per the canonical constraint set in [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]]:
+#### Step 3 opens with a reconciliation (added 2026-09-04)
+
+**Before any of the four checks, reconcile the triage against the live material.** Gate what the story *is*, not what it was when it was banked.
+
+1. **Read both.** The candidate's `triage.md`, and whatever the story has actually become — CRE's account of it in this session, a `notes.md` that has accumulated, a draft if he wrote one at the desk. (Reading a draft is sanctioned *here*; this is the gate, not the plan. `episode-blueprint` is the tool that never reads `draft.md`.)
+2. **List what has moved,** field by field, in one batch: knot · scenario · constraint · peg · cast · container · anything in `## Arc chain` if the candidate was deepened.
+3. **The live material wins,** every time. Do not ask him to defend the change or re-ratify his own development — a hand-landing is itself a ruling (DIR-019 §3, CDIR-009). You are recording, not adjudicating.
+4. **Run checks a–d against what survived.** This is the whole point: the TOS band and tier get read against content that exists.
+
+**Staleness is a FLAG, never a verdict (CRE-ruled 2026-09-04).** A superseded triage does not produce RESHAPE and does not block the scaffold. It is recorded and the gate proceeds. Sending him back to re-deepen before a folder exists would put a gate in front of the mic, which is exactly what this route is built to avoid. RESHAPE stays reserved for what it has always meant: the *premise itself* does not hold.
+
+**Where the divergences go:** `premise.md`, in a `## Divergences from triage` section, plus frontmatter `triage_reconciled: YYYY-MM-DD`. That location is load-bearing — `episode-blueprint` reads `premise.md` and already rules premise over triage, so a divergence recorded here propagates downstream with no further machinery. An arc-chain field that has gone stale is named in that section and nowhere else; the chain itself stays the triage's and is not rewritten here (capture is `premise-forge`'s, judgment is `episode-blueprint`'s, and this step only reports).
+
+**Nothing to reconcile** — a fresh candidate straight from the bag, or an idea with no triage — record `triage_reconciled: n/a — fresh candidate` and go straight to the checks. Do not manufacture a divergence list.
+
+#### The four checks
+
+Run them in order, per the canonical constraint set in [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]], **against the reconciled material**:
 
 **a. Premise integrity** — knot · scenario-challenges-knot · tensional constraint · **topical peg** (no peg, no title/thumbnail/algorithm surface — a premise without a peg is not ready).
 
@@ -81,6 +100,8 @@ Run the four checks in order, per the canonical constraint set in [[BUSINESS/SUB
 ```
 WRITING/SHORTS/EPISODES/EP NN - <TITLE>/
 ├── premise.md        Pass-1 output — knot · constraint · peg · TOS band · tier · container verdict
+│                     + `## Divergences from triage` (Step 3's reconciliation; `none` when fresh)
+│                     + frontmatter `source_candidate:` and `triage_reconciled:`
 ├── notes.md          CRE's sit-with-it surface (seeded empty; his document — appended below a rule only, never interleaved)
 ├── runway.md         stub, status: awaiting synthesis (episode-runway v2 carves it at S4)
 ├── envelope.md       stub, status: derives at slate time (from the carved runway + rulings; transcoder v5.1 episode mode)
@@ -109,12 +130,17 @@ Three rules stamped into `draft.md`'s scaffold frontmatter so no future session 
 
 Sentinel fails · folder exists · no number/title · gate verdict is RESHAPE or NOT-AN-EPISODE (nothing scaffolds on a non-GO) · CRE hasn't ruled tier.
 
+**Not a stop condition:** a stale or superseded triage. It is reconciled, recorded, and the gate proceeds (Step 3, CRE-ruled 2026-09-04).
+
 ## Guards
 
 - **Never writes CRE's prose** — not the anomaly line, not a beat. Gate + structure only.
 - **Never invents story options.** Forks go to decision-helper exactly as CRE articulated them.
 - **Tier routing is CRE's ruling.** Recommend with a one-line basis; he rules.
 - **Numbering is CRE's scheduling call.** Candidates are promoted, never auto-numbered.
+- **Gate the live material, never the triage.** A triage is a dated claim; where it and the story disagree, the story wins and the divergence is recorded — never re-ratified by CRE, because his development *is* the ruling (DIR-019 §3, CDIR-009).
+- **Staleness flags; it never blocks.** No re-deepen gate in front of the mic.
+- **The reconciliation reports; it does not re-capture or judge.** An arc chain stays `premise-forge`'s to capture and `episode-blueprint`'s to judge; this step only names what moved.
 
 ## Relationship to the rest of the OS
 
@@ -133,4 +159,4 @@ Sentinel fails · folder exists · no number/title · gate verdict is RESHAPE or
 Two things this run surfaced that the spec did not anticipate:
 
 - **A gated episode can arrive with its draft already written.** CRE hand-authored this one at the desk (dialogue spine first, narration layer second) across a single attended session, so **S2 / S4 / S5 did not run** — no sit, no runway carve, no mic, no slate. The scaffold absorbed it by N/A-stubbing `runway.md`, `envelope.md`, `dictation/` and `slate/` **with the reason recorded in each**, rather than leaving them empty or omitting them, and by landing the prose as draft 1 directly. Step 4's file list held; only the *fill* changed. Recommend this stay the sanctioned handling — the stub carrying its own reason is what stops a later pass reading the gap as a defect.
-- **Step 3's gate must be run against the current material, not the triage.** Five of this candidate's ruled constructions had been superseded in development before the gate opened (letter never finished · relapse caused by the dinner · **cocaine/nosebleed ending image retired** as incompatible with a plant already load-bearing in the draft · husband cut from the cast · POV register ruled). "Confirm rather than re-derive" (Inputs) is right for a *fresh* candidate and actively wrong for one that has been worked — the TOS read in particular would have banded this episode against content that no longer exists. Suggested amendment: **confirm the triage against the live material first; where they disagree, the material wins and the divergence is recorded in `premise.md`.**
+- **✅ APPLIED 2026-09-04 — now in the doc body (Inputs + Step 3's reconciliation block). History, not a pending action; do not re-derive it.** **Step 3's gate must be run against the current material, not the triage.** Five of this candidate's ruled constructions had been superseded in development before the gate opened (letter never finished · relapse caused by the dinner · **cocaine/nosebleed ending image retired** as incompatible with a plant already load-bearing in the draft · husband cut from the cast · POV register ruled). "Confirm rather than re-derive" (Inputs) is right for a *fresh* candidate and actively wrong for one that has been worked — the TOS read in particular would have banded this episode against content that no longer exists. Suggested amendment: **confirm the triage against the live material first; where they disagree, the material wins and the divergence is recorded in `premise.md`.**

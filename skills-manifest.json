@@ -1,7 +1,21 @@
 {
-    "generated":  "2026-09-03T12:00:09.0582413-07:00",
+    "generated":  "2026-09-04T12:00:10.0770159-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
+                   {
+                       "name":  "backlog-agent",
+                       "package":  "WORKFLOWS/skills/backlog-agent.skill",
+                       "sha256":  "b7dd542951f82971f51964e997118bc8fe6ed7ef07e8ec7a0a2d06a448e6721f",
+                       "content_sha256":  "435496ee08ca23cf37d971d87f2f4cb2605650ca738165077344e85249654a00",
+                       "bytes":  5585
+                   },
+                   {
+                       "name":  "backlog-supervisor",
+                       "package":  "WORKFLOWS/skills/backlog-supervisor.skill",
+                       "sha256":  "f9ca40e5304e04bb87f1231a8b6b2ae10332be8dfbca0e7a8e863606ee2e3282",
+                       "content_sha256":  "63d47ecd9762a42ea692f7aff73492896d6d0020c69556fee092c71098ebe793",
+                       "bytes":  7068
+                   },
                    {
                        "name":  "blind-read",
                        "package":  "WORKFLOWS/skills/blind-read.skill",
@@ -22,6 +36,13 @@
                        "sha256":  "dccfb58defb06fb3beefeb96f391f1cdc2ad827866b4cc23b246648792cca0a2",
                        "content_sha256":  "cde7cdbc28364ecb72b27fe158db127dce0dc2d0b8713c7c5d439a5499b4658a",
                        "bytes":  6257
+                   },
+                   {
+                       "name":  "bootstrap-manager",
+                       "package":  "WORKFLOWS/skills/bootstrap-manager.skill",
+                       "sha256":  "d65dadcb7a6a0f18dfdcc7bf2772636de650e8b3a9dd3beb98ec6f885fced1dc",
+                       "content_sha256":  "ca08d291c0be6599fe91f258e5ad1f3406789560881e6c84e65b4313ac1c5694",
+                       "bytes":  12457
                    },
                    {
                        "name":  "canon-sync",
@@ -115,6 +136,13 @@
                        "bytes":  22935
                    },
                    {
+                       "name":  "episode-blueprint",
+                       "package":  "WORKFLOWS/skills/episode-blueprint.skill",
+                       "sha256":  "fab05a563fb3aa1dac524f7706693911f2b2e30a28f4651ad7a0aadf50041a31",
+                       "content_sha256":  "c192178962ec74c19f383c488c1ee1ab8bb7333d6c2da81a86ac11dfa991b9e9",
+                       "bytes":  22622
+                   },
+                   {
                        "name":  "episode-feedback",
                        "package":  "WORKFLOWS/skills/episode-feedback.skill",
                        "sha256":  "e60c441cd4f02915bc7c357e3db4d3f7eeb672e1c82eb1e82b9a8695e8f12ed0",
@@ -176,6 +204,13 @@
                        "sha256":  "9d96df703ebc57d5bc5e259432d1e43ab1c90c610937743a32122c324fd54a47",
                        "content_sha256":  "cfdf6aa062d6558abd70ca7cda7d37e0ec41cdbf8a988abe851ced0d962ab881",
                        "bytes":  3662
+                   },
+                   {
+                       "name":  "premise-forge",
+                       "package":  "WORKFLOWS/skills/premise-forge.skill",
+                       "sha256":  "787468b0fd9acf0cfa59394f9b50fce5a74be4220554ca8cf06f1ef10cc12f1b",
+                       "content_sha256":  "368ec5390cb4bb4ed660a36adc332271c2ffe070d79710483b1c0065248c66f3",
+                       "bytes":  16560
                    },
                    {
                        "name":  "project-plan",

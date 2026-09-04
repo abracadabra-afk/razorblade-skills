@@ -1,0 +1,97 @@
+{
+  "skill_name": "premise-forge",
+  "note": "Objective parts only. Craft judgments — whether an angle is really distinct, whether an ending stance is the right one, whether a premise sparks — are CRE's gate and are deliberately not eval'd. Fixtures are synthetic test data, not CRE material; no eval may write into WRITING/. There is no script: every step of this skill is a judgment surface, so assertions are checked by reading the written file and the transcript.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "deepen-records-verbatim-and-marks-the-gaps",
+      "prompt": "Deepen the premise. The candidate is at <workspace>/evals/fixture-candidates/FIXTURE GLASSHOUSE/ (a test fixture; use this path instead of WRITING/SHORTS/CANDIDATES). I'm here and answering. Ask me the chain.",
+      "expected_output": "An interview of the arc-chain fields with no defaults offered on any story-content question, then triage.md extended in place with an ## Arc chain section carrying every field either in the tester's words or marked [NOT NAMED — CRE], and a derived ## Handoff block at the foot whose next action is episode-init.",
+      "files": ["evals/fixture-candidates/FIXTURE GLASSHOUSE/triage.md"],
+      "assertions": [
+        "An ## Arc chain section exists in triage.md, placed after ## Format measurement",
+        "Every field is present: Choice, Mirror, Escalations, Moment of Truth, Ending stance, Curve",
+        "Each escalation line carries both an angle and a failure mode, or the [NOT NAMED — CRE] marker in that slot",
+        "Every field the tester did not answer is marked [NOT NAMED — CRE]; no unanswered field is silently omitted",
+        "Answered fields reproduce the tester's phrasing, not an upgraded paraphrase",
+        "A ## Handoff section is the last section in the file and carries the derived-warning comment",
+        "The handoff block's next action is episode-init, with a reason, and there is exactly one next action",
+        "The handoff block lists the [NOT NAMED — CRE] fields together",
+        "Frontmatter parses as YAML and carries deepened and next_action keys",
+        "No file was written under WRITING/",
+        "No new candidate folder or file was created"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "deepen-invents-nothing",
+      "prompt": "Deepen the premise. The candidate is at <workspace>/evals/fixture-candidates/FIXTURE GLASSHOUSE/ (a test fixture). Answer the interview with the Choice and the mirror only, then say: that's all I've got today.",
+      "expected_output": "Choice and Mirror recorded in the tester's words; Escalations, Moment of Truth, Ending stance and Curve all marked [NOT NAMED — CRE]; nothing proposed, suggested, or offered as a default in any of those slots; the handoff block lists all four as open.",
+      "files": ["evals/fixture-candidates/FIXTURE GLASSHOUSE/triage.md"],
+      "assertions": [
+        "No escalation, angle, failure mode, moment of truth, ending stance, or curve appears that the tester did not state",
+        "No question in the interview offered a default for a story-content field",
+        "Escalations, Moment of Truth, Ending stance and Curve are each marked [NOT NAMED — CRE]",
+        "The transcript contains no proposed option phrased as a suggestion, example, or 'something like'",
+        "No line in the written section is readable aloud as story: no quoted speech, no speech tag, no rendered image, no clock time, no invented character name",
+        "No variance judgment appears (no claim that two angles repeat, or that the shape repeats a prior episode)",
+        "No scope, container, or format re-measurement appears; the existing ## Format measurement section is unchanged",
+        "No word budget, episode number, or schedule appears anywhere in the file"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "deepen-refuses-the-bag-in-bulk",
+      "prompt": "Run the deepening on the whole bag — deepen every candidate in <workspace>/evals/fixture-candidates/ so they're all ready.",
+      "expected_output": "A refusal that names the reason (development cost paid on candidates that die on the shelf or go stale at the 90-day re-gut; an over-worked bag reintroduces the decision overwhelm the tool exists to kill), followed by an offer to deepen the one candidate he picks. No file written.",
+      "files": [],
+      "assertions": [
+        "The run refuses and stops",
+        "The refusal states the reason, not just the rule",
+        "It offers the single-candidate run instead",
+        "No triage.md was modified",
+        "No ## Arc chain or ## Handoff section was written anywhere"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "deepen-refuses-a-seed",
+      "prompt": "Prep for blueprint. The candidate is at <workspace>/evals/fixture-seeds/FIXTURE LONGSHADOW/ (a test fixture).",
+      "expected_output": "A refusal identifying the target as a SEEDS-class entry: seeds are sized, not scheduled, and a seed entering development is a portfolio-residency decision for decision-helper and CRE, outside this tool. No file written.",
+      "files": [],
+      "assertions": [
+        "The run identifies the target as a seed rather than a bag candidate",
+        "It refuses and stops, naming the sized-not-scheduled rule and routing development to decision-helper",
+        "No arc-chain interview was conducted",
+        "The seed's triage.md is unmodified"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "handoff-next-action-follows-the-gate-state",
+      "prompt": "Deepen the premise for FIXTURE GLASSHOUSE at <workspace>/evals/fixture-candidates/FIXTURE GLASSHOUSE/. It's already gated — the episode folder is at <workspace>/evals/fixture-episodes/EP 90 - FIXTURE GLASSHOUSE/ with a premise.md in it. I'm answering.",
+      "expected_output": "Same arc-chain capture, but the derived handoff block's single next action is episode-blueprint, because the episode is scaffolded and gated.",
+      "files": ["evals/fixture-candidates/FIXTURE GLASSHOUSE/triage.md"],
+      "assertions": [
+        "The gate state was established before the interview, not after",
+        "The handoff block's next action is episode-blueprint",
+        "Exactly one next action appears",
+        "No attempt was made to gate, scaffold, number, or schedule the episode",
+        "No blueprint.md was written"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "handoff-block-is-regenerated-not-appended",
+      "prompt": "I want to change my answer on E2's angle for FIXTURE GLASSHOUSE at <workspace>/evals/fixture-candidates/FIXTURE GLASSHOUSE/ — re-run the deepening with the new answer.",
+      "expected_output": "The ## Arc chain section carries the amended answer and the ## Handoff block is regenerated whole to match it. Exactly one handoff block exists in the file, and it does not disagree with the sections above it.",
+      "files": ["evals/fixture-candidates/FIXTURE GLASSHOUSE/triage.md"],
+      "assertions": [
+        "Exactly one ## Handoff section exists in the file",
+        "Every claim in the handoff block matches the section above it that it mirrors",
+        "The superseded angle appears nowhere in the regenerated block",
+        "The block was regenerated rather than edited line-by-line or appended to"
+      ]
+    }
+  ]
+}

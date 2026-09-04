@@ -1,0 +1,57 @@
+{
+  "skill_name": "episode-blueprint",
+  "note": "Objective parts only. Craft judgments (whether two angles are the same angle, whether a route-out basis is right) are CRE's gate and are deliberately not eval'd. Fixtures are synthetic test data, not CRE material.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "standard-band-plan-with-repeated-angle",
+      "prompt": "Blueprint the episode. The episode folder is at <workspace>/fixture-episodes/EP 90 - FIXTURE STANDARD/ (a test fixture; use this path instead of WRITING/SHORTS/EPISODES). I'm here to rule — present the plan and stop.",
+      "expected_output": "blueprint.md in the fixture folder: all 12 sections in order, budgets summing to 2,500, natural estimate inside the standard band, scope_verdict SHORT-FORM, recommendation GO, variance line naming E2/E3 as sharing an angle, Outcome inferred at (~0), Your notes last below a rule, no prose-like lines, nothing written into the vault.",
+      "files": ["fixture-episodes/EP 90 - FIXTURE STANDARD/premise.md"],
+      "assertions": [
+        "scripts/blueprint.py check exits 0 on the written blueprint.md",
+        "All sections present in the ruled order: Cast, Flaw, Incident, Choice, Escalations, Moment of Truth, Climax, Outcome, Variance, Scope, Recommendation, Your notes",
+        "Budgets sum to target_words (2500) within ±25",
+        "scope_verdict is SHORT-FORM and recommendation is GO",
+        "Variance line names E2 and E3 as sharing an angle",
+        "Outcome is inferred at (~0)",
+        "No quoted speech, speech tags, or multi-sentence movement lines",
+        "Frontmatter parses as YAML and carries band_low/band_high/route_out_at/target_words",
+        "No file was written under WRITING/SHORTS/EPISODES"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "over-band-plan-routes-out",
+      "prompt": "Shape the episode. The episode folder is at <workspace>/fixture-episodes/EP 91 - FIXTURE OVERFLOW/ (a test fixture; use this path instead of WRITING/SHORTS/EPISODES). I'm here to rule — present the plan and stop.",
+      "expected_output": "blueprint.md with natural_estimate at or above 4,000, scope_verdict OVER-BAND, recommendation ROUTE-OUT with a one-line basis naming the over dimensions (cast, spines, span), variance line naming E3/E5, budgets still summing to 2,500, no proposed cut or replacement escalation.",
+      "files": ["fixture-episodes/EP 91 - FIXTURE OVERFLOW/premise.md"],
+      "assertions": [
+        "scripts/blueprint.py check exits 0 on the written blueprint.md",
+        "natural_estimate >= route_out_at (4000)",
+        "scope_verdict is OVER-BAND and recommendation is ROUTE-OUT",
+        "Recommendation basis names at least one of: cast, spines, span",
+        "Variance line names E3 and E5 as sharing an angle",
+        "Budgets still sum to 2500 within ±25",
+        "No line proposes which escalation to cut or offers a replacement escalation",
+        "No file was written under WRITING/SHORTS/EPISODES"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "lint-fixtures",
+      "prompt": "Run scripts/blueprint.py check on each file in evals/fixtures/.",
+      "expected_output": "pass-standard-band.md exits 0; pass-over-band-route-out.md exits 0; fail-prose-and-sum.md exits 1 and reports: missing Climax, budgets sum 2400 vs 2500, natural 3300 > band_high with SHORT-FORM/GO inconsistency, quoted speech in Incident, multi-sentence E2, E1 missing angle, notes not below a rule.",
+      "files": ["evals/fixtures/pass-standard-band.md", "evals/fixtures/pass-over-band-route-out.md", "evals/fixtures/fail-prose-and-sum.md"],
+      "assertions": [
+        "pass-* fixtures exit 0",
+        "fail-prose-and-sum.md exits 1",
+        "fail report names the missing Climax section",
+        "fail report names the budget sum mismatch",
+        "fail report names the over-band inconsistency (natural 3300 > 2800 with SHORT-FORM/GO)",
+        "fail report names the quoted-speech line",
+        "fail report names the E1 missing angle"
+      ]
+    }
+  ]
+}

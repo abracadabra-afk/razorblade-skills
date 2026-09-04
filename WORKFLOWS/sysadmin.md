@@ -32,7 +32,7 @@ Five sweepers each defer their judgment calls to a different surface. CRE had to
 
 ## Inputs — where the window's findings already live
 
-**No shared report schema exists and none is needed.** Each sweeper already writes to a known surface; this pass aggregates from those. Read all seven:
+**No shared report schema exists and none is needed.** Each sweeper already writes to a known surface; this pass aggregates from those. Read all eight:
 
 | Source | Surface | What it carries |
 |---|---|---|
@@ -42,6 +42,7 @@ Five sweepers each defer their judgment calls to a different surface. CRE had to
 | `link-audit` | `SYSTEM/reports/<date>-link-audit.md` | dangling refs, broken anchors, duplicate-anchor findings |
 | `skills-sweep` | `SYSTEM/reports/<date>-skills-sweep.md` | install queue, repackage handoff, STALE/SOURCE-AHEAD rows |
 | `vault-health` | `_BACKLOG.md` items + `SYSTEM/reports/brain-doc-sizes.json` | rotation bands, desktop carve handoffs |
+| `backlog-supervisor` | `_BACKLOG.md` § **Needs CRE ruling (backlog-supervisor …)** bin | items ruled ATTENDED with the research already done, escalations after two failed fix rounds (both logs named by path), and already-addressed close proposals. Deliberately the same bin surface as its siblings rather than a parallel channel — DIR-012 cl. 4–5. Run receipts (incl. stand-downs) at `SYSTEM/reports/backlog-supervisor-runs.md` and `-agent-runs.md`. (Eighth source, added 2026-09-04.) |
 | any session (DIR-019 §4 scope lock) | `SYSTEM/drift-ledger.md` § OPEN | out-of-scope staleness noticed mid-task and parked silently — default bin **BATCH-RATIFY** (retire/stamp per DIR-019 §1–2); only a line touching channel/project *law* goes to RULE. Move ruled lines to § CLOSED. (Seventh source, added 2026-09-01.) |
 
 ## Steps
@@ -65,7 +66,7 @@ Then confirm each expected artifact exists **by direct `Read`/`Grep`, never `Glo
 
 ### Step 2 — Aggregate + de-duplicate
 
-Pull every open finding from the six sources into one list. Then **collapse duplicates across sweepers** — the same underlying defect routinely surfaces in two reports (a renamed workflow doc shows up as `task-audit` `BROKEN-REF` *and* `link-audit` `DANGLING`; a carved brain doc shows up in `vault-health` *and* as broken anchors). One defect, one line, both sources cited. Counting it twice inflates the list and burns the budget the cap is protecting.
+Pull every open finding from the eight sources into one list. Then **collapse duplicates across sweepers** — the same underlying defect routinely surfaces in two reports (a renamed workflow doc shows up as `task-audit` `BROKEN-REF` *and* `link-audit` `DANGLING`; a carved brain doc shows up in `vault-health` *and* as broken anchors). One defect, one line, both sources cited. Counting it twice inflates the list and burns the budget the cap is protecting.
 
 Carry forward any unruled items from the previous pass's receipt, **stamped with age** (`carried 2 passes`). Nothing vanishes by being skipped.
 
