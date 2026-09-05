@@ -8,7 +8,7 @@ outputs: [a ratified event arc (beat map) written to the chapter folder, an upda
 lane: fiction
 status: spec — packs after 2–3 live runs
 governed-by: DIR-017 (protected forward-flow), DIR-014 (cue binding), DIR-016 (runner wiring)
-last_updated: 2026-08-09
+last_updated: 2026-09-04
 ---
 
 # WORKFLOW: choreographer
@@ -60,6 +60,10 @@ Verify `_DIRECTIVES.md` frontmatter (`^obs-004`). Identify the target: a `choreo
 ### Step 1 — Load the context (read-only)
 
 Chapter `brief.md` (job, seals, payoffs due), `envelope.md` (POV + conditions for the stretch), `continuity.md`, REFERENCE `threads.md` / `arcs.md` / `bible.md` entries for the participants, and the register's taste surface. Do not preload beyond the participants and the stretch (DIR-002 discipline at chapter scale).
+
+**Supersession triage — as you load, before Step 2 frames the event (DIR-019, added 2026-09-04).** What this session loads that names a span: the `choreo`-typed `open-loops.md` entry and the surrounding text the transcoder anchored it to; an existing ratified map at `choreo/<event-slug>.md` whose beats quote or anchor draft text; and, on the [[WORKFLOWS/panel-response]] nesting, the panel finding and CRE's ruling that binned this event CHOREO, both of which quote banked prose. The working text is the chapter's current `draft.md` — the banked stretch, on the second exit door. **Span present → carry silently** into Step 2. **Span gone → moot:** retire the flag or ruling with a `superseded_by: draft.md (<date>)` stamp in place, one changelog line — **never asked**, and never designed around. **Span reworded but surviving → the only case that surfaces**, as one batched line at the head of the Step 2 dials, tree-researched first (DIR-011). A ratified map whose stamp predates the current `draft.md` is a §1 derived artifact: **regenerate it or retire it in place with the stamp, never put it to him as a map to re-ratify** — and never re-open an event his own later draft already restaged (§3 — a hand-landing is the newest ruling).
+
+**What this does not touch.** The triage runs on maps and flags *entering* a session as inputs, never on a map after its gap has been dictated. A delivered map is spent, not stale: divergence between the finished prose and the map that kickstarted it stays a win, never a supersession finding, and the guard against grading the draft against the map (DIR-017 clause 2) is unchanged. **Scope lock (§4):** staleness noticed outside this event, its chapter folder, and its direct derives is one line in `SYSTEM/drift-ledger.md`, not a beat and not a mid-session aside.
 
 ### Step 2 — Frame the event (propose, one screen)
 

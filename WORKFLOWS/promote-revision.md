@@ -54,6 +54,8 @@ Compare the revision's `source_slate` to `draft.md`'s. **Normalize both sides to
 
 **Fallback when a side lacks `source_slate` (added 2026-08-10, (c) — the v6/expansion route stitched CH12's draft with `provenance:` instead, so this check could not run as written):** verify lineage on `provenance:` (or the rev note's stated source) by confirming both sides name the **same slate run**; on a match, **normalize the draft onto `source_slate`** in the same promotion so the check runs as written next time. Neither field present on one side → treat as a mismatch: surface and ask. Every route that emits a promotable rev should write `source_slate`; a route that can't yet is the defect to file, not a case to wave through.
 
+**The AUTHOR-DIRECT (no-slate) route — CRE-ruled 2026-09-04, `^backlog-promote-no-slate-lineage` / RP-P4.** A draft with **no `source_slate` at all** matches any rev whose `source_slate` is a minted `spec-check/` run id — **proceed, do not ask.** CRE's basis, in his words: *no-slate means no dictation; sometimes he just uses a keyboard to write something.* An author-direct chapter never passed through the Transcoder, so there is no slate to inherit and the rev is keyed on the `spec-check/` sheet id instead (the `spec-check.md` 08-24 minted-run rule); `register-pass`'s `no_slate_sheet()` already resolves that route on the read side, so this closes the same seam on the write side. **Do not** normalize a minted sheet id onto the draft as `source_slate` — the draft genuinely has no slate, and writing one would fabricate a lineage. Stamp the promoted draft `route: author-direct` instead. First live case: CH16 rev1. **Still asks:** a draft that *has* a `source_slate` which merely disagrees with the rev's — that is a real divergence and the existing rule governs.
+
 ### Step 3 — Promote
 Replace `draft.md`'s body with the revision's prose (keep any `[unclear: …]` marks); rewrite the frontmatter per the mapping (read the rev's `kind`/stage first — the status names where the live text came from: `loop-clear → loops-cleared`, `expansion → expansion-revised`, register-pass/default → `register-revised`). Optionally bump `_status.md` `last_updated`.
 
@@ -77,6 +79,7 @@ Append to the chapter `changelog.md` and vault [[_CHANGELOG]] (fiction lane); fi
 - Chapter has no `revisions/` or no `draft.md` → halt, tell CRE (convention not adopted).
 - No `…-rev<N>.md` passage in `revisions/` → halt; nothing to promote — **unless** the trigger was "account the landing," in which case run Step 3b alone (hand-landing mode).
 - Revision `source_slate` ≠ draft `source_slate` (and draft isn't a scaffold) → pause, surface, ask.
+  **Not** a stop condition (CRE-ruled 2026-09-04): a draft with *no* `source_slate` beside a rev carrying a minted `spec-check/` run id — that is the author-direct route, and it proceeds. See Step 2.
 
 ## Logging
 On completion append an entry to [[_CHANGELOG]] (fiction lane) and the chapter's `changelog.md`; file any new fragility to [[_OBSERVATIONS]]. See the skill for the exact log format.

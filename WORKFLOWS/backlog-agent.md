@@ -7,6 +7,7 @@ inputs: [SYSTEM/backlog-queue/_served/ session plans (composed by backlog-superv
 outputs: [the artifacts a plan's completion conditions name, a completion log .md beside the plan in SYSTEM/backlog-queue/_review/, an unconditional run receipt in SYSTEM/reports/backlog-agent-runs.md]
 lane: meta
 status: draft
+version: 2
 created: 2026-09-04
 last_updated: 2026-09-04
 ---
@@ -18,7 +19,7 @@ last_updated: 2026-09-04
 Two modes, two triggers, and they are deliberately different phrases rather than one phrase with a modifier — attended sessions are CRE-called and a modifier is easy to fire by accident.
 
 - **Unattended** — **"work the backlog"**, or the `backlog-agent` scheduled task. Polls `SYSTEM/backlog-queue/_served/` for a plan marked `mode: unattended`, executes it, and writes a completion log detailed enough for [[WORKFLOWS/backlog-supervisor]] to audit without re-doing the work.
-- **Attended** — **"work the backlog with me"**, CRE present. Reads the `mode: attended` plans and works one with him. **Never self-started.** The scheduled task never runs this mode, and an unattended run never picks up an attended plan.
+- **Attended** — **"work the backlog with me"**, CRE present. Reads **`SYSTEM/backlog-queue/_attended/`** (a separate folder as of 2026-09-04, outside the unattended pipeline and its cap), shows him the prepared sittings with their ages, and works the one he picks — moving it straight to `_working/`. **Never self-started.** The scheduled task never runs this mode, an unattended run never reads that folder, and CRE can always name a plan outright: *"work the backlog with me on `^anchor`."*
 
 This is the **executing half** of the supervised backlog loop. The planning and reviewing half is [[WORKFLOWS/backlog-supervisor]].
 
@@ -43,9 +44,11 @@ Two layers, and the outer one is not negotiable.
 
 **Allowed only when the plan's write surface names the exact path:**
 
-- `WORKFLOWS/*.md` canon docs and `WORKFLOWS/skills-src/**` sources.
+- `WORKFLOWS/*.md` canon docs and `WORKFLOWS/skills-src/**` sources — **including authoring a new doc or source unattended when the plan names the exact path and specifies the content** (v2, 2026-09-04). The pack/install that follows is never attempted here (DIR-007/009); the plan's completion log names it as the desktop trip owed, and the supervisor queues it on the weekly sheet. Until packed the doc runs from the trigger index, which is the degraded mode already in place.
 - `SYSTEM/**` outside the two folders above.
-- `_BACKLOG.md` — **only** the single item the plan names, and only the edit the plan's completion conditions describe. Its own DIR-003 log lines are separate and always allowed.
+- `_BACKLOG.md` — **only** the single item the plan names, and only the edit the plan's completion conditions describe. Its own DIR-003 log lines are separate and always allowed. **Reach that item by the shared slice-read protocol** — `WORKFLOWS/backlog-supervisor.md` § Candidate source: measure with a metadata call, `Grep -n` with an explicit path to find the line, `Read` by offset for the slice, edit anchored on that slice, re-read the same slice — **never by pulling the file** (added 2026-09-04): `_BACKLOG.md` measured **288.6 KB**, past the ~256 KB point where the file tools return a prefix without saying so, and a targeted read is both correct and cheaper. If the item cannot be located that way, defer the plan rather than editing against a partial — an edit anchored on text you only half-read is a destructive write waiting to happen. Same rule for `_CHANGELOG.md` (252.6 KB) and `_OBSERVATIONS.md` (235.8 KB); full policy at `WORKFLOWS/log-rotate.md` § The hard line above the bands.
+
+**The auto-ratify class, from the agent's side (v2, 2026-09-04).** DIR-012 clause 6 (proposed at `SYSTEM/reports/2026-09-04-dir012-auto-ratify-proposal.md`; armed on CRE's word) makes a **reversible** write — stamp · move · archive verbatim · rewrite-down · fold, never delete — on `SYSTEM/**`, `_BACKLOG.md` + shards, `_OBSERVATIONS.md` (stamps + own DIR-003 lines), `WORKFLOWS/*.md`, `WORKFLOWS/skills-src/**` his standing yes. **What that changes here:** a plan may name such a path without carrying a per-item CRE ruling, and the agent executes it. **What it does not change:** the plan still has to name the path — the class widens what a plan *may* name, never what the agent does on its own — and the never-written list below is untouched by it, armed or not. The agent does not check whether the class is armed; the supervisor does, before serving.
 
 **Never written unattended, whatever a plan says.** A plan that asks for one of these is itself the defect: stop, defer, and say so in the completion log.
 
@@ -113,6 +116,7 @@ worked_by: backlog-agent
 
 - **## What I did** — the actual work, in order, plainly.
 - **## Completion conditions** — each condition from the plan, quoted, with **met / not met** and the **artifact path plus the specific evidence** that shows it. This is the section the audit reads first.
+- **## Observable — first probe** *(v2, 2026-09-04)* — the plan's `## Observable` quoted, then **one probe of it against live state at the end of the run**: the exact reading (a `Grep` count, a line quoted from the artifact, a frontmatter value), the substrate used, the timestamp. This is reading one of three: the morning audit reads it again, and the evening close-out reads it a third time before the `_BACKLOG` item is closed (`backlog-supervisor.md` § Observables). A plan with no `## Observable` is a pre-v2 plan — say so and probe the completion conditions instead. **Never write the probe from the plan's expectation; write what the artifact actually returned.**
 - **## Files written** — every path touched, with what changed and confirmation it was re-read.
 - **## What I deferred and why** — anything not done, each with the reason and what a next session would need. Empty is a valid answer; vague is not.
 - **## Surprises** — anything the plan assumed that turned out otherwise. This is how a bad plan gets fixed rather than repeated.
@@ -129,19 +133,21 @@ Enumerate `_served/` and `_working/`. Branch:
 - **`_served/` has no `mode: unattended` plan** → **stand down**: write the receipt, end the run. Nothing else — no `_BACKLOG` read, no bootstrap beyond the sentinel. This is the normal case and it must stay cheap.
 - **Otherwise** → claim the oldest eligible plan and continue.
 
-Attended mode skips this branch entirely: CRE names the plan, or is shown the `mode: attended` list and picks.
+**`_attended/` is never read on an unattended run** — not even to count it. The cheapest-work-check stays an enumeration of `_served/` and `_working/`, and adding a third folder to it would make the common stand-down more expensive for a lane this run cannot touch.
+
+Attended mode skips this branch entirely: it reads **`SYSTEM/backlog-queue/_attended/`**, shows CRE the prepared sittings with their ages, and works the one he picks — or the one he names outright.
 
 ### Step 2 — Claim
-Move the plan `_served/` → `_working/`. Confirm the move by reading the plan at its new path.
+Move the plan into `_working/` — from `_served/` on an unattended run, **straight from `_attended/`** when CRE picks one in a sitting. Confirm the move by reading the plan at its new path. From `_working/` both lanes follow the same path onward, and the supervisor audits them identically.
 
 ### Step 3 — Read in
 The plan in full, then every file in its References. Do not begin writing until both are done.
 
 ### Step 4 — Execute
-Follow the plan's Steps inside the plan's write surface, verifying each write by re-read.
+Follow the plan's Steps inside the plan's write surface, verifying each write by re-read. Where the plan has the agent author a canon doc or a skill source, use the house workflow-doc shape (frontmatter, When to use, Steps, Stop conditions, Logging, What this is NOT) and `yaml.safe_dump`-serialized frontmatter (DIR-004); a description over 1,024 characters or containing an angle bracket is a defect the pack gate will reject, so check it before handing back.
 
-### Step 5 — Log and hand back
-Write the completion log; move plan and log to `_review/`; confirm both landed at the new path.
+### Step 5 — Probe, log, hand back
+Probe the plan's observable once (§ The completion log); write the completion log; move plan and log to `_review/`; confirm both landed at the new path.
 
 ### Step 6 — Receipt, unconditionally
 Append one line (newest-first) to `SYSTEM/reports/backlog-agent-runs.md` **every fire, including a stand-down and including a halt**: date, mode, plan worked (or "no eligible plan — stood down"), outcome, files written, any substrate fallback taken. Create the file if absent.

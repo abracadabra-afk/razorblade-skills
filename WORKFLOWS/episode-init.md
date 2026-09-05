@@ -76,11 +76,11 @@ Verify `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). F
 
 **Nothing to reconcile** — a fresh candidate straight from the bag, or an idea with no triage — record `triage_reconciled: n/a — fresh candidate` and go straight to the checks. Do not manufacture a divergence list.
 
-#### The four checks
+#### The four checks (+ the promise gate)
 
 Run them in order, per the canonical constraint set in [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]], **against the reconciled material**:
 
-**a. Premise integrity** — knot · scenario-challenges-knot · tensional constraint · **topical peg** (no peg, no title/thumbnail/algorithm surface — a premise without a peg is not ready).
+**a. Premise integrity** — knot · scenario-challenges-knot · tensional constraint · **topical peg** (no peg, no title/thumbnail/algorithm surface — a premise without a peg is not ready). **Plus the promise gate (dec-034, CRE-ruled 2026-09-04): does the intended piece deliver *dread and a turn*?** Horror is the channel's promise; sub-genre (supernatural, gothic, cosmic, dark fairy tale, contemporary dark) is free and never gated — a dread-less piece is. Fail → record it in `premise.md` and hand back; never reshape the piece toward dread (organic-process guard). Reviewed 2026-12-01 against EP 02/EP 03 retention.
 
 **b. TOS band** — free-tier safe / age-restricted / never. Read the *intended* content against the line; Pass 3 re-checks the draft for drift.
 

@@ -1,20 +1,20 @@
 {
-    "generated":  "2026-09-04T12:00:10.0770159-07:00",
+    "generated":  "2026-09-04T17:08:47.2382935-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
                        "name":  "backlog-agent",
                        "package":  "WORKFLOWS/skills/backlog-agent.skill",
-                       "sha256":  "b7dd542951f82971f51964e997118bc8fe6ed7ef07e8ec7a0a2d06a448e6721f",
-                       "content_sha256":  "435496ee08ca23cf37d971d87f2f4cb2605650ca738165077344e85249654a00",
-                       "bytes":  5585
+                       "sha256":  "e7f26af1bd50ccf48fd2b69e70f6519725a05be3c4a71f4d686440c508a41c66",
+                       "content_sha256":  "e8eaaae2ed49f1f9da3f1e3f4872cffb9d529ed4c4c9d6a96ae72d0d5171f3e4",
+                       "bytes":  6752
                    },
                    {
                        "name":  "backlog-supervisor",
                        "package":  "WORKFLOWS/skills/backlog-supervisor.skill",
-                       "sha256":  "f9ca40e5304e04bb87f1231a8b6b2ae10332be8dfbca0e7a8e863606ee2e3282",
-                       "content_sha256":  "63d47ecd9762a42ea692f7aff73492896d6d0020c69556fee092c71098ebe793",
-                       "bytes":  7068
+                       "sha256":  "d2897091dab6e19955de42fde58a48f7edbcbb6bde000ab06b4a179030b8b2c9",
+                       "content_sha256":  "249ca2cf2722049a16a42211cf79ee0ab105c8d01c74f93f683957977c341d27",
+                       "bytes":  16089
                    },
                    {
                        "name":  "blind-read",
@@ -194,9 +194,9 @@
                    {
                        "name":  "log-rotate",
                        "package":  "WORKFLOWS/skills/log-rotate.skill",
-                       "sha256":  "0afb92c07b07c6c54095bf5872f871d5a0c81ff694fd4f41e30758cc2aff2f94",
-                       "content_sha256":  "ef93ff7ff6d1e9417266394e1f4a229d965aacfef93ae81726b551a72f667661",
-                       "bytes":  3963
+                       "sha256":  "1a029e90933b58a5689b80094e7b75a8cbaac988145f26679d63fddc4459dca7",
+                       "content_sha256":  "4fa40b71805e58e2544157afaae97aa7867933f0da1e81abd52c98f5dbd7a94b",
+                       "bytes":  5326
                    },
                    {
                        "name":  "loop-clearer",
@@ -208,9 +208,9 @@
                    {
                        "name":  "premise-forge",
                        "package":  "WORKFLOWS/skills/premise-forge.skill",
-                       "sha256":  "787468b0fd9acf0cfa59394f9b50fce5a74be4220554ca8cf06f1ef10cc12f1b",
-                       "content_sha256":  "368ec5390cb4bb4ed660a36adc332271c2ffe070d79710483b1c0065248c66f3",
-                       "bytes":  16560
+                       "sha256":  "79fabf2a7d3414fb388d2b1f0871b63e0ccd757fa22dbdd6c1e4d9f3a877c7c9",
+                       "content_sha256":  "a2d1515d5572cd400f94a5a6a4b71d8d9d2fcfda2ad80a3293c8085178395b58",
+                       "bytes":  17158
                    },
                    {
                        "name":  "project-plan",
@@ -222,9 +222,9 @@
                    {
                        "name":  "promote-revision",
                        "package":  "WORKFLOWS/skills/promote-revision.skill",
-                       "sha256":  "80ccd9f42f9c1162ac9e24e42bea47826d9fde5942dd4336a094da54184cd9e8",
-                       "content_sha256":  "42182d6bf9e4e2d92f139ea0f832105fd174186282acd2976fe5a00a3d3336e6",
-                       "bytes":  4520
+                       "sha256":  "fc04c6551d5360f4ae6adbe0b5f3d6e99a985c3ec08036bb04ddbccbcab83ad0",
+                       "content_sha256":  "c942a4d28a31ae4929f4f41d4d50b27958bcfe3e7add14a2fefb5fb4e702393b",
+                       "bytes":  4900
                    },
                    {
                        "name":  "reconcile",
@@ -306,9 +306,9 @@
                    {
                        "name":  "task-audit",
                        "package":  "WORKFLOWS/skills/task-audit.skill",
-                       "sha256":  "235cef5bec1566ac07e158c68394f24d52a093901c8256cec076c3e370307fac",
-                       "content_sha256":  "69c6c5539d8eda19838a34a8f3c5a252ea5fc1a844aec89fdea8100a18bbc759",
-                       "bytes":  14023
+                       "sha256":  "7d9fb09d069d7137436e43cb44d371555fec05db3858450f547e9de345398edd",
+                       "content_sha256":  "14efe66134a92641afb79b6ba7d940f37f8baaf4cf9cfdd08e4b61660dd8ccc2",
+                       "bytes":  16358
                    },
                    {
                        "name":  "triage-the-tasks",

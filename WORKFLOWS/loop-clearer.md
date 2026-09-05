@@ -7,7 +7,7 @@ inputs: [the chapter's open-loops.md (unresolved entries), the chapter's draft.m
 outputs: [a loop-clear revision in revisions/ carrying the surgical fixes + marked demo blocks for the bigger rewrites, the chapter's open-loops.md with ruled entries moved to Resolved / marked in-progress]
 lane: fiction
 status: active
-last_updated: 2026-06-19
+last_updated: 2026-09-04
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep an open-loops.md populated by the Transcoder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]] (which POPULATES open-loops.md); upstream of [[WORKFLOWS/register-pass]]. Automates the open-loops.md note's own instruction ("Resolve here, then patch draft.md") into a gated, in-voice revision. Its loop-clear revision is landed by [[WORKFLOWS/promote-revision]].
 ---
@@ -98,7 +98,7 @@ Report: surgical fixes committed in `rev<N>`; structural demos await CRE's rewri
 - Vault sentinel fails → halt, ask which folder is the vault.
 - Chapter doesn't follow the per-chapter folder convention, or no `draft.md` → halt, tell CRE.
 - `open-loops.md` absent or no unresolved entries → halt; nothing to clear.
-- A loop's source span can't be located in `draft.md` → flag it, skip that loop, continue the rest; never guess a span.
+- A loop's source span can't be located in `draft.md` → the loop is moot, not an open flag (DIR-019, Step 2's supersession triage): stamp the entry `superseded_by: draft.md (<date>)` in place, move it to **Resolved** with that reason, one log line — never asked — and continue the rest; never guess a span.
 - Voice sources (voice-spec / VOICE SAMPLES) absent → proceed best-effort but say so, and flag that options are unverified against the fingerprint.
 
 ## Integration touchpoints (sibling skills)

@@ -49,6 +49,12 @@ The scheduler dir is on the Windows host and **not reachable from sandbox bash**
 2. **Read each `path` via the file tools** (cloud-authoritative) and **write a copy to the session
    outputs scratch** as `prompts/<taskId>.md`. This is the `^obs-103` "stage off the host, read a
    clean copy" discipline — the script reads the scratch, never the host path.
+3. **Orphan check** (standing step, CRE-ruled 2026-09-04) — list `C:\Users\Chad\Claude\Scheduled\`
+   host-side (Desktop Commander or the file tools; bash cannot reach it) and diff it against the
+   registry from step 1. A prompt dir with no registered task is **inert and unrunnable**, yet lints
+   as `NO-DOC` forever and recurs on every punch list as if live. Report each with its mtime.
+   **Never delete** — stage to `SYSTEM/_quarantine/<date>-orphan-task-prompts/`; CRE rules disposal.
+   First run 2026-09-04: 19 dirs vs 16 tasks, three quarantined, parity now 16/16.
 
 ## Step 2 — Stage the script off the mount, then run it (`^obs-103` / `^obs-084`)
 
@@ -86,6 +92,24 @@ scheduler path, `_CHANGELOG` foot-append, dated-snapshot reads, missing NUL-guar
   matched only a bare `Read WORKFLOWS/x.md` and missed every backticked or other-verb loader; the
   fix added quoting/verb tolerance while keeping the path match literal, so no false-positive
   surface was created.
+- **Negations were discounted; IDENTIFIERS and FILENAMES were not** (2026-09-04, CRE-ruled off
+  `^obs-282` — the third direction of the same defect). `CHANGELOG-FOOT-APPEND` fired on **its own
+  signal name** in any prompt documenting the lint vocabulary — including this workflow's own
+  prompt — and `STALE-BOOK-NAME` fired on the **live filename** `WORKFLOWS/weave-vibebook.md`,
+  hitting `books-daily-ingest-weave` every run. **Why it mattered:** a HIGH/MED lint flips the
+  verdict to `DRIFT-MECH`, and `DRIFT-MECH` **short-circuits the stamp comparison**, so a genuinely
+  stale `tracks:` stamp could hide behind a false positive indefinitely. Fixed at the exact layer:
+  `_LINT_ID_RX` masks the all-caps signal identifiers (case-sensitive); `_BOOK_FILENAME_STEM` masks
+  a retired name only when hyphen-prefixed *and* inside a `.md` token — `VIBEBOOK/CAPTURE.md` and
+  `_DOBOOK.md` still hit. Three paired selftests added (25 → 28).
+
+**`doc_sha()` resolves `WORKFLOWS/` then the VAULT ROOT** (2026-09-04, CRE-ruled). `mount-the-vault`
+defers to `CLAUDE.md` — the canonical boot doc (`^obs-160`), of which `WORKFLOWS/vault-boot.md` is a
+derived install — and a root-level doc could not previously be stamped at all ("doc not found"), so
+the one row whose prompt was demonstrably correct was the one row that could never go clean.
+`task_doc_map.json` maps it to `CLAUDE.md` now. CRE ruled the **resolver over an `expect_verdict`
+escape**: an escape suppresses the verdict, the resolver makes the correct verdict reachable
+(DIR-018).
 
 **`STALE-SNAPSHOT` (MED)** fires when a prompt measures or decides off a dated artifact — a
 `SYSTEM/reports/*.json` stamp, a cached scan — with no freshness notion. The bar is deliberately

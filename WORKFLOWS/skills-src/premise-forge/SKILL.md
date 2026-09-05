@@ -64,6 +64,8 @@ Read `WRITING/SHORTS/CANDIDATES/`. Report live candidates, their conditions and 
 
 At cap (~10–12 live), lead with hygiene (Step 8) before forging more. An overfull bag reintroduces the decision overwhelm this tool exists to kill.
 
+**One-time promise read (dec-034).** Any live candidate whose `triage.md` has no `## Promise read` section gets one census line: its dread source as the premise states it, or `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it. Once every live candidate carries the section, this line stops firing.
+
 ## Step 3 — Condition intake + variety scan (FILL)
 
 - **He brings the condition** → run the variety scan as a freshness check only ("you've worked isolation twice — still game, or angle it differently?"). His condition wins regardless; the scan informs, never vetoes.
@@ -78,7 +80,7 @@ The scan reads the corpus — `EPISODES/*/premise.md` and `CANDIDATES/*/triage.m
 Generate what-if premises around the chosen condition — **a batch of ~5–10, one condition per batch** — each in the full `WRITING/SHORTS/PREMISES.md` grammar:
 
 1. **Knot first, always.** Start from the character flaw or condition. The knot is the premise's spine — never reverse-engineer a knot onto a scenario.
-2. **A scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it.
+2. **A scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it. **The detonation is the dread engine** (dec-034): the channel's promise is horror, so a premise forged for this bag carries the thing that frightens — an intrusion, a rule of the world bent, a consequence that cannot be taken back. Sub-genre is free (supernatural, gothic, cosmic, dark fairy tale, contemporary dark); a scenario with no dread in it is a weaker what-if, not a banned one — present it flat, his gut rules.
 3. **A tensional constraint.** A clock, a countdown, a closing door — and prefer constraints that do *containment* work, since a 20-minute clock is also a container.
 4. **A peg from the condition, never from a market.** The peg is the contemporary costume the timeless condition wears: ask *what does this condition look like right now?* A premise whose peg has no condition under it is a box-check, not a story.
 
@@ -122,6 +124,7 @@ working_title: TITLE
 author: Chad Ryan
 source: premise-forge session YYYY-MM-DD
 condition: the feeling or human condition
+subgenre: supernatural | gothic | cosmic | dark fairy tale | contemporary dark | folk horror | weird west | …   (what the variety scan reads; free under the horror promise, dec-034)
 format: short-form
 triaged: YYYY-MM-DD
 status: banked premise — awaiting CRE pick + episode-init gate
@@ -133,7 +136,8 @@ status: banked premise — awaiting CRE pick + episode-init gate
 ## Peg                  the contemporary costume, and its condition source
 ## Container            band verdict + why it holds short
 ## TOS band / tier      best pre-read; episode-init re-rules at the gate
-## Variety note         what this adds against the worked corpus
+## Variety note         what this adds against the worked corpus — condition + subgenre, under the promise
+## Promise read         dec-034 pre-read of episode-init check (a): the DREAD SOURCE as the premise states it. The TURN is not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate
 ## Format measurement   the Step-6 verdict + the dimensions that produced it
 ```
 
@@ -146,7 +150,7 @@ The triage pre-answers the `episode-init` Pass-1 gate. **It does not bind that g
 - **Cap:** ~10–12 live. At cap, forge nothing new until he retires or promotes.
 - **Min-fill floor:** below **4** live → surface "fill the bag" as a task in `TASKS/TASKS.md` so it rides week-shape and day-launch onto the board.
 - **Staleness:** a candidate's peg is a dated claim (DIR-010). At ~90 days, or when a peg's moment has visibly passed, flag for **re-gut**: he re-rules SPARK (with a peg refresh) or KILL. **Never auto-retire** — the checker flags, CRE rules.
-- **Next-up:** close every session with a ranked next-up from the live bag (recency of gut-yes, peg freshness, variety against the last published episode). **He ratifies or reorders.** The weekend slot then presents one story, zero decisions.
+- **Next-up:** close every session with a ranked next-up from the live bag (recency of gut-yes, peg freshness, variety against the last published episode). **He ratifies or reorders.** The weekend slot then presents one story, zero decisions. **Variety ranks under the promise (dec-034):** sub-genre and condition variety among horror-family pieces — the dec-025 interleave — never a reach outside the promise for its own sake. A `thin` promise read is a flag on the row; it never lifts and never sinks. His gut placed it; his gut, or the gate, moves it.
 
 ---
 

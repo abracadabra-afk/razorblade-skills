@@ -70,9 +70,17 @@ doctor", "which task prompts are stale". The detector half of `^backlog-task-pro
 5. **Semantic pass** — for each `REVIEW`/`DRIFT-EXACT`, read prompt + mapped doc and rule HIT/CLEAN.
    This now includes doc-deferring rows flagged for an **unstamped summary block** — do not skip
    them because the shape looks right; that is the `^obs-236` hole.
-6. **Report** — table + punch list + plain next-actions; for every mappable inline task, surface the
+6. **Orphan check** (standing step, CRE-ruled 2026-09-04) — compare `list_scheduled_tasks` against
+   a directory listing of `C:\Users\Chad\Claude\Scheduled\`. A prompt dir with no registered task is
+   an **orphan**: inert, unrunnable, and it lints as `NO-DOC` forever, recurring on every punch list
+   as if it were live. Report each with its dir mtime. Do **not** delete — stage to
+   `SYSTEM/_quarantine/<date>-orphan-task-prompts/` (the vault's holding pen; CRE rules disposal).
+   The listing is a host-side read — bash cannot reach that dir, use Desktop Commander or the file
+   tools. First run 2026-09-04: 19 dirs vs 16 tasks → `ghost-river-ingest`, `vault-backlog-agent`,
+   `witchwood-pipeline-advance` quarantined; parity now 16/16.
+7. **Report** — table + punch list + plain next-actions; for every mappable inline task, surface the
    option-(a) doc-deferral recommendation.
-7. **Log** (explicit session only) — `_CHANGELOG` (meta, top-insert), `_OBSERVATIONS` for new
+8. **Log** (explicit session only) — `_CHANGELOG` (meta, top-insert), `_OBSERVATIONS` for new
    fragility.
 
 ## Verdicts
@@ -93,6 +101,27 @@ every exception a *paired* selftest (must-hit + must-clear) — `STALE-BOOK-NAME
 too broad (fired on the prohibition) and too narrow (case-sensitive, so blind to the real
 mixed-case drift), and a one-sided test could not have caught that.
 
+**Negations were discounted; IDENTIFIERS were not (fixed 2026-09-04, CRE-ruled off `^obs-282`).**
+Two false positives had been burning a verdict every run since at least 08-09:
+
+- `CHANGELOG-FOOT-APPEND` fired on **its own signal name**, because a prompt documenting the lint
+  vocabulary contains the literal string and naming a signal is neither an authorization nor a
+  negation. `task-audit`'s own prompt was the live instance.
+- `STALE-BOOK-NAME` fired on the **live filename** `WORKFLOWS/weave-vibebook.md` — the current,
+  correct doc name — hitting `books-daily-ingest-weave` every run.
+
+**Why this mattered more than weekly noise:** a HIGH/MED lint flips the verdict to `DRIFT-MECH`,
+and `DRIFT-MECH` **short-circuits the stamp comparison** in `audit_one` — so a genuinely stale
+`tracks:` stamp could hide behind a false positive indefinitely. The fix is the reason, not the
+annoyance.
+
+**Both fixes widen the EXACT layer only** (DIR-014's corollary — never widen a fuzzy threshold to
+catch a semantic miss). `_LINT_ID_RX` masks the all-caps signal identifiers, case-sensitively,
+before the foot-append scan; `_BOOK_FILENAME_STEM` masks a retired name only when it is
+hyphen-prefixed *and* inside a token ending `.md`. Slash-rooted retired paths (`VIBEBOOK/CAPTURE.md`)
+and underscore-prefixed ones (`_DOBOOK.md`) are deliberately **not** masked and still hit. Three
+paired selftests guard it (selftest count 25 → 28).
+
 **`STALE-SNAPSHOT`** fires when a prompt measures or decides off a **dated artifact** — a
 `SYSTEM/reports/*.json` stamp, a cached scan — without any freshness notion. Note the bar is
 deliberately *both* an age test **and** a has-anything-written-since test: the `vault-health`
@@ -109,6 +138,14 @@ A one-line comment on an inline prompt:
 lets `task_audit.py` compare the stamped sha to the doc's current sha for an exact verdict instead of
 a "go read it" `REVIEW` (mirrors `skill-audit`'s optional `source_sha`). Re-stamp whenever a prompt is
 deliberately re-synced. CRE ruled the stamp in (2026-06-29).
+
+**`doc_sha()` resolves `WORKFLOWS/` first, then the VAULT ROOT** (2026-09-04, CRE-ruled). Before
+this, a root-level canon doc could not be stamped at all: `mount-the-vault` defers to `CLAUDE.md` —
+the canonical boot doc (`^obs-160`), of which `WORKFLOWS/vault-boot.md` is a *derived install* — and
+a `tracks: CLAUDE.md` stamp reported "doc not found", so the one row whose prompt was demonstrably
+correct was the one row that could never go clean. `task_doc_map.json` now maps `mount-the-vault` →
+`CLAUDE.md`. CRE ruled the **resolver fix over an `expect_verdict` escape**: an escape suppresses
+the verdict, the resolver makes the correct verdict *reachable* — DIR-018, never pass on a proxy.
 
 ## The option-(a) payload (the durable fix, not just the catch)
 For every inline task that maps to a doc, recommend collapsing the prompt to the doc-deferring loader

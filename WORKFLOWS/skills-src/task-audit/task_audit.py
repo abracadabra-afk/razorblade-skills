@@ -51,9 +51,25 @@ _RETIRED_MARKER = re.compile(
     r"\b(never|not|no longer|retired|renamed|the old|old \w+ paths|dead|do not exist|"
     r"deprecated|forbidden|legacy|instead of|→|->)\b|→", re.I)
 
+# Third direction of the same problem (2026-09-04, task-audit 09-02 gate bin / ^obs-282):
+# the signal also fires on a LIVE FILENAME that merely contains a retired root name as a
+# hyphenated stem — `WORKFLOWS/weave-vibebook.md` is the current, correct doc name and has
+# been burning a HIGH verdict on books-daily-ingest-weave every run. A HIGH flips the verdict
+# to DRIFT-MECH, and DRIFT-MECH SHORT-CIRCUITS the stamp comparison (see audit_one), so a
+# genuinely stale `tracks:` stamp can hide behind this false positive. That is the reason to
+# fix it, not the weekly noise.
+#
+# Per DIR-014's corollary: widen the EXACT layer, never a fuzzy threshold. The discriminator is
+# literal and narrow — a retired name preceded by a HYPHEN and inside a token ending `.md` is a
+# filename stem, not a book reference. `VIBEBOOK/CAPTURE.md` (slash-rooted) and `_DOBOOK.md`
+# (underscore-prefixed) are genuine retired paths and are deliberately NOT masked.
+_BOOK_FILENAME_STEM = re.compile(
+    r"-(?:VIBEBOOK|TASKBOOK|DOBOOK|LIFEBOOK)\b(?=[\w-]*\.md\b)", re.I)
+
 def _stale_book_name(body):
     for line in body.splitlines():
-        if _BOOKS.search(line) and not _RETIRED_MARKER.search(line):
+        scan = _BOOK_FILENAME_STEM.sub("-", line)   # exact-layer mask: live filename stems only
+        if _BOOKS.search(scan) and not _RETIRED_MARKER.search(line):
             return True   # a live use of a retired root name, not a prohibition against it
     return False
 
@@ -92,11 +108,22 @@ SUMMARY_RX = re.compile(
     r"summary only, the doc wins|orientation only", re.I)
 
 
+# The lint discounts NEGATIONS (^obs-143) but not IDENTIFIERS (2026-09-04, ^obs-282). A prompt
+# that documents the lint vocabulary — task-audit's own prompt names its signals — contains the
+# literal string `CHANGELOG-FOOT-APPEND`, which `_FOOT` matches and the 30-char negation
+# lookbehind cannot clear, because naming a signal is neither an authorization nor a negation.
+# Exact-layer mask: the all-caps signal IDENTIFIER only, case-sensitive. Prose about
+# "foot-append" in any other casing still scans normally.
+_LINT_ID_RX = re.compile(r"\b(?:CHANGELOG-FOOT-APPEND|STALE-BOOK-NAME|STALE-SCHED-PATH|"
+                         r"MISSING-NUL-GUARD|STALE-SNAPSHOT)\b")
+
+
 def _foot_append_authorized(body):
     if not _writes_changelog(body):
         return False
-    for m in _FOOT.finditer(body):
-        pre = body[max(0, m.start() - 30):m.start()]
+    scan = _LINT_ID_RX.sub(lambda m: "_" * len(m.group(0)), body)  # length-preserving mask
+    for m in _FOOT.finditer(scan):
+        pre = scan[max(0, m.start() - 30):m.start()]
         if not _NEG.search(pre):
             return True   # an authorizing (non-forbidden) foot-append instruction
     return False
@@ -174,11 +201,23 @@ def lint(body):
 
 
 def doc_sha(workflows, doc):
-    p = os.path.join(workflows, doc)
-    if not os.path.isfile(p):
-        return None
-    with open(p, "rb") as f:
-        return sha12(f.read())
+    """sha12 of a canon doc. Resolves WORKFLOWS/ first, then the VAULT ROOT.
+
+    The root fallback landed 2026-09-04 (task-audit 09-02 gate bin). `mount-the-vault` defers to
+    `CLAUDE.md` — the CANONICAL boot doc (^obs-160), of which WORKFLOWS/vault-boot.md is a derived
+    install. Resolving only WORKFLOWS/ made a `tracks: CLAUDE.md` stamp report "doc not found", so
+    the one row that could not be stamped clean was the row whose prompt was demonstrably correct.
+    CRE ruled the resolver fix over an `expect_verdict` escape: an escape SUPPRESSES the verdict,
+    the resolver makes the correct verdict reachable (DIR-018 — never pass on a proxy).
+    """
+    for base in (workflows, os.path.dirname(os.path.abspath(workflows))):
+        if not base:
+            continue
+        p = os.path.join(base, doc)
+        if os.path.isfile(p):
+            with open(p, "rb") as f:
+                return sha12(f.read())
+    return None
 
 
 def audit_one(name, body, mapinfo, workflows):
@@ -335,6 +374,17 @@ def selftest():
          "STALE-BOOK-NAME" not in [f[0] for f in lint(
              "The retired names - Vibebook, Taskbook, LifeBook, DoBook - are dead: never use them.\n"
              "(The restructure renamed Vibebook to VIBES; the old VIBEBOOK/TASKBOOK paths do not exist.)")]),
+        # ^obs-282 pair (2026-09-04, CRE-approved): the two live false positives. Each must CLEAR
+        # while its true-positive sibling above still HITS — that pairing is the whole guard.
+        ("books live filename clears",
+         "STALE-BOOK-NAME" not in [f[0] for f in lint(
+             "STEP 2: weave VIBES new fragments — run WORKFLOWS/weave-vibebook.md and follow it.")]),
+        ("books slash-rooted path still hits",
+         "STALE-BOOK-NAME" in [f[0] for f in lint("Vibebook=VIBEBOOK/CAPTURE.md")]),
+        ("foot-append lint identifier clears",
+         "CHANGELOG-FOOT-APPEND" not in [f[0] for f in lint(
+             "The lint signals are STALE-BOOK-NAME, STALE-SCHED-PATH and CHANGELOG-FOOT-APPEND. "
+             "Write the _CHANGELOG entry top-insert.")]),
         ("hit onedrive", "STALE-SCHED-PATH" in [f[0] for f in lint(ONEDRIVE)]),
         ("nul-guard advisory fires", "MISSING-NUL-GUARD" in [f[0] for f in lint(RR_PRE)]),
         ("nul-guard clears post", "MISSING-NUL-GUARD" not in [f[0] for f in lint(RR_POST)]),

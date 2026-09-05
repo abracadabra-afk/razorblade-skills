@@ -20,7 +20,7 @@ If `_served/` holds no plan for you, stand down. Do not go looking.
 ## Modes
 
 - **Unattended** — the `backlog-agent` scheduled task, or CRE saying **"work the backlog."** Takes `mode: unattended` plans only.
-- **Attended** — CRE saying **"work the backlog with me."** He is present. Read the `mode: attended` plans, show him the list, work the one he picks. **Never self-start this mode**, and never pick up an attended plan on an unattended run.
+- **Attended** — CRE saying **"work the backlog with me."** He is present. Read **`SYSTEM/backlog-queue/_attended/`** (its own folder as of 2026-09-04, outside the unattended pipeline and its cap), show him the prepared sittings with their ages, work the one he picks — moving it straight to `_working/`. **Never self-start this mode**, never read that folder on an unattended run. He can also name one: *"work the backlog with me on `^anchor`."*
 
 ## Write surface — the hard floor no plan can widen
 
@@ -28,7 +28,9 @@ Every plan carries a **Write surface for this plan** section. Write what it name
 
 **Always allowed:** `SYSTEM/backlog-queue/**` (your logs, the plan's folder position) and `SYSTEM/reports/**` (your receipt, plus any report a plan asks for).
 
-**Allowed only when the plan names the exact path:** `WORKFLOWS/*.md` canon docs and `WORKFLOWS/skills-src/**` sources; `SYSTEM/**` outside the two folders above; `_BACKLOG.md` — only the single item the plan names, only the edit its completion conditions describe. Your own session log lines are separate and always allowed.
+**Allowed only when the plan names the exact path:** `WORKFLOWS/*.md` canon docs and `WORKFLOWS/skills-src/**` sources — **including authoring a new doc or source unattended when the plan names the path and specifies the content** (v2, 2026-09-04; house doc shape, serialized frontmatter, description ≤ 1,024 chars and no angle brackets; the pack/install after is a desktop trip you name in the log, never attempt); `SYSTEM/**` outside the two folders above; `_BACKLOG.md` — only the single item the plan names, only the edit its completion conditions describe. Your own session log lines are separate and always allowed. **Reach that item by the shared slice-read protocol** (`WORKFLOWS/backlog-supervisor.md` § Candidate source: measure, `Grep -n` with an explicit path, `Read` by offset, edit anchored on the slice, re-read the slice) — **never by pulling the file** (2026-09-04): it measured **288.6 KB**, past the ~256 KB point where the file tools hand back a prefix without saying so. Cannot locate it that way → defer the plan; an edit anchored on text you only half-read is a destructive write waiting to happen. Same for `_CHANGELOG.md` (252.6 KB) and `_OBSERVATIONS.md` (235.8 KB). Policy: `WORKFLOWS/log-rotate.md` § The hard line above the bands.
+
+**The auto-ratify class, from your side (v2).** DIR-012 clause 6 — proposed at `SYSTEM/reports/2026-09-04-dir012-auto-ratify-proposal.md`, armed on CRE's word — makes a **reversible** write (stamp · move · archive verbatim · rewrite-down · fold, never delete) on `SYSTEM/**`, `_BACKLOG.md` + shards, `_OBSERVATIONS.md` (stamps + own DIR-003 lines), `WORKFLOWS/*.md`, `WORKFLOWS/skills-src/**` his standing yes. What changes for you: a plan may name such a path without a per-item CRE ruling, and you execute it. What does not: the plan still has to name the path — the class widens what a plan may name, never what you do on your own — and the never-written list below is untouched, armed or not. You do not check whether the class is armed; the supervisor does before serving.
 
 **Never written unattended, whatever a plan says.** A plan asking for one of these is itself the defect — stop, defer the whole plan, and name it in the log.
 
@@ -55,7 +57,9 @@ Enumerate `SYSTEM/backlog-queue/_served/` and `_working/`. Branch:
 - **No `mode: unattended` plan in `_served/`** → stand down: write the receipt, end the run. Nothing else — no `_BACKLOG` read, no bootstrap past the sentinel. This is the normal case and it must stay cheap.
 - **Otherwise** → claim the oldest eligible plan by the date in its filename, preferring a higher `round` (a fix prompt is a plan someone is already waiting on).
 
-Attended mode skips this branch: CRE names the plan, or picks from the attended list.
+**Never read `_attended/` on an unattended run** — not even to count it. The check stays an enumeration of `_served/` and `_working/`; a third folder would make the common stand-down more expensive for a lane this run cannot touch.
+
+Attended mode skips this branch: read `SYSTEM/backlog-queue/_attended/`, show CRE the prepared sittings with their ages, work the one he picks — or the one he names outright.
 
 **Substrate:** prefer the host route (`mcp__Desktop_Commander__list_directory` / `move_file`, or `windows-cli`) — it reads the real Dropbox folder rather than a mount that can serve stale partials, and it is the only route with a true atomic move. If denied, fall through to `Glob` with an explicit `path`, confirming every empty result by directly reading that folder's `README.md`; perform a move as a `Write` to the destination then a delete of the source, with **both** ends confirmed by re-read before the source goes.
 
@@ -65,7 +69,7 @@ Attended mode skips this branch: CRE names the plan, or picks from the attended 
 
 ## Step 2 — Claim by moving
 
-Move the plan `_served/` → `_working/`. **The move is the claim** — there is no status field to set, because a status line is written once by the session that created the thing and is exactly the surface nobody updates when that thing finishes. Confirm by reading the plan at its new path.
+Move the plan into `_working/` — from `_served/` unattended, **straight from `_attended/`** when CRE picks one in a sitting. **The move is the claim** — there is no status field to set, because a status line is written once by the session that created the thing and is exactly the surface nobody updates when that thing finishes. Confirm by reading the plan at its new path. From `_working/` both lanes follow the same path onward and the supervisor audits them identically.
 
 One plan per unattended run. A run that finishes early does not go looking for a second.
 
@@ -83,7 +87,9 @@ A deferral is a **successful outcome**, and the log says so. The one genuinely b
 
 **Verify before claiming.** Every write is a targeted file-tool edit, re-read through the file tools afterward to confirm it landed. Never `patch_vault_file`, never a whole-file MCP rewrite, never a bash read to verify a write. Read a file to EOF before concluding an edit did not land — a partial write looks exactly like a non-write from the middle of a file. A `Glob` miss is never evidence of absence; confirm a load-bearing negative with a pathed `Grep` or a direct `Read`. Derived frontmatter is serialized, never hand-formatted.
 
-## Step 5 — Write the completion log, hand back
+## Step 5 — Probe the observable, write the completion log, hand back
+
+**Probe first (v2).** Read the plan's `## Observable` and probe the artifact it names **against live state**, once, at the end of the run — the exact reading (a Grep count, a quoted line, a frontmatter value), the substrate, the timestamp. Write what the artifact returned, never what the plan expected. A plan with no `## Observable` is pre-v2: say so and probe its completion conditions instead. This is reading one of three — the morning audit and the evening close-out read it again before the `_BACKLOG` item is closed.
 
 Write `SYSTEM/backlog-queue/_working/<plan-name>.log-r<N>.md`, `N` matching the plan's round. Then move the plan **and** the log together into `_review/`, confirming both at the new path.
 
@@ -104,6 +110,7 @@ worked_by: backlog-agent
 
 - **## What I did** — the actual work, in order, plainly.
 - **## Completion conditions** — each condition from the plan, quoted, marked **met / not met**, each with the **artifact path and the specific evidence**. The audit reads this section first.
+- **## Observable — first probe** — the plan's observable quoted, then your one live probe of it: reading, substrate, timestamp (Step 5).
 - **## Files written** — every path touched, what changed, and confirmation it was re-read.
 - **## What I deferred and why** — each with the reason and what a next session would need. Empty is valid; vague is not.
 - **## Surprises** — anything the plan assumed that turned out otherwise. This is how a bad plan gets fixed instead of repeated.

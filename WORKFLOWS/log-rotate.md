@@ -35,7 +35,32 @@ Rotation keeps each live file small enough that a file-tool **top-insert stays s
 | WARN | 150K–200K | report + recommend rotation next run |
 | ROTATE | ≥ 200K | act per the per-file policy below |
 
-Measure from the desktop-written `SYSTEM/reports/brain-doc-sizes.json` stamp when fresh (byte-exact — see Step 1), else with the **file tools** (read to EOF), **never** bash `wc -c` — on a large file the bash mount can serve a stale, truncated partial that understates size and would corrupt any carve range (`^obs-014` / `^obs-084`). Defaults chosen 2026-06-15; tune in this table, not in the scheduled task.
+Defaults chosen 2026-06-15; tune in this table, not in the scheduled task.
+
+## The hard line above the bands — the file-tools read limit (added 2026-09-04)
+
+**A band is advisory; the read limit is operative.** The three bands above answer *is this getting big* and produce a recommendation CRE may or may not act on. **At ~256 KB the file tools stop returning the whole file, and a partial read does not announce itself** — the call succeeds and returns a prefix. That is a different kind of threshold and the bands never carried it: they were tuned to keep top-inserts safe, and stopped short of the point where *reading* breaks.
+
+Found 2026-09-04 by CRE, attended, working `_BACKLOG.md` in offset slices because it would not come back whole. Measured that day: `_BACKLOG` **298.6 KB — already over**; `_CHANGELOG` **252.6 KB**, roughly 4 KB of headroom and ~10 KB of that session's own growth; `_OBSERVATIONS` **235.8 KB**. So this is not one file's problem — it is all three brain docs inside one window, with `_CHANGELOG` next to cross.
+
+**`OVER-LIMIT` — the fourth band, and the only one that is a stop rather than a suggestion.**
+
+| Band | Size | Action |
+|---|---|---|
+| OVER-LIMIT | ≥ 240K | **no pass may read this file whole.** Report, gate, and halt any pass that needs it entire. |
+
+240K, not 256K, so a file cannot grow past the real boundary between the measurement and the read — a single session added 10 KB to `_BACKLOG` on the day this was found.
+
+**The two branches, for any pass that reads a brain doc:**
+
+1. **The pass needs a bounded, structurally-known slice** (a named heading block, the newest N entries of a newest-first file) → read it **explicitly by offset**, and **say in the receipt that it worked from a slice and which one**. A slice named up front is honest; a whole-file read that happens to return a prefix is not.
+2. **The pass needs the file entire** (content spread through it — candidate items, a full census, a carve range) → **halt**, write the receipt naming the file and its measured size, and stop. Do not read and proceed.
+
+**Never the third thing: read whole, get a prefix, and carry on.** That is DIR-018's shape in its purest local form — *the read succeeded* stands in as a proxy for *the read is complete*, and nothing in the tooling distinguishes them. An attended session notices because a human is watching; an unattended one does not.
+
+**Measuring, and the circularity this replaces.** Use `mcp__Desktop_Commander__get_file_info` (host route, real Dropbox folder, DIR-020) or the desktop-written `SYSTEM/reports/brain-doc-sizes.json` stamp when fresh. **Never** bash `wc -c` — on a large file the bash mount serves a stale, truncated partial that understates size and would corrupt any carve range (`^obs-014` / `^obs-084`). And note the instruction this supersedes: measuring "with the **file tools**, read to EOF" was **circular for exactly the files that need measuring most** — a file past the limit cannot be read to EOF, so the old method would have understated any file it most needed to catch. A metadata call reads no content and has neither failure. If no measurement route is available, the pass **declares it cannot measure and halts** rather than reading blind.
+
+*(The bands above are stated in "chars" and this line in bytes. For these files they are near enough to be the same number; where it matters, bytes are the measurement, because bytes are what the tool limit is expressed in.)*
 
 ## Per-file policy (the core of this workflow)
 
@@ -45,15 +70,16 @@ It is append-only and almost never back-referenced by anchor, so moving old entr
 **`_OBSERVATIONS.md` — GATE (never auto-move).**
 Its `^obs-NNN` anchors are cross-linked across the vault (`[[_OBSERVATIONS#^obs-NNN]]`); moving a block breaks every citation (`^obs-079` — never repoint blind). Past WARN/ROTATE, do **not** move content. Instead emit a gated recommendation: a **citation-safe split** — carve only observations whose anchors have **zero inbound references** vault-wide (verify with a search) into `SYSTEM/history/_OBSERVATIONS-<period>.md`, leaving a redirect stub for any that are cited. List the candidates; let CRE rule.
 
-**`_BACKLOG.md` — GATE (defer to `backlog-sweep`).**
-Growth here is open items; the right tool is `backlog-sweep` (archives closed items, dedupes), not rotation. Past WARN, recommend running `backlog-sweep` and/or a CRE working session; do not rotate.
+**`_BACKLOG.md` — GATE (defer to `backlog-sweep`), and as of 2026-09-04 it is OVER-LIMIT.**
+Growth here is open items; the right tool is `backlog-sweep` (archives closed items, dedupes), not rotation. Past WARN, recommend running `backlog-sweep` and/or a CRE working session; do not rotate. **Past OVER-LIMIT the recommendation is no longer sufficient on its own** — the file is organized by lane rather than by date, so a prefix read returns the conventions, the Standing queue and the gate bins while silently dropping most of the lane items a pass is trying to rule on. Two windows running, this file's own gate-bin line has read "growth outpaced closures," so rotation alone is not changing the trajectory. The structural answer is to **shard it by lane** — root keeping conventions, the Standing queue, the gate bins and pointers; OS/Meta, Fiction and Writing Ops each a shard, the same shape as the 2026-06-29 project-shard carve — which makes every read bounded instead of merely smaller. Spec pending; until it lands, every reader gates per the hard line above.
 
 ## Tooling discipline (non-negotiable)
 
 - **File tools only** (Read / Write / Edit) on the mounted vault. **Never** `patch_vault_file` and **never** the Obsidian MCP whole-file rewrite for these files (`^obs-020` / `^obs-014` / `^obs-081`).
 - New/newest entries go in at the **top** via a targeted `Edit` (anchor on the `# CHANGELOG\n\n\n` → first-entry boundary), not appended at the foot. Rotation is what keeps that top-insert safe; restoring newest-first is part of the point.
 - After every write, **re-read the touched region with the file tools** to confirm it landed (`^obs-014`); do not trust a bash read alone.
-- **Size and carve from the file tools only** — never bash `wc -c` or a bash read of these files; the bash mount can serve a stale/truncated partial that understates size and would corrupt the carve (`^obs-084`).
+- **Size with a metadata call, never by reading** — `get_file_info` via the host route, or the fresh desktop stamp. Never bash `wc -c` or a bash read (the mount serves a stale/truncated partial that understates size and would corrupt the carve, `^obs-084`), and never "read to EOF" either, which is circular past the read limit — see § The hard line above the bands.
+- **Before any whole-file read of a brain doc, measure it.** Over the OVER-LIMIT line: read a named slice by offset and say so, or halt. Never read whole and proceed on what comes back.
 
 ## Steps
 

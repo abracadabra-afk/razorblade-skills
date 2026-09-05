@@ -53,6 +53,7 @@ Name the revision file you picked in your reply, so a wrong pick is immediately 
    - **Match** → normal case. The revision was built from the same slate lineage the draft already tracks. Proceed.
    - **Mismatch** → the revision descends from a *different* slate than the current draft claims. This is not necessarily wrong (the author may be re-baselining), but it is exactly the kind of thing that should never happen silently. **Surface it and ask** before overwriting: name both slates and let the author confirm.
    - **Draft is still a scaffold** (`status: not-yet-migrated`, or its body is only the placeholder blockquote) → there is no real content to lose; proceed and say so.
+   - **Draft has NO `source_slate` at all, and the rev's `source_slate` is a minted `spec-check/` run id** → the **author-direct (no-slate) route. Proceed, do not ask** (CRE-ruled 2026-09-04, RP-P4 / `^backlog-promote-no-slate-lineage`). CRE's basis, in his words: *no-slate means no dictation; sometimes he just uses a keyboard to write something.* The chapter never passed through the Transcoder, so there is no slate to inherit and the rev keys on the `spec-check/` sheet id instead (`spec-check.md`'s 08-24 minted-run rule); `register-pass`'s `no_slate_sheet()` already resolves this route on the read side. **Do not** write the minted sheet id onto the draft as `source_slate` — the draft genuinely has no slate and that would fabricate a lineage; stamp `route: author-direct` instead. First live case: CH16 rev1.
 
 You never need the author's permission for the *normal* (matching-lineage) case — promotion is reversible by design (see the invariant above). The ask is reserved for the mismatch, where proceeding blindly would bury a real divergence.
 
@@ -110,6 +111,7 @@ If you noticed anything fragile (a lineage mismatch you had to resolve, a missin
 - Chapter has no `revisions/` or no `draft.md` (convention not adopted) → halt, tell the author.
 - `revisions/` holds no `…-rev<N>.md` passage → halt; nothing to promote (run `register-pass` first).
 - Revision `source_slate` ≠ draft `source_slate` (and draft is not a scaffold) → pause, surface both, ask before overwriting.
+  **Not** a stop condition (CRE-ruled 2026-09-04): draft with *no* `source_slate` + rev carrying a minted `spec-check/` run id = the author-direct route; proceed. See Step 2.
 
 ---
 

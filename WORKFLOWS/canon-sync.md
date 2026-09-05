@@ -7,7 +7,7 @@ inputs: [the chapter's landed draft.md, REFERENCE/story-so-far.md, REFERENCE/bib
 outputs: [updated REFERENCE/story-so-far.md, updated REFERENCE/bible.md, updated REFERENCE/threads.md (thread events + blind-read pickup), updated REFERENCE/arcs.md (entry/waypoint/exit character state), filled end-state sections + the Character state @ end of chapter block in the chapter's continuity.md, a conflict block for CRE to rule when the draft contradicts existing canon]
 lane: fiction
 status: active
-last_updated: 2026-08-26
+last_updated: 2026-09-04
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/promote-revision]] — runs when a chapter's draft.md has landed. Its outputs feed the NEXT chapter's [[WORKFLOWS/dictation-preflight]] (which reads REFERENCE first, back-walks only as fallback).
 ---

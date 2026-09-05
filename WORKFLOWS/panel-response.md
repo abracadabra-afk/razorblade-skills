@@ -9,7 +9,7 @@ lane: fiction (+ writing-ops for WIW episodes)
 status: spec — packs after 2–3 live runs
 governed-by: DIR-011 (resolve before flag), DIR-012 (gates attended), DIR-014 (rulings land on tool-read surfaces), DIR-017 (banked prose never re-dictated; choreo maps exit to revision)
 pipeline_position: Workshop-2 tier — consumes the Pass-1-tier panel synthesis; sits between panel-read and the line passes; nests choreographer between its two phases. Route v3 (2026-08-09) — on episodes this always post-dates CRE's author pass, since panel-read is the pre-publication gate.
-last_updated: 2026-08-09
+last_updated: 2026-09-04
 ---
 
 # WORKFLOW: panel-response
@@ -44,6 +44,10 @@ CRE says **"respond to the panel"** / **"panel response"** / **"work the panel f
 **Step 0 — sentinel + locate.** Verify `_DIRECTIVES.md` frontmatter (`^obs-004`). Identify the run folder and the draft revision the panel read (the synthesis frontmatter carries `source:`). If the draft has moved since the panel read it, say so before anything else — rulings against a stale read are rulings against a phantom text.
 
 **Step 1 — load.** The synthesis, the draft, the unit's spec surface (`brief.md` / `premise.md`), prior rulings (`DECISIONS/`, premise amendment stamps, `feedback-log.md` / rulings blocks), and REFERENCE canon where the unit has one. **The clean room ended with the panel — this pass is spec-aware by design.** That is what lets it do DIR-011 research the synthesis could not.
+
+**Supersession triage — run it on the load, before Step 2 walks the bins (DIR-019, added 2026-09-04).** Route v3 puts this pass *after* CRE's author pass, so his hand-landing routinely sits between the panel reading and this session, and §3 makes that landing the newest ruling in the folder. The span-naming rulings loaded above are: each `pass-1-panel.md` finding and the line it quotes; the prior rulings the DIR-011 research reaches (`DECISIONS/` entries, premise amendment stamps, `feedback-log.md` / rulings blocks) wherever they name a span; and an earlier run's `response-rulings.md` — its carried verdicts, its **line-edit queue**, and its **protected patterns** rows, which are §1 derived witnesses. The working text is the current draft. Check each: **span present → carry silently** into the Step 2 walk. **Span gone → moot:** stamp it `superseded_by: draft.md (<date>)` in place, one changelog line — **never put to CRE**, never binned by fix class, never routed to the choreographer. **Span reworded but surviving → the only case that surfaces**, collected into one batched block at the head of the Step 2 walk, tree-researched first (DIR-011). Never ask CRE to re-ratify a finding whose span is intact, and never re-open one his own later draft already discharged.
+
+**What still gates.** Step 0's *the draft has moved since the panel read* check and its matching stop condition are untouched: whether a panel run is still a valid read of this draft is a scope call CRE makes once, at the top, and it is not a per-finding stamp. DIR-019 rules the disposition of the individual findings and rulings inside a read he elects to proceed with; it never converts "re-panel vs. proceed-with-caveat" into a silent retirement. Likewise a finding whose span survives but whose *content* he has not affirmed still meets the route-v3 CONTENT-flag gate before any fix-class routing. **Scope lock (§4):** staleness noticed outside this unit's folder and its direct derives is one line in `SYSTEM/drift-ledger.md`, not a ruling-sheet row and not a chat aside.
 
 **Step 2 — walk the bins, in synthesis order** (DNF → CONSENSUS → CORROBORATED → SPLIT → SINGLETON → PRAISE/POSITIONING). Per finding:
 

@@ -7,7 +7,7 @@ inputs: [a chapter's newest slate clean-draft.md]
 outputs: [five pass results + a reconciled verdicts.md in spec-check/<slate-run>/]
 lane: fiction
 status: active
-last_updated: 2026-06-03
+last_updated: 2026-09-04
 scope: Witchwood (and any per-chapter-folder project with a project register). Selective QA gate — run on chapters that matter, not every slate.
 pipeline_position: diagnostic tier between [[WORKFLOWS/transcoder]] (slate) and [[WORKFLOWS/register-pass]] (execution). Pass 1 runs in a clean room via the `blind-read` skill; Passes 2–5 are spec-aware pasteable prompts.
 ---

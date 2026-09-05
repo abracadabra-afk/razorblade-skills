@@ -1,13 +1,13 @@
 ---
 type: workflow
 name: premise-forge
-status: spec — PACKED + INSTALLED 2026-09-04 (v2, DIR-009); graduates from spec after 2–3 live runs
+status: spec — v2.1 PACKED + INSTALLED 2026-09-04 (DIR-009; installed copy probed, carries the promise-read text); graduates from spec after 2–3 live runs
 triggers: ["forge the premises", "run the premise forge", "fill the bag", "build the premise bag", "size this idea", "what does this want to be", "deepen the premise", "run the deepening", "prep for blueprint"]
 lane: 5 (writing-ops) + 1 (fiction)
 intent: "[[WORKFLOWS/intents/premise-forge-v2]]"
 created: 2026-08-09
 last_updated: 2026-09-04
-revision_note: "v2 — 2026-09-04, amended in place off the ratified premise-forge-v2 intent. Adds the DEEPEN mode (pick-time arc-chain capture via interview-me → `## Arc chain` + a derived handoff block in the candidate's triage.md), the Step 0 creative-lane load, and a `WORKFLOWS/skills-src/premise-forge/` source entry. v1's FILL batch forge, gut gate, Step 6 scope measurement, cap, min-fill floor and 90-day peg re-gut are untouched; Steps 2–8 keep their numbers because downstream docs cite them."
+revision_note: "v2.1 — 2026-09-04 (later, same day), promise alignment off dec-034: horror is the channel's promise, sub-genre is free. Step 4 names the dread engine inside the what-if grammar; the triage gains a `subgenre:` key and a `## Promise read` pre-read (dread source at forge time; the turn stays DEEPEN's); Step 8 next-up ranks variety under the promise and treats a thin promise read as a flag, never a lift; Step 2 census runs a one-time promise read over the live bag. Variety weight itself unchanged — ruled compatible. Source-ahead of the installed v2 pack. v2 — 2026-09-04, amended in place off the ratified premise-forge-v2 intent. Adds the DEEPEN mode (pick-time arc-chain capture via interview-me → `## Arc chain` + a derived handoff block in the candidate's triage.md), the Step 0 creative-lane load, and a `WORKFLOWS/skills-src/premise-forge/` source entry. v1's FILL batch forge, gut gate, Step 6 scope measurement, cap, min-fill floor and 90-day peg re-gut are untouched; Steps 2–8 keep their numbers because downstream docs cite them."
 ---
 
 # premise-forge
@@ -107,6 +107,8 @@ FILL / DECLARED / OPEN / DEEPEN, per the Modes table. Stated trigger wins; other
 ### Step 2 — Bag census
 Read `CANDIDATES/` (a `Glob` miss is never evidence of absence — confirm any negative with a direct read, DIR-005). Report: live candidates, their conditions/knots, ages, and any **stale flags** (Step 8). If the bag is at cap (~10–12 live), lead with hygiene (Step 8) before forging more — an overfull bag reintroduces the decision overwhelm this exists to kill.
 
+**One-time promise read (v2.1, dec-034).** Any live candidate whose `triage.md` has no `## Promise read` section gets one line in the census: its dread source as the premise states it, or `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it; CRE rules at the gut gate and `episode-init` rules at the gate. Once every live candidate carries the section, this line stops firing.
+
 ### Step 3 — Condition intake + variety scan
 Two entries:
 
@@ -121,7 +123,7 @@ The scan reads the corpus (Inputs) — never the market. Variety comes from CRE'
 Generate what-if premises around the chosen condition, **batch of ~5–10, one condition per batch**, each in the full PREMISES grammar:
 
 1. **Knot first, always.** Start from the character flaw/condition ("paranoid," "isolated and resigned"). The knot is the premise's spine — never reverse-engineer a knot onto a scenario.
-2. **Scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it.
+2. **Scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it. **The detonation is the dread engine** (v2.1, dec-034): the channel's promise is horror, so a premise forged for this bag carries the thing that frightens — an intrusion, a rule of the world bent, a consequence that cannot be taken back. Sub-genre is free (supernatural, gothic, cosmic, dark fairy tale, contemporary dark); a scenario with no dread in it is a weaker what-if, not a banned one — it is still presented flat and CRE's gut still rules.
 3. **Tensional constraint.** A clock, a countdown, a closing door — and prefer constraints that do *containment* work (a 20-minute clock is also a container; see Step 6).
 4. **Peg from the condition, never from a market.** The peg is the contemporary costume the timeless condition wears — ask *"what does this condition look like right now?"* (isolation → doomscrolling; hypervigilance → baby monitors; parasocial hunger → the feed). Worked example: HAPPENING NEAR YOU — condition: isolation/resignation, *"easier to stay inside"*; peg: algorithms as substitute for touching grass. The condition produced the peg. A premise whose peg has no condition under it is a box-check, not a story.
 
@@ -170,6 +172,7 @@ working_title: <TITLE>
 author: Chad Ryan
 source: premise-forge session YYYY-MM-DD
 condition: <the feeling/human condition>
+subgenre: <supernatural | gothic | cosmic | dark fairy tale | contemporary dark | folk horror | weird west | …>   # v2.1 — what the variety scan reads; free under the horror promise (dec-034)
 format: short-form   # seeds carry novella | novel | series
 triaged: YYYY-MM-DD
 status: banked premise — awaiting CRE pick + episode-init gate   # seeds: "seed — sized, not scheduled; development is a portfolio decision"
@@ -181,7 +184,8 @@ status: banked premise — awaiting CRE pick + episode-init gate   # seeds: "see
 ## Peg                (the contemporary costume — and its condition source)
 ## Container          (band verdict + why it holds short)
 ## TOS band / tier    (best pre-read: free-tier / age-restricted / never → FULL / SAFE-CUT / TEASE rec — episode-init re-rules at gate)
-## Variety note       (what this adds against the worked corpus)
+## Variety note       (what this adds against the worked corpus — condition + subgenre, under the promise)
+## Promise read       (v2.1, dec-034 — pre-read of episode-init check (a): the DREAD SOURCE as the premise states it. The TURN is not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate)
 ## Format measurement (the Step-6 verdict + the dimensions that produced it; shorts: the containing elements named)
 
 ## Arc chain          (DEEPEN only — written at pick time, never at forge time; absent until then)
@@ -198,7 +202,7 @@ The triage pre-answers the episode-init Pass-1 gate. **It does not bind that gat
 - **Cap:** ~10–12 live candidates. At cap, forge nothing new until CRE retires or promotes.
 - **Min-fill floor:** below **4** live candidates → surface "fill the bag" as a task to `TASKS/TASKS.md` so it rides week-shape/day-launch onto the board (DIR-012 clause 5's logic: a floor nobody serves is a dead letter).
 - **Staleness:** a candidate's **peg is a dated claim** (DIR-010). At ~90 days, or when a peg's moment has visibly passed, flag for **re-gut**: CRE re-rules SPARK (peg refresh if needed) or KILL. Never auto-retire — the checker flags; CRE rules (DIR-014's matcher lesson: the distinguishing fact isn't in the text).
-- **Next-up:** close every session by proposing a ranked next-up from the live bag (recency of gut-yes, peg freshness, variety vs. the last published episode). **CRE ratifies or reorders.** The weekend slot then presents one story, zero decisions.
+- **Next-up:** close every session by proposing a ranked next-up from the live bag (recency of gut-yes, peg freshness, variety vs. the last published episode). **CRE ratifies or reorders.** The weekend slot then presents one story, zero decisions. **Variety ranks under the promise (v2.1, dec-034):** it is sub-genre and condition variety among horror-family pieces — the interleave dec-025 ruled — never a reach outside the promise for its own sake. A candidate whose `## Promise read` is `thin` carries that as a flag on its row; the flag never lifts it and never sinks it. CRE's gut placed it in the bag; his gut, or the gate, moves it.
 
 ## DEEPEN mode (S0.5 — pick time)
 
