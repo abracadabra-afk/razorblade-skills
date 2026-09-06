@@ -24,6 +24,8 @@ Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brai
 3. Read `REFERENCE/protected-patterns.md` — **the shield.** Absent → offer **seed mode** first (below); CRE may waive and run shieldless (note it on the sheet).
 4. Pick the working text, in order: `draft.md` when its `status` marks real content → newest file in `revisions/` → newest slate `clean-draft.md`. Name what you picked so a misfire is visible.
 
+**Supersession triage — before the shield, queue, or premise binds anything (DIR-019, added 2026-09-01).** Every span-naming ruling loaded above (protected-patterns rows, queue items, premise amendments, open-loops resolutions) is checked against the working text first: **span present → carry silently; span gone → moot — stamp the row `superseded_by: <working text> (<date>)` in place, one changelog line, never asked; span reworded-but-surviving → the only case that surfaces**, collected into a single `## Superseded rulings — reworded spans (rule once)` block at the top of the sheet, tree-researched first (DIR-011). Never ask CRE to re-ratify a ruling whose span is intact, and never re-open one his own later draft discharged (DIR-019 §3 — a hand-landed draft is the newest ruling). **Scope lock (§4):** staleness noticed outside the working text and its direct derives is one line in `SYSTEM/drift-ledger.md`, not a sheet item and not a chat aside.
+
 ## Modes
 - **trim** — TRIM + COMPRESS only (the make-or-break subtractive pass).
 - **polish** — WORD + EAR + RUE/TELL + MECH.

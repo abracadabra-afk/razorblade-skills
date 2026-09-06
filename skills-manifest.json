@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-06T12:00:10.6984054-07:00",
+    "generated":  "2026-09-06T15:26:14.5027363-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -152,9 +152,9 @@
                    {
                        "name":  "episode-feedback",
                        "package":  "WORKFLOWS/skills/episode-feedback.skill",
-                       "sha256":  "e60c441cd4f02915bc7c357e3db4d3f7eeb672e1c82eb1e82b9a8695e8f12ed0",
-                       "content_sha256":  "dec52f1663c6e71922f3badb2a3b84b1bbea219f90014a7c4396f60879fb3c25",
-                       "bytes":  3585
+                       "sha256":  "397c50d02afebe5ebbe1327e7462f55caf2dd8025f4fa32b679c46b3f61e0b2f",
+                       "content_sha256":  "d5ca294bf0887b9d2c9738471bf02a7d6b75c910bee05e57d2ad52811ce1a487",
+                       "bytes":  4031
                    },
                    {
                        "name":  "episode-harden",
@@ -194,9 +194,9 @@
                    {
                        "name":  "line-edit",
                        "package":  "WORKFLOWS/skills/line-edit.skill",
-                       "sha256":  "6514a5e4b2a41d2d09e4de3dad5d689f03180d4ace4de9e70cec776dd202ab8b",
-                       "content_sha256":  "79e6ac0e0123b8d4a59d00659cbf6697f9d7031a6f561bbc3dec1a6e68e51dc8",
-                       "bytes":  4120
+                       "sha256":  "9a4607192d76d354a707d41c69bb583fdbedf0e2e9450e6a57994d2737d650fd",
+                       "content_sha256":  "33f61c1dc0ed415b974f0b9e39fe311b1a9eac22324f66137647fffef2c14d67",
+                       "bytes":  4555
                    },
                    {
                        "name":  "link-audit",
@@ -236,9 +236,9 @@
                    {
                        "name":  "promote-revision",
                        "package":  "WORKFLOWS/skills/promote-revision.skill",
-                       "sha256":  "fc04c6551d5360f4ae6adbe0b5f3d6e99a985c3ec08036bb04ddbccbcab83ad0",
-                       "content_sha256":  "c942a4d28a31ae4929f4f41d4d50b27958bcfe3e7add14a2fefb5fb4e702393b",
-                       "bytes":  4900
+                       "sha256":  "4dd119e831676286a0dd2e41e11ffa84d9d7783a17dda23a792295866a369342",
+                       "content_sha256":  "cfb0f6d7b115d553dae09617de5bc6fdcfb1a2171845093e14f97f3b4e9c1d0c",
+                       "bytes":  6163
                    },
                    {
                        "name":  "reconcile",

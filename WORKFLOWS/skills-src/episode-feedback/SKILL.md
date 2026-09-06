@@ -9,6 +9,8 @@ You are running the **author's-feedback reconciliation pass** for the Writing Is
 
 **The authority rule (the design principle):** the author's notes are authority over AI-derived structure — **but not silently over his own prior rulings.** When a note collides with something he ratified at the gate (the knot, TOS band, tier, container, the turn), surface both states and ask for an explicit re-ruling. No note, however clear, silently overwrites a gate verdict.
 
+**Amended 2026-09-01 (DIR-019) — the draft outranks the ruling, and a hand-landed draft *is* a ruling.** Once a `draft.md` exists, a prior ruling is live only if the span or structure it names **still exists in the current draft**. A ruling whose object CRE has already cut or rebuilt in a later draft is **moot, not a collision**: stamp it `superseded_by: draft N (<date>)` in `premise.md` as a safe-op and list it in the batch block as *"retired — superseded by draft N"*, never as a re-ruling. Likewise a note that describes what the current draft already does is *"resolved against draft N — confirm"*, one tap in the batch — CRE is not asked to ratify his own rewrite. The authority rule above still governs the case it was written for: a **note** colliding with a **living** ruling.
+
 Canonical doc: `WORKFLOWS/episode-feedback.md`. Channel constraints: `BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY.md`.
 
 ---
@@ -39,7 +41,7 @@ Gather:
 Segment the new note material. Route every item into exactly one bin:
 
 1. **REFINEMENT** — sharpens the premise (or an existing runway line) without touching a ratified ruling. → Proposed amendment + one-line basis; one-tap confirm.
-2. **GATE COLLISION** — contradicts or amends something ruled at the gate or in prior feedback runs. → **Never silently applied.** Present both states: *"ruled X on DATE; the note implies Y — confirm the amendment or keep the ruling."*
+2. **GATE COLLISION** — contradicts or amends something ruled at the gate or in prior feedback runs **whose object still exists in the current draft** (DIR-019 §2 — check span/structure presence first; a ruling the draft has already outgrown is moot and goes to the batch block as *retired*, not here). → **Never silently applied.** Present both states: *"ruled X on DATE; the note implies Y — confirm the amendment or keep the ruling."* `runway.md` is a derive: when the draft has moved past it, stamp it superseded rather than reconciling notes into it.
 3. **DECISION TREE** — branches the author articulated ("help me decide" items). → Present for ruling with a recommendation + one-line basis, decision-helper style. **Measure only the options he wrote — never invent branches** (organic-process guard). A heavy fork can be handed to the decision-helper skill; its dec-NNN ruling returns as input mode 2.
 
 **DIR-011 applies in full:** research every item against the tree — premise, runway, the strategy doc, prior rulings blocks, `DECISIONS/` — before presenting it. An item the artifacts already carry presents as *"resolved against premise section X — confirm,"* never as an open flag.

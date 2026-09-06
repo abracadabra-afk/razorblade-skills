@@ -78,7 +78,22 @@ Rewrite `draft.md`'s frontmatter by this mapping. Preserve fields not mentioned;
 
 Why both `source_slate` *and* `source_revision`: the slate is the deep provenance (where the words originally came from), the revision is the immediate parent (what was just promoted). Keeping both means anyone can walk the chain in either direction without guessing.
 
-**Do not touch** `slate/`, `revisions/`, the `-note.md` sidecars, or any `spec-check/` file. They are the immutable record; `draft.md` is the only thing this skill writes (besides the logs). If the chapter keeps a `_status.md` phase tracker, you may bump its `last_updated` and note the promotion, but never invent fields it doesn't already have.
+**Do not touch** `slate/`, `revisions/`, the `-note.md` sidecars, or any `spec-check/` file. They are the immutable record; `draft.md` is the only thing this skill writes (besides the logs and the Step 3b stamps below). If the chapter keeps a `_status.md` phase tracker, you may bump its `last_updated` and note the promotion, but never invent fields it doesn't already have.
+
+---
+
+## Step 3b — Supersession accounting (DIR-019, added 2026-09-01) — safe-op, logged, never asked
+
+A promotion is a staleness event for everything that described the previous draft. In the same session, mechanically:
+
+1. **Stamp the derives.** Every derived artifact in the folder whose stamp predates this promotion — `record-script.md`, `performance-notes.md`, `runway.md`, `choreo/*.md`, any `*-sheet` — gets `superseded_by: draft.md (<date>, <rev>)` in frontmatter, **in place, never moved** (pointers and trails survive). Deterministic derives the route needs downstream (StoryLine) regenerate via their own skill; don't hand-edit them here.
+2. **Triage the rulings.** Every span-naming ruling that points at this draft — `open-loops.md` resolutions, `premise.md` amendments, `REFERENCE/protected-patterns.md` rows, board chunks in `TASKS/` naming the chapter — checked by span presence in the promoted text: **present → carry; gone → stamp moot (`superseded_by` + date), one changelog line; reworded-but-surviving → list, one batch, for the next pass that binds them** (not a question for CRE now — the next gated pass surfaces the batch once).
+3. **Update the landed file's own list.** `draft.md`'s `status` / open-items field is rewritten to describe **this** landing — the previous landing's "still open" list dies with the previous draft (`^obs-279`'s recurrence).
+4. **Archive byte-exact.** The superseded `draft.md` body is already preserved by the revision chain in the normal case; on a **hand-landing** (below) write it to `revisions/<date> - draft N superseded.md` first, before anything else touches the folder. This is the one write into `revisions/` this skill performs, and it only happens in hand-landing mode.
+
+**Hand-landing mode — trigger "account the landing" (DIR-019 §3).** When CRE has landed a draft himself (no rev in `revisions/`, `draft.md` already carries the new prose), Steps 1–2 don't apply: **his landing is the ruling.** Run Step 3b alone — archive first (item 4), then items 1–3. Never ask him to confirm a change he made, never re-open an item his rewrite discharged. Report what was stamped and what was retired, in one block; the reworded batch (if any) travels to the next pass. This closes the gap `^backlog-author-landing-preflight` names: the hand-landing had no accounting step and no archive.
+
+**Scope lock (§4).** Staleness outside this chapter's folder and its `REFERENCE/` rows — a channel-law worked example, another episode's pointer — is one line in `SYSTEM/drift-ledger.md`, not a finding in this session.
 
 ---
 
@@ -99,9 +114,10 @@ If you noticed anything fragile (a lineage mismatch you had to resolve, a missin
 - `<chapter>/draft.md` — body replaced with the promoted revision's prose; frontmatter rewritten per the mapping above.
 - `<chapter>/changelog.md` and vault `_CHANGELOG.md` — a log line each.
 - optionally `<chapter>/_status.md` (`last_updated` bump only) and `_OBSERVATIONS.md` (if something fragile surfaced).
+- Step 3b's supersession stamps (DIR-019): `superseded_by:` frontmatter on the folder's stale derives and on moot span-naming rulings, plus — in hand-landing mode only — `revisions/<date> - draft N superseded.md`.
 
 **Must NOT write or alter:**
-- Anything in `slate/`, `revisions/` (including the `-note.md` you read), or `spec-check/`. These are the immutable audit trail; promotion mirrors them into `draft.md`, it never edits them.
+- Anything in `slate/`, `revisions/` (including the `-note.md` you read), or `spec-check/`. These are the immutable audit trail; promotion mirrors them into `draft.md`, it never edits them. The single exception is Step 3b item 4's byte-exact hand-landing archive, which *adds* a file to `revisions/` and edits nothing already there.
 
 ---
 
@@ -109,7 +125,7 @@ If you noticed anything fragile (a lineage mismatch you had to resolve, a missin
 
 - Vault sentinel fails → halt, ask which folder is the vault.
 - Chapter has no `revisions/` or no `draft.md` (convention not adopted) → halt, tell the author.
-- `revisions/` holds no `…-rev<N>.md` passage → halt; nothing to promote (run `register-pass` first).
+- `revisions/` holds no `…-rev<N>.md` passage → halt; nothing to promote (run `register-pass` first) — **unless** the trigger was "account the landing," in which case run Step 3b alone (hand-landing mode, DIR-019 §3).
 - Revision `source_slate` ≠ draft `source_slate` (and draft is not a scaffold) → pause, surface both, ask before overwriting.
   **Not** a stop condition (CRE-ruled 2026-09-04): draft with *no* `source_slate` + rev carrying a minted `spec-check/` run id = the author-direct route; proceed. See Step 2.
 
