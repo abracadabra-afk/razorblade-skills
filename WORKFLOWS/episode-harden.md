@@ -6,8 +6,8 @@ triggers: ["harden the episode"]
 lane: 5 (writing-ops) + 1 (fiction)
 intent: "[[WORKFLOWS/intents/episode-harden]]"
 created: 2026-09-05
-last_updated: 2026-09-05
-revision_note: "v1 — built 2026-09-05 from WORKFLOWS/intents/episode-harden.md (ratified same day). Companion edits landed in the same build: episode-blueprint Inputs name shape.md as run 2's structural source (premise wins on overlap, shape next, DEV additive for the aesthetic layer — CRE widened the 'nowhere else' clause 2026-09-05); pipeline S1.75 row; _SKILLS MAP trigger row."
+last_updated: 2026-09-06
+revision_note: "2026-09-06 — step 7 offers 'build the walker' at the stamp (brainstorm-walker build; installed skill inherits at repack, DIR-009). v1 — built 2026-09-05 from WORKFLOWS/intents/episode-harden.md (ratified same day). Companion edits landed in the same build: episode-blueprint Inputs name shape.md as run 2's structural source (premise wins on overlap, shape next, DEV additive for the aesthetic layer — CRE widened the 'nowhere else' clause 2026-09-05); pipeline S1.75 row; _SKILLS MAP trigger row."
 ---
 
 # episode-harden
@@ -105,7 +105,7 @@ Batched, defaulted where a default is derivable, **blank where the answer would 
 4. **Pre-fill** — every field the three sources answer, tagged `[ruled]` with the resolving section noted for the confirm line. Run `python scripts/shape.py handbacks <blueprint.md>` to seed the agenda with the blueprint's hand-backs. List what is left open; that list is the interview.
 5. **Round 1 → Round 2 → Round 3**, per the section above, in `interview-me`'s form (field tag, why it matters, default or *your call*). Present each round in response-contract voice: one line on what is resolved, then the batch.
 6. **Scaffold → fill → check → re-read** — `scripts/shape.py scaffold` with `--rungs N` and `--anchor`; file-tool fills in his words; `scripts/shape.py check` (frontmatter parses, sections present in walk order, rungs descending and contiguous to E1, one resistance token per rung or the hand-back tag, every entry tagged, no bare `[recommended]` when `status: ratified`, no quoted speech / multi-sentence / 45+-word lines, no placeholders, agenda last); re-read through the file tools (DIR-005). The check names what it did not check (DIR-018): whether a line is his material or an invented beat, whether a resistance line is really different from its neighbour, whether a default was derived from the shape or from imagination.
-7. **The stamp** — present the shape; CRE rules `status: ratified` (frontmatter `ratified: "CRE, YYYY-MM-DD"`). Every `[recommended]` he did not touch becomes `[recommended → ratified]` on his word; one he declines becomes `[NOT NAMED — CRE]`. Not stamped → `status: draft` is the visible deferral (DIR-012 §4). Close by naming the agenda in one line — that is what he aims the mic at.
+7. **The stamp** — present the shape; CRE rules `status: ratified` (frontmatter `ratified: "CRE, YYYY-MM-DD"`). Every `[recommended]` he did not touch becomes `[recommended → ratified]` on his word; one he declines becomes `[NOT NAMED — CRE]`. Not stamped → `status: draft` is the visible deferral (DIR-012 §4). Close by naming the agenda in one line — that is what he aims the mic at — **and offer the walker in one line: "build the walker?"** ([[WORKFLOWS/brainstorm-walker]], 2026-09-06). On his yes, run it in the same sitting; on anything else, leave it — trigger-called, never chained silently. Only on a ratified stamp; a draft shape gets no walker.
 8. **Log** — `_CHANGELOG` top-insert; `_OBSERVATIONS` for tool surprises; `_CREATIVE OBSERVATIONS` (`^cobs`) for craft observations about the shape, automatically (DIR-003).
 
 ## Stop conditions
@@ -136,7 +136,7 @@ Objective parts only (`WORKFLOWS/skills-src/episode-harden/evals/`): every pilla
 ## Relationship to the rest of the OS
 
 - **Upstream:** [[WORKFLOWS/premise-forge]] DEEPEN (S0, optional — its `## Arc chain` is read here) → [[WORKFLOWS/episode-init]] (S1) → [[WORKFLOWS/episode-blueprint]] run 1 (S1.5 — its hand-backs seed the agenda).
-- **Downstream:** [[WORKFLOWS/brainstorm]] + [[WORKFLOWS/dev-capture]] (S2 — CRE carries `shape.md` in; the brainstorm is the aesthetic layer) → [[WORKFLOWS/episode-feedback]] (S3 — collisions between what the mic moved and the ratified shape surface as GATE COLLISION) → [[WORKFLOWS/episode-blueprint]] run 2 (S3 — reads `shape.md` as its structural source: premise wins on overlap, shape next, DEV additive for the aesthetic layer; CRE-ruled 2026-09-05).
+- **Downstream:** [[WORKFLOWS/brainstorm-walker]] (offered at the stamp — derives `walker.md`, the coverage sheet CRE carries to the mic; reads this shape, never reopens it) → [[WORKFLOWS/brainstorm]] + [[WORKFLOWS/dev-capture]] (S2 — CRE carries `shape.md` and `walker.md` in; the brainstorm is the aesthetic layer) → [[WORKFLOWS/episode-feedback]] (S3 — collisions between what the mic moved and the ratified shape surface as GATE COLLISION) → [[WORKFLOWS/episode-blueprint]] run 2 (S3 — reads `shape.md` as its structural source: premise wins on overlap, shape next, DEV additive for the aesthetic layer; CRE-ruled 2026-09-05).
 - **Question lane:** [[WORKFLOWS/interview-me]].
 - **Craft read by path:** [[KNOWLEDGE/PROCESS/CRAFT BELIEFS]] · [[KNOWLEDGE/REFERENCES/Methods/Tension and Transformation Framework]] · index [[KNOWLEDGE/CRAFT CANON]].
 - **Intent:** [[WORKFLOWS/intents/episode-harden]] (ratified 2026-09-05). Watch-item it bears on: `^backlog-deepen-vs-brainstorm`.

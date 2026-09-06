@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-06T10:03:33.3697305-07:00",
+    "generated":  "2026-09-06T12:00:10.6984054-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -43,6 +43,13 @@
                        "sha256":  "d65dadcb7a6a0f18dfdcc7bf2772636de650e8b3a9dd3beb98ec6f885fced1dc",
                        "content_sha256":  "ca08d291c0be6599fe91f258e5ad1f3406789560881e6c84e65b4313ac1c5694",
                        "bytes":  12457
+                   },
+                   {
+                       "name":  "brainstorm-walker",
+                       "package":  "WORKFLOWS/skills/brainstorm-walker.skill",
+                       "sha256":  "3f8e8eb088412596d0f133489b6de5ec98a51ab94f01556e1fce6f5887fe4ec8",
+                       "content_sha256":  "d97f65f7501524e13f0a95e02c75e0f17d8d6ef2df63c0f7b386c276f398f90d",
+                       "bytes":  44432
                    },
                    {
                        "name":  "canon-sync",

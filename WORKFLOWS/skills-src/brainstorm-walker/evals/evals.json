@@ -1,0 +1,70 @@
+{
+  "skill_name": "brainstorm-walker",
+  "note": "Objective parts only. Whether a prompt is a question about the committed entry or a beat wearing a question mark is CRE's gate at the mic and is deliberately not eval'd. Fixtures are synthetic test data (EP 95 - FIXTURE LANTERN), not CRE material. The fixture vault carries a draft.md and a DEV/scenes/ entry with sentinel tokens that must never appear in any output.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "lint-fixtures",
+      "prompt": "Run scripts/walker.py check on each fixture in evals/fixtures/, passing --shape evals/fixtures/vault/WRITING/SHORTS/EPISODES/EP 95 - FIXTURE LANTERN/shape.md.",
+      "expected_output": "pass-derived.md exits 0; pass-with-notes.md exits 0; pass-regenerated-from-notes.md exits 0; fail-beat-lens-head-order.md exits 1 and reports: section order wrong and Brainstorm agenda not last, E3 dialogue introduces words not on the reminder (door, drop, match, oil-soaked, rag), E2 setting head is not S2 cue grammar (location), E1 missing lens imagery, Setting — Region carries a NOT NAMED line but lacks the open flag.",
+      "files": ["evals/fixtures/pass-derived.md", "evals/fixtures/pass-with-notes.md", "evals/fixtures/pass-regenerated-from-notes.md", "evals/fixtures/fail-beat-lens-head-order.md"],
+      "assertions": [
+        "pass-* fixtures exit 0",
+        "fail-beat-lens-head-order.md exits 1",
+        "fail report names the section order / agenda-not-last defect",
+        "fail report names the novel words in E3's dialogue question",
+        "fail report names the non-cue head on E2's setting question",
+        "fail report names E1's missing imagery lens",
+        "fail report names the missing open flag on Setting — Region"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "derive-fixture-episode",
+      "prompt": "Build the walker for EP 95 - FIXTURE LANTERN. The vault root for this run is <workspace>/fixtures/vault (a test fixture; use it instead of the real vault). Write walker.md into the episode folder.",
+      "expected_output": "walker.md in the fixture episode folder: frontmatter parses with type brainstorm-walker, status current, shape_fingerprint set; Refresher with the knot, anchor, curve, gate line, the premise in a folded callout, mechanics (Choice + Mirror from the arc chain, Incident from the blueprint, want, MoT, ending, flaw), cast one-liners, setting, agenda, and the registry line naming Fixture Recurring; four episode-level slots (opening, closing, during, after) each with an empty notes slot; The walk in shape order (Want, Moment of Truth, Ending, E3, E2, E1, Flaw) then Cast (Maren, Tomas, the lamp) then Setting (Era, Region, Class, Living conditions) then Brainstorm agenda last; every block carries its shape lines verbatim with tags, seven lens questions with cue-grammar heads, and an empty notes slot; Moment of Truth and Region flagged open; the --- rule then ## Your notes at the end. Neither sentinel token appears. The line below the blueprint's Your-notes rule does not appear.",
+      "files": ["evals/fixtures/vault/WRITING/SHORTS/EPISODES/EP 95 - FIXTURE LANTERN/shape.md", "evals/fixtures/vault/WRITING/SHORTS/EPISODES/EP 95 - FIXTURE LANTERN/premise.md", "evals/fixtures/vault/WRITING/SHORTS/EPISODES/EP 95 - FIXTURE LANTERN/blueprint.md"],
+      "assertions": [
+        "scripts/walker.py check --shape <shape.md> exits 0 on the written walker.md",
+        "Frontmatter parses as YAML with type brainstorm-walker, status current, non-empty shape_fingerprint and shape_ratified, superseded_by empty",
+        "Every tagged shape entry (Want, MoT, Ending, each rung, Flaw, each Cast line, each Setting line) appears verbatim as a reminder line",
+        "Four episode-level slots present, each with a **Your notes:** line and nothing under it",
+        "Every block carries exactly seven lens lines whose heads are scene — / character — / place — / what I love about this — and end in a question mark",
+        "Every block carries an empty **Your notes:** slot",
+        "Blocks holding a [NOT NAMED — CRE] line carry the open flag and the agenda names them",
+        "Order: Refresher, Episode-level cues, The walk (Want, Moment of Truth, Ending, E3, E2, E1, Flaw), Cast, Setting, Brainstorm agenda, then --- and ## Your notes",
+        "DRAFT-SENTINEL-DO-NOT-MINE and SCENES-SENTINEL-DO-NOT-READ appear nowhere in the output",
+        "The blueprint line below its ## Your notes rule appears nowhere in the output",
+        "No file was written other than walker.md in the fixture episode folder",
+        "CRE was asked nothing during generation"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "regenerate-preserves-notes",
+      "prompt": "The shape for EP 95 - FIXTURE LANTERN was re-ratified. Copy evals/fixtures/pass-with-notes.md into the fixture episode folder as walker.md, then build the walker again (vault root <workspace>/fixtures/vault). I typed notes into E2, Maren, the after cue, and the tail; they must survive.",
+      "expected_output": "walker.md regenerated: the E2 notes (two lines), the Maren note, the after-cue note, and the tail note under ## Your notes are present verbatim in their slots; check exits 0; the derive report says 4 notes slots carried, 0 orphaned.",
+      "files": ["evals/fixtures/pass-with-notes.md"],
+      "assertions": [
+        "FIXTURE NOTE E2 and its second line appear under ### E2's notes slot, verbatim",
+        "FIXTURE NOTE MAREN appears under the Maren cast block's notes slot",
+        "FIXTURE NOTE AFTER appears under ### Cue — after's notes slot",
+        "FIXTURE TAIL NOTE appears under the closing ## Your notes",
+        "scripts/walker.py check exits 0",
+        "No note text was altered, reordered, or duplicated"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "stop-conditions",
+      "prompt": "Build the walker for an episode whose shape.md is status draft; then for an episode with no shape.md; then a second time for an episode whose walker already mirrors the current shape.",
+      "expected_output": "Each run stops with exit 3 and one plain line: not ratified (stamp it first), not hardened (route to episode-harden), nothing moved (walker current). No walker.md is written in the first two cases; the third leaves the existing file untouched.",
+      "files": [],
+      "assertions": [
+        "shape.md status draft: derive exits 3, names the stamp, writes nothing",
+        "no shape.md: derive exits 3, routes to episode-harden, writes nothing",
+        "unchanged shape with an existing walker: derive exits 3, says nothing moved, file bytes unchanged"
+      ]
+    }
+  ]
+}

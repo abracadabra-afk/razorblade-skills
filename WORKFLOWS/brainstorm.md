@@ -3,12 +3,12 @@ type: workflow
 name: brainstorm
 trigger: synthesize the brainstorm
 aliases: [brainstorm this transcript, run the brainstorm, summarize the brainstorm, brainstorm synthesis]
-inputs: [a dictation transcript of CRE talking a project/sequence/scene through with himself — raw or cleaned; pasted, pointed-at, or staged in DEV/_intake/]
+inputs: [a dictation transcript of CRE talking a project/sequence/scene through with himself — raw or cleaned; pasted, pointed-at, or staged in DEV/_intake/; on a WIW episode, ALSO the typed notes slots of the episode's walker.md (brainstorm-walker) — a second input alongside the transcript, same extraction contract]
 outputs: [a CRE-ratified decision sheet in DEV/_intake/ (cue-headed, ready for dev-capture), the source transcript swept to DEV/_intake/_audit/, open questions preserved as questions]
 lane: fiction
 status: spec
-last_updated: 2026-07-26
-revision_note: v2 same day as v1 — input mode corrected per CRE. v1 was built chat-first (live back-and-forth with the AI); CRE's actual flow is a solo dictated talk-through presented for synthesis. Transcript-first now; live mode demoted to optional Mode B. Packs after 2–3 live runs.
+last_updated: 2026-09-06
+revision_note: v2 same day as v1 — input mode corrected per CRE. v1 was built chat-first (live back-and-forth with the AI); CRE's actual flow is a solo dictated talk-through presented for synthesis. Transcript-first now; live mode demoted to optional Mode B. Packs after 2–3 live runs. 2026-09-06 — walker notes named as a second input (brainstorm-walker build); Steps 1–2 and 5 amended.
 ---
 
 # WORKFLOW: brainstorm
@@ -59,7 +59,11 @@ Body sections:
 CRE rules **once**, at the sheet. His approval pass (edit / strike / promote-a-question / confirm, one pass) flips `ratified: yes`. Downstream, **dev-capture treats a ratified sheet's Decisions as pre-ruled**: it routes them without re-asking, and re-gates **only** an actual collision — a `_LEDGER` conflict, a ruled-terms contradiction, banked-manuscript friction (DIR-011: the second gate fires when the tree disagrees, not by default). Open questions and Rulings-needed items route to `_intake` holds as usual — ratifying the sheet ratifies the *decisions*, not the questions.
 
 ## Getting the transcript in
-Any of: paste it in chat; point the session at a file; or drop it through the normal dictation transport and run brainstorm against the staged copy. **No dedicated runner marker exists yet** — a spoken "brainstorm" lead-in currently routes nowhere special (a "dev note" head would send it to dev-capture's queue instead, which is the wrong instrument for exploratory talk). If live runs prove the flow, adding a `brainstorm` marker to [[WORKFLOWS/dictation-runner]] is the follow-up — tracked on `^backlog-pack-brainstorm`, not improvised here (runner-prompt drift is a known trap).
+Any of: paste it in chat; point the session at a file; or drop it through the normal dictation transport and run brainstorm against the staged copy.
+
+**The walker's typed notes are a second input (2026-09-06, [[WORKFLOWS/brainstorm-walker]]).** On a WIW episode CRE carries `walker.md` into the session — at the mic he speaks its cue heads, at the desk he types into its `**Your notes:**` slots. Read every filled slot (per block, the four episode-level cues, the agenda slots, and the tail under `## Your notes`) as source material under the same extraction contract as the transcript: a typed note is still his talk, not a decision until it states a call. A note's block tells you which committed entry it answers; the block's bold head is the cue to carry onto the sheet. The walker itself is a derived coverage sheet, never a spec — an unfilled slot is not a gap to report, and nothing here grades his session against it (DIR-017 §2). Once the sheet ratifies, stamp the walker `superseded_by:` (its own `supersede` subcommand); its notes stay in place for the record.
+
+**No dedicated runner marker exists yet** — a spoken "brainstorm" lead-in currently routes nowhere special (a "dev note" head would send it to dev-capture's queue instead, which is the wrong instrument for exploratory talk). If live runs prove the flow, adding a `brainstorm` marker to [[WORKFLOWS/dictation-runner]] is the follow-up — tracked on `^backlog-pack-brainstorm`, not improvised here (runner-prompt drift is a known trap).
 
 ## Steps
 
@@ -67,7 +71,7 @@ Any of: paste it in chat; point the session at a file; or drop it through the no
 Confirm the `^obs-004` sentinel. Identify the target project (named in the transcript head, or asked once); read its `DEV/_DEV_MAP.md` (cue table + ruled terms), `_DEV.md` (taste anchor), `_intake/_LEDGER.md`, and — targeted — the registry/scene/sequence entries the topic touches. DIR-011 applies to the whole pass: a question the tree already answers is resolved with provenance ("resolved against [[Entry]] — confirm"), never surfaced as an open flag.
 
 ### Step 2 — Read + extract
-Walk the transcript in order under the extraction contract. Track: candidate decisions (with supersessions as later statements override earlier ones), taste statements, tensions with banked material (noted for the sheet, logged to `_LEDGER` if they collide with landed manuscript — silently, per the dev-layer discipline), forks opened, questions left open. Correct obvious STT garbles of *ruled terms* against the `_DEV_MAP` table (exact-alias only — never guess a name the table doesn't hold).
+Walk the transcript in order under the extraction contract; on a WIW episode, walk the walker's filled notes slots the same way (they are the second input, see above). Track: candidate decisions (with supersessions as later statements override earlier ones), taste statements, tensions with banked material (noted for the sheet, logged to `_LEDGER` if they collide with landed manuscript — silently, per the dev-layer discipline), forks opened, questions left open. Correct obvious STT garbles of *ruled terms* against the `_DEV_MAP` table (exact-alias only — never guess a name the table doesn't hold).
 
 ### Step 3 — Distill
 Draft the decision sheet per the format above. Compression, not paraphrase-drift: his vocabulary, his terms. Anything uncertain lands in Open questions, never Decisions.
@@ -78,6 +82,7 @@ Present the sheet. CRE edits/strikes/promotes/confirms in one pass. Apply his ed
 ### Step 5 — Land + hand off
 - Write the ratified sheet to `DEV/_intake/`.
 - Sweep the source transcript to `DEV/_intake/_audit/<date>-brainstorm-<topic>.md` — the floor, per the transcript-floor convention; the sheet's `source_log` carries the pointer. If the transcript was staged in `_intake/`, remove the staged copy once swept (the floor is canonical; `_intake/` holds only unrouted material).
+- On a WIW episode with a `walker.md`: stamp it superseded (`python scripts/walker.py supersede <walker.md> --by <this sheet>`; the sheet's path is the pointer). Body and notes untouched.
 - Offer the next leg: run **"capture the dev"** now (same session) or leave the sheet queued. Either way dev-capture finds a cue-headed, pre-ruled sheet.
 - If Rulings-needed items exist, offer decision-helper per item — never auto-run it.
 
