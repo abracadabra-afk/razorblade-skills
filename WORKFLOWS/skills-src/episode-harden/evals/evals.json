@@ -1,0 +1,60 @@
+{
+  "skill_name": "episode-harden",
+  "note": "Objective parts only. Craft judgments (is a resistance line real, is a default derived from the shape or imagined, is the anchor the right rung) are CRE's gate and are deliberately not eval'd. Fixtures are synthetic test data, not CRE material.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "lint-fixtures",
+      "prompt": "Run scripts/shape.py check on each file in evals/fixtures/.",
+      "expected_output": "pass-ratified.md exits 0; pass-draft-with-holes.md exits 0 (draft status permits bare [recommended] and [NOT NAMED — CRE] holes, and the agenda lists them); fail-untagged-prose-order.md exits 1 and reports: empty anchor_rung, ratified without a stamp, no Anchor rung line, walk order wrong and agenda not last, Want entry untagged, bare [recommended] on a ratified shape, quoted speech in the Answer line, multi-sentence Lost line, Ending missing Mode, rungs ascending (must be walked down), E2 missing the runs-against token, E3 untagged, Cast missing the instrument line, Setting missing Region, a Setting line with two tags.",
+      "files": ["evals/fixtures/pass-ratified.md", "evals/fixtures/pass-draft-with-holes.md", "evals/fixtures/fail-untagged-prose-order.md"],
+      "assertions": [
+        "pass-* fixtures exit 0",
+        "fail-untagged-prose-order.md exits 1",
+        "fail report names the empty anchor_rung",
+        "fail report names the missing ratified stamp",
+        "fail report names the walk order / agenda-not-last defect",
+        "fail report names the untagged Want entry",
+        "fail report names the bare [recommended] on a ratified shape",
+        "fail report names the quoted-speech line",
+        "fail report names the multi-sentence line",
+        "fail report names the ascending rungs",
+        "fail report names E2's missing runs against: token",
+        "fail report names the missing instrument line and the missing Region"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "harden-fixture-episode-ratified",
+      "prompt": "Harden the episode. The episode folder is at <workspace>/fixture-episodes/EP 93 - FIXTURE HOUSE/ (a test fixture; use this path instead of WRITING/SHORTS/EPISODES). I'm here to rule — run the three rounds, take every default, and stamp it ratified.",
+      "expected_output": "shape.md in the fixture folder: knot + anchor lines, pillars in walk order (Want, Moment of Truth with Question + Answer, Ending with Gained + Lost + Mode, Rungs walked down from the top rung to E1 each with a runs against: line, Flaw), Cast with an instrument line, Setting with the four placing facts, Brainstorm agenda last; every entry tagged; status ratified with a stamp; no bare [recommended]; no quoted speech; no multi-sentence lines; nothing written under WRITING/SHORTS/EPISODES or WRITING/SHORTS/DEV.",
+      "files": ["fixture-episodes/EP 93 - FIXTURE HOUSE/blueprint.md", "fixture-episodes/EP 93 - FIXTURE HOUSE/premise.md"],
+      "assertions": [
+        "scripts/shape.py check exits 0 on the written shape.md",
+        "Frontmatter parses as YAML with type episode-shape, anchor_rung non-empty, status ratified, ratified stamped",
+        "Sections in walk order: Want, Moment of Truth, Ending, Rungs, Flaw, Cast, Setting, Brainstorm agenda",
+        "Rungs descend from the top rung to E1 and each carries a runs against: line",
+        "Every entry line carries exactly one of [ruled] / [recommended → ratified] / [NOT NAMED — CRE]",
+        "No want, question, answer, rung, resistance, or ending line was offered with a default in the interview transcript",
+        "No quoted speech, speech tags, or multi-sentence lines",
+        "No file was written under WRITING/SHORTS/EPISODES or WRITING/SHORTS/DEV",
+        "draft.md in the fixture folder was not read"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "harden-fixture-episode-draft-with-holes",
+      "prompt": "Harden the episode. The episode folder is at <workspace>/fixture-episodes/EP 94 - FIXTURE WELL/ (a test fixture). Round 1: I'll answer the want and the question, skip the answer and the ending. Round 2: skip E3's resistance. Round 3: take the defaults but leave the era and his mental state blank. Do not stamp it — leave it draft.",
+      "expected_output": "shape.md with status draft, [NOT NAMED — CRE] on the skipped fields (Answer, Gained, Mode, E3 resistance, mental state, Era), defaults tagged [recommended], and a Brainstorm agenda that lists every hole plus the blueprint's [ANGLE MISSING — CRE] hand-back on E3.",
+      "files": ["fixture-episodes/EP 94 - FIXTURE WELL/blueprint.md", "fixture-episodes/EP 94 - FIXTURE WELL/premise.md"],
+      "assertions": [
+        "scripts/shape.py check exits 0 on the written shape.md",
+        "status is draft and ratified is empty",
+        "Answer, Gained, Mode, E3 runs against, mental state, and Era carry [NOT NAMED — CRE]",
+        "No skipped field was filled with content",
+        "Brainstorm agenda lists each [NOT NAMED — CRE] hole and the blueprint's [ANGLE MISSING — CRE] on E3",
+        "Brainstorm agenda is the last section"
+      ]
+    }
+  ]
+}

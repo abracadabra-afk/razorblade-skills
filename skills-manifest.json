@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-05T12:00:11.8082798-07:00",
+    "generated":  "2026-09-06T10:03:33.3697305-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -138,9 +138,9 @@
                    {
                        "name":  "episode-blueprint",
                        "package":  "WORKFLOWS/skills/episode-blueprint.skill",
-                       "sha256":  "fab05a563fb3aa1dac524f7706693911f2b2e30a28f4651ad7a0aadf50041a31",
-                       "content_sha256":  "c192178962ec74c19f383c488c1ee1ab8bb7333d6c2da81a86ac11dfa991b9e9",
-                       "bytes":  22622
+                       "sha256":  "62d0434f9e0282a1684237359f5860d0548297b1f2737d5e641f6f2db3378a4b",
+                       "content_sha256":  "e3ce44076e4924df5cd8de66f277166fdfeec69634780e5a6b72e030848ec14b",
+                       "bytes":  22880
                    },
                    {
                        "name":  "episode-feedback",
@@ -148,6 +148,13 @@
                        "sha256":  "e60c441cd4f02915bc7c357e3db4d3f7eeb672e1c82eb1e82b9a8695e8f12ed0",
                        "content_sha256":  "dec52f1663c6e71922f3badb2a3b84b1bbea219f90014a7c4396f60879fb3c25",
                        "bytes":  3585
+                   },
+                   {
+                       "name":  "episode-harden",
+                       "package":  "WORKFLOWS/skills/episode-harden.skill",
+                       "sha256":  "3a7ed94f69ba025271e993c9323009778b468e2057982968b9c1d5d56bce74f7",
+                       "content_sha256":  "aba93b3fe5abcc3b509c11d776b6610609f9f314d4a316c575ae1d99b6ab4838",
+                       "bytes":  20132
                    },
                    {
                        "name":  "file-inbox",

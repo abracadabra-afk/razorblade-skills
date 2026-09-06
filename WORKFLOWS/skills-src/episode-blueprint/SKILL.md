@@ -22,6 +22,7 @@ Canonical doc: `WORKFLOWS/episode-blueprint.md`. Route canon: `WORKFLOWS/pipelin
 S0   feeling capture        premise-forge → CANDIDATES/TITLE/triage.md
 S1   gate + scaffold        episode-init  → EP NN folder, gated premise.md, GO
 S1.5 BLUEPRINT run 1        ← this skill — before any drafting, both routes
+S1.75 harden                episode-harden → ratified shape.md (run 2's structural source)
 S2   dream-catching         brainstorm → dev-capture into WRITING/SHORTS/DEV/
 S3   synthesis + REGEN      episode-feedback, then ← this skill again, MANDATORY
 S4   runway carve           episode-runway Pass 2 — OPTIONAL, mic route only
@@ -68,7 +69,9 @@ The episode folder is `WRITING/SHORTS/EPISODES/EP NN - TITLE/`. Named without a 
 
 **Do not read `draft.md`, on either run.** This tool is plan-only (CRE-ruled 2026-09-03). A draft, when one exists, is episode-runway Pass 3 and scene-intensity territory. If the episode is a brought piece whose escalations live only in its prose, the escalations are **not articulated for this tool's purposes** — CRE states them in chat and you measure what he states. Say this plainly rather than reading the draft.
 
-**Where the escalations come from, in priority:** the premise's structural sections → the feedback rulings block → the S2 DEV material (run 2) → the deepened triage's `## Arc chain` → what CRE tells you in this session. Nowhere else. Anything you cannot source to one of those five is a hand-back, not a fill.
+**On run 2 only — `shape.md` in the episode folder**, the ratified structural commitment `episode-harden` wrote at S1.75 (CRE-ruled a run-2 source 2026-09-05): the want, the MoT question and answer scope, the ending, each rung with its resistance line, the flaw, and the cast and setting sheet. Read only `[ruled]` and `[recommended → ratified]` entries as committed; `[NOT NAMED — CRE]` is a hand-back exactly as an arc-chain one is; a bare `[recommended]` on a `status: draft` shape is not a ruling. Absent → record it in `sources_read` and proceed (harden is a step, not a gate).
+
+**Where the escalations come from, in priority:** the premise's structural sections → the feedback rulings block → **the ratified `shape.md` (run 2)** → the deepened triage's `## Arc chain` → the S2 DEV material (run 2, additive, the aesthetic layer) → what CRE tells you in this session. Nowhere else. Anything you cannot source to one of those six is a hand-back, not a fill.
 
 If the candidate was deepened or S2 has run, **do not re-ask him for material he has already given.** He has sat through that interview or that mic session; the whole point of both was that the plan session starts with material instead of a blank page. Read it, and spend the session on what this tool actually owns — the angles' variance, the budgets, the band verdict.
 
