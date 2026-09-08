@@ -7,7 +7,7 @@ inputs: [a sequence brief / the next sequence to draft, the project REFERENCE/ c
 outputs: [a fully landed sequence of chapters (draft.md per chapter), derived REFERENCE canon, a StoryLine mirror, one run report per chapter + one sequence-level report]
 lane: fiction
 status: approved  # rulings settled 2026-06-18 (register every chapter + package as orchestrator); build + skill-audit + packaging pending (^backlog-chapter-pipeline-build)
-last_updated: 2026-08-03
+last_updated: 2026-09-07
 revision_note: 2026-07-15 descent rewire (CRE-ratified) — Phase 1 now consumes the layer-battery + shape-the-part outputs (chapter map + DEV/scenes) where the descent has run, instead of re-planning a locked layer; the Phase-1 runway description now defers to the leg doc's forensic logic-beat form (the temperature-tag form written here 06-18 was superseded 06-19, ^obs-108 — this doc had drifted against a tested result).
 revision_note_2: 2026-08-03 QA-tier rewire (CRE-ratified) — per-chapter blind-read/blind-response-triage removed from the inner loop; reader diagnostics scope to the reader unit (WORKFLOWS/pipeline § QA tiers); Workshop-2's warm read feeds blind-response as executor; the chapter-one canary is pull-only.
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder. First intended adopter — Witchwood. This is the dictation-route successor to the slate/Transcoder pipeline; it never runs the generative Transcoder.
@@ -85,6 +85,8 @@ Read `_DIRECTIVES.md` at the mounted root; confirm `type: ai-os-brain` + `file: 
 ## Run modes — attended vs. unattended
 
 Same discipline as [[WORKFLOWS/land-chapter]]: the rulings (Workshop-2 triage, reconcile judgment calls, canon contradictions) **pause for CRE when attended**; when unattended, the AI runs every ungated step (cleanup, blind-read, spec-passes drafts, additive canon) and **defers every ruling to `open-loops.md` + the report — never guesses.** The promote legs' lineage-mismatch gate always halts. State the mode at the top of each report.
+
+**The commit exit gate belongs to the legs, not to this doc (pointer only — fork ruled 2026-09-06, `^backlog-protected-span-write-gate` / `^backlog-wholefile-diff-gate`).** Four legs on this route write a whole-file prose artifact and each carries its own paragraph-diff count and `protected_spans_touched:` accounting: [[WORKFLOWS/register-pass]] (Phase 4 step 12), [[WORKFLOWS/promote-revision]] at **both** promotes (step 9 structure-promote, step 13 register-promote), and [[WORKFLOWS/land-chapter]] (Phase 5), which itself points at promote-revision's. **This orchestrator never restates the gate** — a duplicated gate is a second surface to keep in sync, and per the Notes below procedure changes belong in the leg docs. Its job is not to swallow it: each leg's count and span accounting go into that chapter's report, and a gate FAIL halts the chain at that leg like any other leg self-test.
 
 ## Stop conditions
 - Vault sentinel fails → halt.

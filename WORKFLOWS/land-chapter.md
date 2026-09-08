@@ -7,7 +7,7 @@ inputs: [the chapter's newest revisions/…-rev<N>.md (the thing being promoted)
 outputs: [draft.md landed from the newest revision, derived REFERENCE state (story-so-far/bible/threads + chapter continuity end-state), a StoryLine scene+codex mirror (when a StoryLine project exists), a single end-to-end landing report]
 lane: fiction
 status: active
-last_updated: 2026-06-12
+last_updated: 2026-09-07
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder. StoryLine mirroring runs only when the project has a WRITING/STORYLINE/<Project>/ target; otherwise that leg no-ops. First intended adopter — Witchwood.
 pipeline_position: A thin orchestrator over the back half of the pipeline. It sequences three existing skills unchanged — [[WORKFLOWS/promote-revision]] → [[WORKFLOWS/canon-sync]] → [[WORKFLOWS/storyline-sync]] — so a single trigger takes a finished revision all the way to landed — draft updated, canon current, StoryLine mirrored. Modeled on [[WORKFLOWS/book-ingest]], which already chains canon-sync + storyline-sync after it lands an ingested chapter. Holds no logic of its own.
 ---
@@ -25,6 +25,8 @@ This workflow **holds no revision, canon, or StoryLine logic of its own.** It is
 - `storyline-sync`'s author-tuned-conflict gate and its mandatory scene-intensity engine run (Step 3b) still apply.
 
 If any leg halts on its own stop condition, the chain halts there and reports how far it got — it never skips a leg's gate to "push through." This is the same discipline as [[WORKFLOWS/book-ingest]], which chains the derive passes unchanged after scaffolding.
+
+**The commit exit gate belongs to the leg, not to this doc (pointer only — fork ruled 2026-09-06, `^backlog-protected-span-write-gate` / `^backlog-wholefile-diff-gate`).** The paragraph-diff count and the `protected_spans_touched:` accounting on a whole-file prose commit live in [[WORKFLOWS/promote-revision]] § Step 3, which is the only leg in this chain that writes prose — `canon-sync` and `storyline-sync` derive, they do not copy. **This orchestrator never restates that gate**, because an orchestrator that duplicates its legs' gate is a second surface to keep in sync. Its one job here is not to swallow it: promote-revision's count and span accounting travel into the Step 7 report the way its lineage gate does, and a gate FAIL there halts the chain before `canon-sync` derives from a body that is already wrong.
 
 ## Run modes — attended vs. unattended
 
