@@ -55,7 +55,7 @@ Enumerate `SYSTEM/backlog-queue/_served/` and `_working/`. Branch:
 
 - **A plan already in `_working/`** → a prior run claimed it and did not finish. Do not start a new one: read it, finish or defer it, and note the interrupted claim in the log. Work in flight is queue state an early-exit must account for.
 - **No `mode: unattended` plan in `_served/`** → stand down: write the receipt, end the run. Nothing else — no `_BACKLOG` read, no bootstrap past the sentinel. This is the normal case and it must stay cheap.
-- **Otherwise** → claim the oldest eligible plan by the date in its filename, preferring a higher `round` (a fix prompt is a plan someone is already waiting on).
+- **Otherwise** → claim the oldest eligible plan by the date in its filename, preferring a higher `round` (a fix prompt is a plan someone is already waiting on). **Tie (same date, same round) → take the lowest `serve_order:` integer in the plan frontmatter** (added 2026-09-08, CRE-ruled; the supervisor sets it whenever it serves more than one). **Key absent** → alphabetically first filename, and **say in the log that `serve_order:` was missing**. Never rank tied plans on their merits — choosing which work matters more is the supervisor's job, and two prior fires improvised it defensibly, which is why it went unnoticed.
 
 **Never read `_attended/` on an unattended run** — not even to count it. The check stays an enumeration of `_served/` and `_working/`; a third folder would make the common stand-down more expensive for a lane this run cannot touch.
 

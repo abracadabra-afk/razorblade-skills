@@ -3,13 +3,13 @@ type: workflow
 name: backlog-supervisor
 trigger: supervise the backlog
 aliases: [serve the backlog, run the backlog supervisor, audit the backlog work, close out the backlog, run the close-out, run the evening close-out]
-inputs: [_BACKLOG.md § Standing queue (backlog-sweep's ranking — consumed, never recomputed), _BACKLOG.md lane items + project shards, SYSTEM/backlog-queue/_review/ completion logs, SYSTEM/backlog-queue/_intake/ routed findings, _CHANGELOG.md, SYSTEM/reports/, SYSTEM/backlog-queue/_closed/, every surface in § Intake (the sweepers' bins and reports, the drift ledger, SCRATCHPAD/, the run-receipt logs)]
+inputs: [_BACKLOG.md § Standing queue (backlog-sweep's ranking — consumed, never recomputed), _BACKLOG.md lane items + project shards, SYSTEM/backlog-queue/_review/ completion logs, SYSTEM/backlog-queue/_intake/ routed findings, _CHANGELOG.md, SYSTEM/reports/, SYSTEM/backlog-queue/_closed/, every surface in § Intake (the sweepers' bins and reports, the drift ledger, the run-receipt logs)]
 outputs: [session plan .md files in SYSTEM/backlog-queue/_served/ and _attended/, audit verdicts moving plans to _closed/ or fix prompts back to _served/, re-probe records beside closed plans, routed findings in SYSTEM/backlog-queue/_intake/, rulings-sheet lines in SYSTEM/backlog-queue/_rulings/pending.md, the weekly rulings sheet SYSTEM/backlog-queue/_rulings/<sunday>-rulings.md, the weekly briefing SYSTEM/reports/<sunday>-vault-briefing.md + its TASKS.md seed, an unconditional run receipt in SYSTEM/reports/backlog-supervisor-runs.md]
 lane: meta
 status: draft
 version: 2
 created: 2026-09-04
-last_updated: 2026-09-04
+last_updated: 2026-09-08
 ---
 
 # WORKFLOW: backlog-supervisor
@@ -59,7 +59,7 @@ CRE ruled the fix (the self-management handoff, 2026-09-04): unless a call direc
 | any session (DIR-019 §4 / DIR-021) | `SYSTEM/drift-ledger.md` § OPEN | close-out | each line re-probed; a derive whose stamp predates its source → **AUTO** retire-in-place (`superseded_by:`), move the line to § CLOSED with the ruling *auto-ratified* · channel/project **law** → **RULE** · already fixed → **PHANTOM** |
 | any session (DIR-003) | `_OBSERVATIONS.md` entries with no triage stamp · `_BACKLOG.md` new items | close-out | **read only for the day's new entries** — stamping is `backlog-sweep`'s Step 4b and graduation is CRE's; the close-out folds nothing here. A new `_BACKLOG` item with no recorded next action → one `pending.md` line asking CRE to name one (E1 is never invented) |
 | `DECISIONS/` | dated entries whose `review-date` has passed · `_WEIGHTS.md` proposals | close-out (Sun) | **RULE**, always — the ledger is never in class. One line per overdue review, age stated |
-| `SCRATCHPAD/` (hand-drop, unrouted) | files, by name and mtime | close-out | **list, never open** — DIR-006 secret-scanning is the reading session's duty and this run does not read. Report count + oldest age in the receipt; a drop older than 7 days → one `pending.md` line *"route to INBOX or GRAVEYARD — your call"* (`_VAULT MAP`: stale notes route on CRE's call). Absorbs the *no server* half of `^backlog-scratchpad-no-server`; the Friday-prompt option stays his |
+| ~~`SCRATCHPAD/` (hand-drop, unrouted)~~ **RETIRED 2026-09-08 — CRE-ruled, not a bin** | — | — | **`SCRATCHPAD/` is CRE's working scratchpad, where he jots and drafts, and he deletes from it by hand.** It was never an unrouted intake zone, so its contents are not findings and its ages are not debt. In his words: *"the scratchpad is exactly that, my scratchpad where I jot and draft. Manual deletions on my end."* **No `pending.md` line, no age report, no count in the receipt** — this row generated a stale-drop line every close-out for a surface working exactly as intended, which is a false positive with a weekly cadence. The `^backlog-scratchpad-no-server` *no server* half is retired with it: a scratchpad does not need a server. Do not re-add this row; a future run that "notices" unrouted drops here is re-deriving a retired finding |
 | every scheduled task | `SYSTEM/reports/<task>-runs.md` receipt logs | close-out (Sun) | per sweeper, one **evidence line** in the briefing § Health: receipt post-dates the window / does not / no receipt file. **Not a liveness monitor** — this is a scheduled task reading other scheduled tasks; `^backlog-scheduler-liveness-check` stays its own build |
 
 **Not routed here, on purpose:** `INBOX` and the intake drop zones (`inbox-router` and the runners serve them; the Friday *Clear the intake gates* item is their sitting); `TASKS/TODAY.md` and the week block (`day-launch` / `week-shape`); anything under `WRITING/` (fiction gates defer to `open-loops.md` and the chapter's own pipeline). Routing those through here would make this skill a second router over surfaces that already have one.
@@ -186,6 +186,8 @@ Three rules, each from a real defect:
 2. **The write surface always names the agent's own run receipt**, `SYSTEM/reports/backlog-agent-runs.md`. The agent's skill requires it unconditionally on every fire, so a surface that omits it forces a conflict between the plan and the agent's own contract — and the agent is right either way, which makes the audit a judgment call. This is the same class as the condition-vs-Defer contradiction below: **a plan must not contradict a rule the agent is separately bound by.** Check the surface against the agent's skill, not only against the job.
 3. **Mark which claims are transcribed and which are inferred.** A cold agent cannot tell a quoted rule from the supervisor's paraphrase of one, so it treats both as given. Quote what is quoted; where the plan is summarizing or reasoning, say so in the sentence, and the agent knows which claims to check against the source before acting on them.
 
+4. **A plan that edits a canon doc names the sources it obligates, and requires the agent to list them in its completion log (added 2026-09-08, CRE-ruled).** Every clause landed in a `WORKFLOWS/<name>.md` canon doc owes a port into `WORKFLOWS/skills-src/<name>/SKILL.md`, or the installed skill never runs it — and **nothing counts that debt unless the plan makes it a deliverable.** So a plan whose write surface includes any canon doc carries a stated debt note naming which of its targets have a `skills-src/` directory, and a completion condition requiring the agent to list the docs it actually edited, for the port plan to be composed off. The failure this prevents is measured: `^backlog-dir019-propagation` landed a canon batch on 2026-09-01, sat five days looking discharged, and surfaced only when CRE's packer printed *"No skill source changed — nothing to repackage."* The packer was right; the record was wrong. **A doc-ahead-of-source gap is invisible from every surface anyone checks** — the canon doc is correct, the item says the doc side is done, and the pack reports success by doing nothing — so the plan is the only place the obligation can be recorded at the moment it is created.
+
 **The general form:** the existing rule *"check your conditions against your own Defer section"* catches only defects internal to the plan. Defects 2 and 3 were the plan being wrong about something **outside itself** — the agent's contract, and a target doc's live rules. Both directions need checking.
 
 **When a served plan turns out to be wrong, the plan is the defect, not the agent** (§ Auditing a completion log). An agent that follows an instruction its plan gave it audits to a PASS; an agent that spots a bad instruction, scopes around it, and flags the departure audits to a PASS and gets its scoping ruled on. Never fail an agent for either.
@@ -199,6 +201,7 @@ anchor: backlog-approval-gated-openers
 item_file: _BACKLOG.md
 mode: unattended        # or attended
 round: 1                # 1 = initial; 2 and 3 are the two fix rounds
+serve_order: 1          # REQUIRED when this run serves more than one unattended plan; 1 = work this first
 served: 2026-09-04
 served_by: backlog-supervisor
 eligibility_reason: "next action is a read-and-report sweep landing in SYSTEM/reports/; no fork, no fiction, no desktop step"
@@ -217,6 +220,8 @@ Body, these sections, all of them:
 - **## Completion conditions** — objective, checkable statements. *"`SYSTEM/reports/2026-09-04-approval-gated-openers.md` exists and lists every one of the 14 registered task prompts with a flag or a clear."* Not *"the sweep is done."* These are what the audit reads; a vague condition makes the audit a judgment call, which is the one thing this loop cannot afford. **Check the conditions against this plan's own Defer section before serving** — a condition that forbids what the Defer rule authorizes is a self-contradicting plan, and the agent will be right whichever way it goes.
 - **## Defer instead of guessing** — the named cases where this job should stop and defer rather than proceed, each with what to write in the completion log.
 - **## Out of scope** — the adjacent work this session must not do.
+
+**Set `serve_order:` whenever this run serves more than one unattended plan (added 2026-09-08, CRE-ruled).** An integer, `1` first, ascending in the order this supervisor wants them worked. The agent takes one plan per fire by filename date then `round`; when those tie — same day, same round, which is the ordinary case for a multi-plan morning — it reads `serve_order:` and takes the lowest. **Omitting it hands the agent a priority decision this skill is supposed to own:** the 2026-09-06 and 2026-09-07 fires each improvised a tie-break on stakes and each was defensible, which is why it went unnoticed for two runs. Order the plans on the same basis the run already used to rank the items — the block's order, the item's own recorded urgency, and whether one plan's write surface depends on another's landing first. Say in the receipt what the order was and why, in one clause. A single-plan serving needs no key.
 
 **Serve at most 3 plans per run**, and never let `_served/` + `_working/` + `_review/` exceed **5 open plans** in total. Bounded output is house discipline (`backlog-sweep` caps graduations at 5, `sysadmin` at 12, `day-launch` at 7): an unbounded queue is one nobody works. `_attended/` is **not** counted against that 5 — it carries its own budget below.
 
@@ -363,7 +368,7 @@ As Step 8. A stand-down is receipt-only.
 
 ## Substrate (DIR-020)
 
-The mechanical steps are enumerating the queue folders, measuring the brain docs, listing `SCRATCHPAD/`, reading the intake reports, and moving plans. **This workflow never requires `bash`.**
+The mechanical steps are enumerating the queue folders, measuring the brain docs, reading the intake reports, and moving plans. **This workflow never requires `bash`.** (`SCRATCHPAD/` was listed here until 2026-09-08; that row is retired — see § Intake.)
 
 1. **Preferred — the host route**: `mcp__Desktop_Commander__list_directory` / `move_file` (or `windows-cli`) against the real Dropbox folder. Better, not degraded: it reads the actual folder, so the mount-staleness caveat DIR-005 exists for does not apply, and it is the only route with a true atomic move. It is also the **only** route that can read a scheduled-task prompt — `C:\Users\Chad\Claude\Scheduled\` sits outside the file tools' connected folders. `mcp__workspace__bash` is currently denied on scheduled seats (`^obs-281`, `^obs-284`) and has already halted `skills-sweep` outright.
 2. **Fallback — the file tools**: `Glob` with an explicit `path`, and **every empty result confirmed by a direct `Read` of that folder's `README.md`** before it is treated as an empty folder. A `Glob` miss is not evidence of absence.

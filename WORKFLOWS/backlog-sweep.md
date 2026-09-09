@@ -7,7 +7,7 @@ inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TA
 outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps, a Standing queue block in _BACKLOG.md (lane counts + ranked-3 attended serving + agent-toggle recommendation), one replaced serving seed in TASKS/TASKS.md]
 lane: writing-ops
 status: active
-last_updated: 2026-08-10
+last_updated: 2026-09-08
 ---
 
 # WORKFLOW: backlog-sweep
@@ -126,6 +126,8 @@ Do not double-count: `#desktop` items frequently also carry `#gated`.
 > **The matcher lesson survives the tag.** `#desktop` is still derived by string match and is still inflatable by a prose mention. Per DIR-018, **anchor any tag count to the item's trailing `#…` run after its `^anchor`** — never the tag string anywhere in the body — and emit a **"not checked"** line naming what the derivation cannot see. Residual build work at `^backlog-queuetag-derivation`.
 
 **Rank the attended bucket by `(priority, age)`.** `#p1` → `#p2` → `#p3` → untagged; within each band, **oldest first**, using the `, YYYY-MM-DD` date carried in the item's anchor parenthetical. Age needs no new tag — it is already in every item. This exists because priority alone has stopped discriminating: at the 2026-08-03 measurement `#p2` held **63 of 131** open items against **4** `#p1`, so a serving ranked on `#p` alone is effectively unordered. **Exclude `#blocked` / `#waiting` items from the serving** (they are not actionable), but keep them in the counts.
+
+**Gate-bin lines are in the population, and are ranked like any other item (added 2026-09-08, CRE-ruled).** An open `- [ ]` line living inside a `## Needs CRE ruling (…)` bin — the `RP-P*` family and its siblings — **is a backlog item**: it has a checkbox, a priority tag, an anchor, and often a recorded next action. Rank it and serve it on exactly the same tests as a lane item. It was previously counted in the lane totals but silently excluded from the serving, which had a live cost: `RP-P2` (`^backlog-witness-mirror-lag`) had its ruling half already answered by DIR-014's 2026-09-04 amendment, says of itself *"not a CRE ruling, a mechanical follow-through,"* names its own target (`WORKFLOWS/land-chapter.md`), and still sat frozen behind a scoping question nobody had been asked. **The bin is a presentation container, not an eligibility class.** A bin line with no recorded next action is skipped under the existing rule, like any other item — the skip reason is the missing action, never its location.
 
 **Serve exactly 3.** Not the ranked list — three items, each as: anchor · one-line what-it-is · **the next physical action already recorded in the item**. Never invent a next action; if an item's next action is missing, skip to the next candidate and note the gap. Three is the cap for the same reason day-launch caps its board — an unbounded serving is one CRE will not work.
 

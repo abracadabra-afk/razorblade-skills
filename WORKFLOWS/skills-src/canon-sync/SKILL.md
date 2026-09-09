@@ -75,6 +75,10 @@ Read, in the project's `REFERENCE/` folder:
 
 If any of the three is missing, create it from the project's scaffold convention (frontmatter `type: project-state`, `maintained_by: canon-sync`) and say you did. Also read the chapter's `continuity.md` (classify each end-state line as author-written or template placeholder) and, **read-only**, the chapter's `brief.md` (intent cross-check) and the run's `spec-check/<slate-run>/pass-1-blind.md` (Prediction harvest) when they exist.
 
+**Supersession triage — as you load, before Step 3's diff and Step 4's gate (DIR-019, added 2026-09-04).** This pass runs *on* a freshly landed draft, so `draft.md` is the newest ruling in the folder (§3) and every span-naming ruling loaded above predates it: the `brief.md` **"Setups to plant"** rows, `pass-1-blind.md`'s Prediction quotes, `open-loops.md` deferrals left by an earlier sync of this chapter, and the Step-2 baseline of `(CH<N> rev<M>)`-tagged bible facts, thread events and `arcs.md` waypoints sourced from **this** chapter. Check each against the landed text: **span present → carry silently; span gone → moot — stamp `superseded_by: draft.md (<date>, <rev>)` in place, archive to the entry's `History` line, one changelog line, never asked; span reworded but surviving → the only case that surfaces**, batched into the Step 4 block, tree-researched first (DIR-011). A this-chapter derive the landed draft no longer supports is a supersession, not a contradiction to re-ratify — never ask CRE to rule against his own landing.
+
+**What still gates.** A contradiction with canon sourced from **another** chapter is real continuity and gates at Step 4 unchanged. Principle 7's write-time debt accounting on a `binding_surface: true` `threads.md` also stands: DIR-019 does not repeal DIR-010 §4, so every CH-tagged thread event is still accounted `kept` / `reworded → new span` / `dropped`, and an *unaccounted* drop still halts. DIR-019 rules the disposition of an accounted drop; it never excuses the accounting. **Scope lock (§4):** staleness outside this chapter's folder and its `REFERENCE/` rows is one line in `SYSTEM/drift-ledger.md`, not a Step 4 item.
+
 ---
 
 ## Step 3 — Extract from the draft (a DIFF, not a fresh read)
@@ -170,6 +174,8 @@ File anything fragile (a conflict cluster suggesting drift, a bible section gett
 **Must NOT write or alter:**
 - `draft.md`, anything in `slate/`, `revisions/`, or `spec-check/` — you derive from them, never into them.
 - `envelope.md`, `brief.md`, `_status.md`, the dictation files, `REFERENCE/register.md`, `REFERENCE/spec-check.md`.
+
+*One exception, created by Step 2's supersession triage (DIR-019):* a moot row in `brief.md` **"Setups to plant"** or in `pass-1-blind.md` may take a `superseded_by: draft.md (<date>, <rev>)` **stamp** — a stamp added beside the row, never a rewrite of it and never a deletion. Nothing else in either file is touched, and the prohibition above is otherwise unchanged.
 
 ---
 

@@ -29,6 +29,8 @@ From the mounted root, read `_DIRECTIVES.md` and confirm its frontmatter has bot
 
 If there is no working text at all (no populated draft, no slate), halt — there's nothing to diagnose; run the Transcoder (and ideally blind-read + blind-response) first.
 
+**Supersession triage — before Passes 2–5 read the working text (DIR-019, added 2026-09-04).** The developmental pass revises `draft.md` between Pass 1 and the line passes, so everything Pass 1 and its grading produced is a dated claim about text that has since moved. Check every span-naming ruling the battery carries forward — `pass-1-blind.md`'s quoted lines, the `brief.md` **Grading record** rulings, a Workshop-2 ruling set on the dictation route, and any earlier `verdicts.md` for this chapter — against the working text the passes are about to read: **span present → carry silently; span gone → moot, stamp the row `superseded_by: <working text> (<date>)` in place, one log line, never asked; span reworded but surviving → the only case that surfaces**, one batched block carried into the reconciliation, tree-researched first (DIR-011). A pass never re-flags a span its own developmental revision already fixed, and never re-opens a ruling CRE's later draft discharged (§3 — a hand-landed draft is the newest ruling). This also keeps the Step 3 denominator guard honest: a pass counting a span that no longer exists is measuring the old draft. **Scope lock (§4):** staleness outside this chapter's folder and its direct derives is one line in `SYSTEM/drift-ledger.md`, not a pass finding.
+
 ---
 
 ## Step 2 — Load the pass prompts from the canonical battery doc
@@ -93,6 +95,8 @@ End by telling the author: the four passes are done (give the examined/flagged c
 **Writes:** `<chapter>/spec-check/<slate-run-id>/pass-2-carries.md … pass-5-theme.md`, `verdicts.md` (status: draft), and a `_CHANGELOG`/chapter `changelog.md` log line.
 
 **Never writes:** the chapter prose (`draft.md`, slate, anything in `revisions/`), `pass-1-blind.md`, the register, or `verdicts.md` at `status: ready` (only the author promotes it). Never edits the working text — this is a diagnostic, not a revision.
+
+*One exception, created by Step 1's supersession triage (DIR-019):* a moot row in `pass-1-blind.md`, in the `brief.md` **Grading record**, or in an earlier `verdicts.md` may take a `superseded_by: <working text> (<date>)` **stamp** — a stamp added beside the row, never a rewrite of it and never a deletion. The prohibition above is otherwise unchanged, and the chapter prose is untouchable regardless.
 
 ---
 

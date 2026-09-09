@@ -50,7 +50,7 @@ Sweepers write where they always have. You consume. Full table with routes: cano
 | any session → `SYSTEM/drift-ledger.md` § OPEN | derive stale → AUTO retire-in-place, line to § CLOSED · law → RULE · fixed → PHANTOM |
 | any session → new `_OBSERVATIONS` entries · new `_BACKLOG` items | read only; stamping is the sweep's, graduation is CRE's; item with no next action → one RULE line asking him to name it |
 | `DECISIONS/` overdue reviews · `_WEIGHTS.md` | RULE, always |
-| `SCRATCHPAD/` | list, never open; count + oldest age in receipt; drop > 7 days → one RULE line |
+| ~~`SCRATCHPAD/`~~ **RETIRED 2026-09-08, CRE-ruled** | **Not a bin.** It is CRE's working scratchpad — he jots, drafts, and deletes by hand. No RULE line, no age report, no count in the receipt. Do not re-add: a run that "notices" unrouted drops here is re-deriving a retired finding |
 | every task → `SYSTEM/reports/<task>-runs.md` | Sunday evidence line per task in the briefing § Health; not a monitor |
 
 **Not routed here:** `INBOX` and the drop zones (the router and the Friday intake item), `TODAY.md` and the week block, anything under `WRITING/`. **Consume, never re-derive:** a missing or wrong-looking report is a RULE line about the sweeper, not a reason to re-run it.
@@ -164,6 +164,7 @@ anchor: backlog-approval-gated-openers
 item_file: _BACKLOG.md
 mode: unattended        # or attended
 round: 1
+serve_order: 1          # REQUIRED when this run serves >1 unattended plan; 1 = work first. The agent's tie-break; omitting it hands it a priority call that is yours
 served: 2026-09-04
 served_by: backlog-supervisor
 eligibility_reason: "read-and-report sweep landing in SYSTEM/reports/; no fork, no fiction, no desktop step"
@@ -214,6 +215,10 @@ An ATTENDED disposition names an item as CRE's. The attended plan is what makes 
 - **## Time** — an honest estimate. A sitting he can size is one he will start.
 
 **Aging.** Every run reports `_attended/` with an age per plan in the receipt, and folds **one** line into `_rulings/pending.md`: how many wait, oldest age. Not a per-plan nag. At **21 days** unworked, stop re-preparing that item and write one rulings line proposing CRE drop it or rule it his-only-forever. A prepared sitting nobody works for three weeks is evidence about its real priority. This is the lane's degraded mode stated up front — if he never sits down, it says so and stops growing.
+
+**Serving more than one unattended plan → set `serve_order:` on each** (added 2026-09-08, CRE-ruled). Ascending, `1` first, in the order you want them worked; order on the basis the run already used — the block's order, the item's recorded urgency, whether one plan's surface depends on another landing first — and say why in the receipt in one clause. Omit it and the agent improvises the tie-break, which is a priority call this skill owns; two fires did exactly that, defensibly, which is why nobody noticed.
+
+**A plan whose write surface includes any `WORKFLOWS/*.md` canon doc carries a stated source-debt note** (added 2026-09-08, CRE-ruled): name which targets have a `WORKFLOWS/skills-src/<name>/` directory, and add a completion condition requiring the agent to list the docs it actually edited, so the port plan can be composed off it. A canon-only landing is invisible from every surface anyone checks — the doc is right, the item reads done, and the packer reports success by doing nothing (`^backlog-dir019-propagation` sat five days that way).
 
 Re-read each written plan through the file tools and confirm the frontmatter parses and every section is present.
 

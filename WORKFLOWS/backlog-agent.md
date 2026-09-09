@@ -9,7 +9,7 @@ lane: meta
 status: draft
 version: 2
 created: 2026-09-04
-last_updated: 2026-09-04
+last_updated: 2026-09-08
 ---
 
 # WORKFLOW: backlog-agent
@@ -74,6 +74,10 @@ On pickup, **move the plan file from `_served/` to `_working/`**. That move *is*
 ### One plan per unattended run
 
 Take the oldest `mode: unattended` plan, by the date in its filename, preferring a higher `round` (a fix prompt is a plan someone is already waiting on). One plan, then stop. A run that finishes early does not go looking for a second — the working-set cap is the supervisor's to manage.
+
+**The tie-break is `serve_order:`, and it is the supervisor's to set (added 2026-09-08, CRE-ruled).** When the rule above does not separate two plans — same filename date, same `round`, both `mode: unattended` — read the **`serve_order:` integer** in each plan's frontmatter and take the lowest. The supervisor writes it whenever it serves more than one plan in a run, so the ordering is a decision it recorded, not one this run invents.
+
+**If `serve_order:` is absent from a tied plan** (a pre-2026-09-08 plan, or a serving that omitted it), fall back to the alphabetically first filename, **and say in the log that the key was missing** — that note is the signal the supervisor needs, and it is cheap. What this run must **not** do is rank the tied plans on their merits: the 2026-09-06 and 2026-09-07 fires each improvised a tie-break on stakes (items closed, exposure named), each was defensible, and that is exactly the problem — an improvised rule that produces good answers is the hardest kind to notice going wrong, and choosing which work matters more is the supervisor's job, not this one's.
 
 ### Work it
 

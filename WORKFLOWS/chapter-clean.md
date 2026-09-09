@@ -6,8 +6,8 @@ aliases: [run the chapter clean, one-sweep the chapter, run the chapter chain, c
 inputs: [queued dictation for the chapter (dictation entry) OR an existing draft.md (mode B — existing work), the per-chapter folder, the project REFERENCE/ canon (register, narrator-rules, voice-spec, contamination-checklist), KNOWLEDGE/PROSE FRAMEWORK/ canon]
 outputs: [near-finished draft.md (status register-swept or register-revised), the chapter clean-ledger.md, one consolidated Gate B ruling sheet, one consolidated changelog entry]
 lane: fiction
-status: draft — CRE-ratified 2026-08-03 (incl. the autonomous posture); pilot on WITCHWOOD CH13; packs after 2–3 live runs
-last_updated: 2026-08-03
+status: live — out of pilot, CRE-ruled 2026-09-08. Ratified 2026-08-03 (incl. the autonomous posture); the WITCHWOOD CH13 pilot landed 2026-08-06 and CH14–17 have landed since, so the 2–3-live-run condition is met. Packaging is the one leg still open (DIR-009 desktop trip); until then it runs from the trigger index.
+last_updated: 2026-09-08
 scope: Projects on the per-chapter folder convention running the v6/slate route (transcoder → expansion → register). First adopter — Witchwood. The dictation-route sibling is [[WORKFLOWS/chapter-pipeline]], which never runs the Transcoder; the two orchestrators stay separate.
 pipeline_position: The v6-route orchestrator — wraps transcoder v6.1 → spine gate → prose-expansion 4–7 → register-pass into one trigger with exactly two CRE sittings. Tier-1 runner in [[WORKFLOWS/pipeline]] § QA tiers.
 ---

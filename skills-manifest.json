@@ -1,20 +1,20 @@
 {
-    "generated":  "2026-09-08T12:00:09.5381866-07:00",
+    "generated":  "2026-09-09T12:00:11.9881272-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
                        "name":  "backlog-agent",
                        "package":  "WORKFLOWS/skills/backlog-agent.skill",
-                       "sha256":  "e7f26af1bd50ccf48fd2b69e70f6519725a05be3c4a71f4d686440c508a41c66",
-                       "content_sha256":  "e8eaaae2ed49f1f9da3f1e3f4872cffb9d529ed4c4c9d6a96ae72d0d5171f3e4",
-                       "bytes":  6752
+                       "sha256":  "8718be79f4e42db53a77d8355f7ac7aaaaf9dfd77b987ee88c7c2754c3cc1fbb",
+                       "content_sha256":  "9a8f0f614ef00e2fc33d3de595f569b75e7c26c8de6af46a0052c8cf5cd33304",
+                       "bytes":  6956
                    },
                    {
                        "name":  "backlog-supervisor",
                        "package":  "WORKFLOWS/skills/backlog-supervisor.skill",
-                       "sha256":  "d2897091dab6e19955de42fde58a48f7edbcbb6bde000ab06b4a179030b8b2c9",
-                       "content_sha256":  "249ca2cf2722049a16a42211cf79ee0ab105c8d01c74f93f683957977c341d27",
-                       "bytes":  16089
+                       "sha256":  "5032560b3cf0f4d9a2b732ba4d2db237d9a5a045a67053391fa6713733d81cf2",
+                       "content_sha256":  "22dab312959f401f93f66f1cdd6671160243b27245ebd35010baecae401be845",
+                       "bytes":  16647
                    },
                    {
                        "name":  "blind-read",
@@ -54,9 +54,9 @@
                    {
                        "name":  "canon-sync",
                        "package":  "WORKFLOWS/skills/canon-sync.skill",
-                       "sha256":  "e3cc9b76de130767658c60a221252038bafc18408c2863a252a5b9ad9df24a10",
-                       "content_sha256":  "e6f3a3b05b31171caafe915cff037a723b6c9fea979401faabadd7818aa1b522",
-                       "bytes":  8029
+                       "sha256":  "19c914ebc68c7274db99216149314caf9bc8f42c46718ad09461363a6ead49d3",
+                       "content_sha256":  "7d8de22e8a3acf3bdd306cc8d9ced2a98c4563a092a0a5d96c88f9fda2d237c5",
+                       "bytes":  8753
                    },
                    {
                        "name":  "chapter-init",
@@ -215,9 +215,9 @@
                    {
                        "name":  "loop-clearer",
                        "package":  "WORKFLOWS/skills/loop-clearer.skill",
-                       "sha256":  "9d96df703ebc57d5bc5e259432d1e43ab1c90c610937743a32122c324fd54a47",
-                       "content_sha256":  "cfdf6aa062d6558abd70ca7cda7d37e0ec41cdbf8a988abe851ced0d962ab881",
-                       "bytes":  3662
+                       "sha256":  "485f3af6e615c368692b2401776de1b9e30788418bc740fa7345f1a5d0e6e6d4",
+                       "content_sha256":  "76667cccd71fcfb270a8351f83441114ab04e03d6ecdc92f40eda2ecf25a4819",
+                       "bytes":  4240
                    },
                    {
                        "name":  "premise-forge",
@@ -243,9 +243,9 @@
                    {
                        "name":  "reconcile",
                        "package":  "WORKFLOWS/skills/reconcile.skill",
-                       "sha256":  "12f2c88ede4ae0606a1a97b6ef4ef0a147b8daf52c257a21f546cab743ece8d7",
-                       "content_sha256":  "9988e69ef3342d6f77d8ae1756670988a7ddcdd487153049473e0f0e57643727",
-                       "bytes":  4115
+                       "sha256":  "803712d4f95289e807a59d3ee8d03cdebbc84de48a5c1bdbb620858bb5867663",
+                       "content_sha256":  "04bb61cdd39e22c3fa242025dd8442d96f401ff06ee018e6d801ba332b92b388",
+                       "bytes":  4799
                    },
                    {
                        "name":  "record-script",
@@ -306,9 +306,9 @@
                    {
                        "name":  "spec-passes",
                        "package":  "WORKFLOWS/skills/spec-passes.skill",
-                       "sha256":  "bb93c7e78bf82e9aae48914923da103f34b3018414e604091255b5d8d9101041",
-                       "content_sha256":  "47675d4f689b1e2f3631d8686665eb8303fd97a1d67cd895a16e987bf1b8cb32",
-                       "bytes":  4157
+                       "sha256":  "bf3c1c9462827b9b82c6597b474e0c82c17572ebe531047c38f839534478f43f",
+                       "content_sha256":  "1d73db8f72c92ddb70e0344f53ac16b2f8320f670faddf20c636176c8f261611",
+                       "bytes":  4869
                    },
                    {
                        "name":  "storyline-sync",
