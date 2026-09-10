@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-09T12:00:11.9881272-07:00",
+    "generated":  "2026-09-10T12:00:12.5307310-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -33,9 +33,9 @@
                    {
                        "name":  "book-ingest",
                        "package":  "WORKFLOWS/skills/book-ingest.skill",
-                       "sha256":  "dccfb58defb06fb3beefeb96f391f1cdc2ad827866b4cc23b246648792cca0a2",
-                       "content_sha256":  "cde7cdbc28364ecb72b27fe158db127dce0dc2d0b8713c7c5d439a5499b4658a",
-                       "bytes":  6257
+                       "sha256":  "cb4ae9019cbe8bded887095be35f6af3ed2c13d38bb12d4e5b5be6f44c4567df",
+                       "content_sha256":  "754dee2b0bbc9812e21218d76f4b38d167d6ec76f84e8ac5cefa74aaad9cc84c",
+                       "bytes":  7328
                    },
                    {
                        "name":  "bootstrap-manager",
@@ -68,9 +68,9 @@
                    {
                        "name":  "chapter-pipeline",
                        "package":  "WORKFLOWS/skills/chapter-pipeline.skill",
-                       "sha256":  "34e252fac97b090faa98c5acaf8e97ae76921394c3057566695afc2e4d1f3a35",
-                       "content_sha256":  "d1bcb76d5f943e42018c2a491914c2fb622f999d7a055cba9cbbf9dc502a3d5a",
-                       "bytes":  3698
+                       "sha256":  "81c99434cd8ee42d3f9deda42b7cc0ef931b52fecd4f9a0c1b0073439775539a",
+                       "content_sha256":  "208c5049229889684c41e9df806281a4f190e524fbcb84433abab1b7ab1c1942",
+                       "bytes":  4045
                    },
                    {
                        "name":  "comp-sweep",
@@ -187,9 +187,9 @@
                    {
                        "name":  "land-chapter",
                        "package":  "WORKFLOWS/skills/land-chapter.skill",
-                       "sha256":  "0b8a15cd37beb55917be1e09d6005a52e411ad7474e379e7a577cc13baa8e905",
-                       "content_sha256":  "f92a9745153ef039d1f3f98fdeb0a12a98ecdd1376fe1dbefd866f1f30888939",
-                       "bytes":  4219
+                       "sha256":  "bfa9784b497c99b99e9d54431669d8d0ce9a6af4ef162820749e5738a233c3a0",
+                       "content_sha256":  "7e2da02ab8b8a905385d1bd5dcc384689fbfebf12d0fe0f45aefdda62007d37c",
+                       "bytes":  4565
                    },
                    {
                        "name":  "line-edit",
@@ -236,9 +236,9 @@
                    {
                        "name":  "promote-revision",
                        "package":  "WORKFLOWS/skills/promote-revision.skill",
-                       "sha256":  "4dd119e831676286a0dd2e41e11ffa84d9d7783a17dda23a792295866a369342",
-                       "content_sha256":  "cfb0f6d7b115d553dae09617de5bc6fdcfb1a2171845093e14f97f3b4e9c1d0c",
-                       "bytes":  6163
+                       "sha256":  "c766d389de4e81dfce4c1e35e8ca72d8da9f88e6bc131b869a65258149e71e42",
+                       "content_sha256":  "81e9339b811f949e28b5f2deda17ade40bb58f43c8025d79a9fc7400cc6f2140",
+                       "bytes":  7070
                    },
                    {
                        "name":  "reconcile",
@@ -257,9 +257,9 @@
                    {
                        "name":  "register-pass",
                        "package":  "WORKFLOWS/skills/register-pass.skill",
-                       "sha256":  "d6e229c4295eacc1ef732405a9767cb6defcc73e899076bd1d4682786281de51",
-                       "content_sha256":  "fedd04c1a0b7276998b6fcd976c6ba02301658390a290ce9ac717c8925ee16b1",
-                       "bytes":  24756
+                       "sha256":  "3ca88e845984a8916142461a3acb8f360461f48eb1d2ccd8473ace873c496ea0",
+                       "content_sha256":  "fdc1f66ac2395f0d2ba29d8cd25c2397ec769feed3cdbae096bad010732cdb8e",
+                       "bytes":  25259
                    },
                    {
                        "name":  "research-briefing",

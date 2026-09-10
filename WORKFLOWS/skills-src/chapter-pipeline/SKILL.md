@@ -32,6 +32,8 @@ The only behavior you add is how you treat a **ruling** a leg needs:
 
 State the mode at the top of the report.
 
+**The commit exit gate belongs to the legs, not to this skill (pointer only — fork ruled 2026-09-06, `^backlog-protected-span-write-gate` / `^backlog-wholefile-diff-gate`).** Four legs on this route write a whole-file prose artifact and each carries its own paragraph-diff count and `protected_spans_touched:` accounting: **`register-pass`** (Phase 4 step 12), **`promote-revision`** at *both* promotes (step 9 structure-promote, step 13 register-promote), and **`land-chapter`** (Phase 5), which itself points at promote-revision's. **You never restate the gate** — a duplicated gate is a second surface to keep in sync, and procedure changes belong in the leg docs. Your job is not to swallow it: each leg's count and span accounting go into that chapter's report, and a gate FAIL halts the chain at that leg like any other leg self-test.
+
 ## Step 0 — Vault sentinel (`^obs-004`)
 From the mounted root read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch → halt and ask which folder is the vault. (Each leg runs this too; you run it once up front so the chain fails fast.)
 

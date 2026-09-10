@@ -15,6 +15,8 @@ You hold **no craft, canon, or StoryLine opinion of your own.** You are a sequen
 
 You run them **in that fixed order**, because each consumes the output of the one before it: canon-sync needs the landed `draft.md`, and storyline-sync reads the bible/threads that canon-sync just refreshed. The order is not configurable. If any leg halts on its own stop condition, you halt there and report how far you got — you never skip a leg's gate to push through. This is the same discipline `book-ingest` uses when it chains the derive passes.
 
+**The commit exit gate belongs to the leg, not to this skill (pointer only — fork ruled 2026-09-06, `^backlog-protected-span-write-gate` / `^backlog-wholefile-diff-gate`).** The paragraph-diff count and the `protected_spans_touched:` accounting on a whole-file prose commit live in **`promote-revision` § Step 3**, which is the only leg in this chain that writes prose — the `canon-sync` leg (Step 3) and the `storyline-sync` leg (Step 4) derive, they do not copy. **You never restate that gate**, because an orchestrator that duplicates its legs' gate is a second surface to keep in sync. Your one job here is not to swallow it: promote-revision's count and span accounting travel into your Step 5 verify roll-up and your Step 7 report the way its lineage gate does, and a gate FAIL there halts the chain before Step 3 derives from a body that is already wrong.
+
 ## Run modes — attended vs. unattended
 
 The only behavior you add is how you treat a **gate** a leg raises, and that turns on whether the author is present:
