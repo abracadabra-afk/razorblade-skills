@@ -7,7 +7,7 @@ inputs: [the chapter's landed draft.md, REFERENCE/story-so-far.md, REFERENCE/bib
 outputs: [updated REFERENCE/story-so-far.md, updated REFERENCE/bible.md, updated REFERENCE/threads.md (thread events + blind-read pickup), updated REFERENCE/arcs.md (entry/waypoint/exit character state), filled end-state sections + the Character state @ end of chapter block in the chapter's continuity.md, a conflict block for CRE to rule when the draft contradicts existing canon]
 lane: fiction
 status: active
-last_updated: 2026-09-04
+last_updated: 2026-09-10
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/promote-revision]] — runs when a chapter's draft.md has landed. Its outputs feed the NEXT chapter's [[WORKFLOWS/dictation-preflight]] (which reads REFERENCE first, back-walks only as fallback).
 ---
@@ -55,7 +55,12 @@ Canon-sync runs in two modes. Everything else in this doc is **land mode** unles
 Read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Locate chapter + verify it has landed
-Resolve the chapter folder; read `draft.md` frontmatter. Expect `status: register-revised` (or `dev-revised` if CRE explicitly syncs mid-pipeline, or `ingested` when the draft is published prose brought in by [[WORKFLOWS/book-ingest]] — `ingested` IS a landed state, `^obs-023`). Record `source_revision` (or `source_slate` if no revision yet; for an ingested chapter there is no revision — use the `ingested` provenance form below). Scaffold or missing draft → halt.
+Resolve the chapter folder; read `draft.md` frontmatter. 
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — then run the Step 2 supersession triage as written. The triage retires stale rulings; this preflight is what makes sure the body they were retired against was preserved.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** An **`ingested` chapter is the named exception** — [[WORKFLOWS/book-ingest]] lands published prose with no revision chain and N/A-stubs the dictation-side files, so a `revisions/` that is empty or stubbed there is the expected state, not a hand-landing: note it in one line and proceed to the `ingested` provenance form below. The preflight also never changes this step's own halt — a scaffold or missing draft still halts before it runs.
+
+Expect `status: register-revised` (or `dev-revised` if CRE explicitly syncs mid-pipeline, or `ingested` when the draft is published prose brought in by [[WORKFLOWS/book-ingest]] — `ingested` IS a landed state, `^obs-023`). Record `source_revision` (or `source_slate` if no revision yet; for an ingested chapter there is no revision — use the `ingested` provenance form below). Scaffold or missing draft → halt.
 
 ### Step 2 — Load current state
 Read `REFERENCE/story-so-far.md`, `REFERENCE/bible.md`, `REFERENCE/threads.md`, and `REFERENCE/arcs.md` (create any from the scaffold templates if missing) and the chapter's `continuity.md`. Index existing bible facts by entity and provenance, open threads by id, and the current entry/waypoint/exit state per character in `arcs.md`. **The set of bible facts and thread events already provenance-tagged to THIS chapter (`(CH<N> rev<M>)`) is the prior extraction — treat it as the baseline to diff the new draft against (see Step 3).** Also read, read-only: the chapter's `brief.md` (if present) and the run's `spec-check/<slate-run>/pass-1-blind.md` (if present).

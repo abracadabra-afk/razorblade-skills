@@ -6,8 +6,8 @@ triggers: ["harden the episode"]
 lane: 5 (writing-ops) + 1 (fiction)
 intent: "[[WORKFLOWS/intents/episode-harden]]"
 created: 2026-09-05
-last_updated: 2026-09-06
-revision_note: "2026-09-06 — step 7 offers 'build the walker' at the stamp (brainstorm-walker build; installed skill inherits at repack, DIR-009). v1 — built 2026-09-05 from WORKFLOWS/intents/episode-harden.md (ratified same day). Companion edits landed in the same build: episode-blueprint Inputs name shape.md as run 2's structural source (premise wins on overlap, shape next, DEV additive for the aesthetic layer — CRE widened the 'nowhere else' clause 2026-09-05); pipeline S1.75 row; _SKILLS MAP trigger row."
+last_updated: 2026-09-11
+revision_note: "2026-09-11 — PROVISIONAL banner added (dec-036): the short-form spine is the want the character has no agency to satisfy, with the flaw discovered in the response rather than established before it, so the rung-walk DOWN to the flaw is provisional. The `## Want` field already asks the right question and is unchanged. Banner only — no step, field or script changed. Full rework deferred by CRE behind a state trigger (the premise floor is producing in-band pieces), tracked at `^backlog-blueprint-harden-want-first`. Prior: 2026-09-06 — step 7 offers 'build the walker' at the stamp (brainstorm-walker build; installed skill inherits at repack, DIR-009). v1 — built 2026-09-05 from WORKFLOWS/intents/episode-harden.md (ratified same day). Companion edits landed in the same build: episode-blueprint Inputs name shape.md as run 2's structural source (premise wins on overlap, shape next, DEV additive for the aesthetic layer — CRE widened the 'nowhere else' clause 2026-09-05); pipeline S1.75 row; _SKILLS MAP trigger row."
 ---
 
 # episode-harden
@@ -36,6 +36,8 @@ Run 2 stays at S3 — the regeneration follows the last thing that moves the pre
 ## When to use
 
 CRE says **"harden the episode"** on a gated WIW episode that has a `blueprint.md` (run 1, ruled GO), before the S2 brainstorm has run. Attended only. Do NOT use it to plan budgets, variance, or the GO/RESHAPE call (`episode-blueprint`), to capture the arc chain at pick time (`premise-forge` DEEPEN — stays optional; read its chain when one exists), to run or route the dream-catching session (`brainstorm` + `dev-capture`), to reconcile notes against the premise (`episode-feedback`), to carve the runway or check production (`episode-runway`), or to weigh a fork (`decision-helper` — a fork found here is recorded `[NOT NAMED — CRE]`, never weighed).
+
+> **PROVISIONAL — the short-form axis is want-first (dec-036, CRE-ruled 2026-09-11).** This doc walks every rung DOWN to the flaw, treating the flaw as the floor the ladder rests on. dec-036 makes the short-form spine the **want the character has no agency to satisfy in that moment**, legible in the opening move, with the flaw discovered in the response rather than established before it — because the lead-up a flaw-first ladder needs is what pushes a piece past 2,500 words. The `## Want` field already carries the right question; the rung-walk below it is the provisional part. **The rework is deferred by CRE**, trigger: *the premise floor is producing in-band pieces* — not date-bound.
 
 ## Inputs
 

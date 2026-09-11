@@ -1,0 +1,51 @@
+{
+  "skill_name": "skill-test",
+  "note": "Evals cover the mechanical shell only. The verdict is subjective and stays with the auditor (CRE's seat); no assertion grades it.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "read-only-skill-pass-path",
+      "prompt": "test skill link-audit. Goal met if: the report lists every dangling wikilink in the vault, none are false positives, and nothing is edited. Test case: the live vault as-is.",
+      "expected_output": "One report at SYSTEM/reports/DATE-skill-test-link-audit.md, verdict first, all nine sections present, three RUN summaries, stand-in rulings table, drift line, Not checked. No _BACKLOG item unless the verdict is short of PASS.",
+      "files": [],
+      "assertions": [
+        "Report file exists at SYSTEM/reports/<date>-skill-test-link-audit.md",
+        "First content line of the report is the VERDICT: line with one of PASS, PASS-WITH-NOTES, FAIL",
+        "All nine required section headings are present in order",
+        "Three RUN headings (RUN 1, RUN 2, RUN 3) are present with a path each",
+        "Stand-in rulings table is present (may be the 'none reached' row)",
+        "skill_test_shell.py check exits 0 on the finished report",
+        "No file under WRITING/, REFERENCE/, or the OS anchors was modified"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "writer-skill-runs-in-fixture",
+      "prompt": "run the skill test on chapter-init. Goal met if it scaffolds CHAPTER 99 - TEST with every convention file and correct chapter frontmatter. Test case: Witchwood, chapter 99, title TEST.",
+      "expected_output": "The skill is classed as a writer; every run writes only under SYSTEM/skill-tests/chapter-init/DATE/run-K/ (a fixture copy of the project skeleton), never into WRITING/PROJECTS/WITCHWOOD. Report present, verdict first.",
+      "files": [],
+      "assertions": [
+        "Report's Write class line says 'writes' and names a fixture path under SYSTEM/skill-tests/chapter-init/",
+        "A CHAPTER 99 folder exists under each run-K directory and NOT under WRITING/PROJECTS/WITCHWOOD/CHAPTERS/",
+        "skill_test_shell.py check exits 0 on the finished report",
+        "Report Not checked section is non-empty"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "fail-verdict-writes-handoff-and-backlog",
+      "prompt": "test the skill dictation-preflight. Goal met if envelope.md is filled with POV, conditions, and state per segment from the queued dictation. Test case: the fixture chapter in SYSTEM/skill-tests/_fixtures/ch-preflight-broken (its dictation folder is empty, so the skill should trip its empty-input gate).",
+      "expected_output": "Runs hit the gate; each logs a stand-in ruling; auditor rules FAIL or PASS-WITH-NOTES; the report carries a skill-creator handoff block of substance and one _BACKLOG item exists at the top of ## OS / Meta with anchor ^backlog-skilltest-dictation-preflight-DATE.",
+      "files": [],
+      "assertions": [
+        "Verdict is FAIL or PASS-WITH-NOTES",
+        "skill-creator handoff section is non-empty and does not start with 'None'",
+        "Handoff block names the skill, the installed path, the goal, evidence paths, the change wanted, and what must be true after",
+        "_BACKLOG.md contains the anchor ^backlog-skilltest-dictation-preflight-<date> under ## OS / Meta",
+        "Every stand-in ruling logged in audit/stand-in-rulings.md appears in the report table, and each gate has exactly one ruling applied to all three runs",
+        "skill_test_shell.py check exits 0 on the finished report",
+        "The installed dictation-preflight SKILL.md was not modified"
+      ]
+    }
+  ]
+}

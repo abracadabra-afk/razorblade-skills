@@ -13,6 +13,8 @@ Three things shape everything below:
 - **Read as known; ask only what is open (DIR-011, CDIR-009).** The blueprint, the premise and the deepened arc chain already carry his rulings. A field they answer is presented as *resolved against blueprint § Flaw — confirm*, one tap, never re-asked. Re-asking costs him what the deepening and the blueprint already bought.
 - **Layers, not rivals.** DEEPEN captured the chain at pick time; the blueprint measured variance and budget; you commit the reader's pillars and the cast; the brainstorm is aesthetic. Four tools on one field at four layers (`^obs-322`). Do not drift into any of the other three.
 
+**PROVISIONAL — the short-form axis is want-first (dec-036, CRE-ruled 2026-09-11).** This skill walks every rung DOWN to the flaw, treating the flaw as the floor the ladder rests on. dec-036 makes the short-form spine the **want the character has no agency to satisfy in that moment**, legible in the opening move, with the flaw discovered in the response rather than established before it — because the lead-up a flaw-first ladder needs is what pushes a piece past 2,500 words. The `## Want` round already asks the right question and is unaffected; the rung-walk below it is the provisional part, so do not treat a thin flaw as a stall when the want and the denial are named. The rework is deferred by CRE behind a state trigger — *the premise floor is producing in-band pieces* — tracked at `^backlog-blueprint-harden-want-first`.
+
 Canonical doc: `WORKFLOWS/episode-harden.md`. Intent: `WORKFLOWS/intents/episode-harden.md`. Route canon: `WORKFLOWS/pipeline.md` episode route v4, row S1.75.
 
 ---

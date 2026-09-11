@@ -9,7 +9,7 @@ lane: fiction (+ writing-ops for WIW episodes)
 status: spec — packs after 2–3 live runs
 governed-by: DIR-011 (resolve before flag), DIR-012 (gates attended), DIR-014 (rulings land on tool-read surfaces), DIR-017 (banked prose never re-dictated; choreo maps exit to revision)
 pipeline_position: Workshop-2 tier — consumes the Pass-1-tier panel synthesis; sits between panel-read and the line passes; nests choreographer between its two phases. Route v3 (2026-08-09) — on episodes this always post-dates CRE's author pass, since panel-read is the pre-publication gate.
-last_updated: 2026-09-04
+last_updated: 2026-09-10
 ---
 
 # WORKFLOW: panel-response
@@ -42,6 +42,10 @@ CRE says **"respond to the panel"** / **"panel response"** / **"work the panel f
 ## Phase 1 — RULE & ROUTE (read-only)
 
 **Step 0 — sentinel + locate.** Verify `_DIRECTIVES.md` frontmatter (`^obs-004`). Identify the run folder and the draft revision the panel read (the synthesis frontmatter carries `source:`). If the draft has moved since the panel read it, say so before anything else — rulings against a stale read are rulings against a phantom text.
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — that existing check tells CRE the read is stale; this one accounts for *why*. Route v3 puts this pass after his author pass, so the hand-landing is the expected case here, not the exception.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It does **not** answer Step 0's *has the draft moved since the panel read* question and does not settle it — whether to re-panel or proceed with a caveat stays the scope call CRE makes once, at the top. The preflight is the accounting that runs either way: it preserves the superseded body and stamps the folder's derives so that a read he elects to proceed with is ruled against a text that still exists on disk. On the episode route a folder with no `revisions/` is common; the shared text's one-line no-`revisions/` case governs there.
 
 **Step 1 — load.** The synthesis, the draft, the unit's spec surface (`brief.md` / `premise.md`), prior rulings (`DECISIONS/`, premise amendment stamps, `feedback-log.md` / rulings blocks), and REFERENCE canon where the unit has one. **The clean room ended with the panel — this pass is spec-aware by design.** That is what lets it do DIR-011 research the synthesis could not.
 

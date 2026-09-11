@@ -1,13 +1,13 @@
 ---
 type: workflow
 name: premise-forge
-status: spec — v2.1 PACKED + INSTALLED 2026-09-04 (DIR-009; installed copy probed, carries the promise-read text); graduates from spec after 2–3 live runs
+status: spec — v2.2 SOURCE-AHEAD of the installed v2.1 pack (2026-09-04). Re-pack owed, `^backlog-premise-forge-v22-pack`; the installed copy asks for a dread source where v2.2 asks the four-clause floor. Description unchanged, so verify the installed body by direct read, never the audit's sha verdict (DIR-009). Graduates from spec after 2–3 live runs
 triggers: ["forge the premises", "run the premise forge", "fill the bag", "build the premise bag", "size this idea", "what does this want to be", "deepen the premise", "run the deepening", "prep for blueprint"]
 lane: 5 (writing-ops) + 1 (fiction)
 intent: "[[WORKFLOWS/intents/premise-forge-v2]]"
 created: 2026-08-09
-last_updated: 2026-09-04
-revision_note: "v2.1 — 2026-09-04 (later, same day), promise alignment off dec-034: horror is the channel's promise, sub-genre is free. Step 4 names the dread engine inside the what-if grammar; the triage gains a `subgenre:` key and a `## Promise read` pre-read (dread source at forge time; the turn stays DEEPEN's); Step 8 next-up ranks variety under the promise and treats a thin promise read as a flag, never a lift; Step 2 census runs a one-time promise read over the live bag. Variety weight itself unchanged — ruled compatible. Source-ahead of the installed v2 pack. v2 — 2026-09-04, amended in place off the ratified premise-forge-v2 intent. Adds the DEEPEN mode (pick-time arc-chain capture via interview-me → `## Arc chain` + a derived handoff block in the candidate's triage.md), the Step 0 creative-lane load, and a `WORKFLOWS/skills-src/premise-forge/` source entry. v1's FILL batch forge, gut gate, Step 6 scope measurement, cap, min-fill floor and 90-day peg re-gut are untouched; Steps 2–8 keep their numbers because downstream docs cite them."
+last_updated: 2026-09-11
+revision_note: "v2.2 — 2026-09-11, off dec-036. The forge-time promise read becomes the four-clause premise floor: Step 5 gains three questions asked of every SPARK headed for a weekly slot (what gets destroyed — not restricted to bodies, no supernatural required · is the wound fresh or is it a scar · why can't the reader look away and why can't the character get what they want now); the `## Promise read` field spec is rewritten to those clauses; Step 2's one-time census line re-fires on any section predating 2026-09-11, since a v2.1 read carries only a dread source. Flag-never-veto and the gut-is-the-gate rule are untouched — the floor never overrides a SPARK or rescues a KILL, and a floor-failing premise banks for Substack paid / anthology / submission rather than dying. A premise needing a lead-up to establish a flaw is an over-container flag for Step 6, not a gate failure. v2.1 — 2026-09-04 (later, same day), promise alignment off dec-034: horror is the channel's promise, sub-genre is free. Step 4 names the dread engine inside the what-if grammar; the triage gains a `subgenre:` key and a `## Promise read` pre-read (dread source at forge time; the turn stays DEEPEN's); Step 8 next-up ranks variety under the promise and treats a thin promise read as a flag, never a lift; Step 2 census runs a one-time promise read over the live bag. Variety weight itself unchanged — ruled compatible. Source-ahead of the installed v2 pack. v2 — 2026-09-04, amended in place off the ratified premise-forge-v2 intent. Adds the DEEPEN mode (pick-time arc-chain capture via interview-me → `## Arc chain` + a derived handoff block in the candidate's triage.md), the Step 0 creative-lane load, and a `WORKFLOWS/skills-src/premise-forge/` source entry. v1's FILL batch forge, gut gate, Step 6 scope measurement, cap, min-fill floor and 90-day peg re-gut are untouched; Steps 2–8 keep their numbers because downstream docs cite them."
 ---
 
 # premise-forge
@@ -107,7 +107,7 @@ FILL / DECLARED / OPEN / DEEPEN, per the Modes table. Stated trigger wins; other
 ### Step 2 — Bag census
 Read `CANDIDATES/` (a `Glob` miss is never evidence of absence — confirm any negative with a direct read, DIR-005). Report: live candidates, their conditions/knots, ages, and any **stale flags** (Step 8). If the bag is at cap (~10–12 live), lead with hygiene (Step 8) before forging more — an overfull bag reintroduces the decision overwhelm this exists to kill.
 
-**One-time promise read (v2.1, dec-034).** Any live candidate whose `triage.md` has no `## Promise read` section gets one line in the census: its dread source as the premise states it, or `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it; CRE rules at the gut gate and `episode-init` rules at the gate. Once every live candidate carries the section, this line stops firing.
+**One-time promise read (v2.2, dec-034 → dec-036).** Any live candidate whose `triage.md` has no `## Promise read` section — **or whose section predates 2026-09-11 and therefore reads only a dread source** — gets one line in the census against the four-clause floor: what is destroyed · fresh wound or scar · why the reader can't look away · why the character can't get what they want now. Absent → `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it; CRE rules at the gut gate and `episode-init` rules at the gate. Once every live candidate carries a dec-036-shaped section, this line stops firing.
 
 ### Step 3 — Condition intake + variety scan
 Two entries:
@@ -137,6 +137,14 @@ CRE's felt response is the only gate. Per candidate:
 - **KILL** — discard freely, zero sunk cost, no defense of the corpse. Expect most of a batch to die; that is the instrument working, not failing.
 
 **Never argue for a killed premise. Never smooth a broken one into shape uninvited** — name what's missing and hand it back (the episode-init gate's own rule). A bag of market-optimal premises CRE is lukewarm on is worse than an empty bag: he won't dictate them, and the bag teaches him to distrust it.
+
+**The premise floor, read at forge time (v2.2, dec-036, CRE-ruled 2026-09-11).** The gut is still the gate — the floor never overrides a SPARK or rescues a KILL. But `episode-init` check (a) now gates on four clauses, and reading them here is what stops the bag filling with pieces that die at the gate or blow past 2,500 words. Three questions, asked of every SPARK headed for a **YouTube weekly slot**:
+
+- **What gets destroyed?** A person, a self, a system, a belief — anything in a character's reality. Not restricted to bodies, and **no supernatural element is required**.
+- **Is the wound fresh or is it a scar?** The destroying must happen on the page in story-present and drive the story. Rendered-to-examine-its-effects is literary, not horror. This is the clause most pieces fail.
+- **Why can't the reader look away, and why can't the character get what they want right now?** Reader compulsion is what separates the piece from snuffwork. Character agency denied — by a person, a system, circumstance, or their own compulsion — with trait and want legible in the **opening move**, is what keeps it inside the band. A premise that needs a lead-up to establish a flaw before escalation can start is an over-container flag for Step 6, not a gate failure.
+
+Answers go to `## Promise read`. **Flag, never veto** — `episode-init` rules at the gate, CRE rules at the gut. A premise that fails the floor is banked for Substack paid / anthology / submission, not killed: this floor governs the weekly slot only.
 
 On **REWORK**, route the "what's off" through `interview-me` (v2) rather than a volley of single questions — one batch, no defaults on the story-content items, and the re-forge runs off his answer.
 
@@ -185,7 +193,7 @@ status: banked premise — awaiting CRE pick + episode-init gate   # seeds: "see
 ## Container          (band verdict + why it holds short)
 ## TOS band / tier    (best pre-read: free-tier / age-restricted / never → FULL / SAFE-CUT / TEASE rec — episode-init re-rules at gate)
 ## Variety note       (what this adds against the worked corpus — condition + subgenre, under the promise)
-## Promise read       (v2.1, dec-034 — pre-read of episode-init check (a): the DREAD SOURCE as the premise states it. The TURN is not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate)
+## Promise read       (v2.2, dec-036 — pre-read of episode-init check (a), the four-clause premise floor: WHAT IS DESTROYED · FRESH WOUND OR SCAR (is the destroying on the page, in story-present, driving the story?) · WHY THE READER CAN'T LOOK AWAY · WHY THE CHARACTER CAN'T GET WHAT THEY WANT NOW, and whether trait + want are legible in the opening move. The dread source belongs under the first two. The TURN is still not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate. Weekly-slot scope only)
 ## Format measurement (the Step-6 verdict + the dimensions that produced it; shorts: the containing elements named)
 
 ## Arc chain          (DEEPEN only — written at pick time, never at forge time; absent until then)

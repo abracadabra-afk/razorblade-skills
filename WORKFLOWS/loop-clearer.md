@@ -7,7 +7,7 @@ inputs: [the chapter's open-loops.md (unresolved entries), the chapter's draft.m
 outputs: [a loop-clear revision in revisions/ carrying the surgical fixes + marked demo blocks for the bigger rewrites, the chapter's open-loops.md with ruled entries moved to Resolved / marked in-progress]
 lane: fiction
 status: active
-last_updated: 2026-09-04
+last_updated: 2026-09-10
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep an open-loops.md populated by the Transcoder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/transcoder]] (which POPULATES open-loops.md); upstream of [[WORKFLOWS/register-pass]]. Automates the open-loops.md note's own instruction ("Resolve here, then patch draft.md") into a gated, in-voice revision. Its loop-clear revision is landed by [[WORKFLOWS/promote-revision]].
 ---
@@ -59,7 +59,12 @@ The revision frontmatter carries `kind: loop-clear`, the `source_draft` it deriv
 Read `_DIRECTIVES.md` at the mounted root; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Resolve the chapter, the loops, and the voice sources
-Locate the chapter folder (CRE names it, or the most recently touched). Read `open-loops.md` and `draft.md`. Walk up to the project root (the folder whose `CHAPTERS/` holds this chapter) and read `REFERENCE/voice-spec.md` + `REFERENCE/register.md` if present, plus [[KNOWLEDGE/VOICE SAMPLES]]. If `open-loops.md` is missing or has no unresolved entries → halt (see Stop conditions). Name what you loaded so a misfire is visible.
+Locate the chapter folder (CRE names it, or the most recently touched). Read `open-loops.md` and `draft.md`. 
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — run before the Step 2 supersession triage, so the loops that triage retires are retired against a preserved body.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It runs **above this step's own halt** — the preflight is folder bookkeeping and completes even when `open-loops.md` turns out to have no unresolved entries and the pass then halts; an unaccounted hand-landing is not made moot by there being no loops to clear. It does not itself retire or resolve a loop: that stays Step 2's triage, running after, against the preserved body this preflight guarantees.
+
+Walk up to the project root (the folder whose `CHAPTERS/` holds this chapter) and read `REFERENCE/voice-spec.md` + `REFERENCE/register.md` if present, plus [[KNOWLEDGE/VOICE SAMPLES]]. If `open-loops.md` is missing or has no unresolved entries → halt (see Stop conditions). Name what you loaded so a misfire is visible.
 
 ### Step 2 — Parse and triage every unresolved loop
 For each unresolved entry: record its source span and locate that exact span in `draft.md` (quote it back so the anchor is visible). If a span can't be found in `draft.md`, flag it and continue with the others (don't block the batch).

@@ -5,8 +5,8 @@ status: spec — run by hand/in chat; graduates to a packed skill after 2–3 li
 triggers: ["build episode N", "init the episode", "scaffold the episode", "start a new episode", "episode builder"]
 lane: 5 (writing-ops) + 1 (fiction)
 created: 2026-07-23
-last_updated: 2026-09-04
-revision_note: "2026-09-04 — the EP 02 run-log amendment applied to the doc body at last (it had sat as a recommendation since 2026-08-23). Step 3 now opens with a triage-vs-live reconciliation; where they disagree the live material wins and the divergence is recorded in premise.md. CRE ruled staleness a FLAG, never a RESHAPE — a re-deepen gate in front of the mic is the thing the route exists to avoid. Doc-only; episode-init has no skills-src entry, so no pack is owed."
+last_updated: 2026-09-11
+revision_note: "2026-09-11 — dec-036: check (a)'s promise gate replaced. dec-034's single dread-and-turn clause becomes a four-clause premise floor (something destroyed · the destroying on the page in story-present driving the story, fresh wound not old scar · the reader compelled to watch · the character without agency to get what they want now, trait and want legible in the opening move). Sub-genre freedom WIDENED — no supernatural element required. Scope is the YouTube weekly slot only; a failing piece routes to Substack paid / anthology / submission rather than dying. Doc-only, no skills-src entry, no pack owed. | 2026-09-04 — the EP 02 run-log amendment applied to the doc body at last (it had sat as a recommendation since 2026-08-23). Step 3 now opens with a triage-vs-live reconciliation; where they disagree the live material wins and the divergence is recorded in premise.md. CRE ruled staleness a FLAG, never a RESHAPE — a re-deepen gate in front of the mic is the thing the route exists to avoid. Doc-only; episode-init has no skills-src entry, so no pack is owed."
 ---
 
 # episode-init
@@ -80,7 +80,16 @@ Verify `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). F
 
 Run them in order, per the canonical constraint set in [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]], **against the reconciled material**:
 
-**a. Premise integrity** — knot · scenario-challenges-knot · tensional constraint · **topical peg** (no peg, no title/thumbnail/algorithm surface — a premise without a peg is not ready). **Plus the promise gate (dec-034, CRE-ruled 2026-09-04): does the intended piece deliver *dread and a turn*?** Horror is the channel's promise; sub-genre (supernatural, gothic, cosmic, dark fairy tale, contemporary dark) is free and never gated — a dread-less piece is. Fail → record it in `premise.md` and hand back; never reshape the piece toward dread (organic-process guard). Reviewed 2026-12-01 against EP 02/EP 03 retention.
+**a. Premise integrity** — knot · scenario-challenges-knot · tensional constraint · **topical peg** (no peg, no title/thumbnail/algorithm surface — a premise without a peg is not ready).
+
+**Plus the promise gate — the premise floor (dec-036, CRE-ruled 2026-09-11; replaces dec-034's single dread-and-turn clause).** Horror is the channel's promise; sub-genre (supernatural, body, psychological, gothic, cosmic, dark fairy tale, contemporary dark) is **free and never gated**. A supernatural element is **not** required — body horror and psychological horror are horror. What is gated is the floor, and a piece must clear **all four** clauses:
+
+1. **Something is destroyed** — a person, a self, a system, a belief, anything in a character's reality.
+2. **The destroying happens on the page, in story-present, and drives the story.** Discriminator: **fresh wound, not old scar.** Horror renders the wounding; literary fiction renders the scar — real destruction, but past, off-screen, and rendered to examine its effects on character rather than to move the story.
+3. **The reader is compelled to watch** — care, sympathy, relation, or need-to-know. Without it the piece is snuffwork with no reader stakes. This is also what makes the dec-013 refusal work: if the narrator won't say how to feel, the wanting must come from the reader.
+4. **The character lacks the agency to get what they want in that moment** — denial free in source (another person, a system, circumstance, their own compulsion). Trait and want legible in the **opening move**; nothing built up to (the Anomaly Line applied to character). The container clause: flaw-first escalation needs a lead-up 2,500 words can't pay for; want-blocked predicament doesn't. Flaw is discovered *in* the response, not established before it.
+
+All four are required — clause 4 alone passes literary work (*Hard Lemonade* has it and fails clause 2). Fail → record which clause in `premise.md` and hand back; **never reshape the piece toward the floor** (organic-process guard). A failing piece is not killed — it routes to Substack paid / anthology / submission, which this gate does not govern. **Scope: the YouTube weekly slot only.** Reviewed 2026-12-01 with dec-034 against EP 01 / EP 03 retention.
 
 **b. TOS band** — free-tier safe / age-restricted / never. Read the *intended* content against the line; Pass 3 re-checks the draft for drift.
 

@@ -64,7 +64,7 @@ Read `WRITING/SHORTS/CANDIDATES/`. Report live candidates, their conditions and 
 
 At cap (~10–12 live), lead with hygiene (Step 8) before forging more. An overfull bag reintroduces the decision overwhelm this tool exists to kill.
 
-**One-time promise read (dec-034).** Any live candidate whose `triage.md` has no `## Promise read` section gets one census line: its dread source as the premise states it, or `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it. Once every live candidate carries the section, this line stops firing.
+**One-time promise read (dec-034 → dec-036).** Any live candidate whose `triage.md` has no `## Promise read` section — **or whose section predates 2026-09-11, and so reads only a dread source** — gets one census line against the four-clause floor: what is destroyed · fresh wound or scar · why the reader can't look away · why the character can't get what they want now. Absent → `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it. Once every live candidate carries a dec-036-shaped section, this line stops firing.
 
 ## Step 3 — Condition intake + variety scan (FILL)
 
@@ -80,7 +80,7 @@ The scan reads the corpus — `EPISODES/*/premise.md` and `CANDIDATES/*/triage.m
 Generate what-if premises around the chosen condition — **a batch of ~5–10, one condition per batch** — each in the full `WRITING/SHORTS/PREMISES.md` grammar:
 
 1. **Knot first, always.** Start from the character flaw or condition. The knot is the premise's spine — never reverse-engineer a knot onto a scenario.
-2. **A scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it. **The detonation is the dread engine** (dec-034): the channel's promise is horror, so a premise forged for this bag carries the thing that frightens — an intrusion, a rule of the world bent, a consequence that cannot be taken back. Sub-genre is free (supernatural, gothic, cosmic, dark fairy tale, contemporary dark); a scenario with no dread in it is a weaker what-if, not a banned one — present it flat, his gut rules.
+2. **A scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it. **The detonation is the destruction** (dec-034 → dec-036): the channel's promise is horror, so a premise forged for this bag carries something that gets destroyed on the page — a person, a self, a system, a belief — and a consequence that cannot be taken back. Sub-genre is free and **no supernatural element is required** (supernatural, body, psychological, gothic, cosmic, dark fairy tale, contemporary dark all qualify). A scenario whose damage is already done before the story opens is a weaker what-if, not a banned one — present it flat, his gut rules.
 3. **A tensional constraint.** A clock, a countdown, a closing door — and prefer constraints that do *containment* work, since a 20-minute clock is also a container.
 4. **A peg from the condition, never from a market.** The peg is the contemporary costume the timeless condition wears: ask *what does this condition look like right now?* A premise whose peg has no condition under it is a box-check, not a story.
 
@@ -95,6 +95,14 @@ His felt response is the only gate.
 - **KILL** — discard freely, zero sunk cost, no defence of the corpse. Expect most of a batch to die; that is the instrument working.
 
 **Never argue for a killed premise. Never smooth a broken one into shape uninvited** — name what is missing and hand it back. A bag of optimal premises he is lukewarm on is worse than an empty bag: he will not dictate them, and the bag teaches him to distrust it.
+
+**The premise floor, read at forge time (dec-036).** The gut is still the gate — the floor never overrides a SPARK or rescues a KILL. But `episode-init` check (a) gates on four clauses, and reading them here is what stops the bag filling with pieces that die at the gate or blow past 2,500 words. Three questions, asked of every SPARK headed for a **YouTube weekly slot**:
+
+- **What gets destroyed?** A person, a self, a system, a belief — anything in a character's reality. Not restricted to bodies; no supernatural element required.
+- **Is the wound fresh or is it a scar?** The destroying must happen on the page in story-present and drive the story. Rendered-to-examine-its-effects is literary, not horror. The clause most pieces fail.
+- **Why can't the reader look away, and why can't the character get what they want right now?** Reader compulsion is what separates the piece from snuffwork. Agency denied — by a person, a system, circumstance, or their own compulsion — with trait and want legible in the **opening move**, is what keeps it inside the band. A premise needing a lead-up to establish a flaw before escalation starts is an over-container flag for Step 6, not a gate failure.
+
+Answers go to `## Promise read`. **Flag, never veto** — `episode-init` rules at the gate, he rules at the gut. A premise failing the floor banks for Substack paid / anthology / submission, not killed: the floor governs the weekly slot only.
 
 ## Step 6 — Scope measurement (the format verdict)
 
@@ -137,7 +145,7 @@ status: banked premise — awaiting CRE pick + episode-init gate
 ## Container            band verdict + why it holds short
 ## TOS band / tier      best pre-read; episode-init re-rules at the gate
 ## Variety note         what this adds against the worked corpus — condition + subgenre, under the promise
-## Promise read         dec-034 pre-read of episode-init check (a): the DREAD SOURCE as the premise states it. The TURN is not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate
+## Promise read         dec-036 pre-read of episode-init check (a), the four-clause premise floor: WHAT IS DESTROYED · FRESH WOUND OR SCAR (is the destroying on the page, in story-present, driving the story?) · WHY THE READER CAN'T LOOK AWAY · WHY THE CHARACTER CAN'T GET WHAT THEY WANT NOW, and whether trait + want are legible in the opening move. The dread source sits under the first two. The TURN is still not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate. Weekly-slot scope only
 ## Format measurement   the Step-6 verdict + the dimensions that produced it
 ```
 

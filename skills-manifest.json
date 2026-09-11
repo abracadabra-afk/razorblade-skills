@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-10T12:00:12.5307310-07:00",
+    "generated":  "2026-09-11T12:00:11.0988044-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -145,9 +145,9 @@
                    {
                        "name":  "episode-blueprint",
                        "package":  "WORKFLOWS/skills/episode-blueprint.skill",
-                       "sha256":  "62d0434f9e0282a1684237359f5860d0548297b1f2737d5e641f6f2db3378a4b",
-                       "content_sha256":  "e3ce44076e4924df5cd8de66f277166fdfeec69634780e5a6b72e030848ec14b",
-                       "bytes":  22880
+                       "sha256":  "0cadb9198525a2a3974cc580aa39f8fabe4157286c571b4d2093a62c03bc62f4",
+                       "content_sha256":  "db2ef77549a764c98a59162f5257e6b75257a8d3f8f8568a492b0172629b0108",
+                       "bytes":  23258
                    },
                    {
                        "name":  "episode-feedback",
@@ -159,9 +159,9 @@
                    {
                        "name":  "episode-harden",
                        "package":  "WORKFLOWS/skills/episode-harden.skill",
-                       "sha256":  "3a7ed94f69ba025271e993c9323009778b468e2057982968b9c1d5d56bce74f7",
-                       "content_sha256":  "aba93b3fe5abcc3b509c11d776b6610609f9f314d4a316c575ae1d99b6ab4838",
-                       "bytes":  20132
+                       "sha256":  "a02bb8282b148110ceca98093cda361187e8f4a4fdfa013e4d0f51409843a77c",
+                       "content_sha256":  "41e017728a4d9d0ae457aa963ff81938bae24d1fc50390a4a0108cb28dbd5b22",
+                       "bytes":  20494
                    },
                    {
                        "name":  "file-inbox",
@@ -222,9 +222,9 @@
                    {
                        "name":  "premise-forge",
                        "package":  "WORKFLOWS/skills/premise-forge.skill",
-                       "sha256":  "79fabf2a7d3414fb388d2b1f0871b63e0ccd757fa22dbdd6c1e4d9f3a877c7c9",
-                       "content_sha256":  "a2d1515d5572cd400f94a5a6a4b71d8d9d2fcfda2ad80a3293c8085178395b58",
-                       "bytes":  17158
+                       "sha256":  "d37da6981bbbb805ee950702e9f79b38cb63b935ff7728ae928831f71e0ca46a",
+                       "content_sha256":  "93f79b255b4a858058c6876121265c4fd3c42635fd7ab2ea9fcd127ce8e42312",
+                       "bytes":  17991
                    },
                    {
                        "name":  "project-plan",
@@ -302,6 +302,13 @@
                        "sha256":  "cc1a591b37da6641ac4b6244df54c3829b50c57a3af0af390033dd37b065565b",
                        "content_sha256":  "70784805e7f8f4ffee57025253181fa86d9c53f49a4f65b4805faef24243a7b4",
                        "bytes":  13058
+                   },
+                   {
+                       "name":  "skill-test",
+                       "package":  "WORKFLOWS/skills/skill-test.skill",
+                       "sha256":  "bb0ed8306598f67e7382a82f508c312e98b5dd339189aa4568231482637642f4",
+                       "content_sha256":  "f407e386aff42589e128b76c024efa30654179a1a682e6de1a30140c2d55ee06",
+                       "bytes":  12047
                    },
                    {
                        "name":  "spec-passes",
