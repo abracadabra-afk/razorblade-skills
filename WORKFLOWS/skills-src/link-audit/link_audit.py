@@ -2,13 +2,41 @@
 """link_audit.py - Obsidian vault reference-integrity auditor (read-only).
 
 Scans notes for [[wikilinks]], ![[embeds]], and [md](links), resolves each against
-the real file index using Obsidian's rules (basename match with FOLDER-PROXIMITY
-tie-break, or path match), plus heading/block-anchor indices. Reports:
+the real file index using Obsidian's rules, plus heading/block-anchor indices.
+
+PATH RESOLUTION (rebuilt 2026-09-11, ^obs-287 / ^backlog-linkaudit-path-resolution).
+A link containing "/" is tried against FOUR layers, in Obsidian's own order, not one:
+  1. vault-root-relative   ("DEV/registry/items")
+  2. source-relative       (the same link written from inside WRITING/PROJECTS/X/)
+  3. unique path SUFFIX    (Obsidian's shortest-path-when-possible rule)
+  4. suffix matching >1 file -> AMBIGUOUS (resolves to shortest), never DANGLING
+Only layer 1 existed before. Its absence produced ~1,600 phantom DANGLING findings
+per run - about 95% of all output - and three independent skill-test runs disagreed
+by two orders of magnitude (~15 / ~40 / ~1,430) because each one improvised a
+different amount of distrust toward it. A link that points at a DIRECTORY resolves
+to FOLDER-LINK (the vault's navigational convention), not to breakage.
+Wikilink targets are unescaped ("\\|" -> "|") before the alias split: 99 links live
+inside markdown tables, where the pipe must be escaped, and splitting the raw text
+left a trailing backslash on every one of them.
+
+Reports:
   DANGLING        - target file not found anywhere
   BROKEN-ANCHOR   - file resolves, but ^block-id missing
   BROKEN-HEADING  - file resolves, but #heading missing
-  AMBIGUOUS(info) - basename matches >1 file and none in the same folder (Obsidian
-                    still resolves to the shortest path; informational, low priority)
+  AMBIGUOUS(info) - basename or path-suffix matches >1 file and none in the same
+                    folder (Obsidian still resolves to the shortest path; low priority)
+  FOLDER-LINK     - benign: the target is a real DIRECTORY, not a note. The vault
+                    links at folders as navigation on purpose. Never actionable.
+  HOUSE-PREFIX    - benign: a heading cite on _DIRECTIVES / _SKILLS MAP written as a
+                    stable identifier PREFIX rather than full heading text. CRE ruled
+                    this house style 2026-08-19 (^backlog-heading-prefix-cites); the
+                    resolver accepts it so the 32 closed items cannot return as
+                    findings. Reason the ruling stands: those headings get amended
+                    (DIR-005's four times), so pinning cites to full text guarantees
+                    re-breakage. DIR-014's own logic - widen the exact layer.
+  CLIPPING        - benign: a Web Clipper artifact under Clippings/ (author bylines,
+                    javascript: nav stubs). Never authored as vault links.
+  TEMPLATE        - benign: a placeholder in a template/prompt asset (<NAME>, {{var}}).
   SUSPECT-STALE   - a target file read back TRUNCATED (NUL bytes / partial), so its
                     anchor/heading set can't be trusted; the audit refuses to emit a
                     confident BROKEN-ANCHOR/HEADING off a poisoned read. (^obs-073)
@@ -42,8 +70,31 @@ MDLINK   = re.compile(r'(!?)\[[^\]\n]*?\]\(([^)\n]+?)\)')
 HEADING  = re.compile(r'^#{1,6}\s+(.*?)\s*$', re.M)
 BLOCKID  = re.compile(r'(?:^|\s)\^([A-Za-z0-9_-]+)\s*$', re.M)
 SKIPDIRS = {'.git', '.obsidian', '.smart-env', '.trash'}
-QZONES   = ('/GRAVEYARD/', '/evals/', '/SYSTEM/history/')  # history added 2026-08-10 (^backlog-linkaudit-unpack-bug (c)): carved archives hold refs to moved content by design
+# history added 2026-08-10 (^backlog-linkaudit-unpack-bug (c)): carved archives hold refs
+# to moved content by design. skill-tests added 2026-09-11: `skill-test` copies real notes
+# into per-run fixture trees, so every link in them double-counts a link already scanned
+# at its real path - and the count moves whenever a test runs, which is the one thing the
+# baseline must not do.
+QZONES   = ('/GRAVEYARD/', '/evals/', '/SYSTEM/history/', '/SYSTEM/skill-tests/')
 QFILES   = ('_CHANGELOG.md', '_OBSERVATIONS.md', 'vault-migration-plan.md')
+
+# --- benign classes: real unresolved links that are NOT breakage ------------------
+# Every class below was a judgment call an agent re-made from scratch on each run.
+# They are mechanical now, because that improvisation is where the run-to-run
+# inconsistency lived, not in the resolver's arithmetic.
+CLIPPING_ZONES = ('Clippings/', 'COMP LISTINGS/')  # Web Clipper output: author bylines, nav stubs
+TEMPLATE_HINTS = ('_TEMPLATE', '/templates/', '/prompts/')
+PLACEHOLDER    = re.compile(r'[<>{}]|^javascript:|\$\{|\.\.\.|…')
+# Documented metavariables: tokens the OS docs use as STAND-INS inside example link
+# syntax ("resolved against [[Entry]] — confirm", "[[X]]", "[[SEQ NN]]"). A stoplist,
+# deliberately - DIR-014 says widen the EXACT layer, never loosen the matcher. Adding
+# a token here is a one-line, reviewable change; a heuristic over doc paths would
+# swallow real breakage in WORKFLOWS/ canon, which is where link rot actually hurts.
+METAVARS = {'x', 'n', 'nn', 'entry', 'note', 'file', 'title', 'link', 'links',
+            'wikilinks', 'embeds', 'seq nn', 'date', 'name', 'slug', 'project'}
+# Heading cites by stable identifier PREFIX are house style on exactly these two
+# files (CRE-ruled 2026-08-19, ^backlog-heading-prefix-cites). Accept, don't flag.
+HOUSE_ANCHORS  = {'_directives', '_skills map'}
 
 def quarantined(rel):
     if any(z in '/' + rel for z in QZONES): return True
@@ -56,6 +107,13 @@ def strip_code(txt):
     txt = re.sub(r'`[^`\n]*`', '', txt)
     return txt
 
+# DO NOT strip a heading's trailing provenance stamp ("## Sanctuaries along the
+# trail *(CRE, 2026-06-29)*") to match a cite that omits it. Tried 2026-09-11 and
+# REVERTED: the heading renders fine but Obsidian anchors on the FULL text, so the
+# cite genuinely will not navigate - and the 2026-09-06 run already ruled exactly
+# these two cites real (^backlog-linkaudit-fixlist-2026-09-06). They sit outside
+# the 08-19 prefix ruling, which is scoped to _DIRECTIVES / _SKILLS MAP only.
+# Suppressing them would re-open a settled call as a silent non-finding.
 def norm_head(h):
     h = re.sub(r'\[\[([^\]|]+)(?:\|[^\]]+)?\]\]', r'\1', h)
     return re.sub(r'[*_`~]', '', h).strip().lower()
@@ -92,6 +150,8 @@ def main():
     ap.add_argument('--json', action='store_true')
     ap.add_argument('--all', action='store_true', help='include GRAVEYARD/evals/history')
     ap.add_argument('--ambiguous', action='store_true', help='show AMBIGUOUS info findings')
+    ap.add_argument('--benign', action='store_true',
+                    help='show the benign classes (FOLDER-LINK / HOUSE-PREFIX / CLIPPING / TEMPLATE)')
     a = ap.parse_args()
     vault = os.path.abspath(a.vault)
     read_failures = []
@@ -102,13 +162,26 @@ def main():
         for f in fs:
             files.append(os.path.relpath(os.path.join(root, f), vault).replace('\\', '/'))
 
-    by_rel, by_base, by_base_ext = {}, {}, {}
+    by_rel, by_base, by_base_ext, by_suffix = {}, {}, {}, {}
+    dirset = set()
     for rel in files:
         rl = rel.lower(); by_rel[rl] = rel
         if rl.endswith(MD): by_rel[rl[:-3]] = rel
         base = os.path.basename(rel); stem, ext = os.path.splitext(base)
         by_base.setdefault(stem.lower(), []).append(rel)
         by_base_ext.setdefault(base.lower(), []).append(rel)
+        # Obsidian's shortest-path-when-possible rule: a link may name any unique
+        # trailing slice of a path. Indexed once here; a per-link scan of by_rel
+        # would be O(links x files) and this vault has ~7k files.
+        parts = rl.split('/')
+        for i in range(1, len(parts)):
+            suf = '/'.join(parts[i:])
+            by_suffix.setdefault(suf, []).append(rel)
+            if suf.endswith(MD): by_suffix.setdefault(suf[:-3], []).append(rel)
+        # every ancestor directory, so a link at a folder is classified, not flagged
+        p = os.path.dirname(rl)
+        while p:
+            dirset.add(p); p = os.path.dirname(p)
 
     headings, blocks, content, suspect = {}, {}, {}, set()
     integrity_findings = []
@@ -148,13 +221,60 @@ def main():
         sys.exit(2)
 
     findings = list(integrity_findings)
+
+    def benign_class(src, tgt):
+        """Name the benign class of an unresolved link, or None if it is real breakage."""
+        s = '/' + src
+        if any(z in s for z in CLIPPING_ZONES): return 'CLIPPING'
+        if any(h in s for h in TEMPLATE_HINTS) or PLACEHOLDER.search(tgt): return 'TEMPLATE'
+        if tgt.strip().lower() in METAVARS: return 'TEMPLATE'
+        return None
+
+    def house_prefix(target_rel, frag):
+        """True if frag cites a heading on an OS anchor by its stable identifier.
+
+        Prefix match covers "DIR-005" and "Cowork skills"; a contained match covers
+        "_SKILLS MAP#Fiction" against "Lane 1: Fiction Writing". Bounded to the two
+        files CRE ruled on - never widened to the vault (DIR-014: widen the exact
+        layer, never chase the drift).
+        """
+        stem = os.path.splitext(os.path.basename(target_rel))[0].lower()
+        if stem not in HOUSE_ANCHORS: return False
+        f = norm_head(frag)
+        return bool(f) and any(h.startswith(f) or f in h for h in headings.get(target_rel, set()))
+
     def resolve(target, ext_hint, src):
+        """Four-layer path resolution + basename resolution. See module docstring.
+
+        Layer order is Obsidian's, and the order matters: a link that resolves
+        source-relative must not be reported because it failed root-relative.
+        """
         t = target.strip()
         if not t: return ('self', src)
         tl = t.lower()
         if '/' in t:
+            # 1. vault-root-relative
             for c in (tl, tl + MD):
                 if c in by_rel: return ('ok', by_rel[c])
+            # 2. source-relative to the linking note's folder
+            # NOTE: src carries the real casing; by_rel is keyed lowercase. Joining
+            # without lowering silently skips this layer, and the link then falls
+            # through to the suffix layer and matches the WRONG project's file -
+            # which is worse than a miss, because the heading check then runs
+            # against a file the author never linked. (Caught 2026-09-11 by the
+            # closing self-check on its own first run: 327 phantom BROKEN-HEADINGs.)
+            sdir = os.path.dirname(src).lower()
+            if sdir:
+                rp = os.path.normpath(os.path.join(sdir, tl)).replace('\\', '/')
+                for c in (rp, rp + MD):
+                    if c in by_rel: return ('ok', by_rel[c])
+            # 3/4. unique path suffix, else shortest-path among several
+            sufhits = by_suffix.get(tl) or by_suffix.get(tl + MD) or []
+            if len(sufhits) == 1: return ('ok', sufhits[0])
+            if len(sufhits) > 1:
+                pick = sorted(sufhits, key=lambda h: (h.count('/'), len(h)))[0]
+                return ('ambiguous', pick)
+            if tl in dirset: return ('folder', t)
             return ('dangling', None)
         stem, ext = os.path.splitext(t)
         hits = by_base_ext.get(tl, []) if ext else by_base.get(tl, [])
@@ -165,10 +285,14 @@ def main():
             if len(same) == 1: return ('ok', same[0])          # Obsidian: same-folder wins
             pick = sorted(hits, key=lambda h: (h.count('/'), len(h)))[0]  # else shortest path
             return ('ambiguous', pick)
+        if tl in dirset: return ('folder', t)
         return ('dangling', None)
 
     def check(src, embed, inner):
-        part = inner.split('|', 1)[0]
+        # A wikilink inside a markdown TABLE must escape its alias pipe as "\|".
+        # Splitting the raw text left a trailing backslash on the target and made
+        # all 99 of them phantom-DANGLING. Unescape before the alias split.
+        part = inner.replace('\\|', '|').split('|', 1)[0]
         tgt, frag = part.split('#', 1) if '#' in part else (part, None)
         status, rel = resolve(tgt, embed, src)
         if status == 'dangling' and "''" in tgt:
@@ -176,8 +300,12 @@ def main():
             # apostrophe by doubling it ('[[Pig''s Box]]'); Obsidian unescapes before resolving.
             status, rel = resolve(tgt.replace("''", "'"), embed, src)
         kind = 'embed' if embed else 'link'
+        if status == 'folder':
+            findings.append(('FOLDER-LINK', src, inner.strip(),
+                             'target is a directory (%s) - vault navigation convention, not breakage' % rel)); return
         if status == 'dangling':
-            findings.append(('DANGLING', src, inner.strip(), 'target not found')); return
+            findings.append((benign_class(src, tgt) or 'DANGLING', src, inner.strip(),
+                             'target not found')); return
         if status == 'ambiguous':
             findings.append(('AMBIGUOUS', src, inner.strip(), 'basename matches multiple; resolves to ' + rel))
         target_rel = rel
@@ -193,7 +321,11 @@ def main():
                 if f[1:] not in blocks.get(target_rel, set()):
                     findings.append(('BROKEN-ANCHOR', src, inner.strip(), 'no ^%s in %s' % (f[1:], target_rel)))
             elif norm_head(f) not in headings.get(target_rel, set()):
-                findings.append(('BROKEN-HEADING', src, inner.strip(), 'no heading "%s" in %s' % (f, target_rel)))
+                if house_prefix(target_rel, f):
+                    findings.append(('HOUSE-PREFIX', src, inner.strip(),
+                                     'identifier-prefix cite on %s - house style, CRE-ruled 2026-08-19' % target_rel))
+                else:
+                    findings.append(('BROKEN-HEADING', src, inner.strip(), 'no heading "%s" in %s' % (f, target_rel)))
 
     for rel in files:
         if rel not in content: continue
@@ -211,19 +343,70 @@ def main():
             if not ok:
                 b = os.path.basename(href).lower()
                 ok = b in by_base_ext or os.path.splitext(b)[0] in by_base
-            if not ok: findings.append(('DANGLING', rel, href, 'md-link target not found'))
+            if not ok:
+                sufhits = by_suffix.get(href.lower()) or by_suffix.get(href.lower() + MD) or []
+                ok = bool(sufhits)
+            if not ok and (href.lower().rstrip('/') in dirset or cr.rstrip('/') in dirset):
+                findings.append(('FOLDER-LINK', rel, href, 'md-link target is a directory')); continue
+            if not ok:
+                findings.append((benign_class(rel, href) or 'DANGLING', rel, href,
+                                 'md-link target not found'))
 
+    BENIGN = ('FOLDER-LINK', 'HOUSE-PREFIX', 'CLIPPING', 'TEMPLATE', 'AMBIGUOUS')
     show = [f for f in findings if not quarantined(f[1])]
     quar = [f for f in findings if quarantined(f[1])]
-    if not a.ambiguous:
+    benign = [f for f in show if f[0] in BENIGN]
+    if not a.benign:
+        show = [f for f in show if f[0] not in BENIGN]
+    elif not a.ambiguous:
         show = [f for f in show if f[0] != 'AMBIGUOUS']
+
+    # --- CLOSING SELF-CHECK (DIR-018) -------------------------------------------
+    # Apply the resolver's own known limitations to its own actionable section
+    # before printing. Every remaining DANGLING is re-resolved through all four
+    # path layers plus the directory index; anything that resolves on the second
+    # pass is a resolver bug, not a finding, and is pulled out LOUDLY rather than
+    # shipped. Three test runs put four such false positives in section A.
+    caught = []       # a finding the resolver itself can overturn -> its own BUG, print loud
+    ambig_frag = []   # target matched several files; fragment lives in one of the others.
+                      # Not a bug and not confident breakage - the link is genuinely
+                      # ambiguous. Counted, never listed, never actionable.
+    for f in list(show):
+        part = f[2].replace('\\|', '|').split('|', 1)[0]
+        raw, frag = part.split('#', 1) if '#' in part else (part, None)
+        raw = raw.strip()
+        if not raw: continue
+        if f[0] == 'DANGLING':
+            st, _rel = resolve(raw, False, f[1])
+            if st in ('ok', 'ambiguous', 'folder', 'self'):
+                show.remove(f); caught.append((f, 're-resolves as ' + st))
+        elif f[0] in ('BROKEN-HEADING', 'BROKEN-ANCHOR') and frag:
+            # A fragment finding is only confident if the FILE was unambiguous.
+            # Where several files match the link, Obsidian picks one and we may
+            # have picked another; if the fragment exists in ANY candidate the
+            # finding is a resolver artifact, not breakage.
+            tl = raw.lower()
+            cands = (by_suffix.get(tl) or by_suffix.get(tl + MD) or
+                     by_base.get(os.path.basename(tl), []))
+            if len(cands) > 1:
+                ff = frag.strip()
+                hit = any((ff[1:] in blocks.get(c, set())) if ff.startswith('^')
+                          else (norm_head(ff) in headings.get(c, set())) for c in cands)
+                if hit:
+                    show.remove(f); ambig_frag.append(f)
+
     stale_banner = None
     if suspect:
         stale_banner = ("MOUNT MAY BE STALE: %d target(s) read back truncated (NUL bytes). "
                         "Findings off them are downgraded to SUSPECT-STALE. Re-run in a fresh "
                         "session and confirm surprising findings via the file tools." % len(suspect))
+    benign_counts = dict(Counter(f[0] for f in benign))
     if a.json:
-        print(json.dumps({'shown': show, 'quarantined_count': len(quar),
+        print(json.dumps({'shown': show, 'actionable_count': len(show),
+                          'benign': benign if a.benign else [], 'benign_counts': benign_counts,
+                          'self_check_caught': [[list(f), st] for f, st in caught],
+                          'ambiguous_fragment_count': len(ambig_frag),
+                          'quarantined_count': len(quar),
                           'suspect_count': len(suspect), 'suspect_files': sorted(suspect),
                           'md_scanned': len(content), 'md_total': md_total,
                           'read_failures': read_failures,
@@ -232,13 +415,23 @@ def main():
     if read_failures:
         print("[!] %d file(s) could not be read (excluded from scan, NOT evidence of absence):" % len(read_failures))
         for rf in read_failures[:10]: print("      %s: %s" % rf)
-    print("LINK AUDIT  vault=%s\n%d md scanned (of %d files) | %d findings shown, %d quarantined, %d ambiguous-suppressed"
-          % (vault, len(content), len(files), len(show),
-             len([f for f in findings if quarantined(f[1])]),
-             len([f for f in findings if f[0]=='AMBIGUOUS' and not quarantined(f[1])]) if not a.ambiguous else 0))
+    print("LINK AUDIT  vault=%s" % vault)
+    print("%d md scanned (of %d files)" % (len(content), len(files)))
+    # The suppression arithmetic, printed - not left to the reader to re-derive.
+    print("net ACTIONABLE: %d   (benign suppressed: %s | quarantined: %d | "
+          "ambiguous-fragment: %d | self-check caught: %d)"
+          % (len(show), benign_counts or '{}', len(quar), len(ambig_frag), len(caught)))
     print("severity:", dict(Counter(f[0] for f in show)) or "clean")
     for sev, src, raw, detail in sorted(show):
         print("  [%s] %s\n       %s  ->  %s" % (sev, src, raw[:80], detail[:120]))
+    if caught:
+        print("\n[!] SELF-CHECK caught %d item(s) that would have shipped as false positives\n"
+              "    (re-resolved on the second pass -> resolver bug, report it, do NOT list them):" % len(caught))
+        for f, st in caught[:10]: print("      %s  %s  -> %s" % (f[1], f[2][:60], st))
+    if a.benign and benign:
+        print("\n-- benign, not actionable (%d) --" % len(benign))
+        for sev, src, raw, detail in sorted(benign):
+            print("  [%s] %s  %s" % (sev, src, raw[:60]))
     if a.all and quar:
         print("\n-- quarantined (%d) --" % len(quar))
         for sev, src, raw, detail in sorted(quar):

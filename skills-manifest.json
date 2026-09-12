@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-11T12:00:11.0988044-07:00",
+    "generated":  "2026-09-12T12:00:12.2092004-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -201,9 +201,9 @@
                    {
                        "name":  "link-audit",
                        "package":  "WORKFLOWS/skills/link-audit.skill",
-                       "sha256":  "b115e419e9aaa6044b3e2878df7b843fdd9ffa9f2cbe71668bcf62469f017137",
-                       "content_sha256":  "ce9a16d59e13663ceb2ba079dba81026c1792b250299a5f65c30bfa7fc65d142",
-                       "bytes":  7492
+                       "sha256":  "499ca24dd5380155dba435ae2f40f20be579b3d87aa1bf611c0bfd9e4c4ca9ba",
+                       "content_sha256":  "ada685565c8edde5c85332937594a22e574b1d73c8a58588c689a9514a482360",
+                       "bytes":  23586
                    },
                    {
                        "name":  "log-rotate",
@@ -222,9 +222,9 @@
                    {
                        "name":  "premise-forge",
                        "package":  "WORKFLOWS/skills/premise-forge.skill",
-                       "sha256":  "d37da6981bbbb805ee950702e9f79b38cb63b935ff7728ae928831f71e0ca46a",
-                       "content_sha256":  "93f79b255b4a858058c6876121265c4fd3c42635fd7ab2ea9fcd127ce8e42312",
-                       "bytes":  17991
+                       "sha256":  "a0da09e9ec8e872d9354d108bd0be8007a1dc497be897b439e52f74afc921860",
+                       "content_sha256":  "6d3ce0b462df011ed1b8bf6cea012b45431211c60cf63e8f55940258a3b2bfd2",
+                       "bytes":  19846
                    },
                    {
                        "name":  "project-plan",

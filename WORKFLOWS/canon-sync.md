@@ -7,7 +7,7 @@ inputs: [the chapter's landed draft.md, REFERENCE/story-so-far.md, REFERENCE/bib
 outputs: [updated REFERENCE/story-so-far.md, updated REFERENCE/bible.md, updated REFERENCE/threads.md (thread events + blind-read pickup), updated REFERENCE/arcs.md (entry/waypoint/exit character state), filled end-state sections + the Character state @ end of chapter block in the chapter's continuity.md, a conflict block for CRE to rule when the draft contradicts existing canon]
 lane: fiction
 status: active
-last_updated: 2026-09-10
+last_updated: 2026-09-11
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder. First adopter — Witchwood.
 pipeline_position: downstream of [[WORKFLOWS/promote-revision]] — runs when a chapter's draft.md has landed. Its outputs feed the NEXT chapter's [[WORKFLOWS/dictation-preflight]] (which reads REFERENCE first, back-walks only as fallback).
 ---
@@ -122,6 +122,8 @@ File anything fragile (a state contradiction suggesting drift, a bible or arcs s
 **Must NOT write or alter:**
 - `draft.md`, anything in `slate/`, `revisions/`, or `spec-check/` — you derive from them, never into them.
 - `envelope.md`, `brief.md`, `_status.md`, the dictation files, `REFERENCE/register.md`, `REFERENCE/spec-check.md`.
+
+*One exception, created by Step 2's supersession triage (DIR-019):* a moot row in `brief.md` **"Setups to plant"** or in `pass-1-blind.md` may take a `superseded_by: draft.md (<date>, <rev>)` **stamp** — a stamp added beside the row, never a rewrite of it and never a deletion. Nothing else in either file is touched, and the prohibition above is otherwise unchanged.
 
 ---
 

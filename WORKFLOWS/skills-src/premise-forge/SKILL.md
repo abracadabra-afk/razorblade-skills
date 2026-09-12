@@ -64,7 +64,9 @@ Read `WRITING/SHORTS/CANDIDATES/`. Report live candidates, their conditions and 
 
 At cap (~10–12 live), lead with hygiene (Step 8) before forging more. An overfull bag reintroduces the decision overwhelm this tool exists to kill.
 
-**One-time promise read (dec-034 → dec-036).** Any live candidate whose `triage.md` has no `## Promise read` section — **or whose section predates 2026-09-11, and so reads only a dread source** — gets one census line against the four-clause floor: what is destroyed · fresh wound or scar · why the reader can't look away · why the character can't get what they want now. Absent → `thin — [NOT NAMED — CRE]`. Flag only — nothing is retired, reshaped, or re-ranked on it. Once every live candidate carries a dec-036-shaped section, this line stops firing.
+**One-time promise read (dec-034 → dec-036 as amended).** Every live candidate gets one census line reading the five-clause floor: dread · what is destroyed · fresh wound or scar · why the reader can't look away · why the character can't get what they want now.
+
+**`thin` is a property of the CONTENT, never of a missing section.** Derive the read from the triage's existing what-if, knot, peg and constraint first — a candidate with no `## Promise read` section is **not** thin if its content answers the clauses. Return `thin — [NOT NAMED — CRE]` only when the content cannot answer a clause, and **name which clause.** A section written before 2026-09-11 reads only a dread source or only four clauses; re-derive against all five rather than passing it through. **The count must be reproducible** — two runs over the same bag report the same number. Flag only: nothing is retired, reshaped, or re-ranked on it. Once every live candidate carries a five-clause read, this line stops firing.
 
 ## Step 3 — Condition intake + variety scan (FILL)
 
@@ -80,7 +82,7 @@ The scan reads the corpus — `EPISODES/*/premise.md` and `CANDIDATES/*/triage.m
 Generate what-if premises around the chosen condition — **a batch of ~5–10, one condition per batch** — each in the full `WRITING/SHORTS/PREMISES.md` grammar:
 
 1. **Knot first, always.** Start from the character flaw or condition. The knot is the premise's spine — never reverse-engineer a knot onto a scenario.
-2. **A scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it. **The detonation is the destruction** (dec-034 → dec-036): the channel's promise is horror, so a premise forged for this bag carries something that gets destroyed on the page — a person, a self, a system, a belief — and a consequence that cannot be taken back. Sub-genre is free and **no supernatural element is required** (supernatural, body, psychological, gothic, cosmic, dark fairy tale, contemporary dark all qualify). A scenario whose damage is already done before the story opens is a weaker what-if, not a banned one — present it flat, his gut rules.
+2. **A scenario that directly challenges the knot.** The situation must detonate the flaw, not merely coexist with it. **The detonation carries a dread engine AND a destruction** (dec-034 → dec-036 as amended): the channel's promise is horror, which means a premise forged for this bag must promise **something bad is going to happen** — an approaching harm the reader feels coming before it lands — *and* something that gets destroyed on the page, with a consequence that cannot be taken back. **Both, not either.** A cruel act in a world where nothing bends clears the destruction and fails the promise; that is how three premises in the 2026-09-11 skill test got forged and banked without being horror. Sub-genre is free and **no supernatural element is required** (supernatural, body, psychological, gothic, cosmic, dark fairy tale, contemporary dark all qualify) — a body, a mind, a feed, a bargain, a wood can each carry the dread. A scenario with no approaching harm, or whose damage is already done before the story opens, is a weaker what-if, not a banned one — present it flat, his gut rules.
 3. **A tensional constraint.** A clock, a countdown, a closing door — and prefer constraints that do *containment* work, since a 20-minute clock is also a container.
 4. **A peg from the condition, never from a market.** The peg is the contemporary costume the timeless condition wears: ask *what does this condition look like right now?* A premise whose peg has no condition under it is a box-check, not a story.
 
@@ -91,26 +93,43 @@ Present the batch **flat — no advocacy, no ranking.**
 His felt response is the only gate.
 
 - **SPARK** — proceeds to Step 6.
-- **REWORK** — he names what is off; re-forge that one. Route the "what's off" through `interview-me` in one batch rather than a volley of single questions.
+- **REWORK** — he names what is off; re-forge that one. Route the "what's off" through `interview-me` in one batch **only when the miss is not already named** — when his REWORK note says what is off, calling it re-asks what the tree answers (DIR-011); skip it and say so in one line.
 - **KILL** — discard freely, zero sunk cost, no defence of the corpse. Expect most of a batch to die; that is the instrument working.
+
+**Where a re-forge goes (added 2026-09-11 — a REWORK is the normal case, not an edge).** All three test runs produced exactly one, found no exit, and improvised a second surface. The route:
+
+- **The re-forged premise returns to Step 5** for a second gut ruling — a story-content question: **no default, no recommendation, his call.**
+- **The already-ruled SPARKs do not wait.** Run them through Steps 6–8 and bank them while the re-forge is pending.
+- **Every FILL session has two surfaces by design — the gut gate and the ratify gate.** With a REWORK, gate 2 also carries the re-forge; without one it carries the ratifies alone. Gate 2 is specified, not improvised: it carries **the re-forge as a no-default gut question, plus every Step 6/7/8 item that is a ratify** — format verdicts, next-up order, hygiene. A verdict left stated in the session doc with no ask attached is a step he has to go find, which breaks the one-reply rule.
+- **The session closes on his second reply.** If it cannot, say which item is outstanding and why.
 
 **Never argue for a killed premise. Never smooth a broken one into shape uninvited** — name what is missing and hand it back. A bag of optimal premises he is lukewarm on is worse than an empty bag: he will not dictate them, and the bag teaches him to distrust it.
 
-**The premise floor, read at forge time (dec-036).** The gut is still the gate — the floor never overrides a SPARK or rescues a KILL. But `episode-init` check (a) gates on four clauses, and reading them here is what stops the bag filling with pieces that die at the gate or blow past 2,500 words. Three questions, asked of every SPARK headed for a **YouTube weekly slot**:
+**The premise floor, read at forge time (dec-036 as amended 2026-09-11).** The gut is still the gate — the floor never overrides a SPARK or rescues a KILL. But `episode-init` check (a) gates on **five** clauses, and reading them here is what stops the bag filling with pieces that die at the gate or blow past 2,500 words. Ask them of every SPARK headed for a **YouTube weekly slot**, in this order — the first is cheapest to answer and kills fastest:
 
-- **What gets destroyed?** A person, a self, a system, a belief — anything in a character's reality. Not restricted to bodies; no supernatural element required.
-- **Is the wound fresh or is it a scar?** The destroying must happen on the page in story-present and drive the story. Rendered-to-examine-its-effects is literary, not horror. The clause most pieces fail.
-- **Why can't the reader look away, and why can't the character get what they want right now?** Reader compulsion is what separates the piece from snuffwork. Agency denied — by a person, a system, circumstance, or their own compulsion — with trait and want legible in the **opening move**, is what keeps it inside the band. A premise needing a lead-up to establish a flaw before escalation starts is an over-container flag for Step 6, not a gate failure.
+1. **What is the dread — what bad thing is going to happen?** The premise must promise an approaching harm the reader feels coming *before* it lands. Dread is anticipation, not gore. **This clause is the promise.** Without it a premise is cruelty in an unbent world: it clears every other clause and is not horror. **No dread source → stop. Record it, read no further.** Sub-genre is free, no supernatural required — a body, a mind, a feed, a bargain, a wood can each carry it.
+2. **What gets destroyed?** A person, a self, a system, a belief — anything in a character's reality. Not restricted to bodies.
+3. **Is the wound fresh or is it a scar?** The destroying must happen on the page in story-present and drive the story; rendered-to-examine-its-effects is literary, not horror. **Act and omission both count** — FOMO destroys by omission (the mother does not go downstairs; the baby dies) and is horror. No carve-out: the question is whether the destroying happens *now*, not whether anyone moved.
+4. **Why can't the reader look away?** Care, sympathy, relation, need-to-know. Distinct from clause 1 — dread is fear of what is coming, compulsion is the investment that keeps them in the room. A premise can have one without the other; it needs both.
+5. **Why can't the character get what they want in that moment?** Agency denied by a person, a system, circumstance, or their own compulsion.
+
+**Do NOT read at forge time:** *trait and want legible in the opening move.* There is no opening move at forge time, only a what-if sentence — it cannot be read here and **must not be marked `thin` for being absent.** It is checked at `episode-init` and blueprint.
+
+**Over-container flag (Step 6, not a gate failure):** a SPARK carrying a mechanism the reader must be *taught* before escalation can start. Name it and say what it costs; do not refuse the premise for it.
 
 Answers go to `## Promise read`. **Flag, never veto** — `episode-init` rules at the gate, he rules at the gut. A premise failing the floor banks for Substack paid / anthology / submission, not killed: the floor governs the weekly slot only.
 
 ## Step 6 — Scope measurement (the format verdict)
 
+**When this runs (ruled 2026-09-11): AFTER the gut, on SPARKs only. Never pre-measure the batch.** Step 4 requires the batch presented flat — no advocacy, no ranking — and a format verdict attached to a premise his gut has not yet admitted is a ranking wearing a measurement's clothes. It also turns this step into ratification of a call already made. Measuring the survivors is cheaper besides. Format verdicts land on the second surface (the ratify gate) with the rest of the Step 6/7/8 items.
+
 His named weakness runs opposite to most: an under-contained story blows up into a novel, and paring down costs him more than expanding. Catch the sizing at conception. Measure each SPARK or brought idea on the containment dimensions:
 
 **Knots** (one flaw under pressure, or an ensemble?) · **escalation spines** (one line rising to one detonation, or braided?) · **the constraint's temporal span** (a clock that bounds the world, vs one that stretches — "over the following weeks" is a novel leak, generational span is series gravity) · **cast** (protagonist + ≤2 load-bearing others, or an ensemble?) · **world-load** (does it demand a world with its own rules and history, or the reader's own world plus one intrusion? high world-load is the strongest series signal) · **container band** (`BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY.md` §3b, read at run time — the tool carries no numbers).
 
-**Verdict: SHORT-FORM · NOVELLA · NOVEL · SERIES** — a recommendation with a one-line basis and the measured dimensions named. **CRE rules.** None of these is a failure.
+Plus, added 2026-09-11: **the teachable mechanism** — does the reader have to be *taught* how the thing works before escalation can start? A rule accepted in one clause ("the only copy," "the list") is free; a rule that needs demonstrating — a procedure, an economy, an institution with its own logic — buys its lead-up out of the word budget. Strongest single predictor of a short growing into a novella. Name it and say what it costs before recommending SHORT-FORM.
+
+**Verdict: SHORT-FORM · NOVELLA · NOVEL · SERIES** — a recommendation with a one-line basis and the measured dimensions named. **CRE rules.** None of these is a failure, and **NOVELLA is a normal output of this step, not a failed batch** — the 2026-09-11 skill test returned SHORT-FORM on 6/6 survivors across three runs, so this step has never been observed refusing anything. Do not let that become the habit.
 
 - **FILL:** SHORT-FORM → Step 7 (the bag). Anything larger → sized and banked to SEEDS, parked, session returns to shorts.
 - **DECLARED:** verdict contradicts the declaration → surface it with a one-line basis; he rules. A genuine format fork hands to `decision-helper`.
@@ -123,7 +142,11 @@ Sharpen each survivor with him — tighten the what-if sentence, sharpen the con
 - **SHORT-FORM → the bag:** `WRITING/SHORTS/CANDIDATES/<WORKING TITLE>/triage.md`. **The bag stays shorts-pure, always** — that purity is what makes the weekend slot decision-free.
 - **NOVELLA / NOVEL / SERIES → the seedbed:** `WRITING/SEEDS/<WORKING TITLE>/triage.md`, same convention plus a `format:` key and a `## Format measurement` section. **A seed is sized, not scheduled** — the seedbed is a parking lot with good labels, never a queue. A seed entering development is a portfolio-residency decision (`decision-helper` + CRE), outside this tool entirely.
 
-Working title from CRE — never invent one he has not at least shrugged at. Frontmatter serialized (`yaml.safe_dump`) and parse-gated (DIR-004):
+Working title from CRE — never invent one he has not at least shrugged at.
+
+**If he skips the title (degraded mode, added 2026-09-11):** bank it marked, never named. Folder `UNTITLED - P<n>/` on the batch position, frontmatter `working_title: "[NOT NAMED — CRE]"` plus `working_title_placeholder: true`, and one gate line saying it waits to be renamed. **Never a tool-invented noun placeholder** — a name he did not shrug at is one he inherits by default, and the bag is where he goes looking. Never hold a premise out of the bag for want of a title.
+
+Frontmatter serialized (`yaml.safe_dump`) and parse-gated (DIR-004):
 
 ```
 ---
@@ -145,7 +168,7 @@ status: banked premise — awaiting CRE pick + episode-init gate
 ## Container            band verdict + why it holds short
 ## TOS band / tier      best pre-read; episode-init re-rules at the gate
 ## Variety note         what this adds against the worked corpus — condition + subgenre, under the promise
-## Promise read         dec-036 pre-read of episode-init check (a), the four-clause premise floor: WHAT IS DESTROYED · FRESH WOUND OR SCAR (is the destroying on the page, in story-present, driving the story?) · WHY THE READER CAN'T LOOK AWAY · WHY THE CHARACTER CAN'T GET WHAT THEY WANT NOW, and whether trait + want are legible in the opening move. The dread source sits under the first two. The TURN is still not read here — it is the arc chain's Moment of Truth / ending stance, DEEPEN's field. Read from the premise, never supplied: absent → `thin — [NOT NAMED — CRE]`. Flag, never veto; episode-init re-rules at gate. Weekly-slot scope only
+## Promise read         dec-036-as-amended pre-read of episode-init check (a), the FIVE-clause floor in order: THE DREAD, what bad thing is going to happen (no dread source → stop, record, read no further; this clause IS the promise) · WHAT IS DESTROYED · FRESH WOUND OR SCAR, is the destroying on the page in story-present and driving the story (act and omission both count) · WHY THE READER CAN'T LOOK AWAY, distinct from dread · WHY THE CHARACTER CAN'T GET WHAT THEY WANT NOW. NOT read here: trait + want legible in the opening move — no opening move exists at forge time; checked at episode-init/blueprint, never marked thin for being absent. The TURN is still not read here — arc chain's Moment of Truth / ending stance, DEEPEN's field. Derive from the premise's own content; `thin — [NOT NAMED — CRE]` names the clause the content cannot answer, never merely a missing section. Flag, never veto; episode-init re-rules at gate. Weekly-slot scope only
 ## Format measurement   the Step-6 verdict + the dimensions that produced it
 ```
 
