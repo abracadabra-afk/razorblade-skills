@@ -8,7 +8,7 @@ outputs: [a ratified event arc (beat map) written to the chapter folder, an upda
 lane: fiction
 status: spec — packs after 2–3 live runs
 governed-by: DIR-017 (protected forward-flow), DIR-014 (cue binding), DIR-016 (runner wiring)
-last_updated: 2026-09-04
+last_updated: 2026-09-12
 ---
 
 # WORKFLOW: choreographer
@@ -56,6 +56,10 @@ Convention (binds per DIR-014 once wired):
 ### Step 0 — Sentinel + locate
 
 Verify `_DIRECTIVES.md` frontmatter (`^obs-004`). Identify the target: a `choreo`-typed open loop, a flagged stretch CRE names, or an event he brings live. Confirm the event and its outcome note in one line so he can redirect in one word.
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — a ratified map in `choreo/` whose stamp predates a hand-landed `draft.md` is stamped by Step 3b item 1, not re-ratified by him.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It is **additive to the Step 1 supersession triage below, not a replacement for it**: the triage decides what a surviving, reworded, or vanished span means for this session's flags and maps, while the preflight only makes sure the body those decisions are taken against was preserved before it was overwritten. Where both would stamp the same `choreo/<event-slug>.md`, one stamp is enough — Step 3b item 1's — and the triage carries on from there. The preflight does not make this session pushable: the desk session stays **pull-only, tier 2**, fired by CRE naming an event, and a mismatch found here is reported in the one-line confirm above, never turned into a prompt to re-ratify a map or re-open an event his later draft already restaged (§3).
 
 ### Step 1 — Load the context (read-only)
 

@@ -10,7 +10,7 @@ status: spec — packs after 2–3 live runs
 governed-by: DIR-011 (resolve before flag), DIR-012 (gates attended), DIR-014 (rulings land on tool-read surfaces), DIR-015 (executional lane only), DIR-017 (never gates the mic)
 pipeline_position: episode route v3 S6a — first instrument after the drafting engine (post-transcode/register rev), BEFORE CRE's author pass. panel-read moves downstream to the pre-publication gate. Naming note — NOT part of the DEV/-tree family (dev-capture/dev-readiness/dev-reconcile, which live upstream of the brief); this is a developmental edit of drafted prose.
 created: 2026-08-09
-last_updated: 2026-08-09
+last_updated: 2026-09-12
 ---
 
 # WORKFLOW: dev-edit
@@ -38,7 +38,13 @@ The full reader panel + response machinery ran on EP 01 **before** the author pa
 
 ### Step 0 — Sentinel + flag harvest (the non-negotiable first move)
 
-Verify `_DIRECTIVES.md` frontmatter (`^obs-004`). Then **capture CRE's read first, verbatim** — his flags, hunches, "something's off in the second scene" — before any seat reports exist (the author-flags pattern). If an `author-flags` file already exists for the piece, it serves. The blind seats never see these; independence is what makes the convergence evidential.
+Verify `_DIRECTIVES.md` frontmatter (`^obs-004`).
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — the blind seats read the working text, so an unaccounted hand-landing means three seats reporting on a draft whose derives still describe the old one.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It runs **before** the flag harvest so his verbatim read is captured against an accounted draft, and it changes nothing about the harvest rule that follows: the read is still the first thing captured, still before any seat report exists. **Its own result never reaches the blind seats** — not as text, not as a path, not as a remark that the folder was accounted. The seats receive the extracted body and nothing else (`^obs-269`, the frontmatter-strip note below), so a preflight finding is reported to the desk only, and a seat that discloses knowing of it is void on the same terms as one that saw frontmatter. The independence rule stands as written.
+
+Then **capture CRE's read first, verbatim** — his flags, hunches, "something's off in the second scene" — before any seat reports exist (the author-flags pattern). If an `author-flags` file already exists for the piece, it serves. The blind seats never see these; independence is what makes the convergence evidential.
 
 ### Step 1 — Blind dev panel (3 isolated seats, simultaneous)
 

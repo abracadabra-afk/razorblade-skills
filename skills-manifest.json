@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-12T12:00:12.2092004-07:00",
+    "generated":  "2026-09-13T11:58:24.6484289-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -351,6 +351,13 @@
                        "sha256":  "3e6c1b17f2960537b715fcb9c9910f27dd6d067896e2b0be919bd0e8016b0713",
                        "content_sha256":  "795816eb90d82d8d21c50304ed69fbd08c31ddfdd66fbc11ffe52b28388802fc",
                        "bytes":  3921
+                   },
+                   {
+                       "name":  "wiw-story-engine",
+                       "package":  "WORKFLOWS/skills/wiw-story-engine.skill",
+                       "sha256":  "31baeead6dd23c4edccb1748387c25d88bc3dadff9679a9613704367493657f7",
+                       "content_sha256":  "ce98f248ece5ce81ff40e42773b4fed30980e5ce02d36c722786c327988598c6",
+                       "bytes":  32768
                    },
                    {
                        "name":  "workshop-chapter",

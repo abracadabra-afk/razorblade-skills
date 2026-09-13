@@ -7,7 +7,7 @@ inputs: [a chapter folder using the per-chapter convention, the newest unslated 
 outputs: [a filled envelope.md (POV + conditions + state per segment), synced _status.md segment names, a clarification block for any uncertain fields]
 lane: fiction
 status: active
-last_updated: 2026-06-03
+last_updated: 2026-09-12
 consumes: [REFERENCE/story-so-far.md, REFERENCE/bible.md, REFERENCE/threads.md (via canon-sync) — back-walk across prior chapters is the fallback; the chapter's brief.md as intent context when present]
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood.
 pipeline_position: upstream of [[WORKFLOWS/transcoder]]
@@ -38,7 +38,13 @@ When CRE has dropped dictation into a chapter that uses the per-chapter folder c
 Read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch → halt and ask which folder is the vault. (The `^obs-004` mitigation, shared with the Transcoder.)
 
 ### Step 1 — Classify the existing envelope
-Read `<chapter>/envelope.md`. Mark each field as scaffold (angle-bracket placeholder, `…`, empty) or author-filled. A frontmatter `chapter:` that doesn't match the folder name = a verbatim template copy; distrust the whole file and correct the frontmatter on write. Fully filled + matching frontmatter → nothing to do; stop.
+Read `<chapter>/envelope.md`.
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — `envelope.md` is a derive of the draft, so a hand-landing stales it before this pass reads it.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It runs **above this step's own stop**: a fully filled envelope with matching frontmatter still means *nothing to do* for the classify, but it does **not** make an unaccounted hand-landing moot — account first, then stop if the classify says stop. It does not change the classify itself; it only means a `superseded_by:` stamp Step 3b item 1 writes onto `envelope.md` is read as a staleness marker rather than as author-filled content. An N/A-stubbed envelope on a [[WORKFLOWS/book-ingest]] chapter has no revision chain behind it: note it and proceed.
+
+Mark each field as scaffold (angle-bracket placeholder, `…`, empty) or author-filled. A frontmatter `chapter:` that doesn't match the folder name = a verbatim template copy; distrust the whole file and correct the frontmatter on write. Fully filled + matching frontmatter → nothing to do; stop.
 
 ### Step 2 — Segment by perceptual envelope
 Read the dictation. Mark where the perceptual world changes — light, temperature, location, who the POV attends to. For each segment derive: short name, boundaries (quote-anchored first→last beat), POV, conditions, state. Segment on perceptual world only, never maturity or plot.

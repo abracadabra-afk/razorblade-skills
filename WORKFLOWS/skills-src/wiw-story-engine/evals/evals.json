@@ -1,0 +1,60 @@
+{
+  "skill_name": "wiw-story-engine",
+  "note": "Mechanical shell only: scaffold shape, check results on fixtures, budget sums, band verdict, hand-back grammar. Premise quality, dread, and whether a slot is CRE's material are his gut and are never eval'd. Fixtures are CRE's own rev1 walk-through (radio/daughter) and synthetic test data; no eval writes into WRITING/.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "lint-fixtures",
+      "prompt": "Run scripts/engine.py check-triage on each *triage* fixture and check-spine on each *spine* fixture in evals/fixtures/.",
+      "expected_output": "pass-triage-radio.md exits 0 with 0 flags; pass-spine-radio-stamped.md exits 0 with 0 flags and budgets 2450 IN-BAND; flag-triage-pattern.md exits 0 with flags for the pattern word 'keeps', shape not named, dread thin; fail-spine-broken.md exits 1 naming: Your notes not last / not below a rule, Premise placeholder, Inescapable missing truth line, Story missing or-else line, escalation_count 3 vs 2 blocks, E2 but line without denies:, budget_total 2450 vs sum 3100, band_verdict IN-BAND vs OVER-BAND, stamped with a pending check, stamp line malformed; plus flags for the declared want ('wants to'), 2 setting details, an untied detail, an era word, E2 repeating E1's loss, Cut budget 400, quoted speech in Climax, 3 holes on a stamped spine.",
+      "files": ["evals/fixtures/pass-triage-radio.md", "evals/fixtures/pass-spine-radio-stamped.md", "evals/fixtures/flag-triage-pattern.md", "evals/fixtures/fail-spine-broken.md"],
+      "assertions": [
+        "pass-* fixtures exit 0 with zero FLAG lines",
+        "pass-spine-radio-stamped.md reports budgets sum to 2450 → IN-BAND",
+        "flag-triage-pattern.md exits 0 and flags the pattern word 'keeps'",
+        "flag-triage-pattern.md flags the not-named shape and the thin dread line",
+        "fail-spine-broken.md exits 1",
+        "fail report names the missing Inescapable truth line and the missing Story or-else line",
+        "fail report names budget_total 2450 vs sum 3100 and band_verdict IN-BAND vs OVER-BAND",
+        "fail report names Your notes not last / not below a rule",
+        "fail report flags E2 subtracting the same thing as E1",
+        "fail report flags the declared want and the era word in Setting",
+        "fail report flags quoted speech in the Climax line"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "scaffold-round-trip",
+      "prompt": "In a scratch directory, run scaffold-triage --title T and scaffold-spine --episode 'EP 05 - T' --candidate <that triage>, then run check-triage and check-spine on the empty scaffolds.",
+      "expected_output": "Both scaffolds write with frontmatter that parses via yaml.safe_load. check-triage FAILs only on empty Premise/Promise and flags the five thin mapping lines. check-spine at step 2 FAILs only on the Premise/Promise head placeholder, lists 10 hand-backs, and reports Step 3 not linted.",
+      "files": [],
+      "assertions": [
+        "scaffold-triage and scaffold-spine exit 0",
+        "both frontmatters parse with yaml.safe_load",
+        "check-spine on the empty step-2 scaffold reports 10 hand-backs (Want, Rationale, force, truth, must, or-else, 3 setting details, placing facts) and no 'placing facts named' flag",
+        "the scaffold body carries no story-slot text other than [NOT NAMED — CRE] (placing facts included); the only other body text is headings, the Opening label, and Checks/Stamp scaffolding",
+        "scripts/engine.py budget run twice with the same arguments prints the same split",
+        "check-spine on a step-2 file does not lint Step 3 blocks",
+        "no file is written under WRITING/"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "step-3-ask-and-record",
+      "prompt": "Engine step 3 on the fixture episode at <workspace>/fixture-episodes/EP 92 - FIXTURE CHAIR/ (spine.md is at step 2, filled; premise.md present; use this path instead of WRITING/SHORTS/EPISODES). Here are my escalations, verbatim: [three beats given in trigger/therefore/but/penalty form, climax, cut, pay-off, no budgets]. Present the spine and stop; I'm here to stamp.",
+      "expected_output": "spine.md regenerated above the rule at step 3 with every slot in the user's words verbatim, denies: and subtracts: clauses only where the user named them (else [NOT NAMED — CRE]), budgets proposed proportionally and summing inside 2000–2800 with Pay-off (~0), all six Checks lines filled pass/FLAG, status draft (not stamped — the user has not ruled), Your notes carried verbatim, check-spine exit 0.",
+      "files": ["fixture-episodes/EP 92 - FIXTURE CHAIR/spine.md", "fixture-episodes/EP 92 - FIXTURE CHAIR/premise.md"],
+      "assertions": [
+        "scripts/engine.py check-spine exits 0 on the written spine.md",
+        "Every trigger/therefore/but/penalty/climax/cut/pay-off line is the user's wording verbatim (no paraphrase, no added beat)",
+        "Any denies: or subtracts: the user did not name reads [NOT NAMED — CRE]",
+        "Budgets sum inside 2000–2800 and Pay-off is (~0)",
+        "frontmatter status is draft and stamped is empty (user did not stamp)",
+        "## Your notes content from the step-2 file is present verbatim and still last",
+        "No line proposes a replacement or additional escalation, climax, cut, or pay-off",
+        "draft.md in the fixture folder was not read (the transcript shows no read of it)",
+        "No file was written under WRITING/SHORTS/EPISODES"
+      ]
+    }
+  ]
+}

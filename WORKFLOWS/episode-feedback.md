@@ -5,7 +5,7 @@ status: spec — run by hand/in chat; graduates to a packed skill after 2–3 li
 triggers: ["reconcile my notes", "sharpen the episode", "run the author feedback", "feedback pass"]
 lane: 5 (writing-ops) + 1 (fiction)
 created: 2026-07-16
-last_updated: 2026-09-01
+last_updated: 2026-09-12
 ---
 
 # episode-feedback
@@ -28,6 +28,10 @@ The **author's-feedback reconciliation pass** for the Writing Is War episode bat
 - [[WORKFLOWS/episode-runway]] + [[BUSINESS/SUBSTACK/WRITINGISWAR - YOUTUBE CHANNEL STRATEGY]] — the channel constraints (TOS band, container two-band rule, ear-first block)
 
 ## Phase 1 — CLASSIFY & PROPOSE (read-only)
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — run before segmenting: notes written against a superseded draft classify wrong, and `premise.md` is the amendment target either way.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** This is the **episode** route, where an episode folder often has no `revisions/` at all — the shared text's last sentence is then the whole of what applies: note it in one line and segment. The preflight is additive to bin 2's DIR-019 §2 span-presence check below and does not pre-empt it: it decides nothing about what a note means, only that the body the bins are judged against was preserved. It leaves Phase 1 read-only with respect to the episode's content — the accounting it may trigger is folder bookkeeping, not an amendment — and `premise.md` remains the only amendment target, written in Phase 2 after CRE rules.
 
 Segment the notes. Route every item into one of three bins:
 
