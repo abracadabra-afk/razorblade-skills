@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-13T12:00:11.3281697-07:00",
+    "generated":  "2026-09-14T12:00:11.9496359-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -12,9 +12,9 @@
                    {
                        "name":  "backlog-supervisor",
                        "package":  "WORKFLOWS/skills/backlog-supervisor.skill",
-                       "sha256":  "5032560b3cf0f4d9a2b732ba4d2db237d9a5a045a67053391fa6713733d81cf2",
-                       "content_sha256":  "22dab312959f401f93f66f1cdd6671160243b27245ebd35010baecae401be845",
-                       "bytes":  16647
+                       "sha256":  "759ec0b49a9cd6518e0f39e08d0d9ac690aec2f2f0cf15f5e56a856b203c5d25",
+                       "content_sha256":  "cbe884b0657090493aba48b022b0c792153081ed2e27925f9d52d4ba8dbf099d",
+                       "bytes":  16976
                    },
                    {
                        "name":  "blind-read",
