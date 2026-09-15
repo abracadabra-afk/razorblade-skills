@@ -7,7 +7,7 @@ inputs: [a CRE-gated floor draft (transcoder v6 slate, spine-review gate cleared
 outputs: [POV-tagged spine, repetition census, temperature-tag proposal sheet, CRE's restructured/heated draft]
 lane: fiction
 status: draft — 2 live runs (EP 01 2026-08-01, WITCHWOOD CH12 2026-08-03); packs after 3
-last_updated: 2026-08-10
+last_updated: 2026-09-14
 scope: Any project on the per-chapter folder convention with a transcoder v6 floor. Framework steps 4-7 (see KNOWLEDGE/PROSE FRAMEWORK/framework.md).
 pipeline_position: downstream of [[WORKFLOWS/transcoder]] (v6, behind the spine-review gate); upstream of [[WORKFLOWS/register-pass]]
 ---
@@ -20,6 +20,9 @@ pipeline_position: downstream of [[WORKFLOWS/transcoder]] (v6, behind the spine-
 
 - The floor draft has **cleared the spine-review gate**. Never run any pass here on an ungated floor.
 - DIR-017 untouched: everything here is downstream of the mic. No expansion rule ever gates dictation.
+- **Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — as a third precondition. Entry mode B (existing piece) is the live case: a hand-landed `draft.md` entering the revision route with unaccounted derives is the shape `^obs-261` names.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It is a **precondition, not a gate**: it accounts and proceeds, and it never becomes a fourth thing CRE rules. It leaves the two preconditions above exactly as they stand — the spine-review gate still governs entry on the v6 floor route, and **DIR-017 is untouched**: this sits downstream of the mic like everything else here, and nothing in it reaches back to gate a dictation. It does **not** relax Entry mode B's *"draft.md is never touched by the sheet"* — Step 3b's archive and stamps are folder bookkeeping run **before** the sheet, and once the sheet is running `draft.md` stays untouched. A `superseded_by:` stamp Step 3b writes onto a prior `floor-sheet-YYYY-MM-DD.md` marks it stale; it does **not** re-open its ruled items, and DIR-011's resolved-confirm treatment of `protected_patterns` and prior rulings is unchanged.
 
 ## Entry mode B — existing piece (revision route, first run: EP 01, 2026-08-01)
 

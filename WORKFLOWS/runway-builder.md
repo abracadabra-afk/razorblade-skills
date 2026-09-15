@@ -7,7 +7,7 @@ inputs: [a chapter folder using the per-chapter convention with a filled brief.m
 outputs: [a runway.md written into the chapter folder — the v3 chronological-spine speaking outline: entry state, per-scene "what happens" + story goal + plain chronological beats shaped to the tension curve, set & lore, dialogue bank, register reminders, and a notes space that makes the doc CRE's workspace]
 lane: fiction
 status: draft
-last_updated: 2026-07-28
+last_updated: 2026-09-14
 consumes: [the chapter's brief.md (Beats to hit + Seal schedule + goal + weight), envelope.md (segment names + POV + roster, when present), the PRIOR chapter's continuity.md + open-loops.md (entry state), REFERENCE/threads.md, REFERENCE/bible.md + the project DEV tree (set & lore + dialogue bank — tree-sourced only)]
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]). First adopter — Witchwood.
 pipeline_position: Construction (confirmed brief.md) → THIS → Phase 3 dictation; parallel-upstream sibling of [[WORKFLOWS/dictation-preflight]]
@@ -42,7 +42,13 @@ When a chapter using the per-chapter folder convention has a `brief.md` with **B
 Read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Load and classify the brief
-Read `<chapter>/brief.md`. If it has no **Beats to hit** (status `unfilled`), halt — nothing to derive; tell CRE to fill the brief first (workshop / pipeline S2). If `status` is `drafted` (not `confirmed`), proceed but note the runway inherits unconfirmed intent. Read `weight` — it scopes depth (Step 6).
+Read `<chapter>/brief.md`.
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — `runway.md` is a derive of the brief and the draft both; regenerating it over an unaccounted hand-landing is how a stale runway reaches the mic.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It runs **above this step's halt and does not change it**: an `unfilled` brief still halts, a `drafted` brief still proceeds with the unconfirmed-intent note, and the preflight neither supplies a missing brief nor makes a filled one sufficient. A rebuild for a chapter whose own `draft.md` does not exist yet — the ordinary pre-dictation case — has nothing to diff: note it and load the brief. It does **not** edit `brief.md`; a `superseded_by:` stamp Step 3b writes onto an existing `runway.md` marks that prior derive stale, and this run regenerates it as it always has. **DIR-017 holds** — the preflight is bookkeeping in front of the build, never a gate in front of the mic, and it never sends CRE back to re-confirm anything he wrote.
+
+If it has no **Beats to hit** (status `unfilled`), halt — nothing to derive; tell CRE to fill the brief first (workshop / pipeline S2). If `status` is `drafted` (not `confirmed`), proceed but note the runway inherits unconfirmed intent. Read `weight` — it scopes depth (Step 6).
 
 ### Step 2 — Entry state
 From the prior chapter's `continuity.md` + `open-loops.md`: 2–4 lines on where the story stands entering this chapter — position, who carries what, the operative emotional state, and any carried loop worth a ⚠️ flag (a thread gone dark, a state left implicit that this chapter inherits). This is orientation, not recap — only what CRE needs to hold to start talking.

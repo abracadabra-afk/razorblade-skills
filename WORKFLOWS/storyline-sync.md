@@ -7,7 +7,7 @@ inputs: [the chapter's landed draft.md, REFERENCE/bible.md (codex source), REFER
 outputs: [one or more StoryLine scene files in WRITING/STORYLINE/<Project>/Scenes/, codex entries in WRITING/STORYLINE/<Project>/Codex/Characters/ and /Locations/, a conflict block for CRE to rule when the draft contradicts existing StoryLine data]
 lane: fiction
 status: active
-last_updated: 2026-06-19
+last_updated: 2026-09-14
 scope: Projects using the per-chapter folder convention (see [[_SKILLS MAP#Fiction]]) that keep a REFERENCE/ folder AND have a StoryLine project to mirror into. First adopter — Witchwood → WRITING/STORYLINE/WW - Test.
 pipeline_position: parallel sibling of [[WORKFLOWS/canon-sync]] — both run downstream of [[WORKFLOWS/promote-revision]] on a landed draft.md and DERIVE a read-only artifact from it. canon-sync derives REFERENCE state; storyline-sync derives the StoryLine project. It also INVOKES the scene-intensity engine (Step 3b) to seed the intensity fields — scene-intensity needs the scenes segmented first, which this sync produces. Run order: canon-sync → storyline-sync (scene-intensity runs inside it, after segmentation). Best run right after canon-sync, so its bible/threads facts are current.
 ---
@@ -37,7 +37,13 @@ After a chapter's `draft.md` has landed (post-[[WORKFLOWS/promote-revision]]), i
 Read `_DIRECTIVES.md`; confirm frontmatter `type: ai-os-brain` + `file: directives`. Mismatch or missing → halt and ask which folder is the vault. (Shared `^obs-004` gate.)
 
 ### Step 1 — Locate chapter + target project; verify landed
-Resolve the chapter folder and read `draft.md` frontmatter — expect `status: register-revised` (or `dev-revised` if CRE syncs mid-pipeline). Record `source_revision` as the provenance tag. Resolve the target StoryLine project folder under `WRITING/STORYLINE/<Project>/` (confirm with CRE if more than one exists). Scaffold/missing draft → halt.
+Resolve the chapter folder and read `draft.md` frontmatter — expect `status: register-revised` (or `dev-revised` if CRE syncs mid-pipeline).
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — the StoryLine mirror is one-way and regenerated, so an unaccounted hand-landing propagates the stale state into a second store before anyone notices.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It runs **above this step's halt and does not change it** — a scaffold or missing `draft.md` still halts, and an unexpected `status:` is still reported rather than corrected here. Its writes land **in the chapter folder only**: Step 3b stamps and archives there, and **nothing in it touches `WRITING/STORYLINE/`**, which stays a one-way regenerated mirror this workflow writes by its own Step 5 merge alone. A hand-landing found here does **not** re-open the merge's rules — StoryLine-owned and CRE-tuned frontmatter values are still preserved, and a contradiction between draft and mirror is still CRE's conflict block, not something the preflight resolves. `source_revision` is still recorded as the provenance tag; where the landing was by hand it names the accounting rather than a rev, which is the true reading, not a gap to fill.
+
+Record `source_revision` as the provenance tag. Resolve the target StoryLine project folder under `WRITING/STORYLINE/<Project>/` (confirm with CRE if more than one exists). Scaffold/missing draft → halt.
 
 ### Step 2 — Load sources + current StoryLine state
 Read `REFERENCE/bible.md`, `REFERENCE/threads.md`, the chapter's `continuity.md`, and any existing files in `WRITING/STORYLINE/<Project>/Scenes/` and `/Codex/`. Index existing scenes by title and existing codex entries by name, capturing StoryLine-owned and CRE-tuned frontmatter values for the merge in Step 5.

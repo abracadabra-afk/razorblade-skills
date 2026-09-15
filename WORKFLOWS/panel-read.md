@@ -7,7 +7,7 @@ inputs: [the working text (chapter draft, WIW episode, or short), optional CRE-n
 outputs: [one reader report per seated panelist + an attributed synthesis (the Pass-1-tier artifact) in a panel/ run folder]
 lane: fiction
 status: spec
-last_updated: 2026-08-09
+last_updated: 2026-09-14
 scope: any prose unit — Witchwood/Godsrift chapters, WIW episodes, shorts. Generalizes blind-read; the single cold read stays the cheap default for routine chapters.
 pipeline_position: Pass-1 tier (clean room), sibling of blind-read. Upstream of Workshop-2 / blind-response triage. Fan-out mechanics per spec-passes; subagent invocation per the chapter-pipeline Pass-1 delta.
 ---
@@ -96,6 +96,10 @@ Core four seats run every panel. Bench seats are seated by need (Step 0 defaults
 ### Step 0 — Tuning (orchestrator; clean inputs only)
 
 1. **Identify the unit and genre from the prose alone**, or take them from CRE at invocation. Take comps from CRE if offered ({COMPS}); otherwise derive a genre-typical shelf from the prose's own signals. Never open spec material to tune — see the clean-room contract.
+
+   **Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — **the orchestrator runs this, never a seat.** Step 3b is folder bookkeeping, not spec: it stamps and archives without ever entering a panelist's context, and the seats still receive prose only. A seat that would have to read `revisions/` to run the check is the check in the wrong place.
+
+   **Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It is the **orchestrator's alone**, and **its result never reaches a seat in any form** — not as text, not as a path, not as a remark that the folder was accounted, not as a changed persona template or run plan. A seat that learns a landing happened has learned something about the text's history, which is spec by another route and voids that seat on the same terms as the `^obs-269` frontmatter leak. It does **not** relax item 1's never-open-spec rule: `revisions/` and the derives' stamps are folder bookkeeping the orchestrator reads *outside* every seat's context, and the tuning inputs stay the prose alone. It does **not** change what Step 1 extracts — the body is still stripped of frontmatter once, there, before any seat launches — and it does **not** gate the read: a mismatch is accounted and the panel convenes.
 2. **Fill the persona templates** ({GENRE}, {COMPS}, unit-sensitive slush brief).
 3. **Seat the bench** by the defaults above; surface the seating to CRE with the run plan (one line — he can re-seat with a word; don't make it a gate on a standard run).
 
