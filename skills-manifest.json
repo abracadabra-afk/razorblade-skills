@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-15T12:00:12.1228627-07:00",
+    "generated":  "2026-09-16T12:00:13.8541514-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -306,9 +306,9 @@
                    {
                        "name":  "skill-test",
                        "package":  "WORKFLOWS/skills/skill-test.skill",
-                       "sha256":  "bb0ed8306598f67e7382a82f508c312e98b5dd339189aa4568231482637642f4",
-                       "content_sha256":  "f407e386aff42589e128b76c024efa30654179a1a682e6de1a30140c2d55ee06",
-                       "bytes":  12047
+                       "sha256":  "891c488625093685b893429b013519e8b9a5dca2bb60311aa41bc35bf0bde65f",
+                       "content_sha256":  "ef8f607e81c27a62c4514ac7314d48ab85fd1f2cf6a667f048b51c8eff695d74",
+                       "bytes":  12105
                    },
                    {
                        "name":  "spec-passes",

@@ -7,7 +7,7 @@ inputs: [one installed skill name; CRE's success conditions (asked, with default
 outputs: [SYSTEM/reports/YYYY-MM-DD-skill-test-NAME.md (verdict first); SYSTEM/skill-tests/NAME/DATE/ evidence tree; on FAIL or PASS-WITH-NOTES one _BACKLOG item under OS / Meta carrying a skill-creator handoff pointer; a _CHANGELOG entry; NO edit to any skill]
 lane: meta
 status: draft
-last_updated: 2026-09-11
+last_updated: 2026-09-15
 revision_note: v1 authored 2026-09-11 from WORKFLOWS/intents (CRE-dictated brief). Shell script built + selftested; evals written for the shell only. Gate handling CRE-ruled same day (auditor rules once, runs resume). Not yet run live; first target is CRE's pick. Packaging pending (DIR-009 desktop chain).
 ---
 
@@ -89,7 +89,9 @@ run outputs before the auditor does; a returned gate question is not an output.
 
 **Gate loop.** Runs returned at a gate → auditor in gate mode rules each gate once (`_ME` + goal,
 the skill's recommendation unless `_ME` argues against it) → `audit/stand-in-rulings.md` → the
-same ruling to all three runs via `SendMessage` → resume. Repeat until all three finish.
+same ruling to all three runs via `SendMessage` → resume. If `SendMessage` is unavailable, resume
+each run as a fresh agent against its `run-K/` directory plus `audit/stand-in-rulings.md`, and
+record the fallback under Not checked. Repeat until all three finish.
 
 ### Step 5 — Auditor (one subagent, CRE's seat)
 Reads `_ME` in full, the goal, the conditions, the case, the installed `SKILL.md` (for measurable

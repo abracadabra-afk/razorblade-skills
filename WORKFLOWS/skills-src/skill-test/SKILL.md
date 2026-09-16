@@ -111,7 +111,9 @@ the auditor (Step 5 brief, gate mode) with the gate question(s) and the seat bri
 gate **once**, from `_ME` and the stated goal, taking the skill's own recommendation when one is
 offered and nothing in `_ME` argues against it, and writes the question, ruling, and one-line basis
 to `audit/stand-in-rulings.md`. Send the **same ruling to all three runs** (`SendMessage` to each
-run's agent) and let them resume. A run that reaches the gate later applies the ruling already on
+run's agent) and let them resume. If `SendMessage` is unavailable, resume each run as a fresh agent
+against its `run-K/` directory plus `audit/stand-in-rulings.md`, and record the fallback under Not
+checked. A run that reaches the gate later applies the ruling already on
 file — one ruling per gate, never three. Repeat until all three runs return finished. This is why
 the runs stay comparable: three independent stand-in rulings would turn a ruling divergence into a
 false skill divergence, and the consistency read is what three runs buy.
