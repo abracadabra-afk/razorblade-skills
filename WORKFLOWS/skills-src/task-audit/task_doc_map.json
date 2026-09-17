@@ -16,5 +16,11 @@
   "day-launch-runner":          {"docs": ["day-launch.md"],                         "shape_expect": "doc-deferring"},
   "daily-close":                {"docs": ["day-launch.md"],                         "shape_expect": "doc-deferring",
                                  "note": "runs day-launch.md's 'Steps — close-out' section, not the morning run."},
-  "week-shape-runner":          {"docs": ["week-shape.md"],                         "shape_expect": "doc-deferring"}
+  "week-shape-runner":          {"docs": ["week-shape.md"],                         "shape_expect": "doc-deferring"},
+  "backlog-supervisor":         {"docs": ["backlog-supervisor.md"],                 "shape_expect": "doc-deferring",
+                                 "note": "added 2026-09-16 (plan 2026-09-14-taskdocmap-supervisor-rows, off the 2026-09-13 task-audit report's NO-DOC 3). Absence of this row is what produced the NO-DOC verdict; the prompt is a doc-deferring loader over backlog-supervisor.md. This row is the MORNING fire."},
+  "backlog-supervisor-close":   {"docs": ["backlog-supervisor.md"],                 "shape_expect": "doc-deferring",
+                                 "note": "added 2026-09-16 (plan 2026-09-14-taskdocmap-supervisor-rows, off the 2026-09-13 task-audit report's NO-DOC 3). This task is the SECOND FIRE of the same doc - the evening close-out mode, backlog-supervisor.md 'Steps - evening fire'. Two rows pointing at one doc is deliberate, not a duplicate; same pattern as daily-close over day-launch.md."},
+  "backlog-agent":              {"docs": ["backlog-agent.md"],                      "shape_expect": "doc-deferring",
+                                 "note": "added 2026-09-16 (plan 2026-09-14-taskdocmap-supervisor-rows, off the 2026-09-13 task-audit report's NO-DOC 3). Absence of this row is what produced the NO-DOC verdict; the prompt is a doc-deferring loader over backlog-agent.md."}
 }
