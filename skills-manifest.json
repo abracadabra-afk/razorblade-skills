@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-18T12:00:10.2357607-07:00",
+    "generated":  "2026-09-19T12:00:10.2141334-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -313,9 +313,9 @@
                    {
                        "name":  "spec-passes",
                        "package":  "WORKFLOWS/skills/spec-passes.skill",
-                       "sha256":  "bf3c1c9462827b9b82c6597b474e0c82c17572ebe531047c38f839534478f43f",
-                       "content_sha256":  "1d73db8f72c92ddb70e0344f53ac16b2f8320f670faddf20c636176c8f261611",
-                       "bytes":  4869
+                       "sha256":  "ac4a805ccac56aba2d8e75d913d9734fd4d0b87b5016dae068a649c503a1a501",
+                       "content_sha256":  "49c959159c8227a039657f24f7d30b47a581c15d82477c9e352729516244acc0",
+                       "bytes":  5665
                    },
                    {
                        "name":  "storyline-sync",
