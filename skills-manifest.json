@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-20T12:00:09.9853853-07:00",
+    "generated":  "2026-09-21T12:00:12.8020207-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -278,9 +278,9 @@
                    {
                        "name":  "runway-builder",
                        "package":  "WORKFLOWS/skills/runway-builder.skill",
-                       "sha256":  "c650a0eb7b28a978f17163df426f30f430deab48a50945e59cbc1c2399297424",
-                       "content_sha256":  "996858c96d8faff01be0602b2ddc56c4e7a54e66a3d12e6c65c0b460c69d89d5",
-                       "bytes":  6304
+                       "sha256":  "08387978578d3e08be880c68bc618d6547f988e5b337eb735f0233942ec96042",
+                       "content_sha256":  "53da73892cba4f8ddbcb070df545e9b99f6b3d52fd714dbce1d3525d7b72f8cf",
+                       "bytes":  7059
                    },
                    {
                        "name":  "scene-intensity",
@@ -320,9 +320,9 @@
                    {
                        "name":  "storyline-sync",
                        "package":  "WORKFLOWS/skills/storyline-sync.skill",
-                       "sha256":  "edc9413dc8cd995a3cb874f9d60bbef0c4dbcb6a1a91caa2a4226b020c8c71ca",
-                       "content_sha256":  "a2c56b1615b797617379018cd8d15373b575785e37df3b0e5325601bcf3ec367",
-                       "bytes":  10305
+                       "sha256":  "e7497b29a51d8583a2c9f5b726a047c52a78aad121169ca422073eeaf1aa4cd7",
+                       "content_sha256":  "a58469aa738de695b1e95a7b16dce0a49ac740cd373312921d46cbb97060fadc",
+                       "bytes":  11038
                    },
                    {
                        "name":  "task-audit",

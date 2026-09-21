@@ -37,7 +37,13 @@ The gate every skill in this family shares (`^obs-004`). Risk: a mounted folder 
 
 ## Step 1 — Locate chapter + target project; verify landed
 
-Resolve the chapter folder and read `draft.md` frontmatter — expect `status: register-revised` (or `dev-revised`/`hand-revised` if the author syncs mid-pipeline; confirm if so). Record `source_revision` as the provenance tag. Resolve the target StoryLine project under `WRITING/STORYLINE/<Project>/` (confirm with the author if more than one exists). A scaffold or missing draft → halt.
+Resolve the chapter folder and read `draft.md` frontmatter — expect `status: register-revised` (or `dev-revised`/`hand-revised` if the author syncs mid-pipeline; confirm if so).
+
+**Author-landing preflight (DIR-019 §3, `^backlog-author-landing-preflight`).** Before anything else in this step, diff `draft.md`'s body against the newest entry in `revisions/`. Match — or `draft.md`'s `source_revision` names that entry — → proceed. Mismatch, or `revisions/` holds nothing matching the live body → **CRE hand-landed this draft**: run [[WORKFLOWS/promote-revision]] Step 3b in hand-landing mode first (archive the superseded body byte-exact to `revisions/<date> - draft N superseded.md`, then stamp the folder's stale derives, retire the moot rulings, rewrite `draft.md`'s own open-items list), and only then continue. Never ask him to confirm the landing — his landing is the ruling. Safe op, logged, never gated. No `revisions/` folder at all (author-direct route) → note it and proceed; there is nothing to diff against. — the StoryLine mirror is one-way and regenerated, so an unaccounted hand-landing propagates the stale state into a second store before anyone notices.
+
+**Scope of the preflight in this doc (per-doc scoping, DIR-019 leg (b) shape).** It runs **above this step's halt and does not change it** — a scaffold or missing `draft.md` still halts, and an unexpected `status:` is still reported rather than corrected here. Its writes land **in the chapter folder only**: Step 3b stamps and archives there, and **nothing in it touches `WRITING/STORYLINE/`**, which stays a one-way regenerated mirror this workflow writes by its own Step 5 merge alone. A hand-landing found here does **not** re-open the merge's rules — StoryLine-owned and author-tuned frontmatter values are still preserved, and a contradiction between draft and mirror is still the author's conflict block, not something the preflight resolves. `source_revision` is still recorded as the provenance tag; where the landing was by hand it names the accounting rather than a rev, which is the true reading, not a gap to fill.
+
+Record `source_revision` as the provenance tag. Resolve the target StoryLine project under `WRITING/STORYLINE/<Project>/` (confirm with the author if more than one exists). A scaffold or missing draft → halt.
 
 ## Step 2 — Load sources + current StoryLine state
 
