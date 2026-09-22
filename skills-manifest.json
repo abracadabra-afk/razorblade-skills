@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-21T12:00:12.8020207-07:00",
+    "generated":  "2026-09-22T12:00:13.5458603-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -362,9 +362,9 @@
                    {
                        "name":  "workshop-chapter",
                        "package":  "WORKFLOWS/skills/workshop-chapter.skill",
-                       "sha256":  "cd14e4ed43b161b56eda6cd917fdff743c8ac2bb38344fe252f51e098fb566d9",
-                       "content_sha256":  "097f3be1eec96b1c935b932d4c1c1230c9bdda4951e93a6c6ba411f6aefe95cf",
-                       "bytes":  8028
+                       "sha256":  "6d637bb0de0309d9ab3ea0b6474dc7753d581507a6a46c7ebb81d9574b1175a5",
+                       "content_sha256":  "bc7a678163868ed7e8f95735feea8b1caef521cb5a6f8ffd079af78daa7c21df",
+                       "bytes":  8987
                    }
                ]
 }
