@@ -7,14 +7,14 @@ inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TA
 outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps, a Standing queue block in _BACKLOG.md (lane counts + ranked-3 attended serving + agent-toggle recommendation), one replaced serving seed in TASKS/TASKS.md]
 lane: writing-ops
 status: active
-last_updated: 2026-09-08
+last_updated: 2026-09-22
 ---
 
 # WORKFLOW: backlog-sweep
 
 ## When to use
 
-Maintenance pass over `_BACKLOG.md` to keep it lean and trustworthy. Triggered by **"sweep the backlog"** / **"clean the backlog"** / **"tidy the backlog"**, and by the weekly `backlog-sweep` scheduled task (Mondays, after `skills-sweep`). It removes accumulated cruft — completed items left checked in place, exact duplicates, malformed entries, drifted priority tags — and consolidates near-duplicate items, **gating every judgment call for CRE** rather than guessing.
+Maintenance pass over `_BACKLOG.md` to keep it lean and trustworthy. Triggered by **"sweep the backlog"** / **"clean the backlog"** / **"tidy the backlog"**, and by the weekly `backlog-sweep` scheduled task (**Sundays**, after `skills-sweep` — cron `38 14`, Sunday; the window moved from Monday to Sunday afternoon on 2026-08-03, see § Step 4c § Placement in the maintenance window). It removes accumulated cruft — completed items left checked in place, exact duplicates, malformed entries, drifted priority tags — and consolidates near-duplicate items, **gating every judgment call for CRE** rather than guessing.
 
 This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon): a derive-and-tidy pass with the house **"additions/safe-ops write; contradictions/judgment-calls gate"** discipline. It runs *after* `skills-sweep` on Mondays because `skills-sweep` appends follow-ups to `_BACKLOG.md`; the sweep then absorbs and normalizes them.
 
@@ -31,7 +31,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 3. A **"Needs CRE ruling"** bin appended at the end of `_BACKLOG.md` listing every gated judgment call, one line each with the proposed action + reason.
 4. A short sweep report (counts: archived / deduped / reformatted / gated / graduation candidates) appended to `_CHANGELOG.md`.
 5. **Observation-graduation candidates** (Step 4b) — proposed directive text for CRE to ratify; never auto-written to `_DIRECTIVES`.
-6. A **Standing queue** block near the top of `_BACKLOG.md` (Step 4c) — lane counts, a ranked serving of 3 attended items, and the `vault-backlog-agent` toggle recommendation — plus **one** replaced serving seed in `TASKS/TASKS.md` so the serving reaches a surface CRE actually opens.
+6. A **Standing queue** block near the top of `_BACKLOG.md` (Step 4c) — lane counts and a ranked serving of 3 attended items — plus **one** replaced serving seed in `TASKS/TASKS.md` so the serving reaches a surface CRE actually opens. *(~~and the `vault-backlog-agent` toggle recommendation~~ — struck 2026-09-22: the agent lane was retired 2026-08-11, CRE-ruled, `^obs-250`; § Step 4c governs and instructs that nothing be emitted for it.)*
 
 ## Write-mode policy (the core of this workflow)
 
@@ -43,7 +43,7 @@ This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon
 - **Fix priority-tag drift.** De-duplicate repeated tags on one line (e.g. `#p1 #p1` → `#p1`). Do NOT invent or change a priority that isn't there.
 - **Derived task closures (Step 3b, decisive evidence only).** Check off an open `TASKS/TASKS.md` or `_BACKLOG.md` item when `_CHANGELOG.md` records its deliverable shipped/ruled **with named artifacts** (a commit, a file, a decision entry, a verified deploy). Append the evidence + a `closed via backlog-sweep changelog-derive` provenance comment to the closed line. This mirrors day-launch's derive-pass precedent — artifact-backed closures are safe-ops even unattended.
 - **Refresh frontmatter** `last_updated`.
-- **Regenerate the Standing queue block (Step 4c).** Counts and the ranked serving are *derived* — they lose no author intent and are fully reversible, so they write. **Replace the existing block; never append a second one.** The block *recommends* the `vault-backlog-agent` toggle and never performs it (a schedule change is `#gated` by this file's own Conventions).
+- **Regenerate the Standing queue block (Step 4c).** Counts and the ranked serving are *derived* — they lose no author intent and are fully reversible, so they write. **Replace the existing block; never append a second one.** *(~~The block *recommends* the `vault-backlog-agent` toggle and never performs it (a schedule change is `#gated` by this file's own Conventions).~~ — struck 2026-09-22: the agent lane was retired 2026-08-11, CRE-ruled, `^obs-250`; § Step 4c governs and instructs that nothing be emitted for it. A schedule change remains `#gated` regardless.)*
 - **Apply observation triage stamps (Step 4b).** Stamp `PARKED` / `NOT A RULE` on `_OBSERVATIONS.md` entries the sweep has considered and is not proposing. These record *that the sweep looked*, not a CRE ruling, so they are safe. `GRADUATED` stamps are NOT safe — they follow a CRE ruling and land in the same attended edit that writes the directive.
 
 **GATE (judgment calls) — never apply; list in the "Needs CRE ruling" bin:**
