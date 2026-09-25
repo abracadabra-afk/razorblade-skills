@@ -4,10 +4,10 @@ name: backlog-sweep
 trigger: sweep the backlog
 aliases: [clean the backlog, tidy the backlog, backlog maintenance, dedupe the backlog]
 inputs: [_BACKLOG.md, project backlog shards (WRITING/PROJECTS/*/backlog.md), TASKS/TASKS.md (open items — changelog-derive), _CHANGELOG.md (derive evidence)]
-outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps, a Standing queue block in _BACKLOG.md (lane counts + ranked-3 attended serving + agent-toggle recommendation), one replaced serving seed in TASKS/TASKS.md]
+outputs: [a tidied _BACKLOG.md, a dated SYSTEM/history/_BACKLOG-archive file (+ pointer in _CHANGELOG), derived task closures in TASKS/TASKS.md (decisive evidence only), a sweep report, a gated "Needs CRE ruling" bin, observation-graduation candidates (max 5/sweep), observation triage stamps, a Standing queue block in _BACKLOG.md (lane counts + ranked-3 attended serving), one replaced serving seed in TASKS/TASKS.md]
 lane: writing-ops
 status: active
-last_updated: 2026-09-22
+last_updated: 2026-09-24
 ---
 
 # WORKFLOW: backlog-sweep
@@ -16,7 +16,7 @@ last_updated: 2026-09-22
 
 Maintenance pass over `_BACKLOG.md` to keep it lean and trustworthy. Triggered by **"sweep the backlog"** / **"clean the backlog"** / **"tidy the backlog"**, and by the weekly `backlog-sweep` scheduled task (**Sundays**, after `skills-sweep` — cron `38 14`, Sunday; the window moved from Monday to Sunday afternoon on 2026-08-03, see § Step 4c § Placement in the maintenance window). It removes accumulated cruft — completed items left checked in place, exact duplicates, malformed entries, drifted priority tags — and consolidates near-duplicate items, **gating every judgment call for CRE** rather than guessing.
 
-This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon): a derive-and-tidy pass with the house **"additions/safe-ops write; contradictions/judgment-calls gate"** discipline. It runs *after* `skills-sweep` on Mondays because `skills-sweep` appends follow-ups to `_BACKLOG.md`; the sweep then absorbs and normalizes them.
+This is the backlog sibling of `skills-manager` (skills) and `canon-sync` (canon): a derive-and-tidy pass with the house **"additions/safe-ops write; contradictions/judgment-calls gate"** discipline. It runs *after* `skills-sweep` on Sundays because `skills-sweep` appends follow-ups to `_BACKLOG.md`; the sweep then absorbs and normalizes them.
 
 **Since 2026-07-17 the sweep also carries the changelog-derive over the open task list** (Step 3b): day-launch's derive pass only audits items *proposed into TODAY.md*, and week-shape derives only at re-shape, so work done outside a day plan never got its task checked off. The 07-17 ad-hoc sweep caught **5 stale-open items** this way (dec-002, og:image, two umbrellas, the WIW line). This step closes that gap on a weekly cadence.
 
