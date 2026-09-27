@@ -7,7 +7,7 @@ inputs: [_CHANGELOG.md, _OBSERVATIONS.md, _BACKLOG.md, project backlog shards (W
 outputs: [a measured size report, a per-run receipt line in SYSTEM/reports/vault-health-runs.md (every run, incl. no-ops), a rotated lean _CHANGELOG.md, dated archive files under SYSTEM/history/, a gated "Needs CRE ruling" bin for risky rotations]
 lane: meta
 status: active
-last_updated: 2026-08-10
+last_updated: 2026-09-26
 ---
 
 # WORKFLOW: log-rotate
@@ -86,6 +86,9 @@ Growth here is open items; the right tool is `backlog-sweep` (archives closed it
 ### Step 0 — Vault sentinel
 Confirm `_DIRECTIVES.md` frontmatter (`type: ai-os-brain`, `file: directives`). If it fails, **halt and report** — do not edit (`^obs-004`).
 
+### Step 0b — Root census (report only)
+List the vault root's direct children with the host route (`mcp__Desktop_Commander__list_directory`, depth 1). Skip every entry whose name starts with `.` (app and tool state: `.obsidian`, `.git`, `.trash` and the like). For each remaining entry, run a pathed `Grep` for its exact name on `_VAULT MAP.md`, with regex metacharacters escaped (names can carry parentheses, dots or spaces, e.g. `Writing \(Case Conflict 1\)`). Zero hits means **unrecognized**. Put the count and the names in the Step 2 report and receipt. **Report only.** Never move, rename or delete a root entry, and never edit `_VAULT MAP.md`: whether an unrecognized entry belongs is CRE's call. If the host route is unavailable, record `root: not performed (no listing route)` and continue. The file tools cannot list directories, and a `Glob` miss proves nothing (DIR-005). This step reads no brain doc, so it runs even when Step 1 halts at OVER-LIMIT. Why it exists: `^obs-365`, 308 `Writing (Case Conflict N)` directories accrued at the root over ~13.5 hours and nothing noticed (`^backlog-vault-root-watch`).
+
 ### Step 1 — Measure
 **Preferred (byte-exact): read `SYSTEM/reports/brain-doc-sizes.json`** — a size stamp written by the desktop Git Bridge sync (`seed-repo.ps1`, daily ~12:00) with authoritative filesystem access; it carries byte lengths for every brain doc + the project backlog shards (`^backlog-logrotate-exact-size` / `^obs-090`). Use it when its `generated` timestamp is **≤ 36 h old**; bytes ≥ chars, so banding on bytes errs toward rotating early (safe).
 
@@ -106,7 +109,7 @@ Emit a one-table report: file · size · band · recommended action.
 **Then write the run receipt — unconditionally, before any early exit (added 2026-08-10, `^obs-246` / `^backlog-vaulthealth-silent-noop`).** Top-insert one line into `SYSTEM/reports/vault-health-runs.md` (create it with a `# vault-health run receipts` heading if absent):
 
 ```
-- YYYY-MM-DD HH:MM (attended|scheduled) — bands: CHANGELOG <band> <size> · OBS <band> <size> · BACKLOG <band> <size> · shards <band> — path: <stamp(<generated>, write-check pass|fail)|file-tools> — action: <no-op, all GREEN | gated recommendations | ROTATE delegated to desktop>
+- YYYY-MM-DD HH:MM (attended|scheduled) — bands: CHANGELOG <band> <size> · OBS <band> <size> · BACKLOG <band> <size> · shards <band> — path: <stamp(<generated>, write-check pass|fail)|file-tools> — action: <no-op, all GREEN | gated recommendations | ROTATE delegated to desktop> — root: <0 | n unrecognized: names | not performed>
 ```
 
 Verify the insert by re-reading the top of the file (DIR-005). **Why:** the 2026-08-09 scheduled run exited with zero artifacts while `_CHANGELOG` sat past the ROTATE line, and the next pass in the window wrongly inferred it hadn't run. A silent exit was spec-compliant under the old Step 2. The receipt makes every completed run leave evidence; a missing receipt beside a populated `lastRunAt` now unambiguously means **the run failed**, not "nothing to do."

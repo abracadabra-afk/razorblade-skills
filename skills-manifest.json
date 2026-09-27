@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-09-26T12:00:12.7753259-07:00",
+    "generated":  "2026-09-27T12:00:13.4926642-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -208,9 +208,9 @@
                    {
                        "name":  "log-rotate",
                        "package":  "WORKFLOWS/skills/log-rotate.skill",
-                       "sha256":  "1a029e90933b58a5689b80094e7b75a8cbaac988145f26679d63fddc4459dca7",
-                       "content_sha256":  "4fa40b71805e58e2544157afaae97aa7867933f0da1e81abd52c98f5dbd7a94b",
-                       "bytes":  5326
+                       "sha256":  "2fc81d41b13201ed3dc2394c9fcb16549b57f5e57a52d6f44a388d644e40b58a",
+                       "content_sha256":  "b6e21d361bb2fce94a8ffb6cba7d5acc480ab62d00ffe12b05c91bad87e2e956",
+                       "bytes":  5831
                    },
                    {
                        "name":  "loop-clearer",
