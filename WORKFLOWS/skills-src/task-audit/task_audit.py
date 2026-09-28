@@ -159,9 +159,10 @@ LINT = [
 # Per DIR-014's corollary this widens the EXACT layer only — the path still has to match
 # literally, so there is no new false-positive surface. Never widen a fuzzy threshold to catch
 # a semantic miss.
+# 2026-09-26 (^backlog-taskaudit-loaderrx-copula): optional is/are after the token, for "THE CANONICAL DOC IS `WORKFLOWS/x.md`".
 LOADER_VERBS = r"read|run|open|execute|follow|at|per|in|doc|workflow"
 LOADER_RX = re.compile(
-    r"(?:%s)\s+(?:the\s+(?:workflow\s+)?(?:doc\s+)?)?[`'\"\[(]{0,2}"
+    r"(?:%s)\s+(?:(?:is|are)\s+)?(?:the\s+(?:workflow\s+)?(?:doc\s+)?)?[`'\"\[(]{0,2}"
     r"(?:\$?VAULT[\\/]+|\.?[\\/])?WORKFLOWS[\\/]+(\S+?\.md)\b" % LOADER_VERBS, re.I)
 # Phrases that mark the prompt as SUBORDINATE to its doc. Extended 2026-08-03 with the house
 # phrasings actually in use ("the doc is the behavior", "the doc wins", "this prompt is a loader")
@@ -349,6 +350,8 @@ def selftest():
     TICK_AT = "run the workflow at `WORKFLOWS/backlog-sweep.md` — follow the doc.\n1. a\n2. b"
     VERB_EXEC = "STEP 1 — INGEST. Execute WORKFLOWS/inbox-router.md against INBOX.md."
     VAULTVAR = "canonical doc $VAULT/WORKFLOWS/dev-capture.md — follow its steps exactly.\n1. a"
+    COPULA = "THE CANONICAL DOC IS `WORKFLOWS/backlog-supervisor.md` (v2) in the vault. Follow it exactly."
+    COPULA_CLEAR = "The report is `WORKFLOWS/x.md` for reference only."
 
     checks = [
         ("shape runner", classify_shape(RUNNER) == "runner-staged"),
@@ -363,6 +366,8 @@ def selftest():
         ("loader $VAULT prefix", LOADER_RX.findall(VAULTVAR) == ["dev-capture.md"]),
         ("backtick loader classifies defer", classify_shape(TICK_READ) == "doc-deferring"),
         ("no loader stays inline", LOADER_RX.findall(CLEAN) == []),
+        ("loader copula DOC IS hits", LOADER_RX.findall(COPULA) == ["backlog-supervisor.md"]),
+        ("loader copula bare IS clears", LOADER_RX.findall(COPULA_CLEAR) == []),
         ("hit research pre", "CHANGELOG-FOOT-APPEND" in [f[0] for f in lint(RR_PRE)]),
         ("research post clean", "CHANGELOG-FOOT-APPEND" not in [f[0] for f in lint(RR_POST)]),
         ("hit books pre", "STALE-BOOK-NAME" in [f[0] for f in lint(BOOKS_PRE)]),
