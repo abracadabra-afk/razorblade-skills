@@ -7,14 +7,14 @@ inputs: [_CHANGELOG.md, _OBSERVATIONS.md, _BACKLOG.md, project backlog shards (W
 outputs: [a measured size report, a per-run receipt line in SYSTEM/reports/vault-health-runs.md (every run, incl. no-ops), a rotated lean _CHANGELOG.md, dated archive files under SYSTEM/history/, a gated "Needs CRE ruling" bin for risky rotations]
 lane: meta
 status: active
-last_updated: 2026-09-26
+last_updated: 2026-09-28
 ---
 
 # WORKFLOW: log-rotate
 
 ## When to use
 
-A threshold-gated maintenance pass that keeps the **append-only brain docs** from growing past the size where the editing tools stop being safe. Triggered by **"rotate the logs"** / **"run the log doctor"** / **"vault health"** / **"check the brain-doc sizes"**, and by the weekly `vault-health` scheduled task (Mondays, **after** `backlog-sweep`, so it measures the log *after* that run has archived closed items into it).
+A threshold-gated maintenance pass that keeps the **append-only brain docs** from growing past the size where the editing tools stop being safe. Triggered by **"rotate the logs"** / **"run the log doctor"** / **"vault health"** / **"check the brain-doc sizes"**, and by the weekly `vault-health` scheduled task (Sundays, **after** `backlog-sweep`, so it measures the log *after* that run has archived closed items into it).
 
 This is the size sibling of `backlog-sweep` (content) and `link-audit` (references): a measure-then-act pass with the house **"safe ops write; risky ops gate"** discipline. It exists because `_CHANGELOG.md` crossed ~260K chars (2026-06-15), at which point MCP whole-file rewrites and `patch_vault_file` misfire (`^obs-020` / `^obs-081`) and even a newest-first top-insert gets risky — so entries started landing at the foot, inverting the convention (`^obs-082`).
 
@@ -95,13 +95,13 @@ List the vault root's direct children with the host route (`mcp__Desktop_Command
 > **⚠️ The age window is necessary but NOT sufficient — a fresh stamp can still be wrong (added 2026-08-03).** The ≤ 36 h rule was written for a once-daily desktop sync, and it cannot see **writes made after the stamp**. These three files are the most-written docs in the vault: every non-trivial session appends to `_CHANGELOG` (DIR-003), observations and backlog items land beside it, and the intake pollers add lines all day. Live instance: the 2026-08-03 `vault-health` run measured off a stamp **43 minutes old** — comfortably inside the window, fully compliant — that was already **~13.5 K short** on `_CHANGELOG`, ~3.8 K on `_OBSERVATIONS` and ~7.7 K on `_BACKLOG`, because one session had written to all three in the interim. The banding survived that time; it need not next time, and `_BACKLOG` was left reading ~178 K (comfortably WARN) when it was nearer ~186 K and closing on the 200 K ROTATE line.
 >
 > **So the age check is the FIRST gate, not the only one.** Before trusting the stamp, ask whether anything has written to a measured file since `generated`:
-> - **Your own run counts.** If this session has already appended to `_CHANGELOG` / `_OBSERVATIONS` / `_BACKLOG` — or is about to, per DIR-003 — the stamp is behind by at least that much. Add the known delta, or fall back to the file tools.
+> - **Your own run counts.** If this session has already appended to `_CHANGELOG` / `_OBSERVATIONS` / `_BACKLOG` — or is about to, per DIR-003 — the stamp is behind by at least that much. Add the known delta, or re-measure with a metadata call (the fallback below).
 > - **Check `_CHANGELOG`'s newest entry date against `generated`.** An entry stamped after it is proof the file has moved; treat the stamp as stale regardless of age.
-> - **Anything within ~10 K of a band boundary is ambiguous when measured off a stamp** — re-measure that file with the file tools before acting on the band, don't act on the stamp alone.
+> - **Anything within ~10 K of a band boundary is ambiguous when measured off a stamp** — re-measure that file with a metadata call before acting on the band, don't act on the stamp alone.
 >
 > Record which path was used **and** whether the intra-window write check passed, so the next run can tell a verified band call from an inherited one.
 
-If the stamp is missing, stale, or fails the write check above, **fall back** to the file-tools token→char proxy: measure each file with the **file tools** (read to EOF / file-size) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`, and treat a band call that sits right at a threshold as ambiguous (report, don't act). **Never size with bash `wc -c`** — on a large file the bash mount may return a truncated partial (`^obs-084`: on the first live run it understated `_CHANGELOG` by ~16K and ended mid-entry). Record each file's band + which measurement path was used.
+If the stamp is missing, stale, or fails the write check above, **fall back** to a metadata call: measure each file with `mcp__Desktop_Commander__get_file_info` via the host route (§ The hard line above the bands) on `_CHANGELOG.md`, `_OBSERVATIONS.md`, `_BACKLOG.md`, and treat a band call that sits right at a threshold as ambiguous (report, don't act). If no metadata route is available, declare the files unmeasured and halt. **Never size with bash `wc -c`** — on a large file the bash mount may return a truncated partial (`^obs-084`: on the first live run it understated `_CHANGELOG` by ~16K and ended mid-entry). Record each file's band + which measurement path was used.
 
 ### Step 2 — Report + receipt (EVERY run, including a no-op)
 Emit a one-table report: file · size · band · recommended action.
