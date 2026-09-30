@@ -9,7 +9,7 @@ lane: meta
 status: draft
 version: 2
 created: 2026-09-04
-last_updated: 2026-09-13
+last_updated: 2026-09-29
 ---
 
 # WORKFLOW: backlog-supervisor
@@ -180,7 +180,7 @@ A plan is written for a **cold agent with no memory of this session and no acces
 
 Three supervisor/agent rounds produced three defects and **all three were in the plan, never the execution** — each caught only because the agent departed from its instructions and said so. That is not a check; it is a courtesy the loop cannot rely on once the cadence is armed and no one reads a plan before it ships. The root cause is structural: this skill writes the instructions *and* the pass/fail conditions from one research pass, so a misreading propagates into both halves at once and nothing disagrees with it.
 
-Three rules, each from a real defect:
+Four rules, each from a real defect:
 
 1. **Every claim the plan makes about a target doc's behavior is verified by direct read of that doc** — never carried from the backlog item's summary, and never inferred from the doc's name or its `_SKILLS MAP` row. The worked case: a plan told the agent that a `canon-sync` contradiction with an older `REFERENCE` row *"is a supersession, not a conflict to gate."* Read flat, that overrides principle 4's contradiction gate and principle 7's `binding_surface: true` write-time debt accounting — the latter derived from DIR-010 §4, **which DIR-019's own closing sentence says it does not repeal.** The claim came from the backlog item's one-line framing; two minutes in `canon-sync.md` would have caught it. Where a plan asserts what a doc does, the plan cites the section it read.
 2. **The write surface always names the agent's own run receipt**, `SYSTEM/reports/backlog-agent-runs.md`. The agent's skill requires it unconditionally on every fire, so a surface that omits it forces a conflict between the plan and the agent's own contract — and the agent is right either way, which makes the audit a judgment call. This is the same class as the condition-vs-Defer contradiction below: **a plan must not contradict a rule the agent is separately bound by.** Check the surface against the agent's skill, not only against the job.
@@ -285,7 +285,7 @@ Before reading anything expensive, enumerate and count the four **pipeline** fol
 The early-exit accounts for pending queue state, not just new arrivals — a served-but-unworked plan is work in flight, and treating an empty `_review/` as "nothing to do" would strand the queue (`^obs-166`, the file-inbox bug).
 
 ### Step 2 — Audit everything in `_review/`
-Per § Auditing above. Move plans, write fix prompts, update `_BACKLOG` items for passes. Do this before serving so a fix prompt is in `_served/` for the same day's agent run.
+Per § Auditing above. Move plans, write fix prompts, and leave `_BACKLOG` items for passes untouched — the close-out closes them after the re-probe (§ Auditing a completion log, v2). Do this before serving so a fix prompt is in `_served/` for the same day's agent run.
 
 ### Step 3 — Load candidates
 **First, `SYSTEM/backlog-queue/_intake/`** — findings the close-out routed as AGENT work, one file each, already researched and carrying a proposed job. These are not `_BACKLOG` items and consuming them is not ranking: they are the sweepers' own findings translated. Take them oldest first; a plan composed from one names the source report in `## The item` and moves the intake file into the plan's folder beside it. Then read `_BACKLOG.md` § Standing queue. Apply the freshness gate. Take candidates in the order the block states (§ Candidate source). Read each candidate item in full from `_BACKLOG.md` or its project shard, **by slice** (§ Candidate source — measure, then `Grep -n` + offset `Read`). **Past the end of the block: enumerate the next band on its anchored trailing tag run and write the sorted list into the receipt, or decline to extend and say so — never a forward scan** (§ Candidate source, `^obs-311`).
@@ -294,7 +294,7 @@ Per § Auditing above. Move plans, write fix prompts, update `_BACKLOG` items fo
 Run E1–E7 in order. Record every disposition and reason. Stop composing **unattended** plans once 3 are written or the 5-open working set is hit; stop composing **attended** plans after the first, or if `_attended/` already holds 3 (§ The attended lane — separate budgets).
 
 ### Step 5 — Compose and serve
-Write each unattended plan to `_served/` and the run's one attended plan, if any, to `_attended/` (§ The attended lane — selection, sections, cap). **Before serving, run the three verification rules** (§ Verify the plan before serving it): every claim about a target doc's behavior confirmed by direct read of that doc and cited to the section read · the write surface naming `SYSTEM/reports/backlog-agent-runs.md`, the agent's unconditional receipt · transcribed claims marked apart from inferred ones. Then re-read each written plan through the file tools and confirm the frontmatter parses and every required section is present (DIR-004, DIR-005).
+Write each unattended plan to `_served/` and the run's one attended plan, if any, to `_attended/` (§ The attended lane — selection, sections, cap). **Before serving, run the four verification rules** (§ Verify the plan before serving it): every claim about a target doc's behavior confirmed by direct read of that doc and cited to the section read · the write surface naming `SYSTEM/reports/backlog-agent-runs.md`, the agent's unconditional receipt · transcribed claims marked apart from inferred ones · a plan whose write surface includes a canon doc names the `skills-src/` port debt it creates and requires the agent to list the docs it edited (rule 4). Then re-read each written plan through the file tools and confirm the frontmatter parses and every required section is present (DIR-004, DIR-005).
 
 ### Step 6 — Rulings lines
 Append this run's escalations, deferrals, and CRE-only dispositions to `SYSTEM/backlog-queue/_rulings/pending.md` in the one-tap form (§ Escalation and deferral) — targeted file-tool edit, re-read to confirm. Include **one** line for `_attended/` — how many prepared sittings wait and the oldest one's age — plus a line per item that has crossed 21 days, proposing it be dropped or ruled CRE-only-forever. *(v1 wrote a `_BACKLOG` gate bin here; superseded 2026-09-04.)*
