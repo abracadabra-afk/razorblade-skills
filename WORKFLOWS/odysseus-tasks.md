@@ -6,11 +6,14 @@ aliases: [sync tasks to odysseus, send this to odysseus, push tasks to odysseus,
 inputs: [time-bearing open tasks in TASKS/TASKS.md (a date/time or "remind me")]
 outputs: [Odysseus todos with a due_date that fire a notification, the source vault line stamped with `<!-- ody: <id> -->` (+ open_url), a short run report]
 lane: os
-status: active
-last_updated: 2026-06-25
+status: superseded
+superseded_by: WORKFLOWS/reminders.md
+last_updated: 2026-10-06
 ---
 
 # WORKFLOW: odysseus-tasks
+
+> **SUPERSEDED 2026-10-06 → [[WORKFLOWS/reminders]].** Odysseus is retired (CRE-ruled, `DECISIONS/_QUICK LOG.md` 2026-10-06); reminders go through ntfy via `WORKFLOWS/reminders/nudge.py`. Kept for history — do not run.
 
 ## When to use
 CRE has **time-bearing** to-dos in [[TASKS/TASKS|Tasks]] — anything that should *fire a reminder* ("call the dentist Tuesday 5pm", "AC filters next week"). Markdown can't notify; Odysseus can (ntfy / email / browser via its todo `due_date`). Triggers: **"push my reminders"**, "sync tasks to odysseus", or — for a single item CRE just dictated — **"send this to odysseus"**. This is the push leg of the **Obsidian ↔ Odysseus bridge**: the vault is where CRE *authors*; Odysseus is where a dated task becomes *operational*.
