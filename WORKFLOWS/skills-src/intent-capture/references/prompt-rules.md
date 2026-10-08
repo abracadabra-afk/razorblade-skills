@@ -1,6 +1,6 @@
 # Prompt rules for the handoff block
 
-The `## Handoff prompt` section of every `intent.md` is checked against this list before the file is written. Source: Anthropic's Claude 5 prompting guidance as reported in the two 2026-09 clippings (`Clippings/Anthropic Just Revealed 7 New Rules for Prompting Claude 5 Models`, `Clippings/Claude Codes New INTENT.MD, What is It`), mapped onto house practice. Where a rule and a house directive touch, the directive is named.
+The `## Handoff prompt` section of every `intent.md` is checked against this list before the file is written. Source: Anthropic's Claude 5 prompting guidance as reported in the two 2026-09 clippings (`KNOWLEDGE/RESEARCH/CLIPPINGS/Anthropic Just Revealed 7 New Rules for Prompting Claude 5 Models`, `KNOWLEDGE/RESEARCH/CLIPPINGS/Claude Codes New INTENT.MD, What is It`), mapped onto house practice. Where a rule and a house directive touch, the directive is named.
 
 ## The seven
 

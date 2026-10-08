@@ -34,7 +34,7 @@ Reports:
                     findings. Reason the ruling stands: those headings get amended
                     (DIR-005's four times), so pinning cites to full text guarantees
                     re-breakage. DIR-014's own logic - widen the exact layer.
-  CLIPPING        - benign: a Web Clipper artifact under Clippings/ (author bylines,
+  CLIPPING        - benign: a Web Clipper artifact under CLIPPINGS/ (author bylines,
                     javascript: nav stubs). Never authored as vault links.
   TEMPLATE        - benign: a placeholder in a template/prompt asset (<NAME>, {{var}}).
   SUSPECT-STALE   - a target file read back TRUNCATED (NUL bytes / partial), so its
@@ -82,7 +82,7 @@ QFILES   = ('_CHANGELOG.md', '_OBSERVATIONS.md', 'vault-migration-plan.md')
 # Every class below was a judgment call an agent re-made from scratch on each run.
 # They are mechanical now, because that improvisation is where the run-to-run
 # inconsistency lived, not in the resolver's arithmetic.
-CLIPPING_ZONES = ('Clippings/', 'COMP LISTINGS/')  # Web Clipper output: author bylines, nav stubs
+CLIPPING_ZONES = ('/CLIPPINGS/', 'COMP LISTINGS/')  # Web Clipper output: author bylines, nav stubs (KNOWLEDGE/RESEARCH/CLIPPINGS since 2026-10-07)
 TEMPLATE_HINTS = ('_TEMPLATE', '/templates/', '/prompts/')
 PLACEHOLDER    = re.compile(r'[<>{}]|^javascript:|\$\{|\.\.\.|…')
 # Documented metavariables: tokens the OS docs use as STAND-INS inside example link

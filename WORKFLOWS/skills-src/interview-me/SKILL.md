@@ -19,7 +19,7 @@ Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file
 
 ## Step 1 — Take the input and the caller frame
 
-Input is one of: what CRE just said in chat, a dictation transcript (pasted or a path under `_DICTATION INBOX/` or a chapter's `dictation/`), or a vault note he points at. Read it with the file tools. Scan for secrets on sight (DIR-006).
+Input is one of: what CRE just said in chat, a dictation transcript (pasted or a path under `INBOXES/DICTATION/` or a chapter's `dictation/`), or a vault note he points at. Read it with the file tools. Scan for secrets on sight (DIR-006).
 
 Caller frame, if a skill invoked you: the list of fields the caller needs filled (intent-capture passes job / why / guardrails / done / output style / non-goals; decision-helper passes the branches and the criteria). Standalone: use the default frame below.
 

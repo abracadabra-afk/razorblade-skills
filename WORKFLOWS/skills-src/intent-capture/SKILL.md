@@ -17,7 +17,7 @@ Read `_DIRECTIVES.md` from the mounted root; confirm `type: ai-os-brain` + `file
 
 ## Step 1 — Take the input
 
-One of: what CRE said in chat this session, a dictation transcript (pasted, or a path under `_DICTATION INBOX/` or `SCRATCHPAD/`), or a note he points at (a clipping, a backlog item, a TASKS entry). Read it with the file tools. Secrets on sight (DIR-006).
+One of: what CRE said in chat this session, a dictation transcript (pasted, or a path under `INBOXES/DICTATION/` or `SCRATCHPAD/`), or a note he points at (a clipping, a backlog item, a TASKS entry). Read it with the file tools. Secrets on sight (DIR-006).
 
 Settle three things from the input, defaulting where he did not say:
 - **slug** — kebab-case from the title. If `WORKFLOWS/intents/<slug>.md` exists, read it first: this run either amends it (status back to `draft`, `last_updated` bumped) or is a new intent that needs a different slug. Ask only if it is not obvious.

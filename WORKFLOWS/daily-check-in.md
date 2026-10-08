@@ -15,7 +15,7 @@ last_updated: 2026-07-26
 
 ## When to use
 
-CRE says **"daily check-in"** — at the desk, or dictated from anywhere into `_DICTATION INBOX/` — and talks about how the day went: what worked, what didn't, what he's avoiding, ideas, mood, opinions on the system. Also fires as the **subjective half of `day-launch`'s close-out**: "close the day" runs the objective derive pass, then asks for this.
+CRE says **"daily check-in"** — at the desk, or dictated from anywhere into `INBOXES/DICTATION/` — and talks about how the day went: what worked, what didn't, what he's avoiding, ideas, mood, opinions on the system. Also fires as the **subjective half of `day-launch`'s close-out**: "close the day" runs the objective derive pass, then asks for this.
 
 The whole instrument is one sentence: **he talks, the machine sorts.** No form, no questionnaire, no prompts to answer.
 
@@ -49,7 +49,7 @@ CRE-ratified 2026-07-26 (three forks: ledger in `LIFE/CHECK-INS/`, folded into c
 
 ## Intake — three doors, one destination
 
-1. **Dictated (primary).** Say *"Daily check-in."* / *"Weekly check-in."* / *"Check-in."* and talk. `dictation-runner`'s **check-in route** (added 2026-07-26) stages it to `_DICTATION INBOX/_checkin/`, verbatim and un-reconciled. The route is checked **first**, ahead of dev and fiction, because a check-in is routinely canon-dense ("the register pass on Witchwood CH4 fought me") and canon density would otherwise classify his diary as a chapter draft. A filename stem containing `check-in` also routes, so a garbled marker still lands correctly.
+1. **Dictated (primary).** Say *"Daily check-in."* / *"Weekly check-in."* / *"Check-in."* and talk. `dictation-runner`'s **check-in route** (added 2026-07-26) stages it to `INBOXES/DICTATION/_checkin/`, verbatim and un-reconciled. The route is checked **first**, ahead of dev and fiction, because a check-in is routinely canon-dense ("the register pass on Witchwood CH4 fought me") and canon density would otherwise classify his diary as a chapter draft. A filename stem containing `check-in` also routes, so a garbled marker still lands correctly.
 2. **At the desk.** Fire the trigger and type or paste.
 3. **Folded into close-out.** "close the day" runs the `day-launch` derive pass (objective: what landed), then this (subjective: how it went). One evening ritual, two halves. **Two rituals would mean he does neither** — that is why this is folded rather than standalone-only.
 

@@ -3,10 +3,10 @@ type: workflow
 name: file-inbox
 lane: os
 status: active
-trigger: scheduled task `file-inbox-runner` (polls _FILE INBOX/, cron 15,45 * * * *) + manual "run the file inbox"
+trigger: scheduled task `file-inbox-runner` (polls INBOXES/FILES/, cron 15,45 * * * *) + manual "run the file inbox"
 created: 2026-06-15
 updated: 2026-06-16
-purpose: Remote, drop-and-forget FILE intake. Drop ANY document/spreadsheet/PDF/image into _FILE INBOX/ from phone or desktop (Dropbox). A polling task EXTRACTS the content, decides what to ingest and where, files the facts into the right domain, and stores the ORIGINAL for safekeeping in that domain's _sources/. The document sibling of dictation-runner.
+purpose: Remote, drop-and-forget FILE intake. Drop ANY document/spreadsheet/PDF/image into INBOXES/FILES/ from phone or desktop (Dropbox). A polling task EXTRACTS the content, decides what to ingest and where, files the facts into the right domain, and stores the ORIGINAL for safekeeping in that domain's _sources/. The document sibling of dictation-runner.
 ---
 
 # file-inbox
@@ -29,7 +29,7 @@ Some files only want output #2 (a signed contract PDF: keep it whole, derive jus
 ## Architecture — one polling loop, extract-then-route
 
 ```
-phone / desktop (any file) --Dropbox--> _FILE INBOX/<file>
+phone / desktop (any file) --Dropbox--> INBOXES/FILES/<file>
                                               |
               scheduled task "file-inbox-runner" wakes (~every 30 min)
                                               |
@@ -62,7 +62,7 @@ phone / desktop (any file) --Dropbox--> _FILE INBOX/<file>
   (decoupled) the inbox-router files any INBOX summaries on its own schedule.
 ```
 
-**Why polling, not triggers:** same reason as the voice pipeline — every "who fires whom" hand-off is brittle and can't be driven from a phone. One scheduled task watching one folder removes them all. **Transport CUTOVER 2026-07-10 (`^backlog-server-transport`): phone capture now rides Nextcloud, not the Dropbox app.** Phone drops go to `VAULT TRANSPORT/_FILE INBOX` (Nextcloud app → aegis-moon → desktop Nextcloud client), and the desktop scheduled task **`vault-transport-sweep`** (`SYSTEM/maintenance/sweep-transport.ps1`, every 5 min, idle-≥60s guard, moves logged to `transport-sweep.log`) moves them into the vault's `_FILE INBOX/` — where this runner picks them up exactly as before (first proof: `Women - Charles Bukowski.mobi`, phone → server → desktop → vault, 2026-07-10). Drop zone, runner.py, and the scheduled-task prompt are all UNCHANGED (the sweep lives desktop-side because the Cowork sandbox can't see the Nextcloud folder). Dropbox remains the vault's own sync, and desktop drops straight into `_FILE INBOX/` still work.
+**Why polling, not triggers:** same reason as the voice pipeline — every "who fires whom" hand-off is brittle and can't be driven from a phone. One scheduled task watching one folder removes them all. **Transport CUTOVER 2026-07-10 (`^backlog-server-transport`): phone capture now rides Nextcloud, not the Dropbox app.** Phone drops go to `VAULT TRANSPORT/_FILE INBOX` (Nextcloud zone name — unchanged by the 2026-10-07 restructure; only the vault destination moved under `INBOXES/`) (Nextcloud app → aegis-moon → desktop Nextcloud client), and the desktop scheduled task **`vault-transport-sweep`** (`SYSTEM/maintenance/sweep-transport.ps1`, every 5 min, idle-≥60s guard, moves logged to `transport-sweep.log`) moves them into the vault's `INBOXES/FILES/` — where this runner picks them up exactly as before (first proof: `Women - Charles Bukowski.mobi`, phone → server → desktop → vault, 2026-07-10). Drop zone, runner.py, and the scheduled-task prompt are all UNCHANGED (the sweep lives desktop-side because the Cowork sandbox can't see the Nextcloud folder). Dropbox remains the vault's own sync, and desktop drops straight into `INBOXES/FILES/` still work.
 
 ## The fork (Stage A `propose_domain`, then Stage B rules)
 
@@ -85,7 +85,7 @@ This parallels the inbox-router's own routing table and tie-breakers ([[WORKFLOW
 | Knowledge | `KNOWLEDGE/_sources/` |
 | Workflows | `WORKFLOWS/_sources/` |
 | Vibes | `VIBES/_sources/` |
-| INBOX (unsure) | stays in `_FILE INBOX/processed/` until ruled |
+| INBOX (unsure) | stays in `INBOXES/FILES/processed/` until ruled |
 
 ## Relationship to the inbox-router (sole write-path preserved)
 
@@ -113,16 +113,16 @@ The extractor libs (`odfpy` / `openpyxl` / `pdfplumber` / `python-docx` / `pyyam
 ## The scheduled task prompt (Stage A + B)
 
 > Bootstrap is NOT required for this task. Do exactly this:
-> 0. **EMPTY-POLL GATE — the cheap check comes BEFORE the expensive setup (`^obs-166`).** Most polls find nothing, and staging + compiling `runner.py` costs real tokens, so never do it until work is confirmed. Make exactly ONE bash call: `F="<vault>/_FILE INBOX"; DROPS=$(find "$F" -maxdepth 1 -type f ! -name '.*' 2>/dev/null | wc -l); PEND=$(find "$F/_extracted" -maxdepth 1 -type f -name '*.md' 2>/dev/null | wc -l); echo "drops=$DROPS pending=$PEND"`. `_extracted/` may not exist yet — the `2>/dev/null` is deliberate (a missing dir counts as 0); a *pending* staging note is any `.md` sitting **directly** in `_extracted/` (finished ones have been moved into `_extracted/done/`). Then branch: **`drops=0 && pending=0`** → STOP NOW, emit one line ("nothing to do"), end the run — no staging, no deps, no `_CHANGELOG` entry, no message (this is the normal case and it must cost one bash call and nothing else). **`drops=0 && pending>0`** → no new files to extract, only staged notes to drain: **skip steps 1–2 entirely** (running `runner.py` here would report `processed: 0` and, under step 2's stop rule, strand the queue) and go straight to step 3. **`drops>0`** → new files; continue to step 1 (the full path).
+> 0. **EMPTY-POLL GATE — the cheap check comes BEFORE the expensive setup (`^obs-166`).** Most polls find nothing, and staging + compiling `runner.py` costs real tokens, so never do it until work is confirmed. Make exactly ONE bash call: `F="<vault>/INBOXES/FILES"; DROPS=$(find "$F" -maxdepth 1 -type f ! -name '.*' 2>/dev/null | wc -l); PEND=$(find "$F/_extracted" -maxdepth 1 -type f -name '*.md' 2>/dev/null | wc -l); echo "drops=$DROPS pending=$PEND"`. `_extracted/` may not exist yet — the `2>/dev/null` is deliberate (a missing dir counts as 0); a *pending* staging note is any `.md` sitting **directly** in `_extracted/` (finished ones have been moved into `_extracted/done/`). Then branch: **`drops=0 && pending=0`** → STOP NOW, emit one line ("nothing to do"), end the run — no staging, no deps, no `_CHANGELOG` entry, no message (this is the normal case and it must cost one bash call and nothing else). **`drops=0 && pending>0`** → no new files to extract, only staged notes to drain: **skip steps 1–2 entirely** (running `runner.py` here would report `processed: 0` and, under step 2's stop rule, strand the queue) and go straight to step 3. **`drops>0`** → new files; continue to step 1 (the full path).
 > 1. **No dep install needed** — the extractors are vendored at `WORKFLOWS/file-inbox/.deps/` and `runner.py` self-locates them on `sys.path` (2026-07-10, `^backlog-file-inbox-hardening` (a)). **Fallback only** if the run output flags missing extractors: `pip install --no-cache-dir --target /tmp/fi_libs odfpy openpyxl pdfplumber python-docx pyyaml` and re-run (fixed root-fs dir; **never** `--break-system-packages` — ENOSPC, `^obs-102`; if pip ENOSPCs, clear stale `/tmp/*` dep dirs first).
 > 2. **Stage the runner off the mount, then run it (`^obs-103` structural kill).** NEVER run `runner.py` directly off the Dropbox mount — the mount can serve a stale, TRUNCATED copy of the *script* (the `^obs-073`/`^obs-095` hazard; a truncated script is wrong **behavior**, not just wrong data) that crashes `python3` with a SyntaxError. Instead always run a clean copy read via the **file tools** (cloud-authoritative): read `runner.py` via the file tools and **write it to the session outputs folder** (the Write tool reaches outputs, NOT sandbox `/tmp`; outputs is session scratch — not Dropbox-synced, so never stale-truncated — bash reads it at `/sessions/*/mnt/outputs/`); it is standalone — no sibling to stage. Then `OUT=$(ls -d /sessions/*/mnt/outputs|head -1); PYTHONPATH=/tmp/fi_libs VAULT_ROOT="<vault>" python3 "$OUT/runner.py"`. `runner.py` reads `VAULT_ROOT` for every vault path (drop zone, domain `_sources/`), so all reads/writes land in the **real** vault while the *code* runs from the clean staged copy — the mount copy of the script is never trusted (sanity: `py_compile "$OUT/runner.py"`; if it won't compile, re-read via the file tools, never fall back to the mount; you may instead bash-`cp` the outputs copy into `/tmp` and run there). It prints JSON of what it processed; each result carries a `route` (`domain` / `inbox` / `needs-vision`) and a `proposed_domain` + `source_dest`. If `processed: 0` **and step 0 reported `pending=0`**, stop — nothing to do, no log entry. (If step 0 reported `pending>0`, do NOT stop on `processed: 0` — `_extracted/` still holds staged notes to drain; continue to step 3. The unconditional stop-on-zero was a queue-stranding bug, `^obs-166`.)
 > 3. Confirm `_DIRECTIVES.md` frontmatter (the `^obs-004` vault sentinel) before any domain write.
-> 4. **For each new `_FILE INBOX/_extracted/*.md` not yet in `_extracted/done/`:**
+> 4. **For each new `INBOXES/FILES/_extracted/*.md` not yet in `_extracted/done/`:**
 >    - Read the staging note (frontmatter `proposed_domain` / `proposed_source_dest` / `route` / `kind`, and the `## Extracted content`). For an image, read the original in `processed/` natively (vision) to pull text/data.
 >    - **DIR-001 check:** if the content is credentials/keys/tokens, do NOT file it anywhere; note it in the `_CHANGELOG` line and flag CRE to move + rotate. Move staging note to `done/`. Skip the rest.
 >    - **Decide:** is the domain clear and the content structured? → file directly. Ambiguous / spans two domains / unsupported? → summarize to INBOX (see below).
 >    - **Confident path:** ingest the facts into the chosen domain, honoring the inbox-router's definitions (e.g. birthdays → a `LIFE/REFERENCE` dates note; royalty figures → Business). Then **move the original** `processed/<file>` → `<domain>/_sources/<file>` and make the derived note link to it (`[[_sources/<file>]]` or a relative path). Use the file tools for the note edits (`^obs-020`); serialize any derived frontmatter (DIR-004).
->    - **Ambiguous path:** append a short summary item to `INBOX.md` under `## ⚡ Inbox` with a leading hint comment `<!-- file-note <date> · proposed: <domain> · source: _FILE INBOX/processed/<file> -->` and a link to the original; leave the original in `processed/`. The inbox-router files it later.
+>    - **Ambiguous path:** append a short summary item to `INBOX.md` under `## ⚡ Inbox` with a leading hint comment `<!-- file-note <date> · proposed: <domain> · source: INBOXES/FILES/processed/<file> -->` and a link to the original; leave the original in `processed/`. The inbox-router files it later.
 >    - Move the staging note to `_extracted/done/`.
 > 5. Append ONE consolidated line per processed file to `_CHANGELOG.md`, e.g. `- file-inbox: family_birthdays.ods [sheet→Life] (3 birthdays → LIFE/REFERENCE; original → LIFE/REFERENCE/_sources/) ` or `- file-inbox: scan.pdf [pdf→INBOX] (unclear; summarized to INBOX, original in processed/)`.
 > 6. Never delete an original — it lives in a domain `_sources/` (filed) or `processed/` (pending). Deletion is always CRE's call.
@@ -142,5 +142,5 @@ The extractor libs (`odfpy` / `openpyxl` / `pdfplumber` / `python-docx` / `pyyam
 ## Files
 
 - `WORKFLOWS/file-inbox/runner.py` — Stage A orchestrator: scan, `detect_kind()`, `extract()` (csv/xlsx/ods/docx/odt/pdf/text), `propose_domain()`, `write_staging_note()`, move to `processed/`. Self-locating. `--selftest` prints classification over fixtures.
-- `_FILE INBOX/` — drop zone (`README.md`, `_extracted/` + `done/`, `processed/`).
+- `INBOXES/FILES/` — drop zone (`README.md`, `_extracted/` + `done/`, `processed/`).
 - `<domain>/_sources/` — per-domain originals store (created on first file filed there).

@@ -16,7 +16,7 @@ revision_note: v1 — authored 2026-09-03 alongside intent-capture from the two 
 ## When to use
 CRE has a task, tool, feature, or idea partly in his head and wants the unknowns pulled out before anything gets built or run. Standalone on "interview me about X." Called by `intent-capture` (its Step 3), and available to `decision-helper`, `project-plan`, and `premise-forge` wherever they currently improvise a "what do I still need to know" step.
 
-Source: Anthropic's internal practice of running an interview skill before handing a Claude 5 model an end-to-end task (rule 2 of the seven, `Clippings/Anthropic Just Revealed 7 New Rules for Prompting Claude 5 Models`) and the discovery phase of the AI-native SDLC playbook (`Clippings/Claude Codes New INTENT.MD, What is It`).
+Source: Anthropic's internal practice of running an interview skill before handing a Claude 5 model an end-to-end task (rule 2 of the seven, `KNOWLEDGE/RESEARCH/CLIPPINGS/Anthropic Just Revealed 7 New Rules for Prompting Claude 5 Models`) and the discovery phase of the AI-native SDLC playbook (`KNOWLEDGE/RESEARCH/CLIPPINGS/Claude Codes New INTENT.MD, What is It`).
 
 ## The axis it owns (and its neighbors)
 

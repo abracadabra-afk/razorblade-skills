@@ -1,6 +1,6 @@
 ---
 name: file-inbox
-description: Remote FILE intake — ingest a file (doc, sheet, PDF, image) dropped into _FILE INBOX/ into the right vault domain while keeping the original. Use when CRE says "run the file inbox," or on the file-inbox-runner scheduled task (polls _FILE INBOX/, cron 15,45). Stage A (deterministic runner.py) extracts content + proposes a domain; this skill is Stage B, the semantic call a script can't make — read each _extracted/*.md staging note and either file a CONFIDENT + structured extraction straight into its domain intake (moving the ORIGINAL to the domain's _sources/ folder, linked from the derived note) or summarize an AMBIGUOUS / spans-domains / unsupported file to INBOX for the inbox-router. Every file yields two outputs — derived facts + the kept original (external = source of truth, note = mirror). Guards — DIR-001 (secrets never filed), DIR-004 (serialized YAML), ^obs-004 sentinel, ^obs-103 staged-runner. Do NOT use it to draft chapter prose from a file (a desk action) or to delete an original (CRE's call).
+description: Remote FILE intake — ingest a file (doc, sheet, PDF, image) dropped into INBOXES/FILES/ into the right vault domain while keeping the original. Use when CRE says "run the file inbox," or on the file-inbox-runner scheduled task (polls INBOXES/FILES/, cron 15,45). Stage A (deterministic runner.py) extracts content + proposes a domain; this skill is Stage B, the semantic call a script can't make — read each _extracted/*.md staging note and either file a CONFIDENT + structured extraction straight into its domain intake (moving the ORIGINAL to the domain's _sources/ folder, linked from the derived note) or summarize an AMBIGUOUS / spans-domains / unsupported file to INBOX for the inbox-router. Every file yields two outputs — derived facts + the kept original (external = source of truth, note = mirror). Guards — DIR-001 (secrets never filed), DIR-004 (serialized YAML), ^obs-004 sentinel, ^obs-103 staged-runner. Do NOT use it to draft chapter prose from a file (a desk action) or to delete an original (CRE's call).
 ---
 
 # file-inbox
@@ -27,7 +27,7 @@ Some files only want output #2 (a signed contract PDF: keep it whole, derive jus
 ## Two stages — extract-then-route
 
 ```
-phone / desktop (any file) --Dropbox--> _FILE INBOX/<file>
+phone / desktop (any file) --Dropbox--> INBOXES/FILES/<file>
             |
   STAGE A . deterministic (runner.py, no LLM)
    detect_kind -> extract (csv/xlsx/ods/docx/odt/pdf-text; images -> needs-vision)
@@ -68,7 +68,7 @@ This parallels the inbox-router's own routing table and tie-breakers ([[WORKFLOW
 | Knowledge | `KNOWLEDGE/_sources/` |
 | Workflows | `WORKFLOWS/_sources/` |
 | Vibes | `VIBES/_sources/` |
-| INBOX (unsure) | stays in `_FILE INBOX/processed/` until ruled |
+| INBOX (unsure) | stays in `INBOXES/FILES/processed/` until ruled |
 
 ## Sole write-path preserved
 
@@ -98,7 +98,7 @@ PYTHONPATH=/tmp/fi_libs VAULT_ROOT="<vault>" python3 "$OUT/runner.py"
 ```
 `runner.py` reads `VAULT_ROOT` for every vault path, so the *code* runs from the clean staged copy while reads/writes land in the **real** vault. Sanity: `py_compile "$OUT/runner.py"`; if it won't compile, re-read via the file tools — never fall back to the mount. It prints JSON of what it processed; each result carries a `route` (`domain` / `inbox` / `needs-vision`), a `proposed_domain`, and a `source_dest`. If `processed: 0`, stop — nothing to do, no log entry.
 
-### Step 2 — For each new `_FILE INBOX/_extracted/*.md` not in `_extracted/done/`
+### Step 2 — For each new `INBOXES/FILES/_extracted/*.md` not in `_extracted/done/`
 Read the staging note (frontmatter `proposed_domain` / `proposed_source_dest` / `route` / `kind`, and the `## Extracted content`). For an image (`route: needs-vision`), read the original in `processed/` natively (vision) to pull text/data.
 
 ### Step 3 — DIR-001 secrets check (before anything else)
@@ -107,7 +107,7 @@ If the content is credentials / API keys / tokens / passwords, do **NOT** file i
 ### Step 4 — Decide + file
 Is the domain clear and the content structured?
 - **Confident path:** ingest the facts into the chosen domain, honoring the inbox-router's definitions (birthdays → a `LIFE/REFERENCE` dates note; royalty figures → Business). Then **move the original** `processed/<file>` → `<domain>/_sources/<file>` and make the derived note link to it (`[[_sources/<file>]]` or a relative path). For a keep-whole document (a contract PDF), store-and-index: move the original + write a pointer/summary note, don't shred it into facts. File-tools for note edits (`^obs-020`); serialize any derived frontmatter (DIR-004).
-- **Ambiguous path** (spans two domains / unsupported / low confidence): append a short summary item to `INBOX.md` under `## ⚡ Inbox` with a leading hint comment `<!-- file-note <date> · proposed: <domain> · source: _FILE INBOX/processed/<file> -->` and a link to the original; leave the original in `processed/`. The inbox-router files it later.
+- **Ambiguous path** (spans two domains / unsupported / low confidence): append a short summary item to `INBOX.md` under `## ⚡ Inbox` with a leading hint comment `<!-- file-note <date> · proposed: <domain> · source: INBOXES/FILES/processed/<file> -->` and a link to the original; leave the original in `processed/`. The inbox-router files it later.
 
 Then move the staging note to `_extracted/done/`.
 

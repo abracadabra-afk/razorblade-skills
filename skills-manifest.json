@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-10-07T12:00:10.9808097-07:00",
+    "generated":  "2026-10-08T12:00:12.7169469-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -166,23 +166,23 @@
                    {
                        "name":  "file-inbox",
                        "package":  "WORKFLOWS/skills/file-inbox.skill",
-                       "sha256":  "1bffa4972ed269a04e268d93be92ae897aef051d5c1e380db8cb5723cec7ad06",
-                       "content_sha256":  "2dad2dbc050d5bab19a1763a6da8d2ea2c321aa40ee058685c7642a17b715f6f",
-                       "bytes":  5302
+                       "sha256":  "591588908118af9d253b96db2f7b9cef0a2b108fcd16156c882a8b5ad3d3f9fb",
+                       "content_sha256":  "2a0a47b5443a5a947e927251b834d3139ec6f69ac4c71597ac4a702c5672756f",
+                       "bytes":  5304
                    },
                    {
                        "name":  "intent-capture",
                        "package":  "WORKFLOWS/skills/intent-capture.skill",
-                       "sha256":  "04be5d14ab6c087327a8073494b7510a02c8adcedc3f3f016f2e5e83fdc715b5",
-                       "content_sha256":  "ded75ad3d100903cf0ec658a4f4c00b15bc09c1edf7acbdf92c20f481be287b7",
-                       "bytes":  7170
+                       "sha256":  "f10bb6681e3be1ae9176ba58c1183e7cb39bb188eaed33008d210aa77940fc74",
+                       "content_sha256":  "42428b7515a76514394227245f9300d85d48db8bc792400dc8d0d5960cf4e4b2",
+                       "bytes":  7202
                    },
                    {
                        "name":  "interview-me",
                        "package":  "WORKFLOWS/skills/interview-me.skill",
-                       "sha256":  "cf0cb8d73e9477e430767ca359211a049a120737a3e3cf62efd768ac4a704672",
-                       "content_sha256":  "2845dd453d8182b432477fb9454e6747102c37045e4d356748221588e974a55f",
-                       "bytes":  3649
+                       "sha256":  "db19eb32c8a5486e9e5bee9163a04be653efbced2d8fcc6bbfd895efa080a5a7",
+                       "content_sha256":  "058ba221e60b3344c4c7d4970b4ed9296348c6b27356569d01edc90572822c69",
+                       "bytes":  3653
                    },
                    {
                        "name":  "land-chapter",
@@ -201,9 +201,9 @@
                    {
                        "name":  "link-audit",
                        "package":  "WORKFLOWS/skills/link-audit.skill",
-                       "sha256":  "499ca24dd5380155dba435ae2f40f20be579b3d87aa1bf611c0bfd9e4c4ca9ba",
-                       "content_sha256":  "ada685565c8edde5c85332937594a22e574b1d73c8a58588c689a9514a482360",
-                       "bytes":  23586
+                       "sha256":  "6c480b3a3c833d48f5b8eb8b1ffd1b89e02dcc6b3e8b97e7412a7c071ac02c0e",
+                       "content_sha256":  "02df78931142959419ecd51b0dc9eb0b8be97b8182fb67a79a819a47d15b8bda",
+                       "bytes":  40168
                    },
                    {
                        "name":  "log-rotate",

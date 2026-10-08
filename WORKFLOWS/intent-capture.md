@@ -16,7 +16,7 @@ revision_note: v1 — authored 2026-09-03 with interview-me from the two 2026-09
 ## When to use
 CRE wants something built or done and it is still mostly in his head: a new vault skill, a change to a workflow, a tool, a one-shot end-to-end run. He rambles, dictates, or points at a note; this writes the intent down as the first link of the artifact chain (**intent → spec → plan → build**) and derives the prompt the next link runs on. The main consumer is `skill-creator`; `project-plan` and a bare Claude 5 run are the other two targets.
 
-Source: the AI-native SDLC playbook's `intent.md` discovery phase (originator brainstorms with the agent, the agent writes it down, the originator reviews) and the seven Claude 5 prompting rules, both from the 2026-09 clippings in `Clippings/`. Mapped onto the vault: one file per intent, the originator gate, and the house prompt rules in `skills-src/intent-capture/references/prompt-rules.md`.
+Source: the AI-native SDLC playbook's `intent.md` discovery phase (originator brainstorms with the agent, the agent writes it down, the originator reviews) and the seven Claude 5 prompting rules, both from the 2026-09 clippings in `KNOWLEDGE/RESEARCH/CLIPPINGS/`. Mapped onto the vault: one file per intent, the originator gate, and the house prompt rules in `skills-src/intent-capture/references/prompt-rules.md`.
 
 ## The artifact
 `WORKFLOWS/intents/<slug>.md`, from `skills-src/intent-capture/assets/intent-template.md`:

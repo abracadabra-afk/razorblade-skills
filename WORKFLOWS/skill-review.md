@@ -16,7 +16,7 @@ revision_note: v1 scaffold — deterministic linter (scripts/lint_skill.py) buil
 ## When to use
 When CRE wants one skill's **design** judged: is it one unit or two, is its mechanical shell a script or forty lines of prose the model re-derives every run, does its description fire on the right phrases, does it load more than it needs to, and what would break downstream if it changed. Also after a skill run that needed hand corrections — **harvest** mode sorts those into one-time vs forever so the forever ones reach the skill instead of dying with the chat.
 
-Source: the 2026-09-02 review of the *How Anthropic Engineers Prompt Claude Code* clipping (`Clippings/`), mapped onto the vault: skills over prompts, the tools layer is the leverage, composable over monolithic, scripts inside skills, invocation flags, and the compounding loop. Three of those six were already house practice; this skill makes the other three (description precision, invocation control, harvest) recur and adds the two checks the vault needs that the video does not mention — **split cost** and **contract surface**.
+Source: the 2026-09-02 review of the *How Anthropic Engineers Prompt Claude Code* clipping (`KNOWLEDGE/RESEARCH/CLIPPINGS/`), mapped onto the vault: skills over prompts, the tools layer is the leverage, composable over monolithic, scripts inside skills, invocation flags, and the compounding loop. Three of those six were already house practice; this skill makes the other three (description precision, invocation control, harvest) recur and adds the two checks the vault needs that the video does not mention — **split cost** and **contract surface**.
 
 ## The axis it owns (and its neighbors)
 
