@@ -5,7 +5,7 @@ schema_version: 1
 plugin: branch-writing
 plugin_version: 0.9.0
 created: '2026-10-07'
-last_updated: '2026-10-08'
+last_updated: '2026-10-09'
 ---
 
 # Branch Writing — card marker schema, v1
@@ -171,6 +171,30 @@ Word counts, beat-type mix, threads touched, section numbers (1.2.4), soft nesti
   - `backwards`: every payoff comes before the first seed.
   - `orphan`: a payoff with no seed.
 - **Thread walk:** the cards carrying a tag, in story order. A `char:NAME` walk also includes `dialogue` cards whose `speaker` matches NAME.
+
+## 6a. Intensity alignment — design spec (CRE-ratified 2026-10-09, NOT YET BUILT)
+
+The intensity graph today plots hand-set values at two levels and compares endpoints. This section specifies the walk across all levels and the check against the prose. Nothing here changes sections 1–4; every value below is derived or lives in a sidecar, so schema stays v1.
+
+**Principle.** Planned values that agree with each other prove nothing about the prose. Each beat carries three numbers per lane: **target** (planned), **measured** (from the prose), **gap**. Hand-setting is kept to sequence and scene endpoints; beats derive. (Fractal Envelope Model: materialize the upper rungs, check the lower ones.)
+
+**1. Walk up / walk down between set levels (sequence ↔ scene).**
+- *Endpoint check:* first child's start vs the parent's start; last child's end vs the parent's end.
+- *Seam check:* each child's end vs the next child's start. With continuous seams the children's changes sum exactly to the parent's change, so any misalignment is located at a seam or an endpoint.
+- Shown as gap **magnitudes**, never pass/fail. A discontinuity at a scene cut may be deliberate; that is CRE's call. Each lane is checked independently.
+
+**2. Derived beat targets (walk down).** A beat's target is interpolated from its scene's start/end by beat type: `setup/hook` = scene start · `escalation` = rising between · `scene-climax` = the scene's peak (the higher-magnitude endpoint, or a hand value) · `valley` = a dip below the surrounding beats · `outcome/hook` = scene end. Beats of unlisted type interpolate linearly by position. An optional hand override on a beat is stored as ordinary `fields` (`intensity start/end`, `physical start/end` added to the Beat level) and is drawn as an override. The type-to-shape map lives in `settings.intensity.beatShapes` so a template can change it.
+
+**3. Measured values (the silent-failure fix).** A beat's prose is its micro-beats joined in story order.
+- *Physical lane:* computed live in the plugin from the scene-intensity rubric's mechanizable dimensions (D5 somatic load, D6 narration-only pacing surface), rescaled to 0…10. **Does not check:** stakes, proximity or turns. The tooltip says so (DIR-018).
+- *Emotional lane:* an AI pass extending `scene-intensity` to beat scope: magnitude from D1/D2/D4, sign as a new judged call. Evidence-gated as the rubric already requires.
+- *Storage:* never in markers (§6). A sidecar `<board>.measure.json` keyed by card ID, each entry holding the values, the rubric version and a **hash of the prose it read**. Hash mismatch → the measured line draws hollow (stale), never as a current value.
+
+**4. Gap markers.** Planned vs measured is drawn as a ghost line beside the planned line, with a marker where they differ. The tool never edits either side.
+
+**Governing rule (DIR-017 amendment, 2026-10-09).** Revision stage only, never at dictation or as a dictation precondition. A mirror, not a grade: show the gap's size, never pass/fail. On a gap the default is to **move the plan to the prose**; changing the prose is CRE's call alone.
+
+**Build order:** `^backlog-bw-align-walk` → `^backlog-bw-align-beat-targets` → `^backlog-bw-align-measure` → `^backlog-bw-align-gap-markers`.
 
 ## 7. Clean export rules
 
