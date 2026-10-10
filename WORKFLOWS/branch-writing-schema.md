@@ -3,9 +3,9 @@ type: schema
 title: Branch Writing card marker schema
 schema_version: 1
 plugin: branch-writing
-plugin_version: 0.9.0
+plugin_version: 0.13.0
 created: '2026-10-07'
-last_updated: '2026-10-09'
+last_updated: '2026-10-10'
 ---
 
 # Branch Writing — card marker schema, v1
@@ -49,7 +49,7 @@ The card body: plain Markdown, exactly as written.
 | Field | Type | Meaning |
 |---|---|---|
 | `v` | integer | Schema version. Currently `1`. |
-| `kind` | string | A **level key** from the project's `levels` (default `project`, `sequence`, `scene`, `beat`, `micro`), a **custom type key** from `customTypes` (e.g. `flashback`), or a non-structural kind: `note`, `side` (side-note), `variant`, `research`. The last level in `levels` is the prose level; every level above it is a container. In the default template `beat` is a container (type + summary) and `micro` (Micro-beat) holds the prose. Boards made with plugin 0.1 use four levels with `beat` as the prose level; their Project card says so and they keep working. |
+| `kind` | string | A **level key** from the project's `levels` (default `project`, `sequence`, `scene`, `beat`, `micro`), a **custom type key** from `customTypes` (e.g. `flashback`), or a non-structural kind: `note`, `side` (side-note), `variant`, `research`, `idea` (§5a), `cast` (§5b), `arcbeat` (§5c). The last level in `levels` is the prose level; every level above it is a container. In the default template `beat` is a container (type + summary) and `micro` (Micro-beat) holds the prose. Boards made with plugin 0.1 use four levels with `beat` as the prose level; their Project card says so and they keep working. |
 | `depth` | integer ≥ 0 | Tree depth (section 2). |
 | `type` | string | The card's type, from its level's list: `levels[].types` for container levels (default Beat: `conversation`, `action`), `beatTypes` for the prose level (default `action`, `reaction`, `dialogue`, `interiority`, `description`). Any string is kept. |
 | `speaker` | string | Who speaks a `dialogue` card. Used by dialogue export and by `char:` walks. |
@@ -79,7 +79,8 @@ The first card, `kind: "project"`, depth 0, holds the project's settings so they
   ],
   "beatTypes": ["action","reaction","dialogue","interiority","description"],
   "customTypes": [{"key":"character","name":"Character","like":"side","color":"rose","fields":[{"name":"char","desc":"Name","onCard":true,"asTag":true},{"name":"role","desc":"protagonist / main / supporting / antagonist","onCard":true,"asTag":true,"carry":true,"options":["protagonist","main","supporting","antagonist"]},{"name":"flaw","desc":"Internal flaw","carry":true},{"name":"challenge","desc":"Scene-level challenge"},{"name":"coping","desc":"Coping mechanism / behavior","carry":true},{"name":"resistance","desc":"Resistance to change (0–10)","onCard":true,"scale":true,"min":0,"max":10,"carry":true},{"name":"entry state","onCard":true},{"name":"exit state","onCard":true}],"arc":{"key":"char","scale":"resistance","entry":"entry state","exit":"exit state","role":"role"}}],
-  "kindColors": {"side":"stone","note":"stone","research":"stone","variant":"wheat"},
+  "kindColors": {"side":"stone","note":"stone","research":"stone","variant":"wheat","idea":"amber"},
+  "ideaTypes": ["dialogue","beat","scene","twist","image","question"],
   "typeColors": {"action":"rust","reaction":"amber","dialogue":"tide","interiority":"heather","description":"sage"},
   "colorByType": false,
   "tagPrefixes": ["thread:","char:","seed:","payoff:","item:"],
@@ -122,6 +123,7 @@ The first card, `kind: "project"`, depth 0, holds the project's settings so they
   - The **Arc panel** groups cards by key (case-insensitive) in story order on a shared scene axis. It shows entry → exit for each card, the exit → next entry gap between cards, and the scale as one line per character.
   - Observations only: missing entry or exit state, and the scale moving against that character's overall trend.
   - The default template includes **Character** (2026-10-08). Boards made earlier keep their own setup; use Import from… to add it.
+- `ideaTypes`: the type list for `idea` cards (the Idea panel's sort chips). Missing on older boards → the default list.
 - `tagPrefixes`: quick-add prefixes in the Tags dialog, and the order the tag filter groups by. Any prefix is valid in `tags`; these are just offered.
 - `levels[].fields[].asTag`: the field's value also answers as the tag `<field>:<value>` (e.g. `setting:the house`) for filtering and walking. **Derived, never written to `tags`.**
 - **Derived tags.** These are computed and never stored, and they compare case- and space-insensitively:
@@ -158,12 +160,115 @@ A **template** is an ordinary board file containing only a Project card, kept in
   - Dialogue, export, intensity, layout and swatches are replaced only when ticked.
   - Unknown keys survive.
 
+## 5a. Ideas (plugin 0.10, 2026-10-10)
+
+An **idea** is a card with `kind: "idea"`, kept in the board's own file (one inbox per board, CRE-ruled 2026-10-10). Body = the idea text; `type` from `ideaTypes`; `tags` as on any card.
+
+```
+%%bw {"v":1,"kind":"idea","depth":1,"type":"twist","tags":[{"tag":"seed:knife","by":"cre"}]}%% ^k8d2qa
+
+The knife was hers all along.
+
+%%/bw%%
+```
+
+- **Where it is decides its state — no extra field.** Directly under the Project card (or at depth 0 on a board without one) = **in the inbox**. As a child of any other card = **placed** on that card ("in the sequence, not yet in a scene"). Placing is an ordinary move; a placed idea stays with its card when cards are added under that card.
+- **Never in the columns.** An idea with no children shows in the Idea panel (inbox) or in its card's idea tray (placed), never as a column card. An idea that has cards under it (only possible by hand) shows normally, so nothing is hidden.
+- **Side kind:** never exports, not on the main line, not in rollups. Inbox ideas are skipped by the seed check, the walk and the toolbar tag list; placed ideas count in the seed check.
+- **Becoming a card** ("Make it a…") changes `kind` to a level (or a custom type acting like one) in place: a container takes the text as `fields.summary` and an empty body; the prose level keeps the body. `type` is dropped unless the new kind's list has it. Tags carry over. Position: on the level above → stays put; on the same level → next sibling after that card; deeper → after the branch it was in; no parent of the right level → the plugin asks for one.
+- A custom type with key `idea` (suggested as a side type in 0.3) is read as this built-in kind.
+- **AI writers:** may add `by:"ai"` tags to ideas like any card; never create, move, retype or rewrite an idea — the inbox is CRE's.
+
+## 5b. Cast and character profiles (plugin 0.11, 2026-10-10)
+
+A **cast member** is a card with `kind: "cast"` directly under the Project card, one per character, never shown in the columns (the Character panel holds them), never exported, off the main line.
+
+```
+%%bw {"v":1,"kind":"cast","depth":1,"name":"Ashley Vane","aliases":["Ash"],"profile":[{"name":"role","options":["protagonist","main","supporting","antagonist"]},{"name":"flaw"},{"name":"personality","long":true}],"fields":{"role":"protagonist","flaw":"won't ask for help"}}%% ^c4st01
+
+%%/bw%%
+```
+
+- `name` (string) and `aliases` (array of strings, "nicknames" in the panel) are fixed parts of a character, not profile fields.
+- `profile`: **this character's own field list**, same shape as `levels[].fields` plus `long: true` (a bigger text box). Each character can differ. Missing → the starter list (role, tagline, want, need, flaw, wound, personality, voice, appearance, notes).
+- `fields`: the answers, keyed by profile field name. A value whose field was removed from `profile` is kept until cleared.
+- **Names resolve case- and space-insensitively across name + aliases.** A dialogue `speaker` typed in the plugin takes the cast's spelling of that name or nickname (a nickname stays a nickname, since export prints it). A Character card's who-field (`arc.key`) takes the full `name`.
+- **Character card from a profile:** the new arc-type card (Character) gets `fields[arc.key] = name` plus every card-type field whose name matches a profile field (case-insensitive) with a value; carry-forward then fills the rest. Nothing is synced afterwards — the card is a scene snapshot.
+- **Rename:** Character cards whose who-field equals the old full name follow; dialogue speakers equal to the old full name follow only when CRE chooses; nicknames are never rewritten.
+- **Profile templates** are plain notes in `<templates folder>/Characters/` (default `WRITING/BOARD TEMPLATES/Characters/`), shared by every board: frontmatter `type: bw-profile-template` (a fixed literal), a readable field list, and a ```` ```json ```` block `{"v":1,"fields":[…]}` that the plugin reads. A template holds the **field shape only, never a character's answers**. They contain no `%%bw` marker, so they are never listed as board templates. "Apply template" adds missing fields to a character and removes nothing.
+- The cast is planning that happens before the draft. It is separate from StoryLine's Codex and `REFERENCE/` canon, which derive from landed drafts. The plugin never reads or writes either.
+- **AI writers:** never create, edit or delete cast cards or profile templates.
+
+## 5c. Arcs and arc steps (plugin 0.12, 2026-10-10)
+
+A character's arcs live on its cast card: `arcs: [{"id":"arc-k2x9q","name":"Revenge","fields":[{"name":"lie believed"},{"name":"cost","long":true}]}]`. `fields` is the field list **every step of that arc** carries, shaped by CRE.
+
+An **arc step** is a card with `kind: "arcbeat"` that floats like an idea (§5a): under the Project card = unplaced (shown only in the Character panel); under any other card = placed, shown in that card's tray.
+
+```
+%%bw {"v":1,"kind":"arcbeat","depth":3,"cast":"c4st01","arc":"arc-k2x9q","step":2,"label":"Vow","hint":"the promise they make","arcFields":{"lie believed":"I can do it alone"}}%% ^st3p02
+
+Ash swears it at the river.
+
+%%/bw%%
+```
+
+- `cast` = the cast card's block ID; `arc` = the arc's `id`; `step` = position in the arc (1…n, renumbered on every reorder/removal); `label` = the step name ("Vow"); `hint` = optional prompt from a template; body = this character's text for the step; `arcFields` = the step's values. These are kept out of `fields`, so they never collide with a level's fields.
+- **Make it a…** works as for ideas (§5a). The card keeps `cast`/`arc`/`step`/`label`/`arcFields`, so the planner still shows "became Beat in …". A step with no text becomes its label.
+- **Order observation (never a verdict):** a placed step that sits earlier in story order than a lower-numbered placed step is flagged "comes before step N in the story".
+- **Removing an arc** removes its unplaced steps. Placed and converted ones stay as they are, with `cast`/`arc`/`step` cleared. Deleting a character removes its arcs the same way.
+- **Arc templates** are notes in `<templates folder>/Arcs/` (default `WRITING/BOARD TEMPLATES/Arcs/`): frontmatter `type: bw-arc-template` (fixed literal), a readable list, and ```` ```json ```` `{"v":1,"fields":[…],"steps":[{"label","hint"?}]}`. They hold the **structure only** (step labels, hints and the step field list), never a character's text or values. They are independent of character templates (§5b): a character takes a profile template and any number of arcs from arc templates.
+- **Sub-steps (plugin 0.13):** a step can be broken into smaller steps that get from its entry to its exit, to any depth. A sub-step is an ordinary `arcbeat` card with `parentStep` = its step's block ID, and its `step` numbers it among its siblings only. `arcSteps` lists top-level steps (no `parentStep`); numbering reads "2.1", "2.2.1". Sub-steps carry the arc's step fields and are placed, moved, unplaced and promoted independently of their step. **Observation:** a placed sub-step outside the card its parent step is on (or became) is flagged "outside Sequence: …, where step 2 is". Sibling story order is flagged as for steps. Deleting a step removes its unplaced sub-steps and unlinks placed ones (`cast`/`arc`/`step`/`parentStep` cleared). Arc templates nest: `{"label","hint"?,"steps"?:[…]}`.
+- **AI writers:** never create, edit, move or delete arc steps, arcs or arc templates.
+
+## 5d. Eras and life stages (plugin 0.15 stages, 0.16 eras, 2026-10-10)
+
+**Eras** are the story's periods, in time order (CRE-ruled 2026-10-10: story-level eras, with each character's stages mapped to them, so everyone in a scene is consistent). They live on the Project card: `eras: [{"id":"era-k2x9q","name":"1985","label":"the drought years"}, {"id":"era-p4m1z","name":"Present"}]`. Names are unique (any case); `label` is optional free text.
+
+- **A card's era:** any card in the story may carry `"era":"<era id>"`.
+  - On a **top-level card** (a Sequence, directly under the Project card) it **carries forward**: later sequences are in that era until one sets another.
+  - On anything **deeper** (a scene, a beat: a flashback, a memory) it applies to **that card and its subtree only**; the next card is back in the running era with no return marker.
+  - **Era at a card** = the nearest era set on the card or an ancestor, else the last era set on a preceding top-level card, else the **first era** in the list. A board with no eras has no era anywhere.
+- **Aging means a new era** (CRE, 2026-10-10): a character's stage can't change partway through an era; split the era and everyone moves into the new one together.
+- Renaming an era changes only `eras[].name` (cards and characters refer to its id). Deleting one clears `era` from the cards that set it (they fall back to the era around them) and drops characters' mappings to it.
+- **Tags (derived, never stored):** a card that sets an era answers to `era:<name>` as its own tag, so the walk stops there. Every story card answers to its era in force in the filter, so filtering `era:1985` lights the whole period, flashbacks included.
+
+**Life stages** live on the cast card, in the order CRE lists them: `stages: [{"id":"stg-k2x9q","name":"Child","label":"9","aliases":["Ashie"],"fields":{"appearance":"skinned knees","flaw":"afraid of the water"}}, {"id":"stg-p4m1z","name":"Adult"}]`.
+
+- `name` = the stage ("Child"); `label` = optional free-text age; `aliases` = nicknames used in that period; `fields` = **only the profile values that change in this stage**, keyed by profile field name.
+- **Stages by era:** `eraStages: {"<era id>": "<stage id>"}` on the cast card. An era with no mapping **carries the stage of the nearest earlier era that has one**; before any mapping (or on a board with no eras) the character is on the base profile. Deleting a stage drops the eras mapped to it.
+- **0.15 start points:** a stage's `at` ("start" or a block ID) from plugin 0.15 is ignored since 0.16 and kept untouched, like any unknown field.
+- **Values cascade in list order:** base profile `fields`, then each stage's `fields` up to the one in force. A change persists until a later stage changes it again. The base profile is never rewritten by a stage.
+- **Character card from a profile (§5b)** fills from the profile **as of the stage for the target card's era**. A card-type field named `stage` (if CRE adds one) gets the stage's name.
+- **Carry-forward (§ Character cards)** only reads earlier cards **in the same era**, so the scene after a flashback picks up where the present left off. With no eras, it is unchanged.
+- **Names:** stage `aliases` resolve to the character exactly like profile `aliases` (speaker spelling, Character card who-field, walks, Arc tracking). They are not merged into the profile's own `aliases`.
+- **Renaming a profile field** moves its value in every stage too.
+- **Display only, never stored:** the "⏳ 1985" chip on a card that sets an era ("· only here" below top level), Arc tracking's "1985 — Child · 9" dividers, the dashed era-change lines on the resistance chart, and one scale line per era.
+- **Profile templates (§5b)** may carry `"stages":["Child","Adult"]` in their JSON block: stage names only, never values, ages, nicknames or era mappings. A character made from the template, or given it with "Apply template", gets any of those stages it lacks (matched by name, any case), empty.
+- **AI writers:** never create, edit or delete eras, a card's era, stages or era mappings.
+
+## 5e. Events (plugin 0.17, 2026-10-10)
+
+Phase 2 of eras → events → relationships (CRE-ruled 2026-10-10). Events live on the Project card: `events: [{"id":"evt-k2x9q","type":"born","era":"<era id>","who":["<cast id>"],"parents":["<cast id>","<cast id>"],"at":"sce042","note":"in the flood year"}]`.
+
+- **Types:** four built-ins, fixed: **born** and **died** (one person), **married** and **separated** (two people). CRE's own types live in `eventTypes: [{"name":"turned","people":1,"begins":"vampire"}, {"name":"cured","people":1,"ends":"vampire"}]`. Names are unique (any case, built-ins included). Renaming a type moves its events; a type in use can't be removed.
+- **Where an event sits:** every event belongs to an era (`era`). Without `at` it is **off the page**. With `at` (a block ID) it is **pinned** to the card where it happens, and pinning sets `era` to that card's era. Within an era, events keep their list order.
+- **parents** (births only): up to two cast ids. Phase 3 derives parent/child links from these.
+- **Existence (derived):** a character with a `born` event exists from that point on, and one with `died` until that point. With neither, they exist in every era. Between eras the comparison is by era order. Inside one era it is by **file order**, and only when both sides are pinned to cards; otherwise "same era" counts as alive. Known limit: a same-era flashback placed later in the board than a pinned death reads as after it. Splitting the era resolves it.
+- **States (derived):** a type's `begins`/`ends` turns a named state on and off for the people in it, walking eras in order (like the Ledger's gained/lost).
+- **Observations (never verdicts):** a type that doesn't exist; someone no longer in the cast; too few people for the type; a pinned card that was deleted or now sits in another era; born or died more than once; dies before being born; someone in a non-birth event who isn't born yet or has died by then; a birth whose parent isn't born yet, died before it, or is the child; ending a state they aren't in. Arc tracking flags a Character card for someone not born yet or already dead at that card.
+- **Removals:** deleting a character removes events they're in and drops them from births' `parents`. Deleting an era removes its events.
+- **Display only, never stored:** the "✦ Wren born" chip on a pinned card, Life events under each character, the Eras tab's event lines, and "(not born yet)" / "(died)" beside names.
+- **AI writers:** never create, edit, pin or delete events or event types.
+
 ## 6. Derived values (never stored)
 
 Word counts, beat-type mix, threads touched, section numbers (1.2.4), soft nesting warnings, and seed-check statuses are all computed when displayed. **Never write a rollup into a marker.** A stored count goes stale the moment a beat changes.
 
 - **Rollup:** words and prose-card count under a container, the prose type mix, threads touched, and the list of its direct container children with their types (e.g. a scene's beats: conversation, action).
-- **Main line:** every card except custom side types (`like: "side"`) and `note` / `side` / `variant` / `research` cards and everything under them.
+- **Eras and life stages (§5d):** the era at a card, `era:` tags, the stage for an era, the cascaded profile, the era chips and the Arc tracking dividers are computed when displayed.
+- **Events (§5e):** existence, states, observations and the event chips are computed when displayed.
+- **Main line:** every card except custom side types (`like: "side"`) and `note` / `side` / `variant` / `research` / `idea` / `cast` / `arcbeat` cards and everything under them.
 - **Chapter:** a card's chapter is the nearest `fields.chapter` on itself or an ancestor.
 - **Seed check:** pairs `seed:NAME` and `payoff:NAME` tags by NAME (case-insensitive), in story order.
   - `paid`: a payoff comes after the first seed.
