@@ -3,7 +3,7 @@ type: schema
 title: Branch Writing card marker schema
 schema_version: 1
 plugin: branch-writing
-plugin_version: 0.13.0
+plugin_version: 0.25.0
 created: '2026-10-07'
 last_updated: '2026-10-10'
 ---
@@ -49,7 +49,7 @@ The card body: plain Markdown, exactly as written.
 | Field | Type | Meaning |
 |---|---|---|
 | `v` | integer | Schema version. Currently `1`. |
-| `kind` | string | A **level key** from the project's `levels` (default `project`, `sequence`, `scene`, `beat`, `micro`), a **custom type key** from `customTypes` (e.g. `flashback`), or a non-structural kind: `note`, `side` (side-note), `variant`, `research`, `idea` (§5a), `cast` (§5b), `arcbeat` (§5c). The last level in `levels` is the prose level; every level above it is a container. In the default template `beat` is a container (type + summary) and `micro` (Micro-beat) holds the prose. Boards made with plugin 0.1 use four levels with `beat` as the prose level; their Project card says so and they keep working. |
+| `kind` | string | A **level key** from the project's `levels` (default `project`, `sequence`, `scene`, `beat`, `micro`), a **custom type key** from `customTypes` (e.g. `flashback`), or a non-structural kind: `note`, `side` (side-note), `variant`, `research`, `idea` (§5a), `cast` (§5b), `arcbeat` (§5c), `world` (§5h). The last level in `levels` is the prose level; every level above it is a container. In the default template `beat` is a container (type + summary) and `micro` (Micro-beat) holds the prose. Boards made with plugin 0.1 use four levels with `beat` as the prose level; their Project card says so and they keep working. |
 | `depth` | integer ≥ 0 | Tree depth (section 2). |
 | `type` | string | The card's type, from its level's list: `levels[].types` for container levels (default Beat: `conversation`, `action`), `beatTypes` for the prose level (default `action`, `reaction`, `dialogue`, `interiority`, `description`). Any string is kept. |
 | `speaker` | string | Who speaks a `dialogue` card. Used by dialogue export and by `char:` walks. |
@@ -261,6 +261,101 @@ Phase 2 of eras → events → relationships (CRE-ruled 2026-10-10). Events live
 - **Display only, never stored:** the "✦ Wren born" chip on a pinned card, Life events under each character, the Eras tab's event lines, and "(not born yet)" / "(died)" beside names.
 - **AI writers:** never create, edit, pin or delete events or event types.
 
+## 5f. Relationships (plugin 0.18, 2026-10-10)
+
+Phase 3 of eras → events → relationships. **One cast per board** (default taken 2026-10-10 because CRE hadn't ruled on it; a cast shared across boards for multi-book lineage would be its own build).
+
+- **Kinship is derived, never stored:**
+  - A `born` event's `parents` (§5e) make parent/child.
+  - A shared parent makes siblings, and **half-siblings** when they share exactly one and either has another known parent.
+  - Grandparents and grandchildren follow from parents.
+  - Only a character's first `born` event counts.
+- **Marriages** come from `married` events. One ends at a later `separated` event between the same two people (any order of names), and reads as **former spouse** from then on.
+- **Hand-made links** live on the Project card: `relations: [{"id":"rel-k2x9q","type":"mentor","a":"<cast id>","b":"<cast id>","from":"<era id>","to":"<era id>","note":"after the fire"}]`. They read "**a** is **b**'s *type*" (Bram is Wren's mentor). `from`/`to` bound the eras it holds in, inclusive; absent means from the start / to the end. A link needs two different cast members.
+- **Types:** `relationTypes: [{"name":"mentor","inverse":"student"}, {"name":"rival"}]`, written only once CRE edits the starter list (friend, rival, lover, enemy, mentor→student, guardian→ward). `inverse` is what the other side is called; absent means the same both ways. Names are unique. Renaming a type moves its links; a type in use can't be removed.
+- **At a card** (the Relationships tab follows the board selection):
+  - characters not born yet or already dead (§5e) are listed separately;
+  - a child, grandchild or sibling counts once born;
+  - a marriage counts from the wedding (before it, nothing; after a separation, former spouse);
+  - a link counts inside its eras;
+  - a dead relative is marked "died".
+  - **Whole story** shows every tie with its eras ("married in 1960, separated in Present", "from 1985").
+- **Family tree (derived):**
+  - generation = one more than the deepest known parent; a spouse with no known parents sits in their partner's generation;
+  - rows place spouses side by side and children under their parents;
+  - a separated couple's line is dashed, and † marks someone with a `died` event;
+  - cast members with no family ties are listed as "Not in the tree".
+- **Observations (never verdicts):** someone their own ancestor; a link with an unknown type, a missing person, the same person twice, a deleted era, or an end before its start; two linked people who both appear on the board (Character cards or dialogue) but never in the same scene.
+- **Removals:** deleting a character removes their links. Deleting an era clears it from any link's `from`/`to` (that side becomes open).
+- **AI writers:** never create, edit or delete relationship links or types.
+
+## 5g. Books (plugin 0.19, 2026-10-10)
+
+CRE's design (2026-10-10): a **Book** level above Sequence, so one board holds a whole series and every book shares the one Project card's cast, eras, events and relationships. This replaced the queued "cast shared across boards".
+
+- **The level:** `{"key":"book","name":"Book","fields":[summary],"export":"nothing","heading":1,"color":"amber"}`, inserted at `levels[1]` of the Project card's settings. Levels become Project → Book → Sequence → Scene → Beat → Micro-beat. A board gets it once, from the Project card's **Add Book level…** button. That button moves every story card directly under the Project card (not cast, ideas or side cards) into a new Book card titled "Book 1", in order, and leaves the text and the clean export unchanged. A Book is an ordinary structural card (`kind: "book"`); a card added below one is another Book.
+- **A book's name:** its first line, else its summary, else "Book N" by position.
+- **Chapters restart per book.** A chapter is identified as `"<book name> · <chapter>"` (the Chapter filter reads "The Return · Chapter 1"). Group by chapter keeps books apart, and export starts each book's chapter count afresh.
+- **Eras (§5d) carry from every level above Scene:** an era set on a Book or a Sequence carries forward in story order until a later Book or Sequence sets another. One set on a Scene or below applies only there. The era at a card is its own era, else the nearest scene-level era above it, else the latest Book/Sequence era before it, else the first era. On a board without books this is the 0.16 rule unchanged.
+- **Tags (derived):** a Book card answers to `book:<name>`, so the walk stops at books, and every card answers to its book's tag in the filter.
+- **Showing one book** is a view setting (the toolbar's Book selector), never stored. It hides the other books' cards; the Project card and off-board cards stay. Arc tracking (its scene axis and rows), the intensity graph and Copy/Export clean follow it. An export of one book is written as `<board> - <book> (clean).md`. Selecting a card in a hidden book (walk, link, panel jump) switches to its book.
+- **Scale (measured 2026-10-10, Windows):** a full-prose trilogy (4,350 cards, 1.5 MB) parses, serializes, resolves eras and exports in milliseconds. Drawing the board is the cost: about 2 s per redraw with all books shown, about 0.7 s with one book. A planning-depth trilogy (about 900 cards) redraws in about 0.5 s with all books, 0.3 s with one.
+- **AI writers:** never add the Book level, or create, retitle, move or delete Book cards.
+
+## 5h. World entries (plugin 0.21, 2026-10-10)
+
+The story world beside the cast, on one model: places first (0.21), items and system kinds (0.24), CRE's own kinds (0.25). A **world entry** is a card with `kind: "world"` directly under the Project card, never in the columns (the World panel holds it), never exported, off the main line.
+
+```
+%%bw {"v":1,"kind":"world","depth":1,"wkind":"place","name":"The Mill","aliases":["the old wheel"],"parent":"w0harr","profile":[{"name":"type","onCard":true},{"name":"description","long":true}],"fields":{"type":"mill"},"byEra":{"era-p4m1z":{"name":"The Burnt Mill","fields":{"type":"ruin"},"parent":""}}}%% ^w0mill
+
+%%/bw%%
+```
+
+- `wkind`: the entry's kind, a key from the board's world kinds (§5k): `place`, `item`, `faction`, `religion`, `polity`, `magic`, or one of CRE's own.
+- `name` and `aliases`: fixed parts of the entry, as for a cast member (§5b). `profile` and `fields`: its own field list and values, same shape as a cast profile; missing `profile` → the kind's starter fields.
+- **Changes by era, keyed straight to the story's eras:** `byEra: {"<era id>": {"name"?, "aliases"?, "fields"?: {…}, "parent"?}}` holds, per era, only what changes. **Values cascade in era order:** base, then each era's changes up to the era asked about; an era with no entry carries. The base is never rewritten by an era. (Characters keep their life stages mapped to eras, §5d; this is the same idea without the named stage in between.)
+- **Nesting** (kinds with `tree: true`, places): `parent` is the entry it sits in at the base; a `byEra[...].parent` overrides it from that era on, `""` meaning "nothing from here on" (top level). What a place sits in can therefore change by era. Loops are observed (`worldFlags`), never broken.
+- **Links from cards:** a story card links to entries by id, `world: ["w0mill"]`. Dropping an entry on a card adds the id and, when the kind names a `field` the card's level has, fills that field with the entry's **name as of the card's era** (a place fills a scene's `setting`; an item fills a tracker card's `item`). A card whose kind-field already names an entry (any of its names) counts as **linked by name**, so older boards and hand-typed settings show up without a rewrite; such a link draws as a dotted chip.
+- **Tags (derived, never stored):** a linked card's own tag is `<prefix><base name>` (`place:the mill`), so the walk stops where the entry is set. In the filter it also answers to every name the entry has had and to everything it sits in as of the card's era (`place:harrow`), carried down to the cards underneath; the Tag filter offers the ancestors too.
+- **Renaming** an entry (base or era name) renames the kind-field on cards linked by id whose field held the old name; a field that only matched by name is left alone. **Deleting** an entry drops its links (clearing a field that named it), lifts entries nested in it to the top level, and takes its own events and ties (§5i, §5j).
+- **Templates** per kind are notes in `<templates folder>/<Plural>/` (`WRITING/BOARD TEMPLATES/Places/`): frontmatter `type: bw-world-template` + `kind: <key>`, a readable field list, and ```` ```json ```` `{"v":1,"kind":"place","fields":[…]}`. Field shape only, never an entry's values.
+- **Display only:** the "📍 The Old Mill (The Mill)" chip (base name in brackets when the era renames it), its tooltip's "in Harrow › Vermont", the tree per era, Through the story grouped by era, and every observation (a parent that is gone or loops; a card in a place that isn't built yet or is destroyed by then, §5i).
+- **AI writers:** never create, edit, move, rename or delete world entries, their changes by era, their nesting or their links on cards.
+
+## 5i. Lore events and history-only eras (plugin 0.22, 2026-10-10)
+
+Events (§5e) become world history: about any entries, or nobody; spanning eras; mentioned by cards.
+
+- **Subjects:** `who` may hold cast ids, world entry ids, or nothing. Built-in types: **born**, **died**, **married**, **separated** (characters) and, new, **built** and **destroyed** (places and things). CRE's own types take `people: 0 | 1 | 2` (0 = a war, a flood: nobody in particular) and are about anything. A character in a place-type event, or a place in a people-type event, is an observation, never refused.
+- **Existence** is derived for any entry: born/built = exists from there on, died/destroyed = gone after. A card in a place that isn't built yet or is destroyed by then carries the observation ("The Mill is destroyed by here (destroyed in 1985)") on its chip and in Through the story.
+- **Lore:** `name` ("The Flood War") is shown instead of "<who> <type>". `until` (an era id) makes the event span its era through that one inclusive; a state a spanning event begins holds while it runs and lets go after its last era. Ending before starting is an observation.
+- **Mentions:** a card lists events it refers to without them happening there: `events: ["evt-k2x9q"]` on the card (card menu → Mentions). Pinned stays `at` on the event (§5e). Each event lists the cards that mention it; a mentioned event draws as a dashed "↗" chip.
+- **History-only eras:** `history: true` on an era (§5d). The story starts in the **first era that isn't history**; cards with no era of their own default to it, and the Eras tab marks "the story starts here". A history era is reached only by setting it on a card (a myth, a flashback).
+- **Removals:** deleting an entry removes the unnamed events it is in (as before for characters) and only drops it as a subject from a named lore event. Deleting an era removes events starting in it, opens the end of events running until it, and drops world entries' changes keyed to it.
+- **Display only:** the Eras tab's timeline (one band per era, history hatched; marks per event, bars for spans), "… The Flood War (since 1870)" under later eras, the "↗" chips, existence notes.
+- **AI writers:** never create, edit, pin, mention or delete events, nor mark an era history.
+
+## 5j. Ties between any entries (plugin 0.23, 2026-10-10)
+
+Hand-made links (§5f `relations`) join any two entries: `a` and `b` may be cast ids or world entry ids. Same fields (`type`, `from`, `to`, `note`), same reading ("a is <type> of b"; world types read plainly: "Bram rules Harrow", "Harrow borders Vermont").
+
+- **Types:** the starter list gains, for places and systems, `borders`, `rules → ruled by`, `member of → has member`, `holds → held by`, `allied with`, `at war with`, each marked `"for": "world"`. A `for: "world"` type is offered once a world entry is on either side; two characters see the people types only. CRE's own types take the mark too (the "places & systems" switch).
+- **At a card:** a tie counts inside its eras, as before; a world entry's row sits after the people's. A tie whose side isn't built yet or is destroyed by then is held back like an unborn or dead character's.
+- **Observations:** unknown type, a side no longer on the board, the same one twice, an era gone, ending before starting. "Never share a scene" is checked for two characters only.
+- Deleting an entry removes the ties it is in. Kinship and the family tree stay about characters.
+- **AI writers:** never create, edit or delete ties or tie types.
+
+## 5k. Items, system kinds and CRE's own kinds (plugin 0.24–0.25, 2026-10-10)
+
+The **world kinds** a board uses live in its settings: `worldKinds: [{key, name, plural?, color?, prefix?, field?, tree?, ledger?, group?, icon?, fields?, builtin?}]`, read as *what is stored, plus any built-in kind the board doesn't name unless it is listed in `worldKindsOff`*. So a board saved before a new built-in shipped still gets it, and switching a built-in off sticks.
+
+- **Built-ins:** `place` (prefix `place:`, fills `setting`, nests), `item` (`item:`, fills `item`, `ledger: true`), and the system kinds `faction`, `religion`, `polity`, `magic` (`faction:` … `magic:`, `group: "systems"` — one shared tab). Starter field lists are short (type, description, notes) and each entry's fields are its own afterwards.
+- **Items and the Ledger:** an item entry's Through the story also shows, by name, the Ledger rows (§5 tracker types) whose thing matches any of its names: lore above (the profile), possession history below. Dropping an item on a tracker card fills its `item` field; on a scene it links by id. Both answer to `item:<name>` as the Ledger already did.
+- **Systems** carry their weight in ties (§5j): who is member of what, who rules which place, from which era until which.
+- **Own kinds (0.25):** Project settings → World kinds: name, plural, colour, tag prefix (`ship:`), the card field a drop fills, a group, nests, ledger, starter fields; `key` is set once from the name and never changes. A kind with entries on the board can't be removed; removing a built-in adds it to `worldKindsOff`. Import from… adds the source's own kinds this board lacks (never replaces one). Templates per kind follow the plural (`WRITING/BOARD TEMPLATES/Ships/`).
+- **AI writers:** never add, edit or remove world kinds.
+
 ## 6. Derived values (never stored)
 
 Word counts, beat-type mix, threads touched, section numbers (1.2.4), soft nesting warnings, and seed-check statuses are all computed when displayed. **Never write a rollup into a marker.** A stored count goes stale the moment a beat changes.
@@ -268,7 +363,10 @@ Word counts, beat-type mix, threads touched, section numbers (1.2.4), soft nesti
 - **Rollup:** words and prose-card count under a container, the prose type mix, threads touched, and the list of its direct container children with their types (e.g. a scene's beats: conversation, action).
 - **Eras and life stages (§5d):** the era at a card, `era:` tags, the stage for an era, the cascaded profile, the era chips and the Arc tracking dividers are computed when displayed.
 - **Events (§5e):** existence, states, observations and the event chips are computed when displayed.
-- **Main line:** every card except custom side types (`like: "side"`) and `note` / `side` / `variant` / `research` / `idea` / `cast` / `arcbeat` cards and everything under them.
+- **Relationships (§5f):** kinship, marriages, ties at a card, the family tree and its generations are computed when displayed.
+- **Books (§5g):** a card's book, book-qualified chapters, `book:` tags and the one-book view are computed when displayed.
+- **World (§5h–§5k):** an entry as of an era (the cascade), the tree per era, links by name, `place:` / `item:` / `faction:` … tags and the ancestors a card answers to, Through the story, an item's possession history, existence notes on chips, the timeline, spans and "still running" lines, ties at a card, and every world observation are computed when displayed.
+- **Main line:** every card except custom side types (`like: "side"`) and `note` / `side` / `variant` / `research` / `idea` / `cast` / `arcbeat` / `world` cards and everything under them.
 - **Chapter:** a card's chapter is the nearest `fields.chapter` on itself or an ancestor.
 - **Seed check:** pairs `seed:NAME` and `payoff:NAME` tags by NAME (case-insensitive), in story order.
   - `paid`: a payoff comes after the first seed.
