@@ -3,9 +3,9 @@ type: schema
 title: Branch Writing card marker schema
 schema_version: 1
 plugin: branch-writing
-plugin_version: 0.25.0
+plugin_version: 0.36.0
 created: '2026-10-07'
-last_updated: '2026-10-10'
+last_updated: '2026-10-11'
 ---
 
 # Branch Writing — card marker schema, v1
@@ -126,6 +126,7 @@ The first card, `kind: "project"`, depth 0, holds the project's settings so they
 - `ideaTypes`: the type list for `idea` cards (the Idea panel's sort chips). Missing on older boards → the default list.
 - `tagPrefixes`: quick-add prefixes in the Tags dialog, and the order the tag filter groups by. Any prefix is valid in `tags`; these are just offered.
 - `levels[].fields[].asTag`: the field's value also answers as the tag `<field>:<value>` (e.g. `setting:the house`) for filtering and walking. **Derived, never written to `tags`.**
+- `levels[].optional` (0.32): the level may be skipped — a card may sit directly under the level above it with no nesting warning (Book and Part also count as optional by key; §5l).
 - **Derived tags.** These are computed and never stored, and they compare case- and space-insensitively:
   - a dialogue card's `speaker` → `char:<speaker>`
   - an `asTag` field → `<field>:<value>`
@@ -138,6 +139,7 @@ The first card, `kind: "project"`, depth 0, holds the project's settings so they
   - `types` empty means "use the level's list".
   - `key` is set once from the name ("Flashback" → `flashback`) and never changes.
   - **Tracker types:** `tracks` names the field holding the tracked thing (e.g. `"item"`), `holder` the field naming who has it after the event, and `effects` maps each change (the card's `type`) to `gain`, `lose`, `transfer` (to the holder), `use` or `none`. Starter set: gained → gain, lost → lose, spent → lose, given → transfer, used → use. `types` mirrors the keys of `effects`.
+    - **The default template includes an Item tracker (plugin 0.31):** `{"key":"item","name":"Item","like":"side","color":"wheat","tracks":"item","holder":"holder","types":["gained","lost","spent","given","used"],"effects":{"gained":"gain","lost":"lose","spent":"lose","given":"transfer","used":"use"},"fields":[{"name":"item","desc":"What is tracked","onCard":true},{"name":"holder","desc":"Who has it after this","onCard":true,"cast":true,"who":"any"}]}`. Boards made earlier keep their own setup; the Items tab offers **Add the Item tracker type** (it appends this type to the stored `customTypes`, touching nothing else), or use Import from…. A holder field created by "Tracks a thing" carries `cast: true, who: "any"` (0.31), so it is picked from the cast and the world on the card as in the panel.
     - The **Ledger** groups each type's cards by thing (case-insensitive) in story order and replays the effects. It ends on held / not held and the holder.
     - Its observations are never verdicts: lose or transfer with nothing held, gain while already held (by the same holder), use while not held, use by someone other than the holder, no change set.
     - Example event: `{"kind":"item","type":"spent","fields":{"item":"Sword","holder":"Bram"}}`, placed as a child of the card where it happens.
@@ -221,6 +223,8 @@ Ash swears it at the river.
 - **Sub-steps (plugin 0.13):** a step can be broken into smaller steps that get from its entry to its exit, to any depth. A sub-step is an ordinary `arcbeat` card with `parentStep` = its step's block ID, and its `step` numbers it among its siblings only. `arcSteps` lists top-level steps (no `parentStep`); numbering reads "2.1", "2.2.1". Sub-steps carry the arc's step fields and are placed, moved, unplaced and promoted independently of their step. **Observation:** a placed sub-step outside the card its parent step is on (or became) is flagged "outside Sequence: …, where step 2 is". Sibling story order is flagged as for steps. Deleting a step removes its unplaced sub-steps and unlinks placed ones (`cast`/`arc`/`step`/`parentStep` cleared). Arc templates nest: `{"label","hint"?,"steps"?:[…]}`.
 - **AI writers:** never create, edit, move or delete arc steps, arcs or arc templates.
 
+- **Links (0.34):** a step card may also be a step of other arcs through `links: [{cast, arc, step, label?}]`; every arc listing reads both, and a step's number is read per arc. Beats, the form that makes them, and the rest live in §5n.
+
 ## 5d. Eras and life stages (plugin 0.15 stages, 0.16 eras, 2026-10-10)
 
 **Eras** are the story's periods, in time order (CRE-ruled 2026-10-10: story-level eras, with each character's stages mapped to them, so everyone in a scene is consistent). They live on the Project card: `eras: [{"id":"era-k2x9q","name":"1985","label":"the drought years"}, {"id":"era-p4m1z","name":"Present"}]`. Names are unique (any case); `label` is optional free text.
@@ -242,6 +246,17 @@ Ash swears it at the river.
 - **Editing:** "inside" on the add row and a "sits inside" select on each era (Eras tab); an era can't sit inside itself or its own sub-era. Moving earlier/later stays among the eras at the same level and takes the block along; re-parenting moves the block to the end of the new parent (or, to the top level, after the era it was in). Deleting a parent moves the eras inside it up a level and keeps them; cards set to them are untouched.
 - **Display only:** the Eras tab indents sub-eras and numbers them 2.1, 2.2; the timeline draws them as shorter bands; the card chip, Arc tracking's dividers and the walk read "Winter 1986 · Teenage years".
 - **AI writers:** never create, re-parent, move or delete eras.
+
+**The Visuals pane (plugin 0.28, 2026-10-11; CRE's call: drawings below the board, inputs in the side panel).** One pane under the board, four tabs: **Timeline** (eras, sub-eras, events), **Family tree**, **Arc tracking** (the resistance chart and the per-character chains) and **Intensity** (the former Intensity graph view, which still opens if a saved workspace has one and offers the way over). The Characters panel keeps every input — era rows, events, stages, cast, links, types — and each tab that used to draw there now carries an "Open Visuals" row instead; the Arc tracking tab keeps the chains without the chart. Links run both ways: a timeline band opens that era's row, a tree name opens that character, a chart dot jumps to its card; the pane follows the board you're on and redraws on changes and on resize. Toolbar button (the pulse icon) and commands "Visuals pane", "Timeline", "Family tree", "Intensity graph". View only; nothing in the file.
+
+**Structures (plugin 0.29, 2026-10-11; CRE's design: a system or an organisation as a hierarchy, roles held by characters, changing over time).**
+- **Kinds inside kinds.** A world kind may carry `within: ["faction","religion","polity"]`: the kinds its entries can sit inside besides their own (`tree` still means "inside its own kind"). An entry's `parent` may then point at an entry of any allowed kind, in the base and per era as before. A parent of a kind not allowed is flagged, never moved. The tree a kind's tab draws is that kind's entries with everything inside them, of any kind, each entry under its own kind's colour and badge; an entry also lists on its own kind's tab, as a root. Tags: an ancestor answers under its own prefix (`faction:the crown` on a card linked to a role in it). Nesting is set in Project settings → World kinds ("sits inside"); a newly added kind can be picked once saved.
+- **Built-in Role.** `{"key":"role","name":"Role","plural":"Roles","color":"ember","prefix":"role:","group":"systems","within":["faction","religion","polity"],"fields":[{"name":"held by","onCard":true,"cast":true},{"name":"duties","long":true},{"name":"notes","long":true}]}`. Boards saved before 0.29 gain it like any built-in (switch it off in Project settings if unwanted).
+- **Holder fields.** A profile field with `cast: true` names someone: the value is stored as the name and changes by era through `byEra` like any field. **0.30:** `who` says what it may name — `"cast"` (characters, the default), `"world"` (any world entry: a house, a guild), `"any"` (either; characters resolve first) — and `many: true` allows several, stored comma-separated (`"held by": "Bram, House Vane"`; a name can't contain a comma). The panel draws a single-name field as a picker and a `many` field as chips with an add list; an era row with no list of its own shows the carried names greyed, and the first add starts from them. Each name is resolved like any character or entry name (nicknames and era names included); a name that resolves to nothing, or to someone not born / not built yet or dead / destroyed in that era, is flagged on the entry. **Holds** appears under a character and (0.30) under a world entry: every entry whose holder field names them, with the eras as runs ("1985 → Present"). The built-in Role's "held by" is `who: "any", many: true`; any kind's field may be a holder field (a Place's "steward", a Spell's "taught by").
+- **Visuals → Structures.** The chart of a kind's entries (a faction, a magic system) with what sits inside, as of an era: boxes by depth, children centred under their parent, the holders of a holder field named in the box ("vacant" when none; an unresolved name marked "?"). Click a box for the entry, a name for the first holder. Display only.
+- **AI writers:** never set `within`, `cast`, `who`, `many`, a `parent`, or a holder field's value.
+
+**An event's era (0.28):** the open event row has an **in** select beside **until** (sub-eras indented in both). Picking another era moves the event there, keeping its place among that era's events last; an event pinned to a card whose era isn't the new one comes **unpinned** (it stays off the page in the new era). Dragging onto a card still pins it and sets its era to the card's.
 
 **Life stages** live on the cast card, in the order CRE lists them: `stages: [{"id":"stg-k2x9q","name":"Child","label":"9","aliases":["Ashie"],"fields":{"appearance":"skinned knees","flaw":"afraid of the water"}}, {"id":"stg-p4m1z","name":"Adult"}]`.
 
@@ -313,6 +328,63 @@ CRE's design (2026-10-10): a **Book** level above Sequence, so one board holds a
 - **AI writers:** never add the Book level, or create, retitle, move or delete Book cards.
 - **The Project card has no column (plugin 0.26, 2026-10-11; CRE's call).** View only, nothing in the file changes: while the Project card is the only card at depth 0, the board starts at the first level under it, and the toolbar carries the project's name (its body's first line; click to rename, the rest of the body is kept), the whole-board rollup, and a **Project menu** on the gear (Rename project…, Project settings…, Save as template…, Import from…, Add Book level…). A board with other depth-0 cards (hand-edited) still draws column 0 with the card in it. The card can't be the selection while hidden: a new board opens on the first story card, left-arrow from a top-level card stays put.
 
+## 5l. Parts (plugin 0.32, 2026-10-12)
+
+CRE's call (2026-10-12): the level between Book and Sequence was missing — the container his dev pipeline already calls a **part** (`shape-the-part`: parts/sequences → scenes, chapters cut last). Built the way Books were: optional, one click, nothing in the file format changes.
+
+- **The level:** `{"key":"part","name":"Part","fields":[summary],"export":"heading","heading":1,"color":"rust","optional":true}`, inserted directly above Sequence — below Book when the board has books. A board gets it once, from **Add Part level…** in the toolbar's Project menu. It moves every story card under the Project card (or under each Book) that belongs below the new level into a new Part card titled "Part 1", in order; side cards, ideas and the cast stay. An empty board gets an empty Part 1 to build under, so nine parts can be laid down before any sequence. A Part is an ordinary structural card (`kind: "part"`); a card added below one is another Part. Rename the level ("Act") in Project settings.
+- **A part's name:** its first line, else its summary, else "Part N" by position among the parts beside it.
+- **A Part owns nothing of its own.** Chapters run straight through the parts (they restart per book, §5g); there is no one-part view and no `part:` tag (the Kind filter lights every Part). What it carries is what every level above Scene carries: an **era** set on it runs forward until a later Part or Sequence sets another (§5d), its **rollup** counts what is under it and lists its sequences, and it **exports as a heading** by default — "Part One" above its chapter headings; set Export: nothing on the level to keep parts out of the manuscript.
+- **`optional` on a level (new, any level):** a card may sit directly under the level above an optional one, skipping it, with no nesting warning. Book and Part count as optional by key as well, so a board that added its Book level before 0.32 behaves the same. That is where a **prologue or epilogue** lives: a Sequence straight under the Project (or Book), above Part 1 or after the last part — Ctrl/Cmd+← pulls one out of Part 1. Skipping Sequence or Scene still warns.
+- **Prologue and Epilogue card types** (`customTypes`, keys `prologue` / `epilogue`, `like: "sequence"`, `export: "heading"`, colour olive) are added to the board's settings with the Part level when it lacks them. A titleless one exports headed by its type name ("# Prologue"); a titled one by its title.
+- **Project settings (0.32):** each level row has Move up / Move down arrows (the structure can be reordered; cards keep their kind) and a **may be skipped** toggle (`optional`). Before this, "Add level above the prose level" was the only way in and it always landed the new level directly above Micro-beat.
+- **AI writers:** never add the Part level, or create, retitle, move or delete Part cards.
+
+## 5m. The board mark and board names (plugin 0.33, 2026-10-12)
+
+CRE's finding (2026-10-12): renaming the project left the tab reading "Untitled board 12", and nothing in the file explorer told a board from a note. Two small changes, one to the file.
+
+- **The board mark:** one frontmatter line, `board: branch-writing`. The plugin writes it when a board is **created** (in front of the markers) or a note is **converted** (into the note's frontmatter, as its last line, else a new block in front), and on request for boards made earlier: the command **Mark boards for the explorer** adds it to every board in the vault that lacks it and reports the count (a board open in a card view is changed through its view, so its undo and unsaved edits survive). **Opening never adds it:** a board without the line still opens as a board and saves byte-identical until it is edited. The parser treats the line as preamble, like any frontmatter (§1); nothing else reads it. It is the one thing Obsidian's own metadata cache can see, so Dataview, search and any other tool can tell boards apart too.
+- **The explorer icon:** the file explorer shows the board icon (the same columns icon as the tab) beside every note whose cached frontmatter carries the mark, and beside any board opened, created or marked this session (a set the plugin keeps, not stored). Plugin setting **Board icon in the file explorer** (on by default) switches it off. Decoration only — rows get a class and a span, nothing is written.
+- **Board names:** New board (ribbon, command, folder menu, from a template) asks for a name first; it becomes the **file name** (Obsidian's forbidden characters dropped, a taken name numbered) and the **Project card's first line** as typed. Empty, or the API without a name, gives "Untitled board N" as before. **Rename project…** now renames the file to follow: at once when the file was named for the old title or still "Untitled board N", after asking when the file had been renamed by hand; a name already in use leaves the file alone and says so. Links follow (Obsidian's own rename). The tab reads the file name, so the two now agree.
+- **Prompts** (0.33): every text prompt has a Cancel beside Save; Escape still cancels.
+- **AI writers:** may read the mark to find boards; never add, remove or rename boards on its account.
+
+## 5n. Beats — the spine before the scenes (plugin 0.34, 2026-10-12)
+
+CRE's design (2026-10-12, worked through in chat): eras (time), sequences (plot) and character arcs (journey) felt like three systems that met only on the board, too late. The join is one object, a **beat**, with three faces: *when* it happens and whether it is a fact in the world; *whose* arc it advances and as which step; *where* in the plot it lands and, later, the card it becomes. A beat is made in one form and lives in all three views before any scene exists; the Spine view (next) reads these.
+
+- **A beat is an arc-step card** (`kind: "arcbeat"`, §5c) — it waits under the Project card, drags onto a sequence or scene, keeps its data, and "Make it a…" turns it into a Scene or Beat. New on the card, all optional: `who: [castId…]` (the people it is about; its arcs' owners count too); `links: [{cast, arc, step, label?}]` (further arcs it is a step of — an ensemble beat is one card in several arcs); `era` (its own era, §5d; absent = the era of wherever it is placed, and unplaced = not in time yet); `world: [placeId]` + `fields.setting` (its place, §5h). Its **fact** is an event (§5e) pinned to it (`at: <card id>`): one record, in the Timeline and on the beat.
+- **A free beat** has no `cast`/`arc`/`step`: a storm, a war, a moment that is nobody's step. One with no era either is listed first on the Eras tab as "not in any era yet" so it is never lost.
+- **Arc links** (§5c amended): every listing of an arc's steps reads a card's own `cast`/`arc`/`step` **and** its `links`; a step's number and label are read "as seen from" an arc (`stepIn`, `stepLabelIn`); reorder and rename carry an arc context so moving a linked beat in one arc leaves its number in the other alone; deleting it closes the gap in every arc; removing an arc only drops the link on beats that belong to another arc. Sub-steps belong to the card's own arc only.
+- **The form** (New beat…: the Eras tab under an open era, each arc on the Arcs tab, or the command): what happens; who, ticked, each with "advances: new step of <arc>… / an existing unplaced step"; where (a Place); when (an era, or where it's placed — the story's first era by default so a free beat is findable); also a fact? (an event type; a name for one about nobody). Taking an existing step makes the beat **that** card (its text filled, nothing else lost); in a second arc an unplaced, childless step is absorbed (removed, its number kept on the link). Nothing opens on the board; the beat waits in the panel until dragged.
+- **Where beats show:** the Eras tab lists each era's beats (placed ones by their card's era, unplaced by their own) with who, fact and where, draggable to the board, ⋯ for the step menu; the Visuals Timeline draws them under the events as squares (hollow while unplaced); the Arcs tab shows a linked beat as the step of every arc it serves; the board's tray chip badges a free beat by its people.
+- **Make it a…:** the card keeps its era, place, world link and fact; its `who` become `char:` tags; text becomes a container's summary or a prose card's body (§5a). Chapter is never on the form: the beat takes its chapter from the scene it ends in.
+- **AI writers:** may read beats to describe the spine; never create, link, place or promote them.
+
+## 5o. The Spine (plugin 0.35, 2026-10-12) — derived, never stored
+
+The roadmap CRE asked for after the beat (§5n): "a story spine can be built in full before scenes and beats and microbeats hit the board … once a spine is built, a roadmap, I have all of the information needed to drill down." The Spine is the first tab of the Visuals pane and is **read from the board every redraw** — it adds nothing to the file.
+
+- **Columns** are the cards at the spine level — the intensity graph's *outer* level, Sequence unless renamed (`settings.intensity.levels.outer`) — in story order, inside the book shown when one is. Off-board and side cards are never columns.
+- **Groups** above the columns: runs of columns in the same Part (§5l); with no parts, the same Book (§5g); neither → no group row. A column outside every part reads "no part".
+- **The era band:** each column's era (§5d, `eraIdAt` of the sequence), equal neighbours merged into one cell.
+- **Facts:** events (§5e) whose `at` card is the sequence or anything under it.
+- **A row per character** who has any beat: cards that are arc steps or beats (`kind: "arcbeat"`), or the cards those became (they keep `cast`/`arc`/`step`, `who`, `links`), where `beatWho` (§5n) names the character. A chip lands in the column of the card it sits on (placed) or is (became); unplaced ones fill the row's first cell; one placed outside every column is counted, not shown. A chip reads the step number *as seen from that character's arc* (`stepIn`), its text (`beatText`), and a flag per pinned fact. The row head counts placed/total.
+- **Nobody's row:** beats with no `who` at all.
+- **Seeds:** `seed:<name>` / `payoff:<name>` tags on cards inside a column, by column, with the Seed check's statuses (paid / open / backwards / orphan — paid means a payoff at or after the first seed's column); the view draws a line from each seed chip to each payoff chip.
+- **Interaction (view only):** a chip drags onto any column cell or sequence heading → `placeIdeaOn` (the same move as dragging onto the board); a placed chip's click opens the step menu; a card chip's click shows the card; a sequence or part heading selects it on the board; an era cell or a fact opens the Eras tab; a character name opens them; New beat… opens the form (§5n).
+- **AI writers:** read-only; a described spine is a description of these derived rows, never a thing to write back.
+
+## 5p. The drill (plugin 0.36, 2026-10-12)
+
+Release three of the braid (beat §5n → Spine §5o → drill): the step from the roadmap down to the board's levels, and the one stored change — an arc's order.
+
+- **Drilling a column** (view state only, never stored): a sequence heading on the Spine carries a chevron; open, the column splits into one sub-column per scene under it (`SpineColumn.scenes`: the scene-level cards — the intensity graph's *inner* level — anywhere under the sequence, in order) plus "in the sequence" for beats placed on the sequence itself. A chip's `scene` is the index of the scene it sits in or is (through any beat in between), -1 on the sequence; `factScenes` the same for facts. Dropping a chip on a scene sub-column, a scene heading, or "in the sequence" is the same move as on the board (`placeIdeaOn`).
+- **Make it a card here:** a placed chip offers one click that turns the beat into the kind its host holds (`childKind`: a scene in a sequence, a Beat in a scene) — §5n's Make it a… with the kind chosen for you; era, place, fact and who-as-tags carry as before.
+- **`arcs[].order`** (stored on the cast card, §5c): `"time"` for a backstory told in flashbacks; absent = story order. The planner's out-of-order observation then compares the **eras** the steps sit in (`eraIdAt` of each step's host, `eraCompare` with sub-eras) instead of file order: a later step in an earlier era reads "comes before step N in time"; steps in the same era say nothing. Arcs tab: "in story order / in time order" beside the arc's name.
+- **AI writers:** may read `order`; never set it, never drill or promote.
+
 ## 5h. World entries (plugin 0.21, 2026-10-10)
 
 The story world beside the cast, on one model: places first (0.21), items and system kinds (0.24), CRE's own kinds (0.25). A **world entry** is a card with `kind: "world"` directly under the Project card, never in the columns (the World panel holds it), never exported, off the main line.
@@ -353,6 +425,7 @@ Hand-made links (§5f `relations`) join any two entries: `a` and `b` may be cast
 
 - **Types:** the starter list gains, for places and systems, `borders`, `rules → ruled by`, `member of → has member`, `holds → held by`, `allied with`, `at war with`, each marked `"for": "world"`. A `for: "world"` type is offered once a world entry is on either side; two characters see the people types only. CRE's own types take the mark too (the "places & systems" switch).
 - **At a card:** a tie counts inside its eras, as before; a world entry's row sits after the people's. A tie whose side isn't built yet or is destroyed by then is held back like an unborn or dead character's.
+- **Reading (plugin 0.31, display only):** in the Relationships tab a tie of a `for: "world"` type is phrased from the row's own side — Dee's row reads "member of Guild", Town's "ruled by Council", Council's "rules Town" — while people ties keep the other's role ("Bram · mentor"). Nothing in `relations` changes.
 - **Observations:** unknown type, a side no longer on the board, the same one twice, an era gone, ending before starting. "Never share a scene" is checked for two characters only.
 - Deleting an entry removes the ties it is in. Kinship and the family tree stay about characters.
 - **AI writers:** never create, edit or delete ties or tie types.
@@ -378,6 +451,7 @@ Word counts, beat-type mix, threads touched, section numbers (1.2.4), soft nesti
 - **Books (§5g):** a card's book, book-qualified chapters, `book:` tags and the one-book view are computed when displayed.
 - **World (§5h–§5k):** an entry as of an era (the cascade), the tree per era, links by name, `place:` / `item:` / `faction:` … tags and the ancestors a card answers to, Through the story, an item's possession history, existence notes on chips, the timeline, spans and "still running" lines, ties at a card, and every world observation are computed when displayed.
 - **Main line:** every card except custom side types (`like: "side"`) and `note` / `side` / `variant` / `research` / `idea` / `cast` / `arcbeat` / `world` cards and everything under them.
+- **0.31 (display only, never stored):** a story card (any level) whose parent is a side kind other than `variant` carries the soft warning "… under a Character (off the main line: not counted, not exported)" — the beat typed while a dropped Character card was still selected; a book or sequence with no `era` of its own shows the era in force as a greyed chip; a card whose own era differs from the era around it names that era in its chip's tooltip; a container's rollup counts its direct children by kind ("3 scenes · 1 beat"); the type-mix strip waits for a typed micro-beat; an empty board draws a first-card placeholder in its first column; the drop zones are labelled above / below / child while dragging.
 - **Chapter:** a card's chapter is the nearest `fields.chapter` on itself or an ancestor.
 - **Seed check:** pairs `seed:NAME` and `payoff:NAME` tags by NAME (case-insensitive), in story order.
   - `paid`: a payoff comes after the first seed.
