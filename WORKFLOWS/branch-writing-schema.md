@@ -3,9 +3,9 @@ type: schema
 title: Branch Writing card marker schema
 schema_version: 1
 plugin: branch-writing
-plugin_version: 0.36.0
+plugin_version: 0.39.0
 created: '2026-10-07'
-last_updated: '2026-10-11'
+last_updated: '2026-10-13'
 ---
 
 # Branch Writing — card marker schema, v1
@@ -385,6 +385,39 @@ Release three of the braid (beat §5n → Spine §5o → drill): the step from t
 - **`arcs[].order`** (stored on the cast card, §5c): `"time"` for a backstory told in flashbacks; absent = story order. The planner's out-of-order observation then compares the **eras** the steps sit in (`eraIdAt` of each step's host, `eraCompare` with sub-eras) instead of file order: a later step in an earlier era reads "comes before step N in time"; steps in the same era say nothing. Arcs tab: "in story order / in time order" beside the arc's name.
 - **AI writers:** may read `order`; never set it, never drill or promote.
 
+## 5q. Plotting mode (plugin 0.37, 2026-10-13)
+
+The Statement Plotting Method v12 through CRE's ratified lean profile ([[WORKFLOWS/statement-plotting/Statement-Plotting-Method_v12-lean-profile]], dec-037). **Opt-in per board.** A board without `settings.plotting.on` reads, writes and exports exactly as before; nothing below exists on it.
+
+**Switching it on** (Project settings → Plotting mode) is one additive, undoable change. Fields are appended to a level's template only when the template lacks a field of that name (case-insensitive), so a scene's existing `pov`, `setting`, `goal` and `outcome` are reused. Every added field carries `"plot": true`; the plugin keeps those out of the field-rename rows and out of the plain editor when plotting is off. Switching off sets `settings.plotting.on` to `false` and changes nothing else.
+
+- `settings.plotting`: `{"on": true, "leads"?: [castId…], "world"?: true, "exits"?: {castId: cardId}}`. `leads` is the POV-lead roster in order, stored only once there are two or more; `world` switches world tracking on; `exits` is the lead-exit marker (#267), the unit after which a lead leaves the rotation, the carry and the Closure offers.
+- `settings.structuralRoles`: the E5 role list this book uses. Absent = the novella preset.
+- `plotArcs` (on the Project card's marker, beside `events` and `relations`): `[{"id":"parc-…","label"?,"goal_holder"?: castId,"action_type"?,"slots"?:{…},"span"?,"goal"?,"stakes"?,"opposition"?,"conflict"?,"planned_outcome"?,"outcome_detail"?,"planned_change"?,"resolved_in"?: cardId,"main"?: true,"leadArc"?: true}]`. `action_type` is an E2 name (Travel … Prepare; "AC5" also reads); `planned_outcome` an E3 label. `main` is stored only when picked by hand.
+- **The Character Arc** is an arc on the cast card (§5c) flagged `"plot": true`, with `beliefStart`, `beliefEnd`, `direction` (Positive / Negative / Flat) and one step field, `belief`. Its waypoints are its arc steps: `label` = the E5 role, `arcFields.belief` = the planned belief.
+- **Cast profile fields** added: `emotional start`, `physical start` (text, not the 0–10 intensity lane), `pronoun`, `pronoun (subject)`, `pronoun (possessive)`. A character's belief start is the Character Arc's `beliefStart`, shown on the character, stored once.
+- **Book fields** (Project card; each Book card on a series board): `story start`, `world start`, `world end`.
+- **Sequence fields:** `shape` (Scene / Sequel / Event / Closure; absent = Scene), `serves arc` (a `plotArcs` id), `goal holder`, `leads` (the rotation list: names, comma-separated, repeats allowed), `opposition`, `action`, the E2 slots (`origin`, `destination`, `target`, `threat`, `opponent`, `information`, `secret`, `object`, `holder`, `ward`, `truth`, `ordeal`, `plan`, `coming event`), `goal`, `outcome`, `outcome detail`, `story from`, `story to`, `world from`, `world to`, `span`, `stakes`, `conflict`, `role`, and the statement fields of the other shapes (`character`, `reacts to`, `reacts to (short)`, `setting prep`, `setting`, `option a`, `option b`, `costs`, `decision`, `sets goal`, `agent`, `event action`, `effect`, `closes arcs`).
+- **Scene fields:** `goal holder`, `serves arc`, `action` and the slots, `setting prep`, `setting`, `goal`, `stakes`, `opposition`, `conflict`, `outcome`, `outcome detail`, `resolved in` (a card id), `story from`, `story to`, `world from`, `world to`, `role`, `questions opened`, `pov`.
+- **Card types** (`customTypes`, `like: "scene"`, `plot: true`): `sequel` (character, reacts to, reacts to (short), setting prep, setting, option a, option b, costs, decision, sets goal, role), `event` (agent, event action, setting prep, setting, effect, story/world from/to, role — a story unit, not a §5e event), `closure` (character, reacts to, reacts to (short), setting prep, setting, closes arcs, option a, option b, decision, role).
+- **Beat-level fields** (the Beat **level**, one exchange inside a unit — not the §5n arc-step beat): `actor`, `action`, `responder`, `reaction`, `direction` (Toward / Away), `what changed`, `cost` (`"true"`), `functions`, `form`, `read against`. A Beat card counts as a plotted beat only once one of these is filled (or it is an FL4 placeholder): a Beat used as a container of micro-beats is not one.
+- **Ledger rows** are Character cards (the arc type, §5) directly under a unit. `char` names the character; `entry state` / `exit state` are the emotional pair. Added: `wants`, `outcome`, `outcome detail`, `dimensions` (`physical`, `belief`, comma-separated — emotional is on by default; a filled pair also switches its dimension on), `physical from`, `physical to`, `belief from`, `belief to`, `physical signal`, `emotional signal`, `belief signal`.
+- **Value forms:** cast references on cards are names (any name or nickname); in `plotArcs` and the roster they are cast block IDs. `reacts to` and `resolved in` are card block IDs (a range is `id..id`). `closes arcs` is `plotArcs` ids, comma-separated. `outcome` is an E3 label, set by the outcome questions. `setting prep` is blank for "in" (the template's default); `-`, `—` or `none` means no preposition on purpose. Labelled tracks: `label: value; label: value`.
+- `plotComplete: true` on a unit or sequence marks it Complete (the author's mark; refused below Outlined or while a required field is blank).
+- **The flows' stored keys (0.38).** The flows store nothing derived. A few marks record what the tool made or what the author ruled:
+  - `plotStub: true` on a sequel (or a sequel-shape sequence) the FL4 pass created. It is withdrawn only while untouched: nothing but its tool-written `reacts to`.
+  - `plotNoStub: true` on a unit whose stub the author deleted, so it is never raised again.
+  - `plotFl4` is a queue answer (`"beat"` / `"sequel"`) on a queued unit or sequence. On a Beat card it is instead the id of the unit whose reaction it is: the FL4 placeholder, flagged until its `what changed` is filled.
+  - `plotReviewed: true` on a sequel whose sets-goal prefill was accepted (FL5).
+  - `plotLedgerPlan: {name: {dimension: [from, to]}}` on a sequence: a ledger plan accepted from the FL3 rollup, or typed.
+  - `plotOffer: true` on a Closure added from a per-lead offer (0.39).
+  - Two blank-only fills are also written when a card is created: a new scene's `goal holder` from its sequence's rotation list, and a placeholder beat's `actor`.
+- **Visibility (0.39, b9), optional:**
+  - `vis: {"<field>": {"v": "Concealed" | "Misdirected" | "Shown, unread", "shown"?: "<what the reader sees>", "revealed_in"?: cardId | "never"}}` on a unit. This is the per-field map the profile suggests; an unset field is Shown.
+  - `visUnit: cardId` is one revealed in for every hidden field of the unit; a field's own wins.
+  - A unit whose pov is `Offscreen` treats its filled fields as Concealed.
+- **AI writers:** may read every key here to describe a plot; never set a value, an Arc, the roster, a mark or the switch. The statements are the author's words in v12's templates; nothing here is generated.
+
 ## 5h. World entries (plugin 0.21, 2026-10-10)
 
 The story world beside the cast, on one model: places first (0.21), items and system kinds (0.24), CRE's own kinds (0.25). A **world entry** is a card with `kind: "world"` directly under the Project card, never in the columns (the World panel holds it), never exported, off the main line.
@@ -452,6 +485,19 @@ Word counts, beat-type mix, threads touched, section numbers (1.2.4), soft nesti
 - **World (§5h–§5k):** an entry as of an era (the cascade), the tree per era, links by name, `place:` / `item:` / `faction:` … tags and the ancestors a card answers to, Through the story, an item's possession history, existence notes on chips, the timeline, spans and "still running" lines, ties at a card, and every world observation are computed when displayed.
 - **Main line:** every card except custom side types (`like: "side"`) and `note` / `side` / `variant` / `research` / `idea` / `cast` / `arcbeat` / `world` cards and everything under them.
 - **0.31 (display only, never stored):** a story card (any level) whose parent is a side kind other than `variant` carries the soft warning "… under a Character (off the main line: not counted, not exported)" — the beat typed while a dropped Character card was still selected; a book or sequence with no `era` of its own shows the era in force as a greyed chip; a card whose own era differs from the era around it names that era in its chip's tooltip; a container's rollup counts its direct children by kind ("3 scenes · 1 beat"); the type-mix strip waits for a typed micro-beat; an empty board draws a first-card placeholder in its first column; the drop zones are labelled above / below / child while dragging.
+- **Plotting rules and views (0.39):**
+  - every observation (V1–V35, read per lead in an ensemble), and which ones stop the Complete mark;
+  - the Progress view's counts; the lead-spacing view; the sequence lead lines; the lead outcome clauses; the per-lead Closure offers; the waypoint notes;
+  - the reader statement; the reveal chain and V14–V16; the Ensemble view, Beat sheet and Arc track.
+
+  Never written.
+- **Plotting flows (0.38):**
+  - every prefilled or carried value a blank field answers: FL1 goal holder, pov, opposition and serves arc (the single-Arc auto-link; a lead's own Arc); FL2 story, world and per-character from-values (blank pairs pass through, labels carry each); FL5 sets goal; the rotation list prefill; the routed goal; the routed row wants or offer;
+  - the derived row wants and outcome; belief on and belief to at a waypoint or resolved in; a lead Arc's span; beat 1's actor and the responder;
+  - the virtual required rows; FL3 Arc outcomes and sequence rollups; the FL4 queue and where a placeholder goes.
+  
+  Never written.
+- **Plotting (0.37):** every statement (Sketch and full per shape, Book, Arc (subplots), ledger row, beat line), each card's status (below Sketch / Sketch / Outlined; Complete only with the author's mark), what each tier still needs, a sequence's drafting-ready flag, the main Arc when not picked (the only Arc; in an ensemble the first lead's), the effective roster (one lead, the main Arc's goal holder, in a single-POV book), POV mode (single / ensemble, from the roster's length), an Arc's label when blank (its goal holder's name) and code (A1, A2 … by position), and turning points. Never written.
 - **Chapter:** a card's chapter is the nearest `fields.chapter` on itself or an ancestor.
 - **Seed check:** pairs `seed:NAME` and `payoff:NAME` tags by NAME (case-insensitive), in story order.
   - `paid`: a payoff comes after the first seed.
