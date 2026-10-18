@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-10-17T12:00:13.0246403-07:00",
+    "generated":  "2026-10-18T12:00:13.3931322-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -50,6 +50,13 @@
                        "sha256":  "3f8e8eb088412596d0f133489b6de5ec98a51ab94f01556e1fce6f5887fe4ec8",
                        "content_sha256":  "d97f65f7501524e13f0a95e02c75e0f17d8d6ef2df63c0f7b386c276f398f90d",
                        "bytes":  44432
+                   },
+                   {
+                       "name":  "branch-writing-expert",
+                       "package":  "WORKFLOWS/skills/branch-writing-expert.skill",
+                       "sha256":  "f47a1c818b6c02e742d5048e0d34e413243fddc00f11df1fff4ee72968640542",
+                       "content_sha256":  "e8038819c0b0b663bb693221ecd64bdd5620c43115e61790f18cc1f0d8dc8e70",
+                       "bytes":  52121
                    },
                    {
                        "name":  "canon-sync",
@@ -176,6 +183,13 @@
                        "sha256":  "f10bb6681e3be1ae9176ba58c1183e7cb39bb188eaed33008d210aa77940fc74",
                        "content_sha256":  "42428b7515a76514394227245f9300d85d48db8bc792400dc8d0d5960cf4e4b2",
                        "bytes":  7202
+                   },
+                   {
+                       "name":  "interlock-plotter",
+                       "package":  "WORKFLOWS/skills/interlock-plotter.skill",
+                       "sha256":  "d5ec21991ad3250ef0adf41b2af7d1574839b3a03223adda7b381ea5d8a2251f",
+                       "content_sha256":  "7c2b7ce689c3683ec863de7cd81944739f3148ea1604f7ca5ec346e4e87e2d88",
+                       "bytes":  12454
                    },
                    {
                        "name":  "interview-me",
