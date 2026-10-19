@@ -70,11 +70,11 @@ three spine labels, the role slots that land there, under each "asks: …" in th
 **5. Placement (optional).** Only onto containers he names: `structure` via `set` (`{"kind": "sequence", "title": "The
 Bridge", "under": null}`, `{"kind": "scene", "title": "The far bank", "under": "The Bridge"}` — a scene names the sequence
 it sits under), then `beat --n … --spine … --at "seq:<title>"` or `--at "scene:<title>"` (the prefix is a reminder; the
-builder matches the title). No default structure; an unplaced step waits in the Characters panel. **Lead exits (known gap, plugin
-0.62):** the plugin honours a lead's exit only on a **unit** (a Scene-level card); the builder writes the exit onto
-whatever container holds the exit step, so an exit step placed on a Sequence reads "stays to the end" in the Plot tab.
-Until the fix lands, place an exit lead's exit step on a **Scene** (name it under its sequence in `structure`) or tell him
-after the build that the exit needs a scene; never patch the board by hand.
+builder matches the title). No default structure; an unplaced step waits in the Characters panel. **Lead exits (plugin
+0.62.2+):** the builder writes a lead's exit onto whatever container holds the exit step, and the plugin reads an exit on
+a Sequence (or Part, Book) at the **last scene inside it**, so the Plot tab shows "exits at …" there. A container with no
+scene under it yet reads "stays to the end" until one is added; the builder prints that as a NOT DONE line, which you pass
+on to him as it reads. Never patch the board by hand.
 
 **6. Plan → approval.** `render`, show a one-screen summary (cast and roles, switches, filled/open counts, the
 `build-plan.mjs <plan> --dry` preview — anything "NOT DONE" goes to him now). Wait for **"approve the plan"**; only then

@@ -1,4 +1,4 @@
-# Import mode — prose → board, verbatim; structure proposed, ruled, then landed
+# Import mode — prose → board, verbatim; scenes wrapped at his breaks
 
 Two cases: a **short story** (one note) and a **book** (a project's `CHAPTERS/<folder>/draft.md` files, one board per book).
 The board must hold exactly the source text and nothing else; the structure on top is yours to propose and his to rule.
@@ -19,7 +19,25 @@ Source frontmatter is metadata, not prose: it is not imported, and the tool says
 The target is a **new** file; the tool refuses an existing path, `REFERENCE/`, and pipeline paths. Pick the folder he names
 (or beside the source); never inside a chapter folder.
 
-## 2. Structure: propose, rule, land
+**Onto a board he already built** (cast, eras, timeline in place) — `--into` instead of `--board`:
+`node scripts/board_tool.mjs import --book <dir> --into <existing board.md> [--source-label "<where the prose lives>"] [--dry]`
+(`--source` works the same). The same verbatim convert, appended under the board's Project card after everything already
+there, as **one apply-kind run**: every card already on the board stays byte-identical (the tool refuses otherwise), and
+"undo" takes out exactly the cards it added, frontmatter too. Prefer it whenever he names a board that exists — never
+build a second board beside his and leave him to merge them. His prose kept as loose chapter notes (not
+`CHAPTERS/<folder>/draft.md`) is staged first as sha-verified byte copies in folders named for the notes (his words);
+`--source-label` then names the real notes in the frontmatter, never the staging path.
+
+## 2. Structure
+
+*Since 2026-10-19 (CRE: the levels above his prose are administrative):* the **scene wraps at his own breaks and the
+dialogue types** are administrative — apply them as one run with a change list, no ruling list, then the break cards
+themselves (`***`, kept word for word) go with `remove-break-card` once the Scenes export their own break, on his word.
+**Cast candidates, speakers and POV stay story calls:** list them for him to rule (the cast candidates are mostly
+capitalised words, not people — say so). After the import, the breakdown (`references/breakdown.md`) carries it up.
+Before he works the board: dialogue tags `never` (`set-tag-mode`, on his word; a new-board import starts there).
+
+The `propose` output is the source of those ops:
 
 `node scripts/board_tool.mjs propose <board.md> --out <proposals.json>` reads the imported board and lists, each with a
 reason and the op that would land it:
@@ -36,7 +54,7 @@ reason and the op that would land it:
 - The speaker tag is read from the common forms ("X said", "said X", asked, called, whispered…); a line with none
   keeps the speaker blank for him.
 
-Show them to him as one ruling list, grouped, one line each with the reason ("Scene around 4 blocks after the first break ·
+(Before 2026-10-19 this was a ruling list:) one line each with the reason ("Scene around 4 blocks after the first break ·
 begins 'The river…'"). He rules in one pass ("all", "all but 3 and 7", "2: the speaker is Mara"). Approved items go into one
 ops file (copy each item's `op`, edit only what he changed; never copy a `pov` item whose value he left empty — an open POV
 is no write) → `apply`. Rejected and unanswered items are not written and not re-asked. After the wraps land, run

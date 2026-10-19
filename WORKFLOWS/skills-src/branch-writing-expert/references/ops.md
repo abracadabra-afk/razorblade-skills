@@ -49,14 +49,29 @@ name (any case; aliases resolve). Values are CRE's words. `--dry` shows the chan
 | `wrap` | `cards: [^id…]`, `kind`, `title?`, `fields?` | a container around sibling cards (import: a Scene around a run) |
 | `offer` | `card`, `offer: {type?, speaker?, summary?, wants?, states?, chain?}` | tagging mode: written under the marker key `ai` (by: ai, dated), never into his fields |
 | `offer-intensity` | `card`, `emotional?: [start, end]`, `physical?: [start, end]`, `rubric?`, `note?` | §6a: to the sidecar `<board>.measure.json`, never a marker |
+| `replace-words` | `card`, `from`, `to`, `count`, `ruled` (his words) | **only on his explicit instruction naming the change** ("please change to the woodswoman"): an exact phrase swapped on the cards he means; any other count refuses. The one op that touches his words — never on your own initiative; prove afterwards that only those words changed |
+| `set-line` | `card`, `line` (position, 0 = ENTRY), `text` | one chain line's words in place — its id, flavor, ending and the links to it stay (rewriting a whole chain with `set-chain` gives turns new ids and breaks the links of what was drilled from them) |
+| `split-micro` | `card`, `pieces: [{text, type?}]` | breakdown: one micro-beat per beat it fires. The pieces, in order, re-joined with the whitespace between them, must read back as the card's words byte for byte, split at whitespace; a paragraph wrapped whole in `*…*` is split inside the markers and each piece re-wrapped. Never `dialogue` on a piece without an opening quote. Build the ops with `scripts/split_plan.mjs` |
+| `link-from` | `card` (or `beat:<scene ref>:<n>`, the scene's n-th Beat, 0-based), `parent`, `lines: n` or `[a, b]` (positions in the parent's chain, 0 = ENTRY) | a child linked to the line, or run of lines, it carries (`plotFrom`). One line feeds one child; the child's ending is read from its run's last line, so put the ending there |
+| `place-in-bloc` | `card` (a micro-beat), `line` (its beat's chain position) | only for a beat he has given a chain (a choreographed fight): the micro-beat into that slot through the plugin's own move. Not part of the default breakdown (chains stop at the Scene) |
+| `regroup-beats` | `scene`, `groups: [{cards: [^id…], type?, title?, summary?}]` | administrative (2026-10-19): dissolves the scene's container Beats and wraps each run of micro-beats in a new Beat; the groups must cover every micro-beat once, in order |
+| `set-title` / `set-summary` | `card`, `text` | a Beat, Scene or Sequence (never a prose card) |
+| `set-chain` | `card`, `entry`, `turns: [{k: but/therefore, text, outcome?, detail?}]`, `exit: {k: ""/but/therefore, text, outcome?, detail?}` | replaces the card's turns; outcomes are the E3 labels |
+| `remove-break-card` | `card` | on his word: a card whose whole body is a break mark (`***`), nothing else on it; the Scenes around it export their own break |
+| `set-era-source` | `on` | on his word (plugin 0.64): the board's eras come from its scenes — a present scene's era carries forward, a flashback's applies to it only, and Books / Parts / Sequences show the rolled-up span (a sequence's own era is its planned start) |
+| `set-flashback` | `card` (a scene), `on?` | a story call: on his word or an approved proposal |
+| `set-remembers` | `card` (a micro-beat typed `memory`), `era` (`""` = not known) | the era a memory remembers — a broad bucket (Childhood, Teenage) for an unplotted memory, a season for one tied to a plotted event; the scene keeps its own era |
+| `add-beat-type` | `name` | a micro-beat type added to the board's list (`memory`), on his word |
+| `set-tag-mode` | `mode` (`never` / `first` / `every`) | on his word: how the export adds dialogue tags; `never` for prose written with its own tags (plugin 0.63; a new-board import starts there) |
 | `set-plotting` | `on` | Statement Plotting on/off (his instruction) |
 | `add-lead` | `cast` | POV roster |
-| `set-lead-exit` | `cast`, `unit` (a Scene-level card; `""` = stays) | refused on a Sequence: the plugin honours exits on units only |
+| `set-lead-exit` | `cast`, `unit` (a Scene-level card, or a Sequence/Part/Book; `""` = stays) | on a container (plugin 0.62.2+) the exit reads at its last scene, named in the `made:` line; a container with no scene yet is stored and reported NOT DONE (reads "stays to the end" until one is added) |
+| `add-event` | `type`, `who` (name or list), `era` (name, id or exact label), `parents?`, `at?` (the card it happens on), `name?`, `until?` (era) | on CRE's word only (schema §5e/§5i): "Wren is born in 1985" → `{"op": "add-event", "type": "born", "who": "Wren", "era": "1985"}`. Type must be on the board (born, died, married, separated, built, destroyed, or his own); era must exist (add it only on his word); subjects match the type's count and kind; parents only on born; `at` needs a card in an era, and the same era if both are given. Everything is checked before anything is written |
 | `mark-working-copy` | `source` | frontmatter: the drafts stay the authority until the replacement review |
 
 Never available, by design: body text on any card, `plotChain` / `plotMarks` / `plotComplete` / `convo` / `vis`, moving a
 step between arc levels, deleting a key, renaming or removing a board, Book/Part level insertion (a Project-settings change
-the plugin owns), world kinds, events (no op yet: name it as NOT DONE and route it to `_BACKLOG`).
+the plugin owns), world kinds, new event types (an event of an existing type is `add-event`).
 
 Other commands: `read <board> [--full]` (the board as JSON: counts, cast, eras, relations, world, inbox, placed ideas, arc
 steps, containers, plotting/model, this skill's runs) · `undo <board> [--run id] [--force]` · `redo <board>` · `log <board>` ·

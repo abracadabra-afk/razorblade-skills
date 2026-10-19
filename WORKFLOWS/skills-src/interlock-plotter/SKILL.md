@@ -59,7 +59,8 @@ new name). Then `plan_tool.py new <plan> --board-path … --title … [--copy-of
 his words). Ask **one role per character**, every roster lead included: lead, antagonist, deuteragonist (and who they
 face, D1), an exit X1–X4, an anchor AM1–AM5, or none. A non-character antagonist (K4 force) is a cast entry named for
 the force. Ask whether Statement Plotting is on and who the POV leads are; the model lead is the first roster lead.
-Record with `plan_tool.py set --json '…'`. At 5 leads, every lead needs a role; say plainly which ones still have none.
+Record with `plan_tool.py set --json-file part.json` (write the JSON to a file first; `--json '…'` works from Git Bash
+only, because Windows PowerShell 5.1 strips the quotes). At 5 leads, every lead needs a role; say plainly which ones still have none.
 The shapes `set` takes (keys are short handles you pick; names, aliases and answers are his words):
 
 ```json
@@ -103,7 +104,7 @@ character's key: `--spine X2 --cast bo`, `--spine deuteragonist --cast kit`, `--
 - Save after the round (the tool writes on every call) and tell him where the walk stands in one line.
 
 **5. Placement (optional).** Only onto containers he names (Book, Part, Sequence, Scene, by title):
-`set --json '{"structure": [{"kind": "sequence", "title": "…", "under": null}]}'`, then `beat --n … --spine … --at "seq:<title>"`
+`set --json-file part.json` holding `{"structure": [{"kind": "sequence", "title": "…", "under": null}]}`, then `beat --n … --spine … --at "seq:<title>"`
 (no need to repeat his words: `--at` or `--who` alone places or tags the beat).
 No default structure; an unplaced step waits in the Characters panel, which is fine.
 

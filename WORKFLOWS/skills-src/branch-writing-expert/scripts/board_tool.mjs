@@ -11,6 +11,8 @@
 //   node board_tool.mjs redo    <board.md> [--run <id>] [--force]    re-apply the last undone run
 //   node board_tool.mjs import  --source <note.md> --board <new.md> [--title <t>]        prose → board, verbatim
 //   node board_tool.mjs import  --book <project dir> --board <new.md> [--title <t>]      one board from CHAPTERS/*/draft.md
+//   node board_tool.mjs import  (--source <note.md> | --book <dir>) --into <existing.md> [--source-label <t>] [--dry]
+//                                                                   the same, appended under an existing board's Project (one undoable run)
 //   node board_tool.mjs propose <board.md> [--out <file.json>]       structure proposals for an imported board (ruled, never landed)
 //   node board_tool.mjs suggest-tags <board.md> [--out <file.json>]  char:/place: tag offers from names in bodies (ruled)
 //   node board_tool.mjs log     <board.md>                           the runs in the board's change log
@@ -406,6 +408,258 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`intensity offer (sidecar) on ${title(c) || c.meta.kind} ${idOf(c)}`);
           break;
         }
+        // ── The administrative levels (CRE-ruled 2026-10-19): "the prose level (micro-beats) are my words — those are hands off.
+        //    But the levels above it are administrative." Beats, scenes and sequences: grouping, types, titles, summaries and
+        //    chains are written here, logged and undoable; a prose card's body and marker are never touched beyond its parent.
+        case "split-micro": {
+          // CRE, 2026-10-19: a paragraph that fires several micro-beats becomes one card per micro-beat, at the sentence where
+          // the type changes. The words are the forbidden zone: the pieces, in order, must be the card's words exactly —
+          // re-joined with the whitespace between them they read back as the body, byte for byte, or nothing is split. A
+          // paragraph wrapped whole in *…* (or _…_) is split inside the markers and each piece re-wrapped, so it still reads italic.
+          const c = bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (!isProseKind(s, c.meta.kind)) throw new Error(`${idOf(c)} is not a micro-beat`);
+          if (c.children.length || c.meta.convo) throw new Error(`${idOf(c)} has cards under it or is a conversation; left alone`);
+          const pieces = (op.pieces || []).map((x) => ({ text: String(x.text), type: x.type || "" }));
+          if (pieces.length < 2) throw new Error("a split needs two or more pieces");
+          const body = c.body;
+          const m = /^(\s*)([*_])(?!\2)([\s\S]*?[^\s*_])\2(\s*)$/.exec(body);
+          const wrap = m ? m[2] : "";
+          const inner = m ? m[3] : body;
+          let at = 0;
+          const gaps = [];
+          for (const [i, pc] of pieces.entries()) {
+            const j = inner.indexOf(pc.text, at);
+            if (j < 0 || (i === 0 ? inner.slice(0, j).trim() : inner.slice(at, j).trim())) throw new Error(`piece ${i + 1} is not the next words of ${idOf(c)}: ${JSON.stringify(pc.text.slice(0, 50))}`);
+            gaps.push(inner.slice(at, j));
+            at = j + pc.text.length;
+          }
+          if (inner.slice(at).trim()) throw new Error(`the pieces leave words of ${idOf(c)} out: ${JSON.stringify(inner.slice(at).trim().slice(0, 50))}`);
+          if (pieces.some((pc) => pc.text.trim() !== pc.text || !pc.text)) throw new Error("a piece starts or ends with whitespace");
+          if (gaps.slice(1).some((g) => !/^\s+$/.test(g))) throw new Error("pieces must split at whitespace between sentences");
+          const btypes = s.beatTypes || [];
+          for (const pc of pieces) {
+            if (pc.type && !btypes.includes(pc.type)) throw new Error(`"${pc.type}" is not in the board's beat types`);
+            if (pc.type === "dialogue" && !/^\s*["“«]/.test(pc.text)) throw new Error(`dialogue type on a piece that doesn't open with a quote: ${JSON.stringify(pc.text.slice(0, 40))}`);
+          }
+          const w = (x) => (wrap ? wrap + x + wrap : x);
+          const keep = c.meta.type;
+          bw.setBody(c, w(pieces[0].text));
+          if (pieces[0].type) bw.setMeta(c, "type", pieces[0].type);
+          else if (keep === "dialogue" && !/^\s*["“«]/.test(pieces[0].text)) bw.setMeta(c, "type", undefined);
+          if (c.meta.speaker && c.meta.type !== "dialogue") bw.setMeta(c, "speaker", undefined);
+          let prev = c;
+          for (const pc of pieces.slice(1)) {
+            const k = bw.insertSibling(doc, prev, { kind: c.meta.kind, ...(pc.type ? { type: pc.type } : {}) }, true);
+            bw.setBody(k, w(pc.text));
+            prev = k;
+          }
+          made.push(`split ${idOf(c)} into ${pieces.length} micro-beats: ${pieces.map((x) => x.type || "untyped").join(" → ")}`);
+          break;
+        }
+        case "regroup-beats": {
+          // A scene's micro-beats regrouped into Beats: every Beat under the scene that holds only micro-beats is dissolved (its
+          // micro-beats stay in order), then each group — a run of neighbouring micro-beats, in order, covering every one —
+          // is wrapped in a new Beat with its type, title and summary.
+          const sc = findCardRef(doc, op.scene) || bw.findCard(doc, String(op.scene || "").replace(/^\^/, ""));
+          if (!sc) throw new Error(`no card ${op.scene}`);
+          if (!isUnitKind(s, sc.meta.kind)) throw new Error(`${idOf(sc)} is not a scene`);
+          const beatKey = s.levels[s.levels.length - 2].key;
+          for (const b of sc.children.filter((k) => k.meta.kind === beatKey)) {
+            if (b.children.some((k) => !isProseKind(s, k.meta.kind))) throw new Error(`${idOf(b)} holds more than micro-beats; left alone`);
+            if (b.meta.plotChain || b.meta.plotFrom) throw new Error(`${idOf(b)} has a chain; regroup it by hand`);
+          }
+          for (const b of sc.children.filter((k) => k.meta.kind === beatKey)) {
+            for (const k of [...b.children].reverse()) bw.moveOut(doc, k);
+            bw.removeCard(doc, b);
+          }
+          const prose = sc.children.filter((k) => isProseKind(s, k.meta.kind));
+          const groups = op.groups || [];
+          const flat = groups.flatMap((g) => g.cards.map((r) => String(r).replace(/^\^/, "")));
+          const want = prose.map((k) => k.id);
+          if (flat.length !== want.length || flat.some((id, i) => id !== want[i])) throw new Error(`the groups must cover the scene's ${want.length} micro-beats once each, in order (got ${flat.length})`);
+          const btypes = bw.typesFor(s, beatKey);
+          for (const g of groups) {
+            const cards = g.cards.map((r) => bw.findCard(doc, String(r).replace(/^\^/, "")));
+            const b = bw.wrapCards(doc, cards, { kind: beatKey });
+            if (!b) throw new Error("a group could not be wrapped");
+            if (g.type) { if (btypes.length && !btypes.includes(g.type)) throw new Error(`beat type "${g.type}" is not in (${btypes.join(", ")})`); bw.setMeta(b, "type", g.type); }
+            if (g.title) bw.setBody(b, String(g.title).trim());
+            if (g.summary) bw.setField(b, "summary", String(g.summary).trim());
+            made.push(`Beat${g.type ? ` (${g.type})` : ""} "${g.title || ""}" around ${cards.length} micro-beat${cards.length === 1 ? "" : "s"} ${idOf(b)}`);
+          }
+          break;
+        }
+        case "set-title":
+        case "set-summary": {
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (isProseKind(s, c.meta.kind) || ["project", "cast", "world", "idea", "arcbeat"].includes(c.meta.kind)) throw new Error(`${idOf(c)} is not a beat, scene or sequence`);
+          const v = String(op.text == null ? "" : op.text).trim();
+          if (op.op === "set-title") { if (bw.setTitle) bw.setTitle(c, v); else bw.setBody(c, v); made.push(`title "${v}" on ${idOf(c)}`); }
+          else { bw.setField(c, "summary", v); made.push(`summary on ${title(c) || c.meta.kind} ${idOf(c)}: ${v.slice(0, 70)}${v.length > 70 ? "…" : ""}`); }
+          break;
+        }
+        case "place-in-bloc": {
+          // Administrative (2026-10-19): a micro-beat placed in its beat's chain slot (0 = ENTRY … the last = EXIT), through the
+          // plugin's own move, which keeps the file in slot order. The words never move relative to each other when the slots
+          // are filled in reading order; the run's word check is the proof.
+          const m = bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!m) throw new Error(`no card ${op.card}`);
+          const beat = m.parent;
+          if (!beat || !isProseKind(s, m.meta.kind)) throw new Error(`${idOf(m)} is not a micro-beat under a beat`);
+          const pts = bw.blocPoints(beat);
+          const i = Number(op.line);
+          if (!(i >= 0 && i < pts.length)) throw new Error(`line ${op.line} is not in ${idOf(beat)}'s chain of ${pts.length}`);
+          if (!bw.moveToBloc(doc, m, pts[i])) throw new Error(`${idOf(m)} could not be placed (does ${idOf(beat)} have a chain?)`);
+          made.push(`${idOf(m)} in ${title(beat) || "beat"}'s ${i === 0 ? "ENTRY" : i === pts.length - 1 ? "EXIT" : "turn " + i}`);
+          break;
+        }
+        case "link-from": {
+          // Administrative (2026-10-19): a child card linked to the chain line — or run of lines — it carries, by position in
+          // the parent's chain (0 = ENTRY, the last = EXIT). One line feeds at most one child; the child's EXIT ending is then
+          // read from its run's last line (the plugin's drill rule), so the ending belongs on the parent's line.
+          // `card` may also be "beat:<scene ref>:<n>" — the scene's n-th Beat (0-based), for a plan that regroups and links in one run.
+          const bm = /^beat:(.+):(\d+)$/.exec(String(op.card || ""));
+          const bsc = bm ? findCardRef(doc, bm[1]) || bw.findCard(doc, bm[1].replace(/^\^/, "")) : null;
+          const c = bm ? (bsc ? bsc.children.filter((k) => k.meta.kind === s.levels[s.levels.length - 2].key)[Number(bm[2])] : null) : findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          const par = findCardRef(doc, op.parent) || bw.findCard(doc, String(op.parent || "").replace(/^\^/, ""));
+          if (!c || !par) throw new Error(`no card ${!c ? op.card : op.parent}`);
+          const lines = bw.chainLines(doc, par).filter((l) => l.id === "entry" || l.id === "exit" || /^t/.test(l.id));
+          const [a, b] = Array.isArray(op.lines) ? (op.lines.length === 1 ? [op.lines[0], op.lines[0]] : op.lines) : [op.lines, op.lines];
+          if (!(a >= 0 && b >= a && b < lines.length)) throw new Error(`lines ${JSON.stringify(op.lines)} are not in ${idOf(par)}'s chain of ${lines.length}`);
+          const first = lines[a].id, last = lines[b].id;
+          const claim = new Set(lines.slice(a, b + 1).map((l) => l.id));
+          for (const k of doc.cards) {
+            if (k === c || typeof k.meta.plotFrom !== "string") continue;
+            const [pid, run] = k.meta.plotFrom.split(":");
+            if (pid !== par.id) continue;
+            const [f, l] = run.includes("..") ? run.split("..") : [run, run];
+            const fi = lines.findIndex((x) => x.id === f), li = lines.findIndex((x) => x.id === l);
+            if (lines.slice(fi, li + 1).some((x) => claim.has(x.id))) throw new Error(`${idOf(k)} already carries one of those lines`);
+          }
+          bw.setMeta(c, "plotFrom", `${par.id}:${first === last ? first : first + ".." + last}`);
+          made.push(`${title(c) || c.meta.kind} ${idOf(c)} linked to ${title(par) || par.meta.kind}'s ${a === b ? "line " + (a + 1) : "lines " + (a + 1) + "–" + (b + 1)}`);
+          break;
+        }
+        case "set-line": {
+          // One chain line's words, in place (its id, flavor, ending and every link to it stay): `line` by position, 0 = ENTRY.
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (isProseKind(s, c.meta.kind)) throw new Error(`${idOf(c)} is a prose card`);
+          const lines = bw.chainLines(doc, c).filter((l) => l.id === "entry" || l.id === "exit" || /^t/.test(l.id));
+          const l = lines[Number(op.line)];
+          if (!l) throw new Error(`line ${op.line} is not in ${idOf(c)}'s chain of ${lines.length}`);
+          bw.setLinePart(doc, c, l.id, "text", String(op.text));
+          made.push(`line ${Number(op.line) + 1} of ${title(c) || c.meta.kind} ${idOf(c)}: ${String(op.text).slice(0, 60)}`);
+          break;
+        }
+        case "set-chain": {
+          // ENTRY → BUT / THEREFORE turns → EXIT, replacing the card's turns; outcomes are the E3 labels.
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (isProseKind(s, c.meta.kind) || ["project", "cast", "world", "idea", "arcbeat"].includes(c.meta.kind)) throw new Error(`${idOf(c)} is not a beat, scene or sequence`);
+          const OUT = ["Success", "Failure", "False Victory", "False Defeat", "Unresolved", "Disruption"];
+          const chk = (o) => { if (o && !OUT.includes(o)) throw new Error(`outcome "${o}" is not one of ${OUT.join(", ")}`); };
+          const K = (k) => (k === "but" || k === "therefore" ? k : "");
+          for (const tn of bw.chainRec(c).turns.slice()) bw.removeTurn(c, tn.id);
+          if (op.entry != null) bw.setLinePart(doc, c, "entry", "text", String(op.entry));
+          for (const tn of op.turns || []) {
+            const k = K(tn.k); if (!k) throw new Error('a turn needs k "but" or "therefore"');
+            chk(tn.outcome);
+            const id = bw.addTurn(c, k);
+            if (tn.text) bw.setLinePart(doc, c, id, "text", String(tn.text));
+            if (tn.outcome) bw.setLinePart(doc, c, id, "outcome", tn.outcome);
+            if (tn.detail) bw.setLinePart(doc, c, id, "detail", String(tn.detail));
+          }
+          const ex = op.exit || {};
+          chk(ex.outcome);
+          bw.setExitFlavor(c, K(ex.k));
+          if (ex.text != null) bw.setLinePart(doc, c, "exit", "text", String(ex.text));
+          if (ex.outcome && K(ex.k) !== "therefore") bw.setLinePart(doc, c, "exit", "outcome", ex.outcome);
+          if (ex.detail && K(ex.k) !== "therefore") bw.setLinePart(doc, c, "exit", "detail", String(ex.detail));
+          made.push(`chain on ${title(c) || c.meta.kind} ${idOf(c)}: ENTRY → ${(op.turns || []).map((x) => x.k.toUpperCase()).join(" → ") || "—"} → EXIT${K(ex.k) ? " (" + K(ex.k).toUpperCase() + ")" : ""}${ex.outcome ? " · " + ex.outcome : ""}`);
+          break;
+        }
+        case "replace-words": {
+          // ONLY on his explicit word naming the change (2026-10-19: "please change to the woodswoman"): an exact phrase swapped
+          // for the phrase he gave, on the cards he means. `count` is how many times `from` must appear on the card — any other
+          // number refuses the op, so a guess about his words never lands. Never on the AI's own initiative.
+          const c = bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (!op.from || op.to == null || !op.ruled) throw new Error('replace-words needs from, to and ruled ("<his words>")');
+          const n = c.body.split(op.from).length - 1;
+          if (n !== Number(op.count || 1)) throw new Error(`${idOf(c)} has "${op.from}" ${n} time(s), not ${op.count || 1}`);
+          bw.setBody(c, c.body.split(op.from).join(op.to));
+          made.push(`"${op.from}" → "${op.to}" on ${idOf(c)} (${n}×; CRE: ${op.ruled})`);
+          break;
+        }
+        case "remove-break-card": {
+          // On his word only (2026-10-19): a scene-break card the import kept word for word ("***"), once the Scenes around it
+          // export their own break. Refused for anything else: never a card with words, children or keys of its own.
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (!isProseKind(s, c.meta.kind) || !/^\s*(\*\s*\*\s*\*|\*{3,}|-{3,}|_{3,}|~{3,}|#\s*#\s*#|§)\s*$/.test(c.body)) throw new Error(`${idOf(c)} is not a scene-break card`);
+          if (c.children.length || Object.keys(c.meta).some((k) => !["v", "kind", "depth"].includes(k))) throw new Error(`${idOf(c)} carries more than the break; left alone`);
+          bw.removeCard(doc, c);
+          made.push(`scene-break card "${c.body.trim()}" ${idOf(c)} removed`);
+          break;
+        }
+        case "set-era-source": {
+          // On his word (plugin 0.64): this board's eras come from its scenes (on) or from its sequences as before (off).
+          const pc = bw.projectCard(doc); if (!pc) throw new Error("no Project card");
+          const st = JSON.parse(JSON.stringify(pc.meta.settings || {}));
+          const was = st.eraSource === "scene";
+          if (was === !!op.on) { skipped.push(`eras already ${was ? "from scenes" : "from sequences"}`); break; }
+          if (op.on) st.eraSource = "scene"; else delete st.eraSource;
+          bw.setMeta(pc, "settings", st);
+          made.push(`eras now come from ${op.on ? "scenes" : "sequences"}`);
+          break;
+        }
+        case "set-flashback": {
+          // A scene marked a flashback (its era applies to it only) — a story call: on his word or an approved proposal.
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c || !isUnitKind(s, c.meta.kind)) throw new Error(`${op.card} is not a scene`);
+          bw.setFlashback(c, op.on !== false);
+          made.push(`${title(c) || "scene"} ${idOf(c)} ${op.on !== false ? "is a flashback" : "is not a flashback"}`);
+          break;
+        }
+        case "set-remembers": {
+          // A memory micro-beat's era ("" = not known). The card must already be typed memory.
+          const c = bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c || c.meta.type !== bw.MEMORY_TYPE) throw new Error(`${op.card} is not a memory micro-beat`);
+          const e = op.era ? eraRef(doc, op.era) : null;
+          if (op.era && !e) throw new Error(`no era ${op.era}`);
+          bw.setRemembers(c, e ? e.id : "");
+          made.push(`${idOf(c)} remembers ${e ? e.name : "(not known)"}`);
+          break;
+        }
+        case "add-beat-type": {
+          // A micro-beat type added to the board's list (e.g. "memory", plugin 0.64), on his word.
+          const pc = bw.projectCard(doc); if (!pc) throw new Error("no Project card");
+          const st = JSON.parse(JSON.stringify(pc.meta.settings || {}));
+          const list = Array.isArray(st.beatTypes) ? st.beatTypes : [...s.beatTypes];
+          const name = String(op.name || "").trim();
+          if (!name) throw new Error("name is required");
+          if (list.includes(name)) { skipped.push(`"${name}" is already a type`); break; }
+          st.beatTypes = [...list, name];
+          bw.setMeta(pc, "settings", st);
+          s.beatTypes = st.beatTypes; // later ops in this run see the new type
+          made.push(`micro-beat type "${name}" added`);
+          break;
+        }
+        case "set-tag-mode": {
+          // On his word only: how the export adds dialogue tags ("never" for prose written with its own tags; plugin 0.63).
+          if (!["never", "first", "every"].includes(op.mode)) throw new Error('mode is "never", "first" or "every"');
+          const pc = bw.projectCard(doc); if (!pc) throw new Error("no Project card");
+          const st = JSON.parse(JSON.stringify(pc.meta.settings || {}));
+          const was = (st.dialogue && st.dialogue.mode) || "first";
+          if (was === op.mode) { skipped.push(`dialogue tags already "${op.mode}"`); break; }
+          st.dialogue = { ...(st.dialogue || {}), mode: op.mode };
+          bw.setMeta(pc, "settings", st);
+          made.push(`dialogue tags "${was}" → "${op.mode}"`);
+          break;
+        }
         case "set-plotting": {
           if (op.on === false) { bw.disablePlotting(doc); made.push("Statement Plotting off"); break; }
           const added = bw.enablePlotting(doc);
@@ -424,9 +678,55 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           if (op.unit === null || op.unit === "") { bw.setLeadExit(doc, c.id, null); made.push(`${bw.castName(c)} stays to the end`); break; }
           const u = findCardRef(doc, op.unit); if (!u) throw new Error(`no card ${op.unit}`);
           const s2 = bw.settingsOf(doc);
-          if (!isUnitKind(s2, u.meta.kind)) throw new Error(`${idOf(u)} is a ${bw.kindName(s2, u.meta.kind)}; the plugin honours a lead exit only on a unit (a ${bw.kindName(s2, sceneKey(s2))}-level card) — plottab.ts:241, flows.ts:84. Name the unit where ${bw.castName(c)} leaves`);
+          if (isUnitKind(s2, u.meta.kind)) { bw.setLeadExit(doc, c.id, u.id); made.push(`lead exit: ${bw.castName(c)} after ${title(u)} ${idOf(u)}`); break; }
+          // Since plugin 0.62.2 an exit stored on a sequence (or a chapter, part, book) reads at the last unit inside it
+          // (exitUnitId). An older core has no exitUnitId and honours units only, so the refusal stays for it.
+          if (typeof bw.exitUnitId !== "function" || !isContainerKind(s2, u.meta.kind)) throw new Error(`${idOf(u)} is a ${bw.kindName(s2, u.meta.kind)}; this plugin build honours a lead exit only on a unit (a ${bw.kindName(s2, sceneKey(s2))}-level card)${typeof bw.exitUnitId !== "function" ? " — 0.62.2 adds containers" : ""}. Name the unit where ${bw.castName(c)} leaves`);
           bw.setLeadExit(doc, c.id, u.id);
-          made.push(`lead exit: ${bw.castName(c)} after ${title(u)} ${idOf(u)}`);
+          const at = bw.exitUnitId(bw.plotModel(doc), u.id);
+          if (at) made.push(`lead exit: ${bw.castName(c)} after ${title(u)} ${idOf(u)} (reads at its last ${bw.kindName(s2, sceneKey(s2))}, ${title(bw.findCard(doc, at))} ^${at})`);
+          else { made.push(`lead exit: ${bw.castName(c)} after ${title(u)} ${idOf(u)}`); skipped.push(`${what}: ${title(u)} has no ${bw.kindName(s2, sceneKey(s2))} under it yet, so ${bw.castName(c)}'s exit reads "stays to the end" until one is added (stored; nothing to undo by hand)`); }
+          break;
+        }
+        case "add-event": {
+          // An event on CRE's instruction (schema §5e/§5i): {type, who, era, parents?, at?, name?, until?}. Everything is
+          // checked before anything is written, so a refused op leaves the board as it was. Stored on the Project card, so the
+          // run log's segment record makes undo byte-exact like every other op.
+          if (!op.type) throw new Error("type is required (born, died, married, separated, built, destroyed, or one of the board's own)");
+          const t = bw.eventType(doc, String(op.type));
+          if (!t) throw new Error(`event type "${op.type}" is not on this board (its types: ${bw.eventTypes(doc).map((x) => x.name).join(", ")}); a new type is added only on CRE's word`);
+          const eraOf = (ref) => { if (!ref) return null; const e = eraRef(doc, ref); if (e) return e; const hits = bw.erasOf(doc).filter((x) => x.label && norm(x.label) === norm(String(ref))); return hits.length === 1 ? hits[0] : null; };
+          if (!op.era && !op.at) throw new Error("era is required (an event belongs to an era), or at: the card it happens on");
+          const e = op.era ? eraOf(op.era) : null;
+          if (op.era && !e) throw new Error(`no era "${op.era}" on this board (eras: ${bw.erasOf(doc).map((x) => x.name + (x.label ? ` (${x.label})` : "")).join(", ") || "none"}); add it only on CRE's word (add-era)`);
+          const who = (Array.isArray(op.who) ? op.who : op.who ? [op.who] : []).map((r) => {
+            const x = t.for === "world" ? worldRef(doc, r) : t.for === "cast" ? castRef(doc, r) : castRef(doc, r) || worldRef(doc, r);
+            if (!x) throw new Error(`"${r}" is not ${t.for === "world" ? "a world entry" : t.for === "cast" ? "in the cast" : "on the board"} (a "${t.name}" event is about ${t.for === "world" ? "places and things" : t.for === "cast" ? "characters" : "anyone"})`);
+            return x;
+          });
+          if (who.length > t.people) throw new Error(`"${t.name}" is about ${t.people === 0 ? "nobody in particular" : t.people === 1 ? "one subject" : "two people"}; ${who.length} named`);
+          const parents = (op.parents || []).map((r) => { const x = castRef(doc, r); if (!x) throw new Error(`parent "${r}" is not in the cast`); return x; });
+          if (parents.length && t.name !== "born") throw new Error("parents go only on a born event");
+          if (parents.length > 2) throw new Error("a birth names at most two parents");
+          const until = op.until ? eraOf(op.until) : null;
+          if (op.until && !until) throw new Error(`no era "${op.until}" for until`);
+          let atCard = null;
+          if (op.at) {
+            atCard = findCardRef(doc, op.at); if (!atCard) throw new Error(`no card ${op.at}`);
+            const cardEra = bw.eraIdAt(atCard);
+            if (!cardEra) throw new Error(`${title(atCard) || atCard.meta.kind} ^${atCard.id} sits in no era, and the plugin pins an event only to a card with one; set its era first (on CRE's word), or leave at off`);
+            if (e && cardEra !== e.id) throw new Error(`${title(atCard) || atCard.meta.kind} ^${atCard.id} is in era ${bw.eraById(doc, cardEra)?.name || cardEra}, not ${e.name}; pinning takes the card's era, so name one or the other`);
+          }
+          const eraId = e ? e.id : bw.eraIdAt(atCard);
+          const id = bw.addEvent(doc, t.name, eraId, who.map((x) => x.id), parents.map((x) => x.id));
+          if (!id) throw new Error("event not added (no Project card?)");
+          if (atCard) bw.pinEvent(doc, id, atCard);
+          const patch = {};
+          if (op.name && String(op.name).trim()) patch.name = String(op.name);
+          if (until) patch.until = until.id;
+          if (Object.keys(patch).length) bw.updateEvent(doc, id, patch);
+          const ev = bw.eventById(doc, id);
+          made.push(`event: ${bw.eventLabel(doc, ev)} in ${bw.eraById(doc, ev.era)?.name || ev.era}${until ? ` until ${until.name}` : ""}${parents.length ? `, parents ${parents.map((x) => bw.castName(x)).join(" & ")}` : ""}${atCard ? `, on ${title(atCard)} ^${atCard.id}` : ""}${who.length < t.people ? ` (${who.length} of ${t.people} named)` : ""} [${id}]`);
           break;
         }
         case "mark-working-copy": {
@@ -588,6 +888,7 @@ function cmdRead() {
   const pc = bw.projectCard(doc);
   const castList = bw.castOf(doc).map((c) => ({ id: c.id, name: bw.castName(c), aliases: bw.castAliases(c), fields: c.meta.fields || {}, arcs: (c.meta.arcs || []).map((a) => ({ id: a.id, name: a.name, model: a.model || null, plot: !!a.plot })) }));
   const eras = bw.erasOf(doc).map((e) => ({ id: e.id, name: e.name, label: e.label || "", parent: e.parent || "", history: !!e.history }));
+  const events = (bw.eventsOf ? bw.eventsOf(doc) : []).map((e) => ({ id: e.id, type: e.type, name: e.name || "", label: bw.eventLabel ? bw.eventLabel(doc, e) : "", era: e.era || "", who: e.who || [], at: e.at || "" }));
   const rels = bw.relationsOf(doc).map((l) => ({ id: l.id, text: bw.relationLabel(doc, l), type: l.type, a: l.a, b: l.b, from: l.from || "", to: l.to || "", note: l.note || "" }));
   const world = bw.worldOf(doc).map((c) => ({ id: c.id, kind: bw.worldKindOf(c), name: bw.worldName(c), aliases: bw.worldAliases(c), fields: c.meta.fields || {} }));
   const inbox = bw.inboxIdeas(doc).map((c) => ({ id: c.id, type: c.meta.type || "", text: c.body, tags: bw.tagNames(c) }));
@@ -606,7 +907,7 @@ function cmdRead() {
     board: rel(board), title: pc ? title(pc) : "", cards: doc.cards.length, roundTrip, version: v,
     levels: s.levels.map((l) => l.key), ideaTypes: s.ideaTypes || bw.defaultIdeaTypes(), beatTypes: s.beatTypes, tagPrefixes: s.tagPrefixes, worldKinds: bw.worldKinds(s).map((k) => k.key), relationTypes: bw.relationTypes(doc).map((t) => t.name),
     plotting: { on: bw.plottingOn(s), leads: bw.plottingOn(s) ? bw.leadsOf(doc, s) : [], exits: bw.leadExits(s) }, model: s.model || null,
-    cast: castList, eras, relations: rels, world, inbox, placedIdeas: placed, arcSteps: steps.length > 60 && !full ? { count: steps.length, filled: steps.filter((x) => x.filled).length, unplaced: steps.filter((x) => !x.placed).length, note: "--full lists them" } : steps,
+    cast: castList, eras, events, relations: rels, world, inbox, placedIdeas: placed, arcSteps: steps.length > 60 && !full ? { count: steps.length, filled: steps.filter((x) => x.filled).length, unplaced: steps.filter((x) => !x.placed).length, note: "--full lists them" } : steps,
     tree, log: readLog(board).runs.map((r) => ({ id: r.id, date: r.date, label: r.label, status: r.status, touched: (r.cards || []).length })),
   });
 }
@@ -627,14 +928,96 @@ function blocksInto(doc, s, parent, blocks, containerKinds) {
     } else { const c = bw.insertChild(doc, open.length ? open[open.length - 1].card : parent, { kind: prose }); bw.setBody(c, b); }
   }
 }
-function cmdImport() {
+/** Book import source: the chapter folders (CHAPTERS/<folder>/draft.md) in chapter-number order. */
+function bookSources(book) {
+  const dir = abs(book);
+  const chapDir = existsSync(`${dir}/CHAPTERS`) ? `${dir}/CHAPTERS` : dir;
+  const folders = readdirSync(chapDir).filter((f) => { try { return statSync(`${chapDir}/${f}`).isDirectory() && existsSync(`${chapDir}/${f}/draft.md`); } catch { return false; } });
+  const num = (f) => { const m = /(\d+)/.exec(f); return m ? parseInt(m[1], 10) : 1e9; };
+  folders.sort((a, b) => num(a) - num(b) || a.localeCompare(b));
+  if (!folders.length) die(`no chapter folders with draft.md under ${rel(chapDir)}`);
+  return folders.map((f) => ({ folder: f, path: `${chapDir}/${f}/draft.md` }));
+}
+const FM_RE = /^---\r?\n[\s\S]*?\r?\n---[ \t]*(\r?\n|$)/;
+const bodyOf = (t) => { const fm = FM_RE.exec(t); return { body: (fm ? t.slice(fm[0].length) : t).replace(/\r\n/g, "\n"), fm: !!fm }; };
+/** import --into: the same verbatim convert, appended under an existing board's Project card as one logged apply-kind run
+ *  (undo takes out exactly the cards it added; every card already on the board stays byte-identical). */
+function cmdImportInto() {
   requireWritable();
-  const boardPath = abs(arg("--board")); if (!arg("--board")) die("import needs --board <new board.md>");
+  const DRY = flag("--dry");
+  const board = abs(arg("--into"));
+  if (!existsSync(board)) die(`${rel(board)} does not exist; --into needs an existing board (use --board for a new one)`);
+  if (/(^|\/)REFERENCE\//.test(rel(board)) || /\/(draft|brief)\.md$/.test(board) || /\/(slate|revisions)\//.test(board)) die("the target is a pipeline or REFERENCE path");
+  const src = arg("--source"), book = arg("--book");
+  if (!src && !book) die("import needs --source <note.md> or --book <project dir>");
+  const { text, doc, roundTrip } = loadBoard(board);
+  if (!roundTrip) die(`${rel(board)} does not round-trip through the plugin's serializer; open and save it once in Obsidian, or run \`normalize\` as its own logged run first`);
+  const s = bw.settingsOf(doc);
+  const project = bw.projectCard(doc); if (!project) die(`${rel(board)} has no Project card`);
+  const containers = s.levels.slice(1, -1).map((l) => l.key);
+  const before = snapshot(text, doc);
+  const beforeTail = tailOf(text, doc);
+  const sources = [], made = [];
+  const add = (path, t, fm) => sources.push({ path: rel(path), sha256: sha(t), bytes: Buffer.byteLength(t, "utf8"), frontmatterSkipped: fm });
+  if (src) {
+    const t = readText(src); const { body, fm } = bodyOf(t); add(src, t, fm);
+    const seq = bw.insertChild(doc, project, { kind: containers[0] }); bw.setBody(seq, arg("--title", "") || basename(abs(src)).replace(/\.md$/, ""));
+    blocksInto(doc, s, seq, bw.splitBlocks(body), containers.slice(1));
+    made.push(`${bw.kindName(s, containers[0])} "${title(seq)}" ^${seq.id} with ${seq.children.length} cards from ${rel(src)}`);
+  } else {
+    for (const { folder, path } of bookSources(book)) {
+      const t = readText(path); const { body, fm } = bodyOf(t); add(path, t, fm);
+      const seq = bw.insertChild(doc, project, { kind: containers[0] }); bw.setBody(seq, folder);
+      const n = /(\d+)/.exec(folder); if (n) bw.setField(seq, "chapter", String(parseInt(n[1], 10)));
+      blocksInto(doc, s, seq, bw.splitBlocks(body), containers.slice(1));
+      made.push(`${bw.kindName(s, containers[0])} "${folder}"${n ? ` (chapter ${parseInt(n[1], 10)})` : ""} ^${seq.id}`);
+    }
+  }
+  let textNew = bw.serialize(doc);
+  if (book) {
+    const label = arg("--source-label", rel(abs(book))).replace(/"/g, "'");
+    const lines = [`bw-working-copy: true`, `bw-source: "${label}"`, `bw-authority: "the pipeline's drafts, until ^backlog-branch-writing-replacement-review rules"`];
+    // same frontmatter rule as the mark-working-copy op
+    const pre = bw.parse(textNew).preamble; const m = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(\r?\n|$)/.exec(pre);
+    const pre2 = m ? `---\n${[...(m[1] || "").split(/\r?\n/).filter((l) => !/^bw-(working-copy|source|authority):/.test(l)), ...lines].join("\n")}\n---\n` + pre.slice(m[0].length) : `---\n${lines.join("\n")}\n---\n` + pre;
+    textNew = pre2 + textNew.slice(pre.length);
+    made.push(`marked a working copy of ${label} (frontmatter)`);
+  }
+  const docNew = gate(textNew);
+  const after = snapshot(textNew, docNew);
+  const records = [];
+  for (const [id, b] of before) { const a = after.get(id); if (!a) records.push({ id, before: b, after: null }); else if (a.text !== b.text || a.prev !== b.prev) records.push({ id, before: b, after: a }); }
+  const changedOld = records.filter((r) => r.before);
+  if (changedOld.length) die(`internal: ${changedOld.length} card(s) already on the board would change (first ^${changedOld[0].id}); nothing written`);
+  for (const [id, a] of after) if (!before.has(id)) records.push({ id, before: null, after: a });
+  const bodies = new Set(records.map((r) => docNew.cards.find((c) => c.id === r.id)).filter((c) => c && isProseKind(s, c.meta.kind)).map((c) => c.body));
+  const srcBlocks = sources.flatMap((x) => bw.splitBlocks(bodyOf(readText(x.path)).body));
+  const missing = srcBlocks.filter((b) => !bodies.has(b));
+  if (missing.length) die(`${missing.length} source blocks are not on the board word for word; nothing written. First: ${JSON.stringify(missing[0].slice(0, 80))}`);
+  for (const x of sources) if (sha(readText(x.path)) !== x.sha256) die(`${x.path} changed while importing; nothing written`);
+  const preChanged = docNew.preamble !== doc.preamble;
+  const nProse = records.filter((r) => { const c = docNew.cards.find((k) => k.id === r.id); return c && isProseKind(s, c.meta.kind); }).length;
+  const label = `import ${src ? rel(src) : arg("--source-label", rel(abs(book)))} into this board`;
+  console.log(`${DRY ? "DRY RUN — nothing written" : "run"}: ${rel(board)} — ${label}`);
+  for (const m of made) console.log("  made: " + m);
+  console.log(`  cards added: ${records.length} (${nProse} prose, ${records.length - nProse} containers) from ${sources.length} source file(s); ${srcBlocks.length} blocks, all on the board word for word; sources untouched (${sources.map((x) => x.sha256.slice(0, 8)).join(", ")})${preChanged ? "; frontmatter changed" : ""}; every card already on the board byte-identical`);
+  if (DRY) return;
+  const run = { id: newRunId(board), date: new Date().toISOString(), board: rel(board), label, kind: "apply", status: "applied", ops: [{ op: "import-into", source: src ? rel(src) : rel(abs(book)) }], sources, made, notDone: [], file: { beforeSha256: sha(text), afterSha256: sha(textNew), beforeTail, afterTail: tailOf(textNew, docNew) }, preamble: preChanged ? { before: doc.preamble, after: docNew.preamble } : null, cards: records };
+  const lp = writeRun(board, run);
+  safeWriteBoard(board, textNew);
+  console.log(`  logged as ${run.id} in ${rel(lp)}; written — "undo" takes out exactly these cards; next: \`propose\` for the structure (ruled, never landed by itself)`);
+}
+function cmdImport() {
+  if (arg("--into")) return cmdImportInto();
+  requireWritable();
+  const boardPath = abs(arg("--board")); if (!arg("--board")) die("import needs --board <new board.md> (or --into <existing board.md>)");
   if (existsSync(boardPath)) die(`${rel(boardPath)} exists; an import writes only a new board`);
   if (/(^|\/)REFERENCE\//.test(rel(boardPath)) || /\/(draft|brief)\.md$/.test(boardPath) || /\/(slate|revisions)\//.test(boardPath)) die("the target is a pipeline or REFERENCE path");
   const src = arg("--source"), book = arg("--book");
   if (!src && !book) die("import needs --source <note.md> or --book <project dir>");
   const settings = bw.defaultSettings();
+  // Plugin 0.63: imported prose carries its own dialogue tags, so the export never adds the template's (the plugin's Convert does the same).
+  settings.dialogue = { ...settings.dialogue, mode: "never" };
   const doc = bw.parse(""); doc.cards = []; doc.roots = [];
   const project = bw.newCard(doc, { kind: "project", depth: 0, settings }); doc.roots.push(project); doc.cards.push(project); bw.flatten(doc); doc.structureDirty = true;
   const sources = [];

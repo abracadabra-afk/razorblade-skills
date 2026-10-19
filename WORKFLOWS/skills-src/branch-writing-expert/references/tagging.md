@@ -11,7 +11,7 @@ marked `by: ai`** that becomes CRE's on first touch; it never changes a body and
 |---|---|---|
 | a tag the text supports (`char:Mara`, `place:the mill`, `thread:…`, `seed:` / `payoff:`) | `add-tag` → `tags[]` entry `by: ai` | the schema's own by-attributed slot |
 | a link between cards (echoes, pays off, mirrors) | `add-link` with `rel` → `links[]` entry `by: ai` | same |
-| beat type, speaker, summary, wants, a character's state change, a ✦ chain summary | `offer` → one marker key `ai: {…, by: "ai", offered: date}` | `type`, `speaker` and the fields carry no `by`; writing them directly would be indistinguishable from his hand. The plugin preserves the `ai` key untouched (§4 unknown keys); showing it on a collapsed card is a plugin feature, queued |
+| speaker, wants, a character's state change (beat types, titles, summaries and chains on the levels above his prose are written directly since 2026-10-19 — `references/breakdown.md`, not offers) | `offer` → one marker key `ai: {…, by: "ai", offered: date}` | `type`, `speaker` and the fields carry no `by`; writing them directly would be indistinguishable from his hand. The plugin preserves the `ai` key untouched (§4 unknown keys); showing it on a collapsed card is a plugin feature, queued |
 | intensity scores (emotional −10…+10, physical 0…10) via the `scene-intensity` rubric | `offer-intensity` → the sidecar `<board>.measure.json`, keyed by card id with the prose hash | §6a: measured values never sit in a marker and go stale when the prose moves; the hash says when |
 
 ## The run

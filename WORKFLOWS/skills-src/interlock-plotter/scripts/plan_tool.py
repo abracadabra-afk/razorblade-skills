@@ -2,7 +2,9 @@
 valid and the readable table above it is always regenerated from it (never hand-edited, so the two can't drift).
 
     python -I plan_tool.py new    <plan.md> --board-path <path> --title <t> [--copy-of <path>] [--vault V]
-    python -I plan_tool.py set    <plan.md> --json '<partial plan JSON>'          merge top-level keys (cast, roles, switches,
+    python -I plan_tool.py set    <plan.md> --json-file <part.json>                merge top-level keys (a FILE, never a shell
+                                                                                   argument: PowerShell 5.1 strips the quotes, ^obs-444)
+    python -I plan_tool.py set    <plan.md> --json '<partial plan JSON>'          the same from Git Bash only; merge top-level keys (cast, roles, switches,
                                                                                    plotting, structure, external) — CRE's words only
     python -I plan_tool.py beat   <plan.md> --n 17 --spine external [--cast key] [--sub a|b] (--text "<CRE's words>" | --open)
                                   [--who k1,k2] [--at "seq:Title"] [--src "dictation 2026-10-18 ¶12"]
@@ -201,7 +203,7 @@ def main():
     ap.add_argument("plan")
     ap.add_argument("--vault", default=DEFAULT_VAULT)
     ap.add_argument("--board-path"); ap.add_argument("--title"); ap.add_argument("--copy-of")
-    ap.add_argument("--json")
+    ap.add_argument("--json"); ap.add_argument("--json-file")
     ap.add_argument("--n", type=int); ap.add_argument("--spine"); ap.add_argument("--cast"); ap.add_argument("--sub")
     ap.add_argument("--text"); ap.add_argument("--open", action="store_true")
     ap.add_argument("--who"); ap.add_argument("--at"); ap.add_argument("--src")
@@ -231,7 +233,12 @@ def main():
         print("note: the plan was approved; this change takes the approval off (CRE approves again with \"approve the plan\")")
 
     if a.cmd == "set":
-        part = json.loads(a.json)
+        if a.json_file:
+            part = json.loads(open(a.json_file, encoding="utf-8").read())
+        elif a.json:
+            part = json.loads(a.json)
+        else:
+            die("set takes --json-file <part.json> (or --json from Git Bash)")
         bad = set(part) - PLAN_KEYS
         if bad:
             die(f"set takes only {sorted(PLAN_KEYS)}; not {sorted(bad)} (beats go through 'beat', approval through 'approve')")

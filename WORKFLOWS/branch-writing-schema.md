@@ -3,9 +3,9 @@ type: schema
 title: Branch Writing card marker schema
 schema_version: 1
 plugin: branch-writing
-plugin_version: 0.62.0
+plugin_version: 0.64.0
 created: '2026-10-07'
-last_updated: '2026-10-18'
+last_updated: '2026-10-19'
 ---
 
 # Branch Writing — card marker schema, v1
@@ -67,7 +67,7 @@ The card body: plain Markdown, exactly as written.
 1. **Live boards are in bounds, under the log.** It writes to the board CRE names or is working in, including live work, and also builds new boards or copies from an approved plan. Every run is recorded first in the board's change log (`SYSTEM/board-logs/<board>.md`) with the exact before-text of each card it touches, so "undo the last run" restores those cards byte-for-byte and "redo" puts them back. A run that cannot write its log entry does not write the board.
 2. **Instruction executes; inference is proposed.** A direct instruction from CRE ("add Mara to the cast", "file these ideas", "chapter 3 on The Bridge") executes at once, with a change list after. Anything the AI worked out itself — a placement, a tag, a speaker, a scene break, a role, a relationship, an era — is a proposal in a **ruling list** and reaches the board only after CRE approves it.
 3. **CRE's words, verbatim.** Every value written is his words from the session, from a plan or fixture he named, or from a proposal he approved — never reworded or filled in. What he leaves open stays an open, labelled blank (a step keeps its template label and an empty body). The AI may say what a rule asks of a slot, never the answer.
-4. **Never prose, never the author's marks.** No prose-level body, conversation line (`convo`), subtext, chain line (`plotChain`, `plotFrom`), statement, key-beat / line mark (`plotMarks`), outcome or Complete mark (`plotComplete`), and never a value in the author's own `summary` field. Those stay CRE's in every section below (a summary the AI reads out of the text is an offer under rule 5, never the field).
+4. **Never prose, never the author's marks.** *(Amended 2026-10-19, CRE: on boards the expert works, the levels above the micro-beats are administrative — Beat grouping and types, micro-beat types, and titles, summaries, goal holders and chains on Beats, Scenes and Sequences are written by the expert, logged and undoable; see the expert's canon doc. The rest of this rule stands: no prose-level body, conversation line, subtext, mark or Complete mark.)* No prose-level body, conversation line (`convo`), subtext, chain line (`plotChain`, `plotFrom`), statement, key-beat / line mark (`plotMarks`), outcome or Complete mark (`plotComplete`), and never a value in the author's own `summary` field. Those stay CRE's in every section below (a summary the AI reads out of the text is an offer under rule 5, never the field).
 5. **Offers are marked.** Every tag and link the AI adds carries `"by":"ai"`; an entry whose `by` is `"cre"` is never changed or removed. Offers that have no `by` slot of their own (a beat type, a speaker, a summary, wants, states, a chain summary) go under one marker key, `ai` (an object with `by: "ai"` and the date), which the plugin preserves untouched (unknown keys) — never into the author's own fields. Intensity offers go to the board's sidecar (§6a), never a marker.
 6. **Touch only what you change.** Cards outside a run stay byte-identical (the plugin's own parse/serialize round trip is the gate); keys are retired by hiding, never deleted; unknown keys are preserved; one record, never a copy.
 7. **The board is read fresh every run** (nothing is remembered but the log), and a **version check** runs at every launch: the installed plugin and this schema doc against the skill's calibration record; newer → read what changed before writing; a format change it cannot account for → read-only for that run, said plainly.
@@ -288,6 +288,29 @@ Ash swears it at the river.
 - **Profile templates (§5b)** may carry `"stages":["Child","Adult"]` in their JSON block: stage names only, never values, ages, nicknames or era mappings. A character made from the template, or given it with "Apply template", gets any of those stages it lacks (matched by name, any case), empty.
 - **AI writers (under §4):** eras and a card's era as above (instruction executes, inference is proposed, the build's placeholder). Stages and era mappings only on CRE's explicit instruction naming the stage and the era; a multi-era character's treatment (own full spine, a short anchored arc, or feeds the setup) is asked per character, never chosen.
 
+## 5d1. Scene-sourced eras, flashbacks and memories (plugin 0.64, CRE 2026-10-19)
+
+CRE: scenes are the source of truth for time; what sits above them rolls up. **Opt-in per board** — a board without the
+setting reads exactly as before (§5d).
+
+- `settings.eraSource: "scene"` (Project card): a scene's own era **carries forward** to the next scenes, in story order,
+  until another present scene sets one. A Book / Part / Sequence's own era is its **planned start** (its first scene's era
+  until a scene sets one — for spine-first planning before scenes exist). Switched by the command "Eras from scenes: switch
+  on / off (this board)", one undo step. Absent = eras carry from Books / Parts / Sequences and a scene's era applies only
+  there (§5d, unchanged).
+- `flashback: true` on a scene: its era applies to it (and what's inside it) only, and the present goes on after it — on
+  any board. The chip reads "· flashback"; the card menu's Era submenu toggles it.
+- **The roll-up (derived, never stored):** on a scene-sourced board a Book / Part / Sequence with scenes shows
+  `⏳ <present eras in order, each run once, joined by →> · N flashbacks · N memories` (hover lists the flashback and
+  remembered eras). Core: `eraRoll(doc, card)`.
+- **The memory micro-beat:** a prose card of type `memory` (added to a board's `beatTypes` list like any type; the default
+  list is unchanged) is a line that remembers an era. `remembers: "<era id>"` on its marker, optional ("↺ memory" when not
+  known): a broad bucket (e.g. Childhood) for an unplotted memory that deepens a character, a season for one tied to a
+  plotted event. It changes no era: the card and its scene stay in the scene's era. Chip "↺ remembers <era>"; click or the
+  card menu's Remembers… picks it. A `remembers` on a card of any other type is ignored.
+- **AI writers:** may read all of it; `set-era-source`, `set-flashback`, `set-remembers` and `add-beat-type` only on his
+  word or an approved proposal (eras are story calls).
+
 ## 5e. Events (plugin 0.17, 2026-10-10)
 
 Phase 2 of eras → events → relationships (CRE-ruled 2026-10-10). Events live on the Project card: `events: [{"id":"evt-k2x9q","type":"born","era":"<era id>","who":["<cast id>"],"parents":["<cast id>","<cast id>"],"at":"sce042","note":"in the flood year"}]`.
@@ -466,9 +489,12 @@ The Statement Plotting Method v12 through CRE's ratified lean profile ([[WORKFLO
   - `plotBloc: "entry" | "exit" | "<turn id>"` on a micro-beat (a direct child of the beat, at the prose level): the chain point whose bloc it is in. Absent, or naming a line the beat no longer has, = unplaced. Moving a micro-beat to another bloc rewrites it; moving it under another card removes it (unplaced there); removing a turn removes it from that turn's micro-beats.
   - **The order rule:** under a beat with a chain, the file holds its micro-beats in bloc order — ENTRY's, each turn's in chain order, EXIT's, then unplaced. Every plugin write that places, moves or re-orders keeps it, in the same undo step; other cards under the beat (notes, side cards, variants) keep their positions. A hand edit that breaks the order is read as it stands, and settled only when that beat is next edited.
   - `beatTypes` default: `exposition` is in the built-in list for new boards (colour `wheat`). A board that stores its own list keeps it; Project settings → the prose level offers "Add exposition".
+- **A beat's contract face (0.63.2, CRE 2026-10-19).** An expanded beat with no chain of its own — no words on ENTRY or EXIT, no turn, no ending — draws its title, summary and Write box only, without a blank ENTRY / EXIT; its + offers "Give this beat a chain: BUT / THEREFORE" (one click adds the first turn, and the chain is drawn from then on). Nothing stored changes; a beat with a chain draws as before. Display only.
 - **AI writers (0.43):** may read `plotBloc` and a beat's chain; never place, move or unplace a micro-beat, write a beat's chain line, or settle the order.
 - **Conversations (0.44, fix list 2026-10-16 item 2).** One dialogue micro-beat can hold a whole conversation. It stays `kind` = the prose level and `type: "dialogue"` (so a bloc's type mix counts it once); its **body holds the lines, one paragraph each, exactly as written** (word counts, search and reading view see every line). One new key on its marker: `convo: {"with": [names], "who": [the speaker of each line, by position], "end"?: "natural" | "interrupted" | "walked out" | "cut away", "endText"?: string}`. Participants are names (cast names, or any name). A paragraph with no `who` entry (typed in Markdown) takes the next participant after the line before. `speaker` is not used on a conversation (a merge moves it into `who`). Clean export writes each line as a dialogue card of its own would be written (same quotes, same tag rule), so a merge leaves the export byte-identical. Nothing is ever merged by itself: "Merge into one conversation" (card menu) joins a run of neighbouring dialogue micro-beats in the same bloc into the first card, in one undo step; a card with other marker keys (a colour, fields, an era), children, a body of more than one paragraph, or something linking to its block id stays out of the run.
 - **AI writers (0.44):** may read `convo`; never write it or merge cards.
+- **Action lines and the range merge (0.63, CRE 2026-10-19).** A conversation may hold **action lines**: the action, narration or a tag on its own line between the spoken lines, exactly as written. One more optional key: `convo.act: [true | false, …]`, by position as `who`, written only when some line is one (a conversation without action lines stores exactly what it stored before). An action line's `who` entry is `""`; it has no speaker, is skipped when speakers alternate, and exports as written (§7). **Merge N cards into one conversation** (card menu, on a Shift-selected run of neighbouring micro-beats under one parent, same bloc): dialogue cards become spoken lines, every other card an action line; the run is refused, with the reason, when it crosses a scene-break card, holds no dialogue card, or a card carries other marker keys, children, more than one paragraph or an incoming link (the first card may keep its link). Before it merges, the export of the run's parent is computed on a copy; if it would read differently by one byte, nothing is merged. A merge's first card becomes `type: "dialogue"`. The line ⋯ menu's **Action (no speaker)** makes a line an action line or spoken again. **Speakers from the author's tags:** on a board whose `dialogue.mode` is `never`, a merged dialogue card with no `speaker` takes its speaker from its own tag when the words outside its quotation marks put one cast name or alias beside a speech verb ("…," the boy said · said the woodswoman · asked the old one); a pronoun ("she said") names no one and the line alternates as before. Nothing is read on a `first`/`every` board (a named speaker would make the export add a tag). **Converted boards** (the plugin's Convert, and the expert's new-board import) start with `dialogue.mode: "never"`: prose written with its own tags gets none added.
+- **AI writers (0.63):** may read `convo.act`; never write it or merge cards (unchanged).
 - **Card types onto the chain, release 1 (0.45, lean profile §m1): quiet retirements, UI only.** Nothing is stored, added, renamed or deleted; a board's settings are not changed. On a board with `settings.plotting.on`:
   - **"Add card"** (the card menu's Add other) leaves out the Character card type (the custom type keyed `character`, else the board's first arc type) and "Character from the cast…". Card kind still lists it; the Characters panel's "Add to selected card" stays.
   - **The Beat level's position types** (`setup/hook`, `escalation`, `scene-climax`, `valley`, `outcome/hook` on `levels[beat].types`, the Story Framework's list) are not offered in its type picker (the card menu's Type list, the `t` key); any other type on that list (the plotting fixtures' `conversation`, `action`) still is. A list of positions only leaves no picker, and `t` does nothing. A custom type `like: "beat"` without its own `types` is treated the same. The list stays in the settings; Project settings still edits it.
@@ -659,6 +685,7 @@ Export covers the main line only, with no markers, no block IDs, no `%%` comment
 - Each structural level renders as set in `export`. A chapter heading (`export.chapterHeading`) starts wherever a card's `fields.chapter` value changes.
 - Dialogue cards hold only the line. Export adds `dialogue.quotes`-style quote marks, unless the line already opens with a quote. It adds the tag from `dialogue.tag` per `dialogue.mode`, and joins them with a comma: a final `.` becomes `,`; `?`, `!`, `—` and `…` are kept.
 - A quoted line with text after its closing quote is treated as CRE's own tag and exported as written.
+- A conversation's action line (0.63, `convo.act`) is exported exactly as written, like the action card it was, and ends the exchange for the tag rule.
 - Nothing else in a body is changed.
 
 ## 8. Reading a board without the plugin (Python sketch)

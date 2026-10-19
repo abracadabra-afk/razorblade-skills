@@ -1,6 +1,6 @@
 ---
 name: branch-writing-expert
-description: 'The single front door to CRE''s Branch Writing boards (his Obsidian plugin): executes what he says at any level on the board he names, live boards included, never prose. Use whenever CRE says "work the board", "board: …", "import to the board", "tag the board", "interlock the arcs", "build the interlock board" or "check the interlock", hands over a dump of story ideas to file or place, asks to add or change cast, eras, relationships, systems, items, tags or links on a board, to put a story or chapters onto a board, to plot a book against his Interlocking Arc Model, or to undo or redo what this skill did. Instructions execute at once with a change list; its own inferences (placements, tags, structure, roles) are a ruling list he approves first; every write is logged per board for undo/redo. Do NOT use to write prose, invent beats or characters, export a board, edit the arc model, audit arcs in a draft (arc-audit), cut scenes in DEV/ (shape-the-part), sort the vault INBOX (inbox-router), or run unattended.'
+description: 'The single front door to CRE''s Branch Writing boards (his Obsidian plugin): executes what he says at any level on the board he names, never his prose. Use whenever CRE says "work the board", "board: …", "import to the board", "break down chapter N", "tag the board", "interlock the arcs", "build the interlock board" or "check the interlock", hands over story ideas to file or place, asks to change cast, eras, relationships, world entries, tags or links, to put chapters on a board, to plot against his Interlocking Arc Model, or to undo this skill''s work. Instructions execute with a change list; the levels above his prose (typed micro-beats, beats, summaries, scene and chapter chains, links) it writes directly, one pilot chapter first; story inferences (placements, tags, roles, cast) are a ruling list first; every write is logged for undo. Do NOT use to write prose, invent beats or characters, export a board, edit the arc model, audit arcs (arc-audit), cut DEV/ scenes (shape-the-part), or run unattended.'
 ---
 
 # branch-writing-expert
@@ -16,15 +16,25 @@ Canon doc: `WORKFLOWS/branch-writing-expert.md` (if this file and it disagree, t
 
 ## Why the rules are shaped this way
 
-- **Execute his instructions; propose your inferences.** "Add Mara to the cast", "file these ideas", "chapter 3 on The
-  Bridge" execute at once, change list after. Anything you worked out yourself — where an idea belongs, a tag, a speaker,
-  a scene break, a role, a relationship, an era — is a **proposal in the ruling list**, never on the board until he says
-  so, because a suggestion already on the board anchors him and an executed guess is his work to find and undo.
-- **His words, verbatim.** Every value you write came from him in this session, from a fixture he named, or from a
-  proposal he approved. No tidying, no completing a fragment, no filling a blank "to be helpful". You may say what a rule
-  asks of a slot (the model's own words), never the answer. What he leaves open stays an open, labelled blank.
-- **Never prose.** No prose-level body, conversation line, subtext, chain line, statement, mark or Complete mark. Those
-  are the author's instrument; the writer tool refuses them (schema §5n, §5q).
+- **His words are the forbidden zone; the levels above them are administrative** (CRE-ruled 2026-10-19: "the prose level
+  (microbeats) are my words - those are hands off. But the levels above it are administrative."). The board is his
+  plotting and planning tool: he built it to see the pieces identified, find what is missing, write each piece, and export
+  them into a working draft he formats. So, reading his prose, you **write directly** — logged, undoable, no ruling list
+  first — the splitting of a paragraph into one micro-beat per beat it fires, each micro-beat's type, the Beats that group
+  them (type, title, summary), and each Scene's and Sequence's title, summary, goal holder and chain, carried up and linked
+  down (`references/breakdown.md`). Never change, add, drop or reorder one of his words; paragraphing on export is not
+  protected (it is his working draft).
+- **Execute his instructions; propose your story inferences.** "Add Mara to the cast", "file these ideas", "chapter 3 on
+  The Bridge" execute at once, change list after. What you work out about the *story* — where an idea belongs, a tag, a
+  speaker, a role, a relationship, an era, a cast entry, a POV — is a **proposal in the ruling list**, never on the board
+  until he says so: a story suggestion already on the board anchors him. Structure and identification above the prose are
+  not proposals (the rule above).
+- **His story values, verbatim.** A cast name, an idea, a profile answer, a plan beat: from him this session, from a
+  fixture he named, or from a proposal he approved. No tidying, no completing a fragment, no filling a blank "to be
+  helpful". What he leaves open stays an open, labelled blank. Titles, summaries and chain lines on the administrative
+  levels are yours, in plain words, and say what the prose already does — never what it should do.
+- **Never prose.** No prose-level body, conversation line, subtext, line mark or Complete mark (schema §5n, §5q); a
+  conversation merge is his click in the plugin. Chain lines, titles and summaries above the micro-beats are not prose.
 - **Live boards are in bounds, under the log.** You write to the board he names or is in. Every run is recorded first in
   the board's change log (`SYSTEM/board-logs/<board>.md`) with the exact before-text of every card it touches; a run that
   cannot write its log entry does not write the board. The log is yours: he never has to open it, the change list in chat
@@ -64,7 +74,10 @@ there (always the current copy) and the plugin dev folder is `C:\Users\Chad\dev\
 
 | Script | Does |
 |---|---|
-| `scripts/board_tool.mjs` | `check` · `read` · `apply <ops.json> [--dry]` · `undo` · `redo` · `import` · `propose` · `suggest-tags` · `log` · `calibrate` · `normalize` — every board write (`references/ops.md`). Paths may be absolute (`C:/…` or Git Bash `/c/…`), relative to the current folder, or vault-relative. `--log-dir <folder>` moves the change logs (test runs keep them in the test folder); the default is `SYSTEM/board-logs/` |
+| `scripts/board_tool.mjs` | `check` · `read` · `apply <ops.json> [--dry]` · `undo` · `redo` · `import` (`--board` new, `--into` an existing board) · `propose` · `suggest-tags` · `log` · `calibrate` · `normalize` — every board write (`references/ops.md`). Paths may be absolute (`C:/…` or Git Bash `/c/…`), relative to the current folder, or vault-relative. `--log-dir <folder>` moves the change logs (test runs keep them in the test folder); the default is `SYSTEM/board-logs/` |
+| `scripts/split_plan.mjs` | breakdown: a split spec (card → its pieces' types and opening words) → `split-micro` ops; refuses a piece that isn't his next words |
+| `scripts/admin_plan.mjs` | breakdown: a chapter plan (beats, types, titles, summaries, chains, links) → one ops file; refuses a plan that doesn't cover every micro-beat once, in order |
+| `scripts/words.mjs` | the words proof: every micro-beat's words on a board, in order, as one hash and a count — run before and after every breakdown run; they must match |
 | `scripts/plan_tool.py` | plotting mode's plan: `new` · `set --json-file` · `beat` · `walk` · `walked` · `render` · `approve` · `status` |
 | `C:\Users\Chad\dev\branch-writing\tools\build-plan.mjs` / `check-board.mjs` | plotting mode's builder (new board or copy) and check report |
 | `scripts/grade.mjs` | the proof grader ("every word given is on the board, and nothing else") — tests only |
@@ -72,8 +85,9 @@ there (always the current copy) and the plugin dev folder is `C:\Users\Chad\dev\
 ## The shape of every run
 
 1. Version check, read the board (Load).
-2. Sort what he said into **instructions** (execute) and **inferences** (propose). When one sentence holds both ("file
-   these ideas and put them where they go"), the filing executes now and the placing becomes the ruling list.
+2. Sort what he said into **instructions** (execute), **administrative work** (execute: the breakdown above his prose)
+   and **story inferences** (propose). When one sentence holds both ("file these ideas and put them where they go"), the
+   filing executes now and the placing becomes the ruling list.
 3. Write the instructions as an ops file (`references/ops.md`) and run `apply … --dry` first when the run touches more
    than a handful of cards or anything you are not sure the tool accepts; then `apply`. The tool prints `made:` and `NOT
    DONE:` lines — the change list is those lines in his words, one per write, nothing else. Anything NOT DONE goes back to
@@ -105,7 +119,8 @@ the board (`read --full` shows each step's text), never in a memory of it.
 **Direct instructions at any level** — cast (name, aliases, profile answers), eras (name, label, inside which, history),
 relationships (type from the board's list, a is type of b, from/to eras), places / items / systems (world entries by kind),
 tags and links (always by: ai), containers by title (Book, Part, Sequence, Scene), structural fields (chapter, pov, setting,
-time), a card's era, the plotting switch, POV leads, a lead's exit. Multi-era characters (a childhood arc and an adult arc):
+time), a card's era, the plotting switch, POV leads, a lead's exit (on a scene, or on a sequence: plugin 0.62.2+ reads it
+at the sequence's last scene), events of the board's own types ("Wren is born in 1985" → `add-event`). Multi-era characters (a childhood arc and an adult arc):
 ask **per character** which of three he wants — their own full spine, a short anchored arc, or they feed the setup — and
 record the answer in the plan or as the ops he names; never pick for him.
 
@@ -113,9 +128,10 @@ record the answer in the plan or as the ops he names; never pick for him.
 
 | CRE says | Mode | Read |
 |---|---|---|
-| "import to the board", "put this story / these chapters on a board" | Import (prose → board, verbatim; structure proposed) | `references/import.md` |
+| "import to the board", "put this story / these chapters on a board" | Import (prose → board, verbatim; scenes wrapped at his breaks) | `references/import.md` |
+| "break down chapter N", "break down the book", "split / type / group / summarize / chain chapter N" | Breakdown (the administrative levels: micro-beats split and typed, beats, summaries, chains, links) | `references/breakdown.md` |
 | "interlock the arcs" · "build the interlock board" · "check the interlock", or plots a book on the 35-beat spines | Plotting (the former interlock-plotter, plus the story-bible setup) | `references/plotting.md` |
-| "tag the board", or asks for beat types, speakers, missed tags, links, intensity, wants, states, a chain summary | Tagging (offers, every one by: ai) | `references/tagging.md` |
+| "tag the board", or asks for speakers, missed tags, links, intensity, wants, states | Tagging (offers, every one by: ai) | `references/tagging.md` |
 | a build lands with no era, blank roles or no relationships; "set up the bible" | Story-bible setup | `references/bible.md` |
 | anything else about a board | Work the board (this file is enough) | — |
 
@@ -126,9 +142,28 @@ write, in his words; the ruling list is one line per proposal with its reason; n
 sentence. Don't make him rule on trivia — file names, the order of questions, where the log lives are yours; story calls
 are his. When a step ends on his taste (is this placement right, is the structure locked), hand it over and say so.
 
+## Safety habits (learned 2026-10-19)
+
+- **Re-hash the board before every run, and tell him to reopen its tab after.** An open board tab can miss outside writes
+  (`^backlog-bw-tab-missed-reload`): it kept showing an older copy twice in one session. If the file's hash isn't the last
+  run's after-hash (`board_tool.mjs log`), he edited it — read it again before writing. Keep a copy of the board in the
+  session scratchpad after each run. **Ask him to close the board's tab before a run that writes it, or close Obsidian on his OK** — an open stale tab once
+  saved its older board over a finished run when he next clicked (`^obs-457`); re-read the board after he next touches it.
+- **Prove the words.** `scripts/words.mjs <board>` before and after any run that splits, regroups or moves micro-beats; the
+  hash and count must match. A run whose words changed is undone at once and reported.
+- **A scratch copy first.** A new op, or a run over many cards: apply it to a copy with `--log-dir` in the scratchpad,
+  check words, export and `undo` byte-identity, then the board.
+- **The export is checked, not assumed.** Typing a card `dialogue` that doesn't open with a quote makes the export add quote
+  marks — the tools refuse it. A board of imported prose should have dialogue tags `never` (`set-tag-mode`, on his word).
+- **When the tool can't do what he named, say so and extend the tool** — never reshape his request around its limits (it
+  once built a second board because `import` could only make new ones; `import --into` exists since).
+- **A change he dictates to his own words** ("change 'the hunter' to the woodswoman") goes through `replace-words` with his words as `ruled`: list every match in context first, leave the ones that don't mean what he means ("Better hunter than cook."), and prove afterwards that exactly those words changed. Never edit a chain with `set-chain` once things are linked to it — `set-line`.
+- **His layout is his.** Before a live plugin test, copy `workspace.json` and the plugin's `data.json`; restore them
+  byte-identical after, and hash his open boards before and after.
+
 ## What this skill never does
 
-Write prose, beat content, a premise or a character idea; reword an idea; fill a blank; put a proposal on the board before
+Write prose, beat content, a premise or a character idea; change, add, drop or reorder a word of his prose; reword an idea; fill a blank; put a proposal on the board before
 he rules; change or remove a tag or link whose `by` is `cre`; write in `REFERENCE/`, StoryLine's Codex or the pipeline
 files (`draft.md`, `brief.md`, `slate/`, `revisions/`); export or Copy clean (a plugin click); decide which copy of imported
 prose is canon (`^backlog-branch-writing-replacement-review`); migrate boards between schema versions; edit the model or
