@@ -1,5 +1,5 @@
 {
-    "generated":  "2026-10-19T12:00:13.5437323-07:00",
+    "generated":  "2026-10-20T12:00:13.1194231-07:00",
     "note":  "sha256 = zip hash of each built .skill package; content_sha256 = build.py-recipe hash over the package contents (SKILL.md+assets, installed-comparable). skill-audit / build.py audit compare installed-vs-this.",
     "skills":  [
                    {
@@ -54,9 +54,9 @@
                    {
                        "name":  "branch-writing-expert",
                        "package":  "WORKFLOWS/skills/branch-writing-expert.skill",
-                       "sha256":  "8b1ef82c000960c7ecfe5a0dec07e7441b4e568596126d93550688beb2bde1d8",
-                       "content_sha256":  "b3f999a1eb45a67a5be06c55c90c8936d201d7ab48810e5b2c8804538ea0161b",
-                       "bytes":  72459
+                       "sha256":  "84447ccc4ed85343ab2efc66b44b285c368635d31210b7d4439a3f4dadaafc0d",
+                       "content_sha256":  "183fe6c6977e1d08e7f59314c5709d2b6a535b86a3010370ad3abbf43a2254d7",
+                       "bytes":  101604
                    },
                    {
                        "name":  "canon-sync",

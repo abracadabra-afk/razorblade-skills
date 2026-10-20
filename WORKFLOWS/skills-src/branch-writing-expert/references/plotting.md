@@ -17,7 +17,8 @@ Extra rules for this mode, beyond the skill's:
   building a copy beside it and telling him so; the rest of the expert's modes then work on whichever he keeps.
 
 Tools (Git Bash on the desktop):
-- `python -I scripts/plan_tool.py …` — new / set --json-file / beat / walk / walked / render / approve / status.
+- `python -I scripts/plan_tool.py …` — new / set --json-file / beat / walk / walked / render / approve / status
+  (`--set <key>` on beat / walk / walked for an extra spine set, step 4b).
 - `node C:\Users\Chad\dev\branch-writing\tools\build-plan.mjs <plan.md> [--dry]` — plan → board, outside Obsidian.
 - `node C:\Users\Chad\dev\branch-writing\tools\check-board.mjs <board.md> --out <report.md>` — the check report.
 - `node C:\Users\Chad\dev\branch-writing\tools\make-iam-templates.mjs --check` — the 13 IAM templates match the model.
@@ -61,11 +62,41 @@ three spine labels, the role slots that land there, under each "asks: …" in th
 - Someone his words name who isn't cast: ask once whether to add them and to the beat's `who`. Never add a person yourself.
 - "Skip", silence or "later" → **no call**; a beat the plan doesn't list is an open, labelled blank. Don't ask twice.
 - After each round `plan_tool.py walked --beats a-b`; tell him where the walk stands in one line.
+- **Three layers per cell (CRE-ruled 2026-10-20, from existing material):** `--text` is the **beat** at sequence altitude —
+  plain administrative words saying what the story already does; `--support "a||b"` the **scene beats** that carry it (board
+  beat titles with ids, chapter and scene, SEQ beat numbers); `--quote` the **execution** — his prose verbatim (a router line
+  prefixed `dev summary: `). The quote proves the beat; it is never the beat. The builder reads only `text`, `who`, `at`.
+- **The clock (same ruling):** the plot sets the order and the arcs stagger inside it. The external column's first cited
+  card per row defines a window; from B6 every other column's beat N must cite a card inside [external N, external N+1) in
+  story order (board card order, then pipeline chapter order, then SEQ order); setup rows 1–5 are loose; no column runs
+  backwards; a spine told out of board order (interludes) runs on era order. Check it by machine before the write (the
+  crawl's `cellcheck.py`, `SYSTEM/reports/2026-10-19-witchwood-beat-crawl-work/rewrite/`) and leave a window with no card
+  of that character's as an **open, labelled blank** — never fill it from a neighbouring window.
+- On a copy, `--at "scene:<title>"` places the step on a scene the board already has (0.65.1); titles the board uses twice
+  are refused by name.
 - A beat number means what the builder reads: the step at that beat; else the compressed step whose rows span it; else the
   one step carrying that beat. Compressed steps hold a range: ask once for the step, not once per beat.
 - An anchor's open beat ("29 lost, or 31 if they survive") is his pick → the role's `beats` (`{"resolves": 31}`) via `set`.
 - K2 V2/V3: the lead's B34 has 34a and 34b (`--n 34 --spine lead --sub a` / `--sub b`); the deuteragonist's Moment of Truth
   at 34b is its own B34 (`--n 34 --spine deuteragonist --sub b`).
+
+**4b. A second full spine set (plugin 0.65+), only when he asks for one.** One character can lead two stories on one
+board — the Woodsgirl interludes beside the woodswoman's present day. A set is its own lead, antagonist and external spine,
+with its own switches K1–K6 and its own walk; the cast is shared (the same Death in both). Add it with `set --json-file`:
+
+```json
+{"spines": [{"key": "woodsgirl", "name": "<his name for it>", "lead": "woodswoman", "antagonist": "death",
+             "era": "<an era name on the board, or null>", "switches": {"K1": null}}]}
+```
+
+`spines` merges by key (a set already there keeps its beats and walked rounds; `set` never drops a set). Its walk is the
+same seven rounds with `--set <key>` on `walk`, `beat` and `walked` (`beat --set woodsgirl --n 6 --spine lead --text
+"…"`); a set has three columns (`antagonist`, `external`, `lead`), no `--cast`. `status` names where each set resumes. No
+`--set` is the main set, exactly as before, so a walk in progress needs no change. The builder makes the set's arcs on the
+plan's cast, named "IAM — Lead · <set name>", with one external plot Arc per set (only the main set's is the main one), and
+the checks and the Interlock grid run within each set. **Which existing arc carries which spine is his call:** on a copy,
+arcs a character already has are never reassigned to a set; the builder names them in a NOT DONE line, which goes to him
+as the question.
 
 **5. Placement (optional).** Only onto containers he names: `structure` via `set` (`{"kind": "sequence", "title": "The
 Bridge", "under": null}`, `{"kind": "scene", "title": "The far bank", "under": "The Bridge"}` — a scene names the sequence

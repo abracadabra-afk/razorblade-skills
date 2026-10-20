@@ -14,6 +14,15 @@ valid and the readable table above it is always regenerated from it (never hand-
     python -I plan_tool.py walked <plan.md> --beats 16-20                         record a round as walked (answered or skipped)
     python -I plan_tool.py status <plan.md> [--vault V]                           what is filled, which rounds are walked, where to resume
 
+Spine sets (0.65): a plan may carry extra full spine sets beside the main one — one character leading two stories (the
+Woodsgirl interludes beside the woodswoman's present day). Add or change one with `set --json-file` holding
+    {"spines": [{"key": "woodsgirl", "name": "The Woodsgirl", "lead": "<cast key>", "antagonist": "<cast key>",
+                 "era": "<era name on the board, or null>", "switches": {"K1": null, ...}, "external": {"label": "..."}}]}
+(merged by key: a set already there keeps its beats and walked rounds; a set is never dropped by `set`). Its beats, walk and
+rounds take `--set <key>`: `beat --set woodsgirl --n 6 --spine lead --text "…"`, `walk --set woodsgirl --beats 6-10`,
+`walked --set woodsgirl --beats 6-10`. A set has three columns: antagonist, external, lead. No --set is the main set,
+exactly as before, and a plan without `spines` is unchanged.
+
 A beat CRE skips needs no call: a beat the plan doesn't list is an open, labelled blank. `beat` with only --at / --who places
 or tags a beat without retyping its words. A beat number means what the builder reads (stepAtBeat): the step at that beat,
 else the compressed step whose rows span it, else the one step carrying that model beat.
@@ -36,7 +45,8 @@ FENCE = re.compile(r"```json\r?\n(.*?)\r?\n```", re.S)
 GROUPS = [(1, "Setup: Introduction"), (6, "Incident: Change Event"), (11, "Trials: Hairlines"), (16, "Pinch 1: Fractures"), (21, "Mid-Point: Cracks"), (26, "Pinch 2: Shattering"), (31, "Final Showdown: Change Vs. Failure")]
 SPINES = ["antagonist", "external", "lead"]
 ROLES = ["lead", "antagonist", "deuteragonist", "X1", "X2", "X3", "X4", "AM1", "AM2", "AM3", "AM4", "AM5"]
-PLAN_KEYS = {"cast", "roles", "switches", "plotting", "structure", "external", "board"}
+PLAN_KEYS = {"cast", "roles", "switches", "plotting", "structure", "external", "board", "spines"}
+SET_KEYS = {"key", "name", "lead", "antagonist", "era", "switches", "external"}
 K_OPTIONS = {
     "K1": ["Changed", "Not changed"], "K2": ["V1", "V2", "V3"], "K3": ["None", "PH1", "PH2", "PH3 leading", "PH3 trailing"],
     "K4": ["Evil", "Force of resistance, with intent", "Force of resistance, without intent"], "K5": ["Unchanged", "Redeemed"], "K6": ["False victory", "False defeat"],
@@ -117,16 +127,26 @@ def group_of(n):
     return g[1]
 
 
-def beat_entry(plan, n, spine, cast=None, sub=None):
-    for b in plan.get("beats", []):
+def spine_set(plan, key):
+    """An extra spine set by key (0.65), or None."""
+    return next((s for s in plan.get("spines") or [] if s.get("key") == key), None)
+
+
+def beats_of(plan, key=None):
+    """The beat list of the main set (key None) or of an extra set."""
+    return plan.get("beats", []) if not key else (spine_set(plan, key) or {}).get("beats", [])
+
+
+def beat_entry(plan, n, spine, cast=None, sub=None, beats=None):
+    for b in (plan.get("beats", []) if beats is None else beats):
         if b.get("n") == n and b.get("spine") == spine and (b.get("cast") or None) == (cast or None) and (b.get("sub") or None) == (sub or None):
             return b
     return None
 
 
-def entry_for(plan, spine, cast, steps, step, sub=None):
+def entry_for(plan, spine, cast, steps, step, sub=None, beats=None):
     """The plan's entry for a step, whichever of its beat numbers CRE used (B21 or B22 for a step spanning 21–22)."""
-    for b in plan.get("beats", []):
+    for b in (plan.get("beats", []) if beats is None else beats):
         if b.get("spine") == spine and (b.get("cast") or None) == (cast or None) and (b.get("sub") or None) == (sub or None):
             if step_at(steps, b["n"]) is step:
                 return b
@@ -176,6 +196,7 @@ def render(path, plan, vault):
             b = entry_for(plan, c, ck, steps, st)
             words = (b or {}).get("text")
             cell = esc(words) if words else "*open:* " + esc(st["label"])
+            cell += layers(b, esc)
             if st.get("beat") != n:
                 cell = "↑ " + cell  # the same step as the row it sits at (a compressed range)
             subs = [(x, beat_entry(plan, n, c, ck, x)) for x in ("a", "b")]
@@ -187,6 +208,8 @@ def render(path, plan, vault):
                 cell += "".join(f" · 34{x}: " + (esc(e["text"]) if e and e.get("text") else "*open*") for x, e in subs)
             row.append(cell)
         lines.append("| " + " | ".join(row) + " |")
+    for sp in plan.get("spines") or []:
+        lines += render_set(plan, sp, T, cast, esc)
     lines += ["", "```json", json.dumps(plan, indent=2, ensure_ascii=False), "```", ""]
     out = "\n".join(lines)
     json.loads(FENCE.search(out).group(1))  # parse gate
@@ -195,6 +218,81 @@ def render(path, plan, vault):
     back = json.loads(FENCE.search(open(path, encoding="utf-8").read()).group(1))
     if back != plan:
         die("parse gate: the plan did not read back identical")
+
+
+def layers(b, esc):
+    """The two layers beneath a beat statement (2026-10-20, CRE: the cell is the beat; the scene beats carry it; the
+    quote proves it): rendered under the text in the same cell. Both optional; the builder ignores them."""
+    out = ""
+    for s in (b or {}).get("support") or []:
+        out += "<br>▸ " + esc(s)
+    q = (b or {}).get("quote")
+    if q:
+        out += "<br>‹" + esc(q) + "›"
+    return out
+
+
+def render_set(plan, sp, T, cast, esc):
+    """An extra spine set's section (0.65): its switches, lead and antagonist, and its own three-column table."""
+    sw = sp.get("switches") or {}
+    beats = sp.get("beats", [])
+    out = ["", f"## Spine set: {sp.get('name') or sp['key']}" + (f" — told in {sp['era']}" if sp.get("era") else ""), "",
+           f"Key `{sp['key']}` · lead: {cast.get(sp.get('lead'), sp.get('lead') or 'open')} · antagonist: {cast.get(sp.get('antagonist'), sp.get('antagonist') or 'open')}" + (f" · external: {sp['external']['label']}" if (sp.get("external") or {}).get("label") else ""), "",
+           "**Switches:** " + " · ".join(f"{k}: {sw.get(k) or 'open'}" for k in ["K1", "K2", "K3", "K4", "K5", "K6"]), ""]
+    head = ["#", f"antagonist · {cast.get(sp.get('antagonist'), '')}".strip(" ·"), "external", f"lead · {cast.get(sp.get('lead'), '')}".strip(" ·")]
+    out += ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+    cols = [(c, effective_steps(T.get(c))) for c in SPINES]
+    last_group = None
+    for n in range(1, 36):
+        g = group_of(n)
+        if g != last_group:
+            out.append("| | **" + g + "** |" + " |" * (len(head) - 2))
+            last_group = g
+        row = [f"B{n}"]
+        for c, steps in cols:
+            st = step_at(steps, n, carried=False)
+            if not st:
+                row.append("")
+                continue
+            b = entry_for(plan, c, None, steps, st, beats=beats)
+            words = (b or {}).get("text")
+            cell = esc(words) if words else "*open:* " + esc(st["label"])
+            cell += layers(b, esc)
+            subs = [(x, beat_entry(plan, n, c, None, x, beats=beats)) for x in ("a", "b")]
+            if n == 34 and any(e for _, e in subs):
+                cell += "".join(f" · 34{x}: " + (esc(e["text"]) if e and e.get("text") else "*open*") for x, e in subs)
+            row.append(cell)
+        out.append("| " + " | ".join(row) + " |")
+    return out
+
+
+def check_spines(plan, part):
+    """Validate and merge `spines` by key: a set already there keeps its beats and walked rounds; none is dropped."""
+    keys = {c["key"] for c in plan.get("cast", [])} | {c["key"] for c in part.get("cast") or []}
+    cur = [dict(s) for s in plan.get("spines") or []]
+    for s in part["spines"]:
+        if not isinstance(s, dict) or not isinstance(s.get("key"), str) or not s["key"].strip() or s["key"].strip() in ("main", ""):
+            die("each spine set needs a \"key\" of its own (not \"main\")")
+        bad = set(s) - SET_KEYS
+        if bad:
+            die(f"a spine set takes only {sorted(SET_KEYS)}; not {sorted(bad)} (its beats go through 'beat --set {s['key']}')")
+        for k, v in (s.get("switches") or {}).items():
+            if k not in K_OPTIONS or (v is not None and v not in K_OPTIONS[k]):
+                die(f"spine set {s['key']} {k}: {v!r} is not one of the model's options {K_OPTIONS.get(k)}")
+        for r in ("lead", "antagonist"):
+            if s.get(r) is not None and s[r] not in keys:
+                die(f"spine set {s['key']}: {r} {s[r]!r} is not a cast key in the plan ({sorted(keys)})")
+        old = next((x for x in cur if x["key"] == s["key"]), None)
+        if old:
+            for k, v in s.items():
+                old[k] = {**(old.get(k) or {}), **v} if isinstance(v, dict) and k in ("switches", "external") else v
+        else:
+            new = {"key": s["key"].strip(), "name": s.get("name") or s["key"].strip(), "lead": s.get("lead"), "antagonist": s.get("antagonist"), "era": s.get("era"),
+                   "switches": {k: (s.get("switches") or {}).get(k) for k in K_OPTIONS}, "beats": [], "walked": []}
+            if s.get("external"):
+                new["external"] = s["external"]
+            cur.append(new)
+    return cur
 
 
 def main():
@@ -207,7 +305,10 @@ def main():
     ap.add_argument("--n", type=int); ap.add_argument("--spine"); ap.add_argument("--cast"); ap.add_argument("--sub")
     ap.add_argument("--text"); ap.add_argument("--open", action="store_true")
     ap.add_argument("--who"); ap.add_argument("--at"); ap.add_argument("--src")
+    ap.add_argument("--support", help="the scene beats that carry this model beat, '||'-separated (board beat titles with ids, SEQ beat numbers); administrative, never CRE's words")
+    ap.add_argument("--quote", help="the execution line: CRE's prose verbatim (or a dev-summary line, prefixed 'dev summary: ')")
     ap.add_argument("--beats"); ap.add_argument("--phrase")
+    ap.add_argument("--set", dest="spine_set", help="an extra spine set's key (0.65); none = the main set")
     a = ap.parse_args()
     V = a.vault
 
@@ -248,6 +349,10 @@ def main():
         for r in part.get("roles") or []:
             if r.get("role") not in ROLES:
                 die(f"role {r.get('role')!r} is not a model role {ROLES}")
+        if "spines" in part:
+            if not isinstance(part["spines"], list):
+                die("spines is a list of spine sets")
+            part = {**part, "spines": check_spines(plan, part)}
         for k, v in part.items():
             plan[k] = {**plan.get(k, {}), **v} if isinstance(v, dict) and k in ("switches", "plotting", "board", "external") else v
         render(a.plan, plan, V)
@@ -255,16 +360,25 @@ def main():
     elif a.cmd == "beat":
         if not a.n or not a.spine:
             die("--n and --spine are required")
-        if a.text is None and not a.open and a.at is None and a.who is None:
-            die("give CRE's words with --text, --open for an open blank, or --at / --who to place or tag a beat")
-        b = beat_entry(plan, a.n, a.spine, a.cast, a.sub)
+        if a.text is None and not a.open and a.at is None and a.who is None and a.support is None and a.quote is None:
+            die("give the beat with --text, --open for an open blank, --support / --quote for the layers beneath it, or --at / --who to place or tag a beat")
+        if a.spine_set:
+            sp = spine_set(plan, a.spine_set)
+            if not sp:
+                die(f"no spine set {a.spine_set!r} in the plan ({', '.join(s['key'] for s in plan.get('spines') or []) or 'none yet'}); add it with set --json-file")
+            if a.spine not in SPINES or a.cast:
+                die(f"a spine set has three columns: {', '.join(SPINES)} (no --cast)")
+            beats = sp.setdefault("beats", [])
+        else:
+            beats = plan.setdefault("beats", [])
+        b = beat_entry(plan, a.n, a.spine, a.cast, a.sub, beats=beats)
         if not b:
             b = {"n": a.n, "spine": a.spine}
             if a.cast:
                 b["cast"] = a.cast
             if a.sub:
                 b["sub"] = a.sub
-            plan.setdefault("beats", []).append(b)
+            beats.append(b)
         if a.open:
             b["text"] = None
         elif a.text is not None:
@@ -275,9 +389,13 @@ def main():
             b["at"] = a.at or None
         if a.src:
             b["src"] = a.src
-        plan["beats"].sort(key=lambda x: (x["n"], x.get("sub") or "", SPINES.index(x["spine"]) if x["spine"] in SPINES else 9, x.get("cast") or ""))
+        if a.support is not None:
+            b["support"] = [s.strip() for s in a.support.split("||") if s.strip()]
+        if a.quote is not None:
+            b["quote"] = a.quote or None
+        beats.sort(key=lambda x: (x["n"], x.get("sub") or "", SPINES.index(x["spine"]) if x["spine"] in SPINES else 9, x.get("cast") or ""))
         render(a.plan, plan, V)
-        print(f"B{a.n}{a.sub or ''} {a.spine}{' (' + a.cast + ')' if a.cast else ''}: {'open' if a.open else 'set' if a.text is not None else 'placed/tagged'}")
+        print(f"{a.spine_set + ' ' if a.spine_set else ''}B{a.n}{a.sub or ''} {a.spine}{' (' + a.cast + ')' if a.cast else ''}: {'open' if a.open else 'set' if a.text is not None else 'placed/tagged'}")
     elif a.cmd == "render":
         render(a.plan, plan, V)
         print("rendered")
@@ -294,17 +412,23 @@ def main():
         T = templates(V)
         lo, hi = (int(x) for x in (a.beats or "1-5").split("-"))
         cast = {c["key"]: c["name"] for c in plan.get("cast", [])}
-        print(f"## {group_of(lo)} — beats {lo}–{hi}\n")
+        ss = None
+        if a.spine_set:
+            ss = spine_set(plan, a.spine_set)
+            if not ss:
+                die(f"no spine set {a.spine_set!r} in the plan")
+        print(f"## {(ss.get('name') or ss['key']) + ' — ' if ss else ''}{group_of(lo)} — beats {lo}–{hi}\n")
         for n in range(lo, hi + 1):
             print(f"### B{n}")
             for sp in SPINES:
                 steps = effective_steps(T.get(sp))
                 st = step_at(steps, n)
-                b = entry_for(plan, sp, None, steps, st) if st else None
-                print(f"- **{sp}** — {st['label'] if st else '?'}: {(b or {}).get('text') or 'open'}")
+                b = entry_for(plan, sp, None, steps, st, beats=beats_of(plan, a.spine_set)) if st else None
+                who = cast.get((ss or {}).get(sp), "") if ss and sp != "external" else ""
+                print(f"- **{sp}{' · ' + who if who else ''}** — {st['label'] if st else '?'}: {(b or {}).get('text') or 'open'}")
                 if st and st.get("hint"):
                     print(f"  - asks: {st['hint']}")
-            for r in plan.get("roles", []):
+            for r in ([] if ss else plan.get("roles", [])):
                 if r["role"] in ("lead", "antagonist"):
                     continue
                 steps = effective_steps(T.get(r["role"]), r)
@@ -322,14 +446,24 @@ def main():
         lo = int((a.beats or "").split("-")[0] or 0)
         if lo not in [g for g, _ in GROUPS]:
             die("--beats must start a model group: " + ", ".join(str(g) for g, _ in GROUPS))
-        plan["walked"] = sorted(set(plan.get("walked", [])) | {lo})
+        tgt = plan
+        if a.spine_set:
+            tgt = spine_set(plan, a.spine_set)
+            if not tgt:
+                die(f"no spine set {a.spine_set!r} in the plan")
+        tgt["walked"] = sorted(set(tgt.get("walked", [])) | {lo})
         render(a.plan, plan, V)
-        print(f"round {group_of(lo)} walked")
+        print(f"{a.spine_set + ' ' if a.spine_set else ''}round {group_of(lo)} walked")
     elif a.cmd == "status":
         filled = [b for b in plan.get("beats", []) if b.get("text")]
         walked = set(plan.get("walked", []))
         nxt = next((g for g, _ in GROUPS if g not in walked), None)
         print(f"plan {a.plan}: {len(plan.get('cast', []))} cast, {len(plan.get('roles', []))} roles, {len(filled)} beats in CRE's words (every other beat is an open blank); rounds walked: {len(walked)} of 7; next round starts at {'B' + str(nxt) + ' (' + group_of(nxt) + ')' if nxt else '— (walk complete)'}; approved: {bool(plan.get('approved'))}")
+        for sp in plan.get("spines") or []:
+            f2 = [b for b in sp.get("beats", []) if b.get("text")]
+            w2 = set(sp.get("walked", []))
+            n2 = next((g for g, _ in GROUPS if g not in w2), None)
+            print(f"  spine set {sp.get('name') or sp['key']} (--set {sp['key']}): {len(f2)} beats in CRE's words; rounds walked: {len(w2)} of 7; next round starts at {'B' + str(n2) + ' (' + group_of(n2) + ')' if n2 else '— (walk complete)'}")
     else:
         die("unknown command " + a.cmd)
 

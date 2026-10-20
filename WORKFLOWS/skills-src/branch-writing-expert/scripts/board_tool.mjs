@@ -666,6 +666,19 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`Statement Plotting on${added.length ? ` (${added.length} fields added)` : ""}`);
           break;
         }
+        case "set-arc-role": {
+          // 0.65.1 (2026-10-20): the Interlocking Arc Model role an existing arc carries — `role` null clears it; `set` names a
+          // spine set (0.65). On CRE's word or his ruling only (which arc carries which spine is his call); the builder never
+          // reassigns an arc itself, and an arc holding a role in a set blocks that set's template arc on a copy build.
+          const c = castRef(doc, op.cast); if (!c) throw new Error(`no cast member "${op.cast}"`);
+          const arc = bw.arcsOf(c).find((a) => a.name === op.arc || a.id === op.arc); if (!arc) throw new Error(`no arc "${op.arc}" on ${bw.castName(c)}`);
+          const role = op.role == null ? null : String(op.role);
+          if (role !== null && typeof bw.isIamRole === "function" && !bw.isIamRole(role)) throw new Error(`"${role}" is not a model role`);
+          const against = op.against ? castRef(doc, op.against) : null; if (op.against && !against) throw new Error(`no cast member "${op.against}" to face`);
+          bw.setArcRole(c, arc.id, role, against ? against.id : undefined, op.set ? String(op.set) : undefined);
+          made.push(`arc "${arc.name}" of ${bw.castName(c)}: model role ${role === null ? "cleared" : role + (op.set ? ` (set ${op.set})` : " (main set)") + (against ? ", facing " + bw.castName(against) : "")}`);
+          break;
+        }
         case "add-lead": {
           const c = castRef(doc, op.cast); if (!c) throw new Error(`no cast member "${op.cast}"`);
           if (!bw.plottingOn(bw.settingsOf(doc))) throw new Error("Statement Plotting is off on this board (set-plotting first, on CRE's word)");
