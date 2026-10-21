@@ -24,8 +24,9 @@ outside the run is byte-identical, writes the log entry (before-text of every to
 the file. It prints one `made:` line per write (the change list) and one `NOT DONE:` line per refusal. Exit 2 = refused,
 nothing written; 3 = written with NOT DONE lines.
 
-References: a card by `^id` or `title:Exact title` (containers only; unique); cast, world entries, eras and relation types by
-name (any case; aliases resolve). Values are CRE's words. `--dry` shows the change list and writes nothing.
+References: a card by `^id` or `title:Exact title` (containers only; unique), or `beat:<scene ref>:<n>` — the scene's n-th
+Beat, 0-based (Beats a run has just made have no unique title); cast, world entries, eras and relation types by name (any
+case; aliases resolve). Values are CRE's words. `--dry` shows the change list and writes nothing.
 
 | op | fields | notes |
 |---|---|---|
@@ -38,8 +39,11 @@ name (any case; aliases resolve). Values are CRE's words. `--dry` shows the chan
 | `add-relation` | `type`, `a`, `b`, `from?`, `to?`, `note?` | "a is type of b"; the type must be on the board |
 | `add-world` | `kind` (place/item/faction/religion/polity/magic/role/own), `name`, `aliases?`, `fields?` | never invented |
 | `set-world` | `entry`, `field`, `value` | |
-| `add-idea` | `text` (verbatim), `type?` (from the board's ideaTypes), `tags?`, `by?` | tags default by: ai; `by: "cre"` only for a `#tag` he typed |
+| `add-idea` | `text` (verbatim) or `from: {source, block \| quote}`, `type?` (from the board's ideaTypes), `tags?`, `by?`, `on?` | tags default by: ai; `by: "cre"` only for a `#tag` he typed. `from` takes the words from a file — the n-th block (the plugin's block split, frontmatter skipped) or a `quote` that must occur in it word for word — so his words are never retyped; `on` places the new idea on a card in the same op (a card made earlier in the run, by title or `beat:<scene>:<n>`) |
+| `place-prose` | `under` (a Beat or Scene), `source` (file), `blocks: [a, b]`, `skip?: [n…]` | his prose from a source file as micro-beats appended under the container, block for block; the ops name the file and range, never the words; `skip` leaves a heading line or `***` break off (named in the change list); the run logs the file's hash and re-checks it before writing (2026-10-20, the Witchwood board build) |
 | `place-idea` | `idea` (^id), `on` (card, or a placed arc step: the card it sits on) | approved placement → the card's tray; refused on a step that isn't on a card yet |
+| `place-on-line` | `step` (^id), `via` (the Beat that carries it, or a micro-beat under it) — or `on` + `line` (0 = ENTRY) | CRE 2026-10-21: arc steps sit at line level — the step goes on the scene chain line its Beat is linked to (the first line of a run), through the plugin's `putFloatOnLine` (`plotLine`), moving it to that scene first if it sits elsewhere; a step on a line is drawn as a beat, not a Need. Build the ops from the plan's citations with `scripts/step_lines.mjs` |
+| `split-step` | `step` (^id), `parts: [{text, via}]` (≥ 2; `via` = the Beat that carries that piece), `unplace?` | CRE 2026-10-21 ("yes, sub steps"): a step whose plan cell cites more than one scene becomes a parent with one sub-step per cited scene, through the plugin's own sub-step mechanism (`addSubStep` / `addPlotArcStep` + `parentStep`). Each part's `text` must be a verbatim span of the step's own words, in order — his clause for that piece, never new wording; each sub-step goes on its Beat's line. With `unplace` the parent comes off the board and lives in the Characters panel as a category (its checklist shows each landed sub-step). A cell whose clauses don't split cleanly by its citations goes to his ruling list instead |
 | `unplace-idea` | `idea` | back to the inbox |
 | `add-tag` / `remove-tag` | `card`, `tag` | always by: ai; a cre tag is never removed |
 | `add-link` / `remove-link` | `card`, `to` (`^id`, a title, or `[[File#^id]]`), `rel?` | always by: ai |
@@ -57,6 +61,7 @@ name (any case; aliases resolve). Values are CRE's words. `--dry` shows the chan
 | `regroup-beats` | `scene`, `groups: [{cards: [^id…], type?, title?, summary?}]` | administrative (2026-10-19): dissolves the scene's container Beats and wraps each run of micro-beats in a new Beat; the groups must cover every micro-beat once, in order |
 | `set-title` / `set-summary` | `card`, `text` | a Beat, Scene or Sequence (never a prose card) |
 | `set-chain` | `card`, `entry`, `turns: [{k: but/therefore, text, outcome?, detail?}]`, `exit: {k: ""/but/therefore, text, outcome?, detail?}` | replaces the card's turns; outcomes are the E3 labels |
+| `remove-empty-card` | `card` (a Beat or Scene; `beat:<scene>:<n>` works) | on his word: a container with nothing under it and nothing linking to it comes off the board (2026-10-21: a Beat built from a stale DEV beat its neighbour carries). Refused if any card sits under it or points at it; undo restores it. Re-chain and re-link the scene after |
 | `remove-break-card` | `card` | on his word: a card whose whole body is a break mark (`***`), nothing else on it; the Scenes around it export their own break |
 | `set-era-source` | `on` | on his word (plugin 0.64): the board's eras come from its scenes — a present scene's era carries forward, a flashback's applies to it only, and Books / Parts / Sequences show the rolled-up span (a sequence's own era is its planned start) |
 | `set-flashback` | `card` (a scene), `on?` | a story call: on his word or an approved proposal |

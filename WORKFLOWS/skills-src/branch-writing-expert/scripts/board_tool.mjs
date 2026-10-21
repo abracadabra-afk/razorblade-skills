@@ -185,6 +185,9 @@ const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 function findCardRef(doc, ref) {
   if (!ref) return null;
   const r = String(ref).trim();
+  // "beat:<scene ref>:<n>" — the scene's n-th Beat (0-based): Beats a run has just made have no unique title to name them by.
+  const bm = /^beat:(.+):(\d+)$/.exec(r);
+  if (bm) { const sc = findCardRef(doc, bm[1]); if (!sc) return null; const lv = bw.settingsOf(doc).levels; return sc.children.filter((k) => k.meta.kind === lv[lv.length - 2].key)[Number(bm[2])] || null; }
   const byId = bw.findCard(doc, r.replace(/^\^/, ""));
   if (byId) return byId;
   const t = r.replace(/^title:/, "");
@@ -203,6 +206,34 @@ const isUnitKind = (s, k) => k === sceneKey(s) || (s.customTypes || []).some((c)
 // Fields the author owns outright (statements, chain, outcomes) or that arrive only as offers (summary, intensity).
 const NEVER_FIELDS = new Set(["summary", "story from", "story to", "outcome", "outcome detail", "decision", "goal", "sets goal", "reacts to", "reacts to (short)", "stakes", "opposition", "conflict", "what changed", "intensity start", "intensity end", "physical start", "physical end"]);
 const NEVER_KEYS = new Set(["plotChain", "plotMarks", "plotComplete", "plotFrom", "plotBloc", "plotLine", "plotPins", "plotUntag", "plotNeeds", "plotTurnedAt", "convo", "vis", "visUnit"]);
+
+/** A card by `^id` / `title:…`, or "beat:<scene ref>:<n>" — the scene's n-th Beat (0-based). */
+function cardOrBeat(doc, s, ref) {
+  const bm = /^beat:(.+):(\d+)$/.exec(String(ref || ""));
+  if (!bm) return findCardRef(doc, ref) || bw.findCard(doc, String(ref || "").replace(/^\^/, ""));
+  const sc = findCardRef(doc, bm[1]) || bw.findCard(doc, bm[1].replace(/^\^/, ""));
+  return sc ? sc.children.filter((k) => k.meta.kind === s.levels[s.levels.length - 2].key)[Number(bm[2])] || null : null;
+}
+/** A source file read once per run (frontmatter skipped, CRLF normalised), its hash kept for the run's log and re-checked before the write. */
+function sourceOf(path, ctx) {
+  ctx.sources = ctx.sources || {};
+  const p = rel(path);
+  if (!ctx.sources[p]) {
+    if (!existsSync(abs(path))) throw new Error(`no source file ${p}`);
+    const t = readText(path);
+    const { body } = bodyOf(t);
+    ctx.sources[p] = { sha256: sha(t), body, blocks: bw.splitBlocks(body) };
+  }
+  return ctx.sources[p];
+}
+const sourceBlocks = (path, ctx) => sourceOf(path, ctx).blocks;
+function sourceText(from, ctx) {
+  if (!from || !from.source) throw new Error("from needs a source");
+  const src = sourceOf(from.source, ctx);
+  if (from.block != null) { const b = src.blocks[Number(from.block)]; if (b == null) throw new Error(`block ${from.block} is not in ${rel(from.source)}`); return b; }
+  if (typeof from.quote === "string" && from.quote) { if (!src.body.includes(from.quote)) throw new Error(`the quote is not in ${rel(from.source)} word for word: ${JSON.stringify(from.quote.slice(0, 60))}`); return from.quote; }
+  throw new Error("from needs block or quote");
+}
 
 // ── apply ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function applyOps(doc, s, ops, made, skipped, ctx) {
@@ -286,12 +317,50 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           break;
         }
         case "add-idea": {
-          if (typeof op.text !== "string" || !op.text.trim()) throw new Error("text is required (CRE's words, verbatim)");
+          // `from: {source, block | quote}` takes the text from a file instead of the ops file, so his words are never retyped:
+          // `block` is the n-th block (0-based, the plugin's own block split, frontmatter skipped), `quote` must occur in the
+          // source word for word. `on` places the new idea on a card at once (a card made earlier in the same run, by title or
+          // `beat:<scene>:<n>`), since the real run draws the idea's id fresh.
+          let text = op.text;
+          if (op.from) {
+            const fromText = sourceText(op.from, ctx);
+            if (op.text != null && op.text !== fromText) throw new Error("text and from disagree; give one");
+            text = fromText;
+          }
+          if (typeof text !== "string" || !text.trim()) throw new Error("text is required (CRE's words, verbatim)");
           const types = s.ideaTypes || bw.defaultIdeaTypes();
           if (op.type && !types.includes(op.type)) throw new Error(`idea type "${op.type}" is not one of this board's (${types.join(", ")})`);
-          const c = bw.addIdea(doc, op.text, op.type || undefined, []);
+          const host = op.on ? cardOrBeat(doc, s, op.on) : null;
+          if (op.on && !host) throw new Error(`no card ${op.on} to place the idea on`);
+          const c = bw.addIdea(doc, text, op.type || undefined, []);
           for (const t of op.tags || []) bw.addTag(c, String(t), op.by === "cre" ? "cre" : "ai");
-          made.push(`idea${op.type ? ` (${op.type})` : ""}: ${op.text.replace(/\s+/g, " ").slice(0, 90)}${op.text.length > 90 ? "…" : ""} ${idOf(c)}`);
+          if (host && !bw.placeIdea(doc, c, host)) throw new Error(`the idea could not be placed on ${op.on}`);
+          made.push(`idea${op.type ? ` (${op.type})` : ""}: ${text.replace(/\s+/g, " ").slice(0, 90)}${text.length > 90 ? "…" : ""} ${idOf(c)}${host ? ` on ${title(host) || host.meta.kind} ${idOf(host)}` : ""}${op.from ? ` (from ${rel(op.from.source)})` : ""}`);
+          break;
+        }
+        case "place-prose": {
+          // His prose from a source file, block for block, as micro-beats appended under a container (a Beat, or a Scene).
+          // The tool reads the words from the file (the plugin's own block split, frontmatter skipped) — the ops file names
+          // only the file and the block range, never the text — and records the file's hash in the run; `skip` lists block
+          // numbers inside the range that are not prose (a chapter heading, a `***` break), left off and named in the change list.
+          const host = cardOrBeat(doc, s, op.under);
+          if (!host) throw new Error(`no card ${op.under}`);
+          if (!isContainerKind(s, host.meta.kind)) throw new Error(`${idOf(host)} is not a container; prose goes under a Beat or a Scene`);
+          const blocks = sourceBlocks(op.source, ctx);
+          const [a, b] = Array.isArray(op.blocks) ? (op.blocks.length === 1 ? [op.blocks[0], op.blocks[0]] : op.blocks) : [op.blocks, op.blocks];
+          if (!(Number.isInteger(a) && Number.isInteger(b) && a >= 0 && b >= a && b < blocks.length)) throw new Error(`blocks ${JSON.stringify(op.blocks)} are not in ${rel(op.source)} (${blocks.length} blocks)`);
+          const skip = new Set((op.skip || []).map(Number));
+          const prose = s.levels[s.levels.length - 1].key;
+          let n2 = 0;
+          for (let i = a; i <= b; i++) {
+            if (skip.has(i)) continue;
+            if (headingRank(blocks[i]) && !blocks[i].includes("\n")) throw new Error(`block ${i} of ${rel(op.source)} is a heading; skip it or end the range before it`);
+            const k = bw.insertChild(doc, host, { kind: prose });
+            bw.setBody(k, blocks[i]);
+            if (k.body !== blocks[i]) throw new Error(`internal: block ${i} did not land word for word`);
+            n2++;
+          }
+          made.push(`${n2} micro-beat${n2 === 1 ? "" : "s"} under ${title(host) || host.meta.kind} ${idOf(host)}: blocks ${a}–${b} of ${rel(op.source)}, word for word${skip.size ? ` (left off: ${[...skip].map((i) => `block ${i} ${JSON.stringify(blocks[i].slice(0, 30))}`).join(", ")})` : ""}`);
           break;
         }
         case "place-idea": {
@@ -303,6 +372,81 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           if (idea.parent === host) throw new Error(`${op.idea} is already on ${title(host) || host.meta.kind} ${idOf(host)}`);
           if (!bw.placeIdea(doc, idea, host)) throw new Error(`${op.idea} could not be placed on ${op.on}`);
           made.push(`placed "${title(idea) || idea.meta.label || idea.id}" on ${title(host) || host.meta.kind} ${idOf(host)}${host !== on ? ` (the card step ${idOf(on)} sits on)` : ""}`);
+          break;
+        }
+        case "place-on-line": {
+          // CRE, 2026-10-21: an arc step sits on the chain line of the beat that carries it, not loose on the scene (where the
+          // plugin draws it as a Need). `via` names the card that carries it — a Beat, or a micro-beat (its Beat is used) — and
+          // the step goes on the scene line that Beat is linked to (its plotFrom; the first line of a run), through the
+          // plugin's own putFloatOnLine (plotLine; moved to that scene first if it sits elsewhere). Or `on` + `line` (0 = ENTRY).
+          const st = bw.findCard(doc, String(op.step || "").replace(/^\^/, ""));
+          if (!st || st.meta.kind !== "arcbeat") throw new Error(`no arc step ${op.step}`);
+          let host, lineId;
+          if (op.via) {
+            let b = findCardRef(doc, op.via) || bw.findCard(doc, String(op.via).replace(/^\^/, ""));
+            if (!b) throw new Error(`no card ${op.via}`);
+            const beatKey = s.levels[s.levels.length - 2].key;
+            while (b && b.meta.kind !== beatKey) b = b.parent && isProseKind(s, b.meta.kind) ? b.parent : null;
+            if (!b) throw new Error(`${op.via} is not a Beat or a micro-beat under one`);
+            const pf = typeof b.meta.plotFrom === "string" ? b.meta.plotFrom : "";
+            if (!pf) throw new Error(`Beat "${title(b)}" ${idOf(b)} is linked to no line of its scene`);
+            const [pid, run] = pf.split(":");
+            host = bw.findCard(doc, pid);
+            lineId = (run || "").split("..")[0];
+          } else {
+            host = findCardRef(doc, op.on);
+            if (!host) throw new Error(`no card ${op.on}`);
+            const ls = bw.chainLines(doc, host).filter((l) => l.id === "entry" || l.id === "exit" || /^t/.test(l.id));
+            if (!ls[Number(op.line)]) throw new Error(`line ${op.line} is not in ${idOf(host)}'s chain of ${ls.length}`);
+            lineId = ls[Number(op.line)].id;
+          }
+          if (!host || !bw.lineOrder(host).includes(lineId)) throw new Error(`line ${lineId} is not on ${host ? idOf(host) : "the card"}`);
+          const from = st.parent && st.parent.meta.kind !== "project" ? st.parent : null, fromLine = st.meta.plotLine || "";
+          if (from === host && fromLine === lineId) throw new Error(`${idOf(st)} is already on that line`);
+          if (!bw.putFloatOnLine(doc, st.id, host.id, lineId)) throw new Error(`${idOf(st)} could not be put on ${idOf(host)}'s line`);
+          const ls = bw.chainLines(doc, host).filter((l) => l.id === "entry" || l.id === "exit" || /^t/.test(l.id));
+          const li = ls.findIndex((l) => l.id === lineId);
+          const nm = li === 0 ? "ENTRY" : li === ls.length - 1 ? "EXIT" : (ls[li].k || "turn").toUpperCase();
+          made.push(`step "${(st.meta.label || "").slice(0, 40)}" ${idOf(st)} on ${title(host)} ${idOf(host)}, line ${li + 1} (${nm})${from && from !== host ? ` — moved from ${title(from)}` : ""}${op.why ? ` · ${op.why}` : ""}`);
+          break;
+        }
+        case "split-step": {
+          // CRE, 2026-10-21 ("yes, sub steps"): an arc step whose plan cell cites more than one scene becomes a parent step
+          // with one sub-step per cited scene, each on the line of the Beat that carries it. Through the plugin's own
+          // sub-step mechanism (addSubStep / addPlotArcStep with parentStep — §5c "Sub-steps"). Each part's words must be a
+          // verbatim span of the step's own text (his words, split by its citations — never new wording), in order, not
+          // overlapping. The parent keeps its whole text and label; with `unplace` it comes off the board and lives in the
+          // Characters panel as a category whose checklist shows each landed sub-step (a placed parent would flag every
+          // sub-step outside its card).
+          const st = bw.findCard(doc, String(op.step || "").replace(/^\^/, ""));
+          if (!st || st.meta.kind !== "arcbeat") throw new Error(`no arc step ${op.step}`);
+          if (bw.subSteps(doc, st.id).length) throw new Error(`${idOf(st)} already has sub-steps`);
+          const parts = op.parts || [];
+          if (parts.length < 2) throw new Error("a split needs two or more parts");
+          let at = 0;
+          for (const [i, p] of parts.entries()) {
+            const j = st.body.indexOf(String(p.text || ""), at);
+            if (!p.text || j < 0) throw new Error(`part ${i + 1} is not the step's own words, in order: ${JSON.stringify(String(p.text).slice(0, 50))}`);
+            at = j + p.text.length;
+          }
+          const beatKey = s.levels[s.levels.length - 2].key;
+          const lines = parts.map((p, i) => {
+            const b = findCardRef(doc, p.via) || bw.findCard(doc, String(p.via || "").replace(/^\^/, ""));
+            let k = b; while (k && k.meta.kind !== beatKey) k = k.parent && isProseKind(s, k.meta.kind) ? k.parent : null;
+            if (!k || typeof k.meta.plotFrom !== "string") throw new Error(`part ${i + 1}: ${p.via} is not a Beat linked to a scene line`);
+            const [pid, run] = k.meta.plotFrom.split(":");
+            return { host: bw.findCard(doc, pid), line: run.split("..")[0], beat: k };
+          });
+          const cast = st.meta.cast ? bw.findCard(doc, st.meta.cast) : null;
+          const label = st.meta.label || "";
+          const made2 = [];
+          parts.forEach((p, i) => {
+            const sub = st.meta.plotArc ? bw.addPlotArcStep(doc, st.meta.plotArc, label, p.text, { parentStep: st.id }) : bw.addSubStep(doc, cast, st, label, p.text);
+            if (!bw.putFloatOnLine(doc, sub.id, lines[i].host.id, lines[i].line)) throw new Error(`part ${i + 1} could not be put on its line`);
+            made2.push(`${i + 1}. "${p.text.slice(0, 50)}${p.text.length > 50 ? "…" : ""}" → ${title(lines[i].host)} · ${title(lines[i].beat)} ${idOf(sub)}`);
+          });
+          if (op.unplace && st.parent && st.parent.meta.kind !== "project") bw.unplaceIdea(doc, st);
+          made.push(`step "${label.slice(0, 40)}" ${idOf(st)} split into ${parts.length} sub-steps${op.unplace ? " (the parent now off the board, a category in the Characters panel)" : ""}: ${made2.join("; ")}`);
           break;
         }
         case "unplace-idea": {
@@ -594,6 +738,21 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`"${op.from}" → "${op.to}" on ${idOf(c)} (${n}×; CRE: ${op.ruled})`);
           break;
         }
+        case "remove-empty-card": {
+          // On his word (2026-10-21: a Beat built from a stale DEV beat its neighbour carries): a Beat or Scene with nothing
+          // under it — no micro-beat, idea, arc step or card — and nothing linking to it is taken off the board. The log keeps
+          // its text; undo puts it back. A card with anything under it, or one another card points at, is refused.
+          const c = findCardRef(doc, op.card);
+          if (!c) throw new Error(`no card ${op.card}`);
+          if (!isContainerKind(s, c.meta.kind) || ["part", "sequence"].includes(c.meta.kind) && c.children.length) throw new Error(`${idOf(c)} is not an empty container`);
+          if (c.children.length) throw new Error(`${idOf(c)} has ${c.children.length} card(s) under it; left alone`);
+          const pointing = doc.cards.filter((k) => k !== c && (String(k.meta.plotFrom || "").startsWith(c.id + ":") || bw.linksOf(k).some((l) => String(l.to).includes(c.id))));
+          if (pointing.length) throw new Error(`${idOf(c)} is linked from ${pointing.map(idOf).join(", ")}; left alone`);
+          const t = title(c) || c.meta.kind;
+          bw.removeCard(doc, c);
+          made.push(`removed the empty ${bw.kindName(s, c.meta.kind)} "${t}" ${idOf(c)} (nothing under it; undo restores it)`);
+          break;
+        }
         case "remove-break-card": {
           // On his word only (2026-10-19): a scene-break card the import kept word for word ("***"), once the Scenes around it
           // export their own break. Refused for anything else: never a card with words, children or keys of its own.
@@ -792,7 +951,9 @@ function cmdApply() {
   if (!changed) { console.log("  nothing changed on the board"); process.exit(skipped.length ? 3 : 0); }
   console.log(`  cards touched: ${records.length} (${records.filter((r) => !r.before).length} added, ${records.filter((r) => !r.after).length} removed, ${records.filter((r) => r.before && r.after).length} changed)${preChanged ? "; frontmatter changed" : ""}; every other card byte-identical`);
   if (DRY) process.exit(skipped.length ? 3 : 0);
-  const run = { id: newRunId(board), date: new Date().toISOString(), board: rel(board), label: String(spec.label || made[0] || "run"), kind: "apply", status: "applied", ops: spec.ops, made, notDone: skipped, file: { beforeSha256: sha(text), afterSha256: sha(textNew), beforeTail, afterTail: tailOf(textNew, docNew) }, preamble: preChanged ? { before: doc.preamble, after: bw.parse(textNew).preamble } : null, cards: records };
+  const srcs = Object.entries(ctx.sources || {}).map(([path, x]) => ({ path, sha256: x.sha256 }));
+  for (const x of srcs) if (sha(readText(x.path)) !== x.sha256) die(`${x.path} changed during the run; nothing written`);
+  const run = { id: newRunId(board), date: new Date().toISOString(), board: rel(board), label: String(spec.label || made[0] || "run"), kind: "apply", status: "applied", ops: spec.ops, made, notDone: skipped, sources: srcs.length ? srcs : undefined, file: { beforeSha256: sha(text), afterSha256: sha(textNew), beforeTail, afterTail: tailOf(textNew, docNew) }, preamble: preChanged ? { before: doc.preamble, after: bw.parse(textNew).preamble } : null, cards: records };
   if (ctx.sidecar) {
     const sp = board.replace(/\.md$/, ".measure.json");
     const cur = existsSync(sp) ? JSON.parse(readFileSync(sp, "utf8")) : {};
