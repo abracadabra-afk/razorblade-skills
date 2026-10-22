@@ -31,7 +31,9 @@ function devSeq(file) {
   if (!existsSync(abs(p))) { problems.push(`no DEV sequence file ${p}`); return null; }
   const t = read(p);
   const sect = (h) => { const m = new RegExp(`^## ${h}[^\\n]*\\n([\\s\\S]*?)(?=^## |^---|(?![\\s\\S]))`, "m").exec(t); return m ? m[1] : ""; };
-  const beats = sect("Beats").split("\n").filter((l) => /^\d+\.\s/.test(l)).map((l) => l.replace(/^\d+\.\s+/, ""));
+  // a read captured at sequence grain (SEQ 01, the prologue) numbers its beats under "## Scenes (in order)" instead
+  const list = (x) => x.split("\n").filter((l) => /^\d+\.\s/.test(l)).map((l) => l.replace(/^\d+\.\s+/, ""));
+  const beats = list(sect("Beats")).length ? list(sect("Beats")) : list(sect("Scenes \\(in order\\)"));
   // prev / next as the read's own Connections line names them ("prev: [[sequences/SEQ 23B - …|…]]")
   const link = (k) => { const m = new RegExp(`${k}:\\s*\\[\\[sequences/(SEQ [^|\\]]+)`, "i").exec(t); return m ? m[1].trim() + ".md" : null; };
   return { path: p, file, id: seqId(file), text: t, sha256: sha(t), beats, arc: sect("The arc"), prev: link("prev"), next: link("next") };
@@ -191,6 +193,9 @@ for (const ch of plan.chapters) {
       quoteLog.push({ seq: sc.seq, beat: "arc", quote: q, found: hit ? hit.path : null });
       if (hit) prose.push({ op: "add-idea", from: { source: hit.path, quote: hit.quote }, on: T(sc.title), type: "beat", tags: [`seq:${sc.seq.replace(/^SEQ (\w+).*$/, "$1")}`, "dev dictation"] });
     }
+    // a scene of his prose that no DEV sequence carries (a landed chapter's extra scenes): the prose goes under the scene,
+    // and the breakdown groups it into Beats afterwards
+    if (sc.prose) { if ((sc.beats || []).length) problems.push(`${sc.title}: prose goes on the scene or on its Beats, not both`); else prose.push({ op: "place-prose", under: T(sc.title), ...sc.prose }); }
     if (sc.summary) ops.push({ op: "set-summary", card: T(sc.title), text: sc.summary });
     if (sc.goalHolder) ops.push({ op: "set-field", card: T(sc.title), field: "goal holder", value: sc.goalHolder });
     if (sc.chain) {

@@ -45,7 +45,11 @@ FENCE = re.compile(r"```json\r?\n(.*?)\r?\n```", re.S)
 GROUPS = [(1, "Setup: Introduction"), (6, "Incident: Change Event"), (11, "Trials: Hairlines"), (16, "Pinch 1: Fractures"), (21, "Mid-Point: Cracks"), (26, "Pinch 2: Shattering"), (31, "Final Showdown: Change Vs. Failure")]
 SPINES = ["antagonist", "external", "lead"]
 ROLES = ["lead", "antagonist", "deuteragonist", "X1", "X2", "X3", "X4", "AM1", "AM2", "AM3", "AM4", "AM5"]
-PLAN_KEYS = {"cast", "roles", "switches", "plotting", "structure", "external", "board", "spines"}
+PLAN_KEYS = {"cast", "roles", "switches", "plotting", "structure", "external", "board", "spines", "subplots"}
+# Subplots (CRE, 2026-10-21): plot arcs with no model role — "the subplot beats would hit the scenes and lines like the others,
+# so each unit holds the entirety of narrative needs - plus they are linked to larger arcs". Each carries its own `status`
+# (pilot / ruled), so setting them leaves the grid's approval alone: the approval covers the model cells, not the subplots.
+SUBPLOT_STEP_KEYS = {"label", "text", "src", "from", "via", "renamed", "cards", "parts", "seq", "ch", "unplaced", "ruling"}
 SET_KEYS = {"key", "name", "lead", "antagonist", "era", "switches", "external"}
 K_OPTIONS = {
     "K1": ["Changed", "Not changed"], "K2": ["V1", "V2", "V3"], "K3": ["None", "PH1", "PH2", "PH3 leading", "PH3 trailing"],
@@ -210,6 +214,8 @@ def render(path, plan, vault):
         lines.append("| " + " | ".join(row) + " |")
     for sp in plan.get("spines") or []:
         lines += render_set(plan, sp, T, cast, esc)
+    for sp in plan.get("subplots") or []:
+        lines += render_subplot(sp, esc)
     lines += ["", "```json", json.dumps(plan, indent=2, ensure_ascii=False), "```", ""]
     out = "\n".join(lines)
     json.loads(FENCE.search(out).group(1))  # parse gate
@@ -218,6 +224,30 @@ def render(path, plan, vault):
     back = json.loads(FENCE.search(open(path, encoding="utf-8").read()).group(1))
     if back != plan:
         die("parse gate: the plan did not read back identical")
+
+
+def render_subplot(sp, esc):
+    """A subplot (a plot arc with no model role): its fields, then its steps in story order with where each one lands."""
+    out = ["", f"## Subplot: {sp['label']}" + (" *(working label — his call)*" if sp.get("labelOpen") else "") + f" — {sp.get('status', 'pilot')}", ""]
+    for k in ("goal_holder", "goal", "stakes", "planned_outcome"):
+        out.append(f"- **{k.replace('_', ' ')}:** " + (esc(str(sp[k])) if sp.get(k) else "*open — his call*"))
+    if sp.get("sources"):
+        out.append("- **sources:** " + "; ".join(sp["sources"]))
+    out += ["", "| # | step | his words | lands |", "|---|---|---|---|"]
+    for i, st in enumerate(sp.get("steps") or [], 1):
+        if st.get("parts"):
+            lands = "sub-steps: " + "; ".join(f"{esc(p['text'][:40])} → [{p.get('card') or p.get('via') or '?'}]" for p in st["parts"])
+        elif st.get("cards"):
+            lands = "line of the Beat carrying [" + st["cards"][0] + "]"
+        elif st.get("via"):
+            # the subplot builder's `via` (a Beat, a micro-beat or a scene ref) — 2026-10-22, the second board audit
+            lands = "line of [" + esc(str(st["via"])) + "]"
+        elif st.get("ruling"):
+            lands = "*ruling:* " + esc(st["ruling"])
+        else:
+            lands = "unplaced — " + esc(st.get("unplaced") or "no board card yet")
+        out.append(f"| {i} | {esc(st.get('label', ''))} | {esc(st['text'])}" + (f"<br>*{esc(st['src'])}*" if st.get("src") else "") + f" | {lands} |")
+    return out
 
 
 def layers(b, esc):
@@ -327,12 +357,7 @@ def main():
         return
 
     text, plan = read_plan(a.plan)
-    if a.cmd in ("set", "beat") and plan.get("approved"):
-        # Any change after approval takes the approval off: CRE approves what will be built.
-        plan["approved"] = None
-        plan["status"] = "draft"
-        print("note: the plan was approved; this change takes the approval off (CRE approves again with \"approve the plan\")")
-
+    part = None
     if a.cmd == "set":
         if a.json_file:
             part = json.loads(open(a.json_file, encoding="utf-8").read())
@@ -340,6 +365,14 @@ def main():
             part = json.loads(a.json)
         else:
             die("set takes --json-file <part.json> (or --json from Git Bash)")
+    only_subplots = part is not None and set(part) == {"subplots"}
+    if a.cmd in ("set", "beat") and plan.get("approved") and not only_subplots:
+        # Any change after approval takes the approval off: CRE approves what will be built.
+        plan["approved"] = None
+        plan["status"] = "draft"
+        print("note: the plan was approved; this change takes the approval off (CRE approves again with \"approve the plan\")")
+
+    if a.cmd == "set":
         bad = set(part) - PLAN_KEYS
         if bad:
             die(f"set takes only {sorted(PLAN_KEYS)}; not {sorted(bad)} (beats go through 'beat', approval through 'approve')")
@@ -349,6 +382,17 @@ def main():
         for r in part.get("roles") or []:
             if r.get("role") not in ROLES:
                 die(f"role {r.get('role')!r} is not a model role {ROLES}")
+        for sp in part.get("subplots") or []:
+            if not sp.get("key") or not sp.get("label"):
+                die("a subplot needs key and label (a working label he rules is fine; it is marked as such)")
+            if sp.get("model") or sp.get("role"):
+                die(f"subplot {sp['key']}: subplots carry no model role (only the external spine does)")
+            for i, st in enumerate(sp.get("steps") or []):
+                extra = set(st) - SUBPLOT_STEP_KEYS
+                if extra:
+                    die(f"subplot {sp['key']} step {i + 1}: unknown keys {sorted(extra)}")
+                if not (st.get("text") or "").strip():
+                    die(f"subplot {sp['key']} step {i + 1}: text is required — his words, from a ruling or his prose")
         if "spines" in part:
             if not isinstance(part["spines"], list):
                 die("spines is a list of spine sets")

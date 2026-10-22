@@ -1,6 +1,6 @@
 ---
 name: branch-writing-expert
-description: 'The single front door to CRE''s Branch Writing boards (his Obsidian plugin): executes what he says at any level on the board he names, never his prose. Use whenever CRE says "work the board", "board: …", "import to the board", "break down chapter N", "tag the board", "interlock the arcs", "build the interlock board" or "check the interlock", hands over story ideas to file or place, asks to change cast, eras, relationships, world entries, tags or links, to put chapters on a board, to plot against his Interlocking Arc Model, or to undo this skill''s work. Instructions execute with a change list; the levels above his prose (typed micro-beats, beats, summaries, scene and chapter chains, links) it writes directly, one pilot chapter first; story inferences (placements, tags, roles, cast) are a ruling list first; every write is logged for undo. Do NOT use to write prose, invent beats or characters, export a board, edit the arc model, audit arcs (arc-audit), cut DEV/ scenes (shape-the-part), or run unattended.'
+description: 'The single front door to CRE''s Branch Writing boards (his Obsidian plugin): executes what he says at any level on the board he names, never his prose. Use whenever CRE says "work the board", "board: …", "import to the board", "break down chapter N", "tag the board", "interlock the arcs", "build the interlock board", "check the interlock" or "audit the board", hands over story ideas to file or place, asks to change cast, eras, relationships, world entries, tags or links, to put chapters on a board, to plot against his Interlocking Arc Model, to audit a whole board (a read-only report), or to undo this skill''s work. Instructions execute with a change list; the levels above his prose (micro-beat types, beats, summaries, chains, links) it writes directly; story inferences are a ruling list first; every write is logged for undo. Do NOT use to write prose, invent beats or characters, export a board, edit the arc model, audit arcs in a draft (arc-audit), cut DEV/ scenes (shape-the-part), or run unattended.'
 ---
 
 # branch-writing-expert
@@ -79,6 +79,8 @@ there (always the current copy) and the plugin dev folder is `C:\Users\Chad\dev\
 | `scripts/admin_plan.mjs` | breakdown: a chapter plan (beats, types, titles, summaries, chains, links) → one ops file; refuses a plan that doesn't cover every micro-beat once, in order |
 | `scripts/dev_import.mjs` | a part's structure from the DEV sequence files: a part plan → one ops file, held to the DEV beats; the neighbour check first (a beat the next or previous sequence already carries goes to his ruling list, never built twice, never dropped silently); his dictated lines kept only where a floor has them word for word (`references/import.md` §2b) |
 | `scripts/step_lines.mjs` | arc steps onto chain lines: each step's plan cell → its first cited Beat → that Beat's scene line (`place-on-line` ops); lists the steps whose cells cite no board card, for his ruling, never guessed, and the cells that span scenes, for a split into sub-steps (`split-step`, `references/import.md`) |
+| `scripts/subplot_build.mjs` | a plan's subplot (a plot arc with no model role, `plan_tool.py set` with only `subplots` keeps the grid's approval) → its arc and steps on the board by the same rules: line by citation, sub-steps across scenes, unplaced with a reason, ruling items listed, never placed |
+| `scripts/audit_crawl.mjs` | audit mode, read-only: a whole board (+ its plan) → digests in a scratch folder, in story order — outlines and prose per part, every arc's steps, the markers, plan-vs-board alignment, name silences, repeats — plus what the crawl did not check |
 | `scripts/words.mjs` | the words proof: every micro-beat's words on a board, in order, as one hash and a count — run before and after every breakdown run; they must match |
 | `scripts/plan_tool.py` | plotting mode's plan: `new` · `set --json-file` · `beat` · `walk` · `walked` · `render` · `approve` · `status` |
 | `C:\Users\Chad\dev\branch-writing\tools\build-plan.mjs` / `check-board.mjs` | plotting mode's builder (new board or copy) and check report |
@@ -97,7 +99,8 @@ there (always the current copy) and the plugin dev folder is `C:\Users\Chad\dev\
 4. Show proposals as **one line per item with its reason**, numbered, and wait. Approved items become the next ops file;
    rejected or unanswered ones stay where they are (the inbox is a valid state). An approved placement is never re-asked
    (a settled call stays settled).
-5. Close with the change list. If nothing was written, say so in one line.
+5. Close with the change list. If nothing was written, say so in one line. When the run put a whole part on a live board,
+   offer the audit once, in one line ("Part N is on the board — want me to audit the board?"); never run it unasked.
 
 **Undo / redo.** "Undo the last run" → `board_tool.mjs undo <board>`; "redo" → `redo`. The tool restores each touched card
 byte-for-byte and names any card he edited since (left alone unless he says `--force`). An import undoes whole (the board
@@ -109,14 +112,22 @@ the tool asks for the id. Cast, eras, world entries and relation types by name.
 
 **Idea dump → placement** (the model workflow). "Here is a dump of my story ideas": split his dump at his own breaks
 (paragraphs, lines, dashes) into ideas **verbatim** — never reworded, merged or trimmed — and file each with `add-idea`
-and one of the board's idea types (`dialogue / beat / scene / twist / image / question`, from `read`); the type is the
-only thing you choose, and a `#tag` he typed on an idea is his (by: cre). "Match them to beats" → for each inbox idea one
+and one of the board's idea types (`dialogue / beat / scene / twist / image / question`, from `read`); a `#tag` he typed
+on an idea is his (by: cre). "Match them to beats" → for each inbox idea one
 proposal: a beat (B17 external), an arc step, or a card, by title, with a one-line reason; show the list; approved ones
 `place-idea` onto their card (their tray), the rest stay in the inbox. An idea sits on a **card**: a proposal "on Ash's
 B17" means the card that step is placed on, and a step still waiting in the Characters panel cannot take an idea — say
 so in the proposal ("B17 isn't on a card yet; place the step first, or name the card") rather than offering it. When he
 approves a placement but names a different card, that is an instruction: do what he said, once. Ground your reasons in
 the board (`read --full` shows each step's text), never in a memory of it.
+
+**An idea's words are his; everything around them is admin** (CRE-ruled 2026-10-22: "it is not allowed to change the idea
+itself, but should be able to change tags, remove duplicates, types - anything administrative or design related that
+doesn't impact the noted idea itself"). On a placed or inbox idea you write directly, logged and undoable, with a change list
+after: its type (`set-type`, from the board's ideaTypes, any time, not only at filing), `by: ai` tags (`add-tag` /
+`remove-tag`), byte-identical duplicates (`remove-duplicate-idea`). Never reword, trim, merge or split an idea's text,
+never promote one (Make it a…), never touch a `by: cre` tag. Where an idea belongs is still a story call: placement stays
+a proposal.
 
 **Direct instructions at any level** — cast (name, aliases, profile answers), eras (name, label, inside which, history),
 relationships (type from the board's list, a is type of b, from/to eras), places / items / systems (world entries by kind),
@@ -135,6 +146,7 @@ record the answer in the plan or as the ops he names; never pick for him.
 | "interlock the arcs" · "build the interlock board" · "check the interlock", or plots a book on the 35-beat spines | Plotting (the former interlock-plotter, plus the story-bible setup) | `references/plotting.md` |
 | "tag the board", or asks for speakers, missed tags, links, intensity, wants, states | Tagging (offers, every one by: ai) | `references/tagging.md` |
 | a build lands with no era, blank roles or no relationships; "set up the bible" | Story-bible setup | `references/bible.md` |
+| "audit the board", or asks what is wrong or weak across the whole book (continuity, beat mapping, alignment, plotting, repetition) | Audit (read-only: crawl, five checks, a ranked report in `SYSTEM/reports/`; never writes the board) | `references/audit.md` |
 | anything else about a board | Work the board (this file is enough) | — |
 
 ## Talking to CRE

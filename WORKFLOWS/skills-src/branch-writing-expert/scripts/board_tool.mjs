@@ -129,7 +129,7 @@ function offsets(text, doc) {
 }
 function snapshot(text, doc) {
   const m = new Map();
-  doc.cards.forEach((c, i) => m.set(c.id, { text: seg(c), prev: i ? doc.cards[i - 1].id : "", idx: i, children: c.children.map((k) => k.id) }));
+  doc.cards.forEach((c, i) => m.set(c.id, { text: seg(c), prev: i ? doc.cards[i - 1].id : "", idx: i, children: c.children.map((k) => k.id), parent: c.parent ? c.parent.id : "" }));
   return m;
 }
 /** The whitespace after the last card (the plugin's serializer may leave a blank line there after a move). */
@@ -251,6 +251,18 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`cast: ${op.name}${op.aliases && op.aliases.length ? ` (${op.aliases.join(", ")})` : ""}${Object.keys(op.profile || {}).length ? " — " + Object.entries(op.profile).map(([k, v]) => `${k}: ${v}`).join("; ") : ""} ${idOf(c)}`);
           break;
         }
+        case "add-alias": {
+          // On his word (2026-10-21: "Dargon and Raella are both named — aliases of the black and brown hounds"): another name
+          // for a cast member already on the board. Refused if another cast member already answers to it.
+          const c = castRef(doc, op.cast); if (!c) throw new Error(`no cast member "${op.cast}"`);
+          const al = String(op.alias || "").trim(); if (!al) throw new Error("alias is required");
+          const other = bw.findCastByName(doc, al); if (other && other !== c) throw new Error(`"${al}" already names ${bw.castName(other)}`);
+          const cur = bw.castAliases(c);
+          if (cur.some((x) => norm(x) === norm(al))) throw new Error(`${bw.castName(c)} already has the alias "${al}"`);
+          bw.setMeta(c, "aliases", [...cur, al]);
+          made.push(`cast ${bw.castName(c)}: alias ${al}`);
+          break;
+        }
         case "set-cast": {
           const c = castRef(doc, op.cast); if (!c) throw new Error(`no cast member "${op.cast}"`);
           if (op.field === undefined) throw new Error("field is required");
@@ -298,6 +310,16 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           if (op.note) bw.updateRelation(doc, id, { note: String(op.note) });
           const nm = (c) => (bw.isCast(c) ? bw.castName(c) : bw.worldName(c));
           made.push(`relation: ${nm(a)} is ${op.type} of ${nm(b)}${from ? ` from ${from.name}` : ""}${to ? ` to ${to.name}` : ""}${op.note ? ` (${op.note})` : ""}`);
+          break;
+        }
+        case "add-aliases": {
+          // His instruction: more names for an existing cast member (kept, never removed or reordered; duplicates skipped).
+          const c = castRef(doc, op.cast); if (!c) throw new Error(`no cast member "${op.cast}"`);
+          const have = bw.castAliases(c).map(String);
+          const add = (Array.isArray(op.aliases) ? op.aliases : [op.aliases]).map(String).filter((a) => a && !have.some((h) => h.toLowerCase() === a.toLowerCase()) && a.toLowerCase() !== bw.castName(c).toLowerCase());
+          if (!add.length) throw new Error(`${bw.castName(c)} already has ${(Array.isArray(op.aliases) ? op.aliases : [op.aliases]).join(", ")}`);
+          bw.setMeta(c, "aliases", [...have, ...add]);
+          made.push(`cast ${bw.castName(c)}: aliases + ${add.join(", ")}`);
           break;
         }
         case "add-world": {
@@ -410,6 +432,64 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`step "${(st.meta.label || "").slice(0, 40)}" ${idOf(st)} on ${title(host)} ${idOf(host)}, line ${li + 1} (${nm})${from && from !== host ? ` — moved from ${title(from)}` : ""}${op.why ? ` · ${op.why}` : ""}`);
           break;
         }
+        // ── Subplots (CRE, 2026-10-21: "the subplot beats would hit the scenes and lines like the others, so each unit holds
+        //    the entirety of narrative needs - plus they are linked to larger arcs"). A subplot is a plot Arc (§5q `plotArcs`)
+        //    with NO model role — only the external spine carries one — and its steps are arcbeat cards with `plotArc`.
+        case "add-plot-arc": {
+          if (!op.label || !String(op.label).trim()) throw new Error("label is required (his words, or a working label he rules)");
+          if (bw.plotArcs(doc).some((a) => norm(a.label) === norm(op.label))) throw new Error(`a plot arc "${op.label}" is already on the board`);
+          const OK = new Set(["goal", "stakes", "opposition", "conflict", "planned_outcome", "outcome_detail", "planned_change", "span", "action_type"]);
+          const init = { label: String(op.label).trim() };
+          for (const [k, v] of Object.entries(op.fields || {})) { if (!OK.has(k)) throw new Error(`"${k}" is not a plot-arc field this op writes (${[...OK].join(", ")})`); if (v) init[k] = String(v); }
+          if (op.goalHolder) { const gh = castRef(doc, op.goalHolder); if (!gh) throw new Error(`no cast member "${op.goalHolder}"`); init.goal_holder = gh.id; }
+          const a = bw.addPlotArc(doc, init);
+          made.push(`plot arc "${init.label}" (${a.id}; a subplot — no model role)${init.goal_holder ? `, goal holder ${op.goalHolder}` : ""}${Object.keys(op.fields || {}).length ? " — " + Object.keys(op.fields).join(", ") : ""}`);
+          break;
+        }
+        case "add-plot-step": {
+          // A subplot step: `text` his words (or `from` a source, as add-idea), `label` where it sits; then `via` puts it on the
+          // line of the Beat that carries it, `parts` makes it a parent with one sub-step per scene (each `{text, via}`, a verbatim
+          // span of `text`), and with neither it waits unplaced in the Characters panel — `unplaced` says why (shown in the log).
+          const arc = bw.plotArcs(doc).find((a) => a.id === op.arc || norm(a.label) === norm(op.arc));
+          if (!arc) throw new Error(`no plot arc "${op.arc}"`);
+          if (arc.model) throw new Error(`"${arc.label}" carries a model role; subplot steps go on a plot arc without one`);
+          const text = op.from ? sourceText(op.from, ctx) : String(op.text || "");
+          const st = bw.addPlotArcStep(doc, arc.id, String(op.label || ""), text);
+          let where = "";
+          const lineOf = (via, i) => {
+            const beatKey = s.levels[s.levels.length - 2].key;
+            let k = findCardRef(doc, via) || bw.findCard(doc, String(via || "").replace(/^\^/, ""));
+            // a whole scene cited (a scene-level marker): its own opening line, ENTRY (CRE 2026-10-21, the held calls)
+            if (k && isUnitKind(s, k.meta.kind) && bw.lineOrder(k).includes("entry")) return { host: k, line: "entry", beat: { body: "ENTRY" } };
+            while (k && k.meta.kind !== beatKey) k = k.parent && isProseKind(s, k.meta.kind) ? k.parent : null;
+            if (!k || typeof k.meta.plotFrom !== "string") throw new Error(`${i}: ${via} is not a Beat (or a micro-beat under one) linked to a scene line`);
+            const [pid, run] = k.meta.plotFrom.split(":");
+            return { host: bw.findCard(doc, pid), line: run.split("..")[0], beat: k };
+          };
+          if (op.parts && op.parts.length) {
+            if (op.parts.length < 2) throw new Error("parts needs two or more");
+            let at = 0;
+            const lines = op.parts.map((p, i) => { const j = text.indexOf(p.text, at); if (!p.text || j < 0) throw new Error(`part ${i + 1} is not a span of the step's words, in order`); at = j + p.text.length; return lineOf(p.via, `part ${i + 1}`); });
+            op.parts.forEach((p, i) => { const sub = bw.addPlotArcStep(doc, arc.id, String(op.label || ""), p.text, { parentStep: st.id }); if (!bw.putFloatOnLine(doc, sub.id, lines[i].host.id, lines[i].line)) throw new Error(`part ${i + 1} could not be put on its line`); });
+            where = ` — ${op.parts.length} sub-steps: ${lines.map((l) => `${title(l.host)} · ${title(l.beat)}`).join("; ")} (the parent off the board, a category)`;
+          } else if (op.via) {
+            const l = lineOf(op.via, "via");
+            if (!bw.putFloatOnLine(doc, st.id, l.host.id, l.line)) throw new Error("the step could not be put on its line");
+            where = ` — on ${title(l.host)} · ${title(l.beat)}`;
+          } else where = ` — unplaced${op.unplaced ? ": " + op.unplaced : ""}`;
+          // `before`: an inserted step goes ahead of an existing step of the same arc (story order), moved up through the
+          // plugin's own movePlotStep, which renumbers the list (CRE 2026-10-21: a step added between two in The Warning).
+          if (op.before) {
+            const tgt = bw.findCard(doc, String(op.before).replace(/^\^/, ""));
+            if (!tgt || tgt.meta.plotArc !== arc.id || tgt.meta.parentStep) throw new Error(`${op.before} is not a top-level step of "${arc.label}"`);
+            let guard = 0;
+            while (st.meta.step > tgt.meta.step && guard++ < 500) if (!bw.movePlotStep(doc, st, arc.id, -1)) break;
+            if (st.meta.step !== tgt.meta.step - 1) throw new Error(`the step could not be put before ${op.before}`);
+            where += ` — step ${st.meta.step}, before "${(tgt.meta.label || "").slice(0, 30)}"`;
+          }
+          made.push(`◆ ${arc.label} step "${(op.label || "").slice(0, 30)}": ${text.replace(/\s+/g, " ").slice(0, 70)}${text.length > 70 ? "…" : ""} ${idOf(st)}${where}`);
+          break;
+        }
         case "split-step": {
           // CRE, 2026-10-21 ("yes, sub steps"): an arc step whose plan cell cites more than one scene becomes a parent step
           // with one sub-step per cited scene, each on the line of the Beat that carries it. Through the plugin's own
@@ -432,6 +512,9 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           const beatKey = s.levels[s.levels.length - 2].key;
           const lines = parts.map((p, i) => {
             const b = findCardRef(doc, p.via) || bw.findCard(doc, String(p.via || "").replace(/^\^/, ""));
+            // a whole scene cited (an unwritten interlude slot, no Beats yet): its own opening line, ENTRY — as add-plot-step
+            // (2026-10-22, the second board audit's housekeeping)
+            if (b && isUnitKind(s, b.meta.kind) && bw.lineOrder(b).includes("entry")) return { host: b, line: "entry", beat: { body: "ENTRY" } };
             let k = b; while (k && k.meta.kind !== beatKey) k = k.parent && isProseKind(s, k.meta.kind) ? k.parent : null;
             if (!k || typeof k.meta.plotFrom !== "string") throw new Error(`part ${i + 1}: ${p.via} is not a Beat linked to a scene line`);
             const [pid, run] = k.meta.plotFrom.split(":");
@@ -511,7 +594,8 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           if (!op.kind) throw new Error("kind is required");
           if (!isContainerKind(s, op.kind)) throw new Error(`"${op.kind}" is not a container level on this board; the assistant adds containers only (never prose cards, ideas or arc steps by this op)`);
           let c;
-          if (op.under) { const p = findCardRef(doc, op.under); if (!p) throw new Error(`no card ${op.under}`); c = bw.insertChild(doc, p, { kind: op.kind }); }
+          // `first: true` puts it ahead of the parent's other children (an interlude slot opens its chapter)
+          if (op.under) { const p = findCardRef(doc, op.under); if (!p) throw new Error(`no card ${op.under}`); c = bw.insertChild(doc, p, { kind: op.kind }, !!op.first); }
           else if (op.after) { const r = findCardRef(doc, op.after); if (!r) throw new Error(`no card ${op.after}`); c = bw.insertSibling(doc, r, { kind: op.kind }, true); }
           else { const p = bw.projectCard(doc); if (!p) throw new Error("no Project card"); c = bw.insertChild(doc, p, { kind: op.kind }); }
           if (op.title) bw.setBody(c, String(op.title));
@@ -738,6 +822,57 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`"${op.from}" → "${op.to}" on ${idOf(c)} (${n}×; CRE: ${op.ruled})`);
           break;
         }
+        case "fill-step": {
+          // An EMPTY arc step takes its words from his approved plan (2026-10-22, the board audit: a cell he ruled after the
+          // build never reached the board). The words come from the plan record, never from the op — so nothing is typed in
+          // his name — and only into a step whose body is blank and whose beat number is the cell's. A step with any text is
+          // refused: changing his words is replace-words, on his explicit word.
+          const c = bw.findCard(doc, String(op.step || "").replace(/^\^/, ""));
+          if (!c || c.meta.kind !== "arcbeat") throw new Error(`${op.step} is not an arc step`);
+          if (c.body.trim()) throw new Error(`${idOf(c)} already has words; fill-step only fills an empty step`);
+          const f = op.from || {};
+          if (!f.source || f.n == null || !f.spine) throw new Error("fill-step needs from: {source: <plan.md>, n, spine, set?}");
+          const blocks = [...readText(f.source).matchAll(/```json\r?\n([\s\S]*?)\r?\n```/g)];
+          if (!blocks.length) throw new Error(`no JSON record in ${f.source}`);
+          const plan = JSON.parse(blocks[blocks.length - 1][1]);
+          const pool = f.set ? ((plan.spines || []).find((x) => x.key === f.set) || {}).beats || [] : plan.beats || [];
+          const cell = pool.find((b) => Number(b.n) === Number(f.n) && b.spine === f.spine && (f.sub ? b.sub === f.sub : !b.sub));
+          if (!cell || !String(cell.text || "").trim()) throw new Error(`the plan has no filled cell B${f.n} ${f.spine}${f.set ? ` in set ${f.set}` : ""}`);
+          if (c.meta.beat != null && Number(c.meta.beat) !== Number(f.n)) throw new Error(`${idOf(c)} is B${c.meta.beat}, not B${f.n}`);
+          bw.setBody(c, String(cell.text).trim());
+          made.push(`${idOf(c)} filled from the plan's B${f.n} ${f.spine}${f.set ? ` (${f.set})` : ""}: "${String(cell.text).trim().slice(0, 80)}"`);
+          break;
+        }
+        case "replace-arc-words": {
+          // replace-words for a plot Arc's own fields (2026-10-22: "the dead withdraw" for Assimilation's planned outcome).
+          // ONLY on his explicit word naming the change: an exact phrase swapped in one text field of one plot Arc, through the
+          // plugin's setPlotArc. `count` must match, as in replace-words. Never the chain, marks or anything structural.
+          const FIELDS = ["goal", "stakes", "planned_outcome", "outcome_detail", "planned_change", "opposition", "conflict", "span"];
+          const norm = (x) => String(x || "").trim().toLowerCase();
+          const a = bw.plotArcs(doc).find((x) => x.id === op.arc || norm(x.label) === norm(op.arc));
+          if (!a) throw new Error(`no plot arc "${op.arc}"`);
+          if (!FIELDS.includes(op.field)) throw new Error(`field must be one of ${FIELDS.join(", ")}`);
+          if (!op.from || op.to == null || !op.ruled) throw new Error('replace-arc-words needs from, to and ruled ("<his words>")');
+          const v = String(a[op.field] || "");
+          const n = v.split(op.from).length - 1;
+          if (n !== Number(op.count || 1)) throw new Error(`"${a.label}" ${op.field} has "${op.from}" ${n} time(s), not ${op.count || 1}`);
+          bw.setPlotArc(doc, a.id, op.field, v.split(op.from).join(op.to));
+          made.push(`"${op.from}" → "${op.to}" in "${a.label}" ${op.field.replace("_", " ")} (${n}×; CRE: ${op.ruled})`);
+          break;
+        }
+        case "move-step": {
+          // On his word (2026-10-22: "Step renumbering (two swaps)"): a step moves one place up or down among its siblings in
+          // its arc, through the plugin's own Plot-tab move (moveStep / movePlotStep), which renumbers the list. Words untouched.
+          const c = bw.findCard(doc, String(op.step || "").replace(/^\^/, ""));
+          if (!c || c.meta.kind !== "arcbeat") throw new Error(`${op.step} is not an arc step`);
+          const dir = Number(op.dir);
+          if (dir !== -1 && dir !== 1) throw new Error("move-step needs dir: -1 (up) or 1 (down)");
+          const was = c.meta.step;
+          const ok = c.meta.plotArc ? bw.movePlotStep(doc, c, c.meta.plotArc, dir) : bw.moveStep(doc, c, dir);
+          if (!ok) throw new Error(`${idOf(c)} cannot move ${dir < 0 ? "up" : "down"} (end of its list)`);
+          made.push(`step ${idOf(c)}${c.meta.label ? ` "${c.meta.label}"` : ""}: s${was} → s${c.meta.step}`);
+          break;
+        }
         case "remove-empty-card": {
           // On his word (2026-10-21: a Beat built from a stale DEV beat its neighbour carries): a Beat or Scene with nothing
           // under it — no micro-beat, idea, arc step or card — and nothing linking to it is taken off the board. The log keeps
@@ -753,6 +888,29 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`removed the empty ${bw.kindName(s, c.meta.kind)} "${t}" ${idOf(c)} (nothing under it; undo restores it)`);
           break;
         }
+        case "remove-duplicate-idea": {
+          // On his word only (2026-10-22, the second audit: "remove dulpicates - no clutter"): an idea card whose text is
+          // byte-identical (trimmed) to a `twin` idea in the same scene comes off the board; the twin keeps his words. Refused
+          // when the texts differ by a single character, the two sit in different scenes, or the idea carries tags, links or
+          // children. The log keeps its text; undo puts it back.
+          const c = bw.findCard(doc, String(op.idea || "").replace(/^\^/, ""));
+          const tw = bw.findCard(doc, String(op.twin || "").replace(/^\^/, ""));
+          if (!c || c.meta.kind !== "idea") throw new Error(`no idea card ${op.idea}`);
+          if (!tw || tw.meta.kind !== "idea" || tw === c) throw new Error(`no twin idea card ${op.twin}`);
+          if ((c.body || "").trim() !== (tw.body || "").trim()) throw new Error(`${idOf(c)} and ${idOf(tw)} differ in their words; left alone`);
+          const sceneOf = (k) => { let x = k.parent; while (x && x.meta.kind !== "scene") x = x.parent; return x; };
+          if (!sceneOf(c) || sceneOf(c) !== sceneOf(tw)) throw new Error(`${idOf(c)} and ${idOf(tw)} are not in the same scene; left alone`);
+          // nothing may be lost with it: every tag and link it carries must also be on the twin
+          const lost = bw.tagNames(c).filter((g) => !bw.tagNames(tw).includes(g))
+            .concat(bw.linksOf(c).filter((l) => !bw.linksOf(tw).some((m) => String(m.to) === String(l.to))).map((l) => "link " + l.to));
+          if (c.children.length || lost.length) throw new Error(`${idOf(c)} carries ${c.children.length ? "cards" : lost.join(", ")} its twin doesn't; left alone`);
+          const pointing = doc.cards.filter((k) => k !== c && bw.linksOf(k).some((l) => String(l.to).includes(c.id)));
+          if (pointing.length) throw new Error(`${idOf(c)} is linked from ${pointing.map(idOf).join(", ")}; left alone`);
+          const on = c.parent;
+          bw.removeCard(doc, c);
+          made.push(`removed the duplicate idea "${title(c).slice(0, 50)}" ${idOf(c)} from ${title(on)} ${idOf(on)} — its twin ${idOf(tw)} stays on ${title(tw.parent)}`);
+          break;
+        }
         case "remove-break-card": {
           // On his word only (2026-10-19): a scene-break card the import kept word for word ("***"), once the Scenes around it
           // export their own break. Refused for anything else: never a card with words, children or keys of its own.
@@ -762,6 +920,21 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           if (c.children.length || Object.keys(c.meta).some((k) => !["v", "kind", "depth"].includes(k))) throw new Error(`${idOf(c)} carries more than the break; left alone`);
           bw.removeCard(doc, c);
           made.push(`scene-break card "${c.body.trim()}" ${idOf(c)} removed`);
+          break;
+        }
+        case "rename-spine-set": {
+          // On his word (2026-10-22, "rename it"): a spine set's display name in the board's model settings — its pill tag is
+          // derived from the name (arcid.ts setTag). The key never changes (steps, roles and the plan key off it); arc names
+          // built from the old set name stay as they are (display text, not a key).
+          const pc = bw.projectCard(doc); if (!pc) throw new Error("no Project card");
+          const st = JSON.parse(JSON.stringify(pc.meta.settings || {}));
+          const set = ((st.model || {}).sets || []).find((x) => x.key === op.key);
+          if (!set) throw new Error(`no spine set "${op.key}" in the board's model`);
+          if (!op.name || !String(op.name).trim()) throw new Error("name is required");
+          if (set.name === op.name) { skipped.push(`set ${op.key} is already named "${op.name}"`); break; }
+          const was = set.name; set.name = String(op.name);
+          bw.setMeta(pc, "settings", st);
+          made.push(`spine set ${op.key}: "${was}" → "${set.name}"${typeof bw.setTag === "function" ? ` (pill tag ${bw.setTag(set.name)})` : ""}`);
           break;
         }
         case "set-era-source": {
@@ -941,7 +1114,7 @@ function cmdApply() {
   const docNew = gate(textNew);
   const after = snapshot(textNew, docNew);
   const records = [];
-  for (const [id, b] of before) { const a = after.get(id); if (!a) records.push({ id, before: b, after: null }); else if (a.text !== b.text || a.prev !== b.prev) records.push({ id, before: b, after: a }); }
+  for (const [id, b] of before) { const a = after.get(id); if (!a) records.push({ id, before: b, after: null }); else if (a.text !== b.text || a.prev !== b.prev || (a.parent || "") !== (b.parent || "")) records.push({ id, before: b, after: a }); }
   for (const [id, a] of after) if (!before.has(id)) records.push({ id, before: null, after: a });
   const preChanged = bw.parse(textNew).preamble !== doc.preamble;
   const changed = records.length > 0 || preChanged || !!ctx.sidecar;
@@ -1138,6 +1311,38 @@ function cmdImportInto() {
     const seq = bw.insertChild(doc, project, { kind: containers[0] }); bw.setBody(seq, arg("--title", "") || basename(abs(src)).replace(/\.md$/, ""));
     blocksInto(doc, s, seq, bw.splitBlocks(body), containers.slice(1));
     made.push(`${bw.kindName(s, containers[0])} "${title(seq)}" ^${seq.id} with ${seq.children.length} cards from ${rel(src)}`);
+  } else if (arg("--under")) {
+    // Chapters continuing a part he already built (the Witchwood build, 2026-10-21: "CH12–18 via import --into after Chapter
+    // 14, verbatim, marked pre-redraft"): each folder becomes a chapter container under the named part, numbered on from
+    // --number-from in his board's numbering, the pipeline folder name kept in `landed`; with --scenes-at-breaks each run of
+    // prose between his breaks is a Scene (the break itself is the Scene's own break on export). Only the pipeline's own
+    // notes are left off — the "# Draft" heading line, status blockquotes, `---` rules, break lines — each listed in the log.
+    const under = findCardRef(doc, arg("--under")); if (!under || !isContainerKind(s, under.meta.kind)) die(`--under ${arg("--under")} is not a container on this board`);
+    const lv = s.levels.map((l) => l.key); const chKind = lv[lv.indexOf(under.meta.kind) + 1], scKind = lv[lv.indexOf(under.meta.kind) + 2];
+    const [lo, hi] = String(arg("--chapters", "1-9999")).split("-").map(Number);
+    let n = Number(arg("--number-from", "0"));
+    const SMALL = new Set(["a", "an", "and", "of", "the", "to", "in", "on", "with", "for", "at", "by", "or"]);
+    const tc = (x) => x.toLowerCase().split(" ").map((w, i) => (i && SMALL.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1))).join(" ");
+    const structural = (b) => /^#{1,6}\s+Draft\b/.test(b) || /^>/.test(b) && b.split("\n").every((l) => /^>/.test(l)) || /^(-{3,}|\*{3,}|\* \* \*)\s*$/.test(b);
+    const isBreak = (b) => /^(\*{3,}|\* \* \*)\s*$/.test(b);
+    for (const { folder, path } of bookSources(book)) {
+      const num = parseInt((/(\d+)/.exec(folder) || [])[1], 10); if (!(num >= lo && num <= hi)) continue;
+      const t = readText(path); const { body, fm } = bodyOf(t); add(path, t, fm);
+      const name = folder.replace(/^CHAPTER\s+\d+\s*-\s*/i, "");
+      const seq = bw.insertChild(doc, under, { kind: chKind }); bw.setBody(seq, n ? `Chapter ${n} - ${tc(name)}` : folder);
+      if (n) bw.setField(seq, "chapter", String(n));
+      bw.setField(seq, "landed", `${folder} (pipeline, pre-redraft) — this chapter's prose, imported verbatim; which copy is canon is yours`);
+      const blocks = bw.splitBlocks(body); const skipped = [];
+      let scene = null;
+      for (const b of blocks) {
+        if (structural(b)) { skipped.push(b.split("\n")[0].slice(0, 70)); if (isBreak(b)) scene = null; continue; }
+        if (flag("--scenes-at-breaks") && !scene) scene = bw.insertChild(doc, seq, { kind: scKind });
+        const c = bw.insertChild(doc, flag("--scenes-at-breaks") ? scene : seq, { kind: s.levels[s.levels.length - 1].key }); bw.setBody(c, b);
+      }
+      sources[sources.length - 1].skipped = skipped;
+      made.push(`${bw.kindName(s, chKind)} "${title(seq)}" ^${seq.id} under "${title(under)}" — ${seq.children.length} ${flag("--scenes-at-breaks") ? "scenes" : "cards"} from ${folder}; left off ${skipped.length} pipeline note/break lines`);
+      if (n) n++;
+    }
   } else {
     for (const { folder, path } of bookSources(book)) {
       const t = readText(path); const { body, fm } = bodyOf(t); add(path, t, fm);
@@ -1148,7 +1353,7 @@ function cmdImportInto() {
     }
   }
   let textNew = bw.serialize(doc);
-  if (book) {
+  if (book && !arg("--under")) {
     const label = arg("--source-label", rel(abs(book))).replace(/"/g, "'");
     const lines = [`bw-working-copy: true`, `bw-source: "${label}"`, `bw-authority: "the pipeline's drafts, until ^backlog-branch-writing-replacement-review rules"`];
     // same frontmatter rule as the mark-working-copy op
@@ -1160,13 +1365,20 @@ function cmdImportInto() {
   const docNew = gate(textNew);
   const after = snapshot(textNew, docNew);
   const records = [];
-  for (const [id, b] of before) { const a = after.get(id); if (!a) records.push({ id, before: b, after: null }); else if (a.text !== b.text || a.prev !== b.prev) records.push({ id, before: b, after: a }); }
-  const changedOld = records.filter((r) => r.before);
+  for (const [id, b] of before) { const a = after.get(id); if (!a) records.push({ id, before: b, after: null }); else if (a.text !== b.text || a.prev !== b.prev || (a.parent || "") !== (b.parent || "")) records.push({ id, before: b, after: a }); }
+  // (--under inserts mid-file: the one card after the new run keeps its text and only its neighbour changes — logged for undo)
+  const changedOld = records.filter((r) => r.before && (r.after ? r.after.text !== r.before.text || !arg("--under") : true));
   if (changedOld.length) die(`internal: ${changedOld.length} card(s) already on the board would change (first ^${changedOld[0].id}); nothing written`);
   for (const [id, a] of after) if (!before.has(id)) records.push({ id, before: null, after: a });
   const bodies = new Set(records.map((r) => docNew.cards.find((c) => c.id === r.id)).filter((c) => c && isProseKind(s, c.meta.kind)).map((c) => c.body));
-  const srcBlocks = sources.flatMap((x) => bw.splitBlocks(bodyOf(readText(x.path)).body));
+  const skipLine = (x) => (b) => !(x.skipped || []).includes(b.split("\n")[0].slice(0, 70));
+  const srcBlocks = sources.flatMap((x) => bw.splitBlocks(bodyOf(readText(x.path)).body).filter(skipLine(x)));
   const missing = srcBlocks.filter((b) => !bodies.has(b));
+  // in order, too: the prose cards this run added read back as the source blocks, one for one
+  if (arg("--under")) {
+    const addedProse = docNew.cards.filter((c) => !before.has(c.id) && isProseKind(s, c.meta.kind)).map((c) => c.body);
+    if (addedProse.length !== srcBlocks.length || addedProse.some((b, i) => b !== srcBlocks[i])) die(`the imported prose does not read back as the source blocks in order (${addedProse.length} cards for ${srcBlocks.length} blocks); nothing written`);
+  }
   if (missing.length) die(`${missing.length} source blocks are not on the board word for word; nothing written. First: ${JSON.stringify(missing[0].slice(0, 80))}`);
   for (const x of sources) if (sha(readText(x.path)) !== x.sha256) die(`${x.path} changed while importing; nothing written`);
   const preChanged = docNew.preamble !== doc.preamble;

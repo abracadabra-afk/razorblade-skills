@@ -123,3 +123,18 @@ board itself the Visuals pane's **Interlock** tab (0.62+) draws the same grid; p
 
 ## "build the interlock board" — steps 7–9 from an approved plan (if it isn't approved, say so and stop).
 ## "check the interlock" — step 9 only, on the board he names (read-only; a live board is fine).
+
+## Subplots — "the subplot beats would hit the scenes and lines like the others" (CRE, 2026-10-21)
+
+Each unit should hold all its narrative needs, each linked to a larger arc. A subplot is a plot Arc with **no model role**
+(only the external spine carries one), kept in the plan's `subplots` section — `{key, label, labelOpen?, status, goal_holder?,
+goal?, stakes?, planned_outcome?, sources, steps: [{label, text, src, from?, cards? | parts? | unplaced? | ruling?}]}` —
+set with `plan_tool.py set --json-file` (a set of only `subplots` leaves the grid's approval alone; each subplot carries its
+own status). Step text is his words only: a ruling from a DEV floor, or his prose (a board card's words, or a draft's
+exact span through `from`). Label, goal and goal holder are his call: propose them from his own lines as ruling items, build
+with a working label marked open, never invent one. `scripts/subplot_build.mjs <plan> <board> --key <k> --out <ops>` then
+places the steps by the same rules as the spines: a step citing a board card goes on its Beat's line (its words must be on
+that card), one spanning scenes becomes sub-steps, one whose part or chapter isn't on the board waits unplaced with its
+reason, and one a citation can't settle goes to his ruling list. Pilot: the Knots clock
+(`SYSTEM/reports/2026-10-21-witchwood-subplot-knots.md`); next, after his ruling: the heartbox / her secret, the maiden
+legend, the darkness's assimilation.
