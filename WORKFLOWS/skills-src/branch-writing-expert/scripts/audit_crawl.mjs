@@ -95,6 +95,9 @@ const markerCards = doc.cards.filter((c) => c.meta.kind !== "project" && isMarke
 
 // ── outline-P<n>.md ───────────────────────────────────────────────────────────────────────────────────────────────────
 mkdirSync(OUT, { recursive: true });
+const eraNameOf = (id) => (id ? (bw.erasOf(doc).find((e) => e.id === id) || {}).name || id : "—");
+// The tagging pass's offers (by: ai, never his): speaker / wants / states, shown after his words, marked as offers.
+const aiNote = (c) => { const a = c.meta.ai; if (!a || typeof a !== "object") return ""; const p = []; if (a.speaker && !c.meta.speaker) p.push(`speaker? ${a.speaker}`); if (Array.isArray(a.wants) && a.wants.length) p.push(`wants? ${a.wants.join("; ")}`); if (Array.isArray(a.states) && a.states.length) p.push(`states? ${a.states.join("; ")}`); return p.length ? `  ‹ai offer: ${p.join(" · ")}›` : ""; };
 const stepLine = (st) => {
   const a = arcs.get(stepArc(st)) || { name: stepArc(st) || "?", owner: "" };
   const mk = markerClass(st.body) || markerClass(st.meta.label || "");
@@ -121,7 +124,12 @@ for (const p of parts) {
       const sc = scOf(c.id);
       out.push(`### ${scLabel(sc)} · ${title(c)} ^${c.id}`);
       const f = ["goal holder", "outcome"].filter((x) => F(c, x)).map((x) => `${x}: ${F(c, x)}`);
-      if (c.meta.era) f.push(`era: ${(bw.erasOf(doc).find((e) => e.id === c.meta.era) || {}).name || c.meta.era}`);
+      // The bible layer (world walk, 2026-10-22): the era the scene reads as, its flashback mark, its setting and the
+      // world entries it links — so continuity and alignment can test against them.
+      f.push(`era: ${eraNameOf(bw.eraIdAt(c))}${bw.isFlashback(c) ? " (flashback)" : ""}${c.meta.era ? "" : " (inherited)"}`);
+      if (F(c, "setting")) f.push(`setting: ${F(c, "setting")}`);
+      const wl = bw.cardWorldIds(c).map((id) => bw.findCard(doc, id)).filter(Boolean).map((w) => bw.worldName(w));
+      if (wl.length) f.push(`links: ${wl.join(", ")}`);
       if (f.length) out.push(f.join(" · "));
       if (F(c, "summary")) out.push(`> ${one(F(c, "summary"))}`);
       if (F(c, "story from") || F(c, "story to")) out.push(`from: ${one(F(c, "story from"))} → to: ${one(F(c, "story to"))}`);
@@ -131,7 +139,7 @@ for (const p of parts) {
       out.push(`- ^${c.id} [${c.meta.type || "—"}] ${title(c)}${F(c, "summary") ? ` — ${one(F(c, "summary"))}` : ""}${isMarker(c) ? ` ⚑ ${markerClass(c.body)}` : ""}`);
       for (const st of sts) out.push(stepLine(st));
     } else if (k === K_MICRO) {
-      prose.push(`${scLabel(scOf(c.id))} · ^${c.id} [${c.meta.type || "—"}${c.meta.speaker ? `: ${c.meta.speaker}` : ""}] ${one(c.body)}`);
+      prose.push(`${scLabel(scOf(c.id))} · ^${c.id} [${c.meta.type || "—"}${c.meta.speaker ? `: ${c.meta.speaker}` : ""}] ${one(c.body)}${aiNote(c)}`);
       for (const st of sts) out.push("  " + stepLine(st));
     } else if (k === K_PART) {
       if (sts.length) { out.push("Part-level steps:"); for (const st of sts) out.push(stepLine(st)); out.push(""); }
@@ -316,6 +324,43 @@ rpOut.push("", `## Beat titles used in more than one scene (${dupTitles.length})
 for (const l of dupTitles) rpOut.push(`- "${l[0].t}": ${l.map((b) => `${scLabel(b.sc)} ^${b.id}`).join(", ")}`);
 writeFileSync(`${OUT}/repeats.md`, rpOut.join("\n") + "\n");
 
+// ── bible.md (the world walk's layer: timeline, places, seeds, events, profiles, offered states) ──────────────────────
+const bbOut = ["# Bible layer — what the board's side panels say", "", "Facts for the checks, never findings. Eras, settings, seeds, pins and profiles were ruled by him (world walk); `‹ai offer›` lines are the tagging pass's offers, not his.", ""];
+const scenesInOrder = order.filter((c) => c.meta.kind === K_SCENE);
+const setting = (c) => F(c, "setting");
+bbOut.push("## Timeline — every scene, story order", "", "`sc · era (fb = flashback) · setting · title`", "");
+for (const c of scenesInOrder) bbOut.push(`- ${scLabel(scOf(c.id))} · ${eraNameOf(bw.eraIdAt(c))}${bw.isFlashback(c) ? " (fb)" : ""} · ${setting(c) || "—"} · ${title(c)} ^${c.id}`);
+// Place jumps: consecutive present (non-flashback) scenes, both set, in different places — continuity reads whether the travel is shown.
+const present = scenesInOrder.filter((c) => !bw.isFlashback(c) && setting(c));
+const jumps = [];
+for (let i = 1; i < present.length; i++) if (setting(present[i]) !== setting(present[i - 1])) jumps.push(`- ${scLabel(scOf(present[i - 1].id))} ${setting(present[i - 1])} → ${scLabel(scOf(present[i].id))} ${setting(present[i])} (${title(present[i])} ^${present[i].id})`);
+bbOut.push("", `## Place changes between consecutive present scenes (${jumps.length})`, "", "Each is a move the story makes; check the travel is on the page or meant to be off it.", "", ...jumps);
+// Era turns in the present.
+const turns = []; let lastEra = "";
+for (const c of scenesInOrder) { if (bw.isFlashback(c)) continue; const e = bw.eraIdAt(c); if (e !== lastEra) { turns.push(`- ${scLabel(scOf(c.id))} → ${eraNameOf(e)} (${title(c)})`); lastEra = e; } }
+bbOut.push("", "## Where the present's era turns", "", ...turns);
+// Seeds.
+const seeds = bw.seedCheck ? bw.seedCheck(doc) : [];
+const cardLine = (k) => `${scLabel(scOf(k.id) || scOf(k.parent?.id || ""))} ^${k.id} "${cut(k.body, 120)}"`;
+bbOut.push("", `## Seed check (${seeds.length} threads: ${["paid", "open", "backwards", "orphan"].map((s) => `${seeds.filter((r) => r.status === s).length} ${s}`).join(", ")})`, "", "Open = planted, no payoff tagged yet: a candidate dangling plant to confirm against the prose. Backwards = a payoff before its plant.", "");
+for (const r of seeds) bbOut.push(`- **${r.name}** — ${r.status} · seed ${r.seeds.map(cardLine).join(" | ") || "—"}${r.payoffs.length ? ` · payoff ${r.payoffs.map(cardLine).join(" | ")}` : ""}`);
+// Events.
+const evs = bw.eventsOf(doc);
+bbOut.push("", `## Events (${evs.filter((e) => e.at).length} of ${evs.length} pinned)`, "", "A pinned event's era should match its card's era; a mismatch is listed.", "");
+for (const e of evs) { const at = e.at ? bw.findCard(doc, e.at) : null; const cardEra = at ? bw.eraIdAt(at) : ""; bbOut.push(`- ${bw.eventLabel(doc, e)} · ${eraNameOf(e.era)}${at ? ` · on ${scLabel(scOf(at.id))} ${title(at)} ^${at.id}${cardEra !== e.era ? ` ⚠ card reads ${eraNameOf(cardEra)}` : ""}` : " · unpinned"}`); }
+// Profiles.
+bbOut.push("", "## Cast profiles (his ruled answers; checks test actions against want, need, flaw, wound)", "");
+for (const c of cast) { const f = c.meta.fields || {}; const keys = ["role", "want", "need", "flaw", "wound", "personality"].filter((k) => f[k]); bbOut.push(`- **${bw.castName(c)}**${keys.length ? ": " + keys.map((k) => `${k}: ${one(f[k])}`).join(" · ") : " — no profile"}`); }
+// Offered states and wants, per character, in story order.
+const byChar = new Map();
+for (const c of order) { const a = c.meta.ai; if (!a || typeof a !== "object") continue; for (const [kind, list] of [["state", a.states], ["want", a.wants]]) for (const s of Array.isArray(list) ? list : []) { const m = /^([^:]+):\s*(.+)$/.exec(String(s)); const who = m ? m[1].trim() : "?"; if (!byChar.has(who)) byChar.set(who, []); byChar.get(who).push(`${scLabel(scOf(c.id))} ${kind}: ${m ? m[2] : s} ^${c.id}`); } }
+bbOut.push("", "## Offered state changes and wants, per character (‹ai offer›, story order)", "", "A state that reverses with nothing between, or a want that vanishes, is a continuity or meaning lead — confirm in the prose.", "");
+for (const [who, l] of [...byChar.entries()].sort((a, b) => b[1].length - a[1].length)) bbOut.push(`### ${who} (${l.length})`, ...l.map((x) => `- ${x}`), "");
+// World entries.
+bbOut.push("## World entries", "");
+for (const w of bw.worldOf(doc)) { const linked = scenesInOrder.filter((c) => bw.cardWorldIds(c).includes(w.id)).length; const set = scenesInOrder.filter((c) => setting(c) && bw.allWorldNames(w).some((n) => n.toLowerCase() === setting(c).toLowerCase())).length; bbOut.push(`- **${bw.worldName(w)}** (${bw.worldKindOf(w)}) · linked from ${linked} scenes${set ? ` · setting of ${set}` : ""} — ${cut((w.meta.fields || {}).description || "", 200)}`); }
+writeFileSync(`${OUT}/bible.md`, bbOut.join("\n") + "\n");
+
 // ── README.md ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 const count = (k) => order.filter((c) => c.meta.kind === k).length;
 const readme = [
@@ -327,6 +372,7 @@ const readme = [
   `| markers.md | ${[...byClass.entries()].map(([k, l]) => `${k} ${l.length}`).join(" · ")} |`,
   `| alignment.md | ${alCounts ? `${alCounts.cells} plan cells: ${alCounts.missing} not carried by a step, ${alCounts.moved} in another scene than cited, ${alCounts.gone} citing a gone card; subplots on one side only ${alCounts.onlyBoard + alCounts.onlyPlan}; count differences ${alCounts.countDiff}; board-only step words ${alCounts.boardOnly}` : "not crawled (no --plan)"} |`,
   `| names.md | ${entities.length} cast and world entries |`,
+  `| bible.md | the side panels: timeline (${scenesInOrder.filter((c) => setting(c)).length}/${scenesInOrder.length} scenes set), ${jumps.length} place changes, ${turns.length} era turns, ${seeds.length} seed threads (${seeds.filter((r) => r.status === "open").length} open), ${evs.filter((e) => e.at).length}/${evs.length} events pinned, ${cast.length} profiles, offered states/wants for ${byChar.size} characters |`,
   `| repeats.md | ${repList.length} repeated phrases · ${twins.length} near-twin beat summaries · ${dupTitles.length} shared beat titles |`, "",
   "## What this crawl does not check",
   ...(() => { const thin = partFiles.filter((p) => order.filter((c) => c.meta.kind === K_MICRO && pos.get(c.id).part === p.n).length < 10).map((p) => `P${p.n}`); return thin.length ? [`- His prose in ${thin.join(", ")}: those parts carry beats and summaries but (almost) no micro-beats, so continuity, names and repeats there rest on summaries, not his words. Confirm a finding there against DEV or the landed chapters.`] : []; })(),
@@ -335,6 +381,7 @@ const readme = [
   "- Mentions by pronoun, description or role (\"she\", \"the old man\"): names.md matches names and aliases only.",
   "- Repeats under " + GRAM + " words, and repeated images said in different words.",
   "- Placed ideas (his idea cards on a card's tray) are counted, not crawled.",
+  "- bible.md's place changes compare scene settings only: a scene with no setting (left blank by his ruling) breaks the chain, and travel inside one place isn't seen. Offered states and wants are a reader's offers, not his words; seed status reflects the tags, not the prose.",
   "- The model structure (beat order across spines, collisions, open blanks): that is `check-board.mjs`.",
 ];
 writeFileSync(`${OUT}/README.md`, readme.join("\n") + "\n");

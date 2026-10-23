@@ -130,8 +130,10 @@ Each unit should hold all its narrative needs, each linked to a larger arc. A su
 (only the external spine carries one), kept in the plan's `subplots` section — `{key, label, labelOpen?, status, goal_holder?,
 goal?, stakes?, planned_outcome?, sources, steps: [{label, text, src, from?, cards? | parts? | unplaced? | ruling?}]}` —
 set with `plan_tool.py set --json-file` (a set of only `subplots` leaves the grid's approval alone; each subplot carries its
-own status). Step text is his words only: a ruling from a DEV floor, or his prose (a board card's words, or a draft's
-exact span through `from`). Label, goal and goal holder are his call: propose them from his own lines as ruling items, build
+own status). A step's **text** is a plain line of what happens there, with a key line of his kept in quotation marks and its
+context (CRE 2026-10-22, SKILL.md "A quote is not a summary"); its **`quote`** holds his exact words that prove it: a
+ruling from a DEV floor, or his prose (a board card's words, or a draft's exact span through `from`). The builder checks
+the citation against `quote` (or `text` on an older step without one). Label, goal and goal holder are his call: propose them from his own lines as ruling items, build
 with a working label marked open, never invent one. `scripts/subplot_build.mjs <plan> <board> --key <k> --out <ops>` then
 places the steps by the same rules as the spines: a step citing a board card goes on its Beat's line (its words must be on
 that card), one spanning scenes becomes sub-steps, one whose part or chapter isn't on the board waits unplaced with its

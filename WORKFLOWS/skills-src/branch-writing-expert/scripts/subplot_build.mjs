@@ -31,21 +31,23 @@ const norm = (s) => String(s).replace(/[’‘]/g, "'").replace(/[“”]/g, '"'
 (sp.steps || []).forEach((st, i) => {
   const base = { op: "add-plot-step", arc: sp.label, label: st.label || "" };
   const n = `${i + 1}. ${st.label || ""}`;
-  if (st.ruling) { rulings.push(`${n} — "${st.text}" — ${st.ruling}`); ops.push({ ...base, ...(st.from ? { from: { source: st.from, quote: st.text } } : { text: st.text }), unplaced: `for CRE's ruling: ${st.ruling}` }); return; }
+  // his words prove the step: `quote` when the step's text is a plain administrative line (CRE 2026-10-22), else the text itself
+  const words = st.quote || st.text;
+  if (st.ruling) { rulings.push(`${n} — "${st.text}" — ${st.ruling}`); ops.push({ ...base, ...(st.from ? { from: { source: st.from, quote: words }, ...(st.quote ? { text: st.text } : {}) } : { text: st.text }), unplaced: `for CRE's ruling: ${st.ruling}` }); return; }
   // placed on his ruling where its words aren't on a board card (a DEV ruling's words): `via` names the Beat
-  if (st.via) { ops.push({ ...base, ...(st.from ? { from: { source: st.from, quote: st.text } } : { text: st.text }), via: st.via }); return; }
+  if (st.via) { ops.push({ ...base, ...(st.from ? { from: { source: st.from, quote: words }, ...(st.quote ? { text: st.text } : {}) } : { text: st.text }), via: st.via }); return; }
   if (st.parts && st.parts.length) { ops.push({ ...base, text: st.text, parts: st.parts.map((p) => ({ text: p.text, via: p.via || `^${p.card}` })) }); return; }
   if (st.cards && st.cards.length) {
     const c = bw.findCard(doc, st.cards[0]);
     if (!c) { problems.push(`${n}: card ^${st.cards[0]} is not on the board`); return; }
     // a name he has ruled renamed (e.g. Shadow → Thistle, 2026-10-21) where the card hasn't caught up: checked against the card with the rename applied
     const body = (st.renamed || []).reduce((b, r) => b.split(r.from).join(r.to), c.body);
-    if (!norm(body).includes(norm(st.text))) problems.push(`${n}: its words are not on card ^${st.cards[0]}`);
+    if (!norm(body).includes(norm(words))) problems.push(`${n}: its words are not on card ^${st.cards[0]}`);
     ops.push({ ...base, text: st.text, via: `^${st.cards[0]}` });
     return;
   }
   const op = { ...base, unplaced: st.unplaced || "no board card yet" };
-  if (st.from) op.from = { source: st.from, quote: st.text }; else op.text = st.text;
+  if (st.from) { op.from = { source: st.from, quote: words }; if (st.quote) op.text = st.text; } else op.text = st.text;
   ops.push(op);
 });
 if (problems.length) { console.error("REFUSED:\n  " + problems.join("\n  ")); process.exit(2); }

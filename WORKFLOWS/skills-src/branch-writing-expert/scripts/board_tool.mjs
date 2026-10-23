@@ -235,6 +235,18 @@ function sourceText(from, ctx) {
   throw new Error("from needs block or quote");
 }
 
+/** Every span `text` puts in quotation marks must be his words: on this board (any card's body but arc steps, plot arcs'
+ *  own fields), in `extra` strings (an entry's notes), or in a `sources` file. Throws naming the first that isn't. */
+function checkQuotes(doc, ctx, text, extra, sources, label) {
+  if (!text) return;
+  const qn = (x) => String(x || "").replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, " ").trim().toLowerCase();
+  const quotes = [...String(text).matchAll(/“([^”]+)”|"([^"]+)"/g)].map((m) => m[1] || m[2]);
+  if (!quotes.length) return;
+  if (!ctx.hisWords) ctx.hisWords = qn([...doc.cards.filter((k) => k.meta.kind !== "arcbeat").map((k) => k.body), ...bw.plotArcs(doc).flatMap((a) => ["goal", "stakes", "planned_outcome", "outcome_detail"].map((f) => a[f] || ""))].join("\n"));
+  const more = [...(extra || []), ...(sources || []).map((p) => sourceOf(p, ctx).body)].map(qn).join("\n");
+  for (const q of quotes) if (!ctx.hisWords.includes(qn(q)) && !more.includes(qn(q))) throw new Error(`${label}: the quote ${JSON.stringify(q.slice(0, 60))} is not his words on this board, in its notes${sources && sources.length ? " or in its sources" : ""}`);
+}
+
 // ── apply ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 function applyOps(doc, s, ops, made, skipped, ctx) {
   const idOf = (c) => `^${c.id}`;
@@ -325,6 +337,9 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
         case "add-world": {
           if (!op.kind || !op.name) throw new Error("kind and name are required");
           if (bw.findWorldByName(doc, op.name, op.kind)) throw new Error(`"${op.name}" is already a ${op.kind}`);
+          // The world walk (2026-10-22): a description is a plain line drawn from his words; any span it puts in quotation
+          // marks claims to be his and must occur in the entry's own notes, this board's words or a `sources` file.
+          checkQuotes(doc, ctx, (op.fields || {}).description, [(op.fields || {}).notes || ""], op.sources, `"${op.name}" description`);
           const c = bw.addWorldEntry(doc, s, String(op.kind), String(op.name));
           if (!c) throw new Error(`world kind "${op.kind}" is not on this board (kinds: ${bw.worldKinds(s).map((k) => k.key).join(", ")})`);
           if (Array.isArray(op.aliases) && op.aliases.length) bw.setMeta(c, "aliases", op.aliases.map(String));
@@ -334,8 +349,65 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
         }
         case "set-world": {
           const c = worldRef(doc, op.entry); if (!c) throw new Error(`no world entry "${op.entry}"`);
+          if (String(op.field) === "description") checkQuotes(doc, ctx, op.value, [((c.meta.fields || {}).notes) || ""], op.sources, `${bw.worldName(c)} description`);
           bw.setWorldValue(c, String(op.field), op.value == null ? "" : String(op.value));
           made.push(`${bw.worldKindOf(c)} ${bw.worldName(c)}: ${op.field} = ${op.value}`);
+          break;
+        }
+        case "link-world": {
+          // The world walk (2026-10-22): a scene (or any container) linked to a world entry it names, through the plugin's own
+          // linkWorld — the entry's id goes in the card's `world` list, and the kind's field (a place → `setting`) is filled
+          // when the card's level has it. Admin once the entry is approved. A field he already filled with another name is
+          // kept as it was (the id link still lands), so a scene naming two places never loses its first.
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, "")); if (!c) throw new Error(`no card ${op.card}`);
+          if (!isContainerKind(s, c.meta.kind)) throw new Error(`${idOf(c)} is a ${c.meta.kind} card; link the scene (or sequence) it sits in — cards inside carry it`);
+          const e = worldRef(doc, op.entry); if (!e) throw new Error(`no world entry "${op.entry}"`);
+          if (bw.cardWorldIds(c).includes(e.id)) { skipped.push(`${what}: ${bw.worldName(e)} is already linked from ${idOf(c)}`); break; }
+          const kd = bw.worldKindDef(s, e);
+          const fld = kd && kd.field ? kd.field : "";
+          const had = fld ? String((c.meta.fields || {})[fld] || "") : "";
+          if (!bw.linkWorld(doc, s, c, e)) throw new Error(`${idOf(c)} could not be linked to ${bw.worldName(e)}`);
+          // A card naming a place is not set there (the boy's wish for the Moon Sea is spoken in the cottage): the kind's field
+          // is left exactly as it was unless the op says `fill: true` — where a scene happens is his call, not a name match.
+          let note = "";
+          if (fld && op.fill !== true) { if (String((c.meta.fields || {})[fld] || "") !== had) bw.setField(c, fld, had); }
+          else if (fld && had.trim() && !bw.allWorldNames(e).some((n) => norm(n) === norm(had))) { bw.setField(c, fld, had); note = ` (its ${fld} stays "${had}")`; }
+          else if (fld && (c.meta.fields || {})[fld] && !had.trim()) note = ` (${fld}: ${(c.meta.fields || {})[fld]})`;
+          made.push(`${title(c) || c.meta.kind} ${idOf(c)} → ${bw.worldKindOf(e)} ${bw.worldName(e)}${note}`);
+          break;
+        }
+        case "unlink-world": {
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, "")); if (!c) throw new Error(`no card ${op.card}`);
+          const e = worldRef(doc, op.entry); if (!e) throw new Error(`no world entry "${op.entry}"`);
+          if (!bw.cardWorldIds(c).includes(e.id)) throw new Error(`${idOf(c)} does not link ${bw.worldName(e)}`);
+          bw.unlinkWorld(doc, s, c, e);
+          made.push(`${title(c) || c.meta.kind} ${idOf(c)} no longer linked to ${bw.worldName(e)}`);
+          break;
+        }
+        case "pin-event": {
+          // The world walk (2026-10-22): an existing event pinned to the card it happens on, through the plugin's pinEvent.
+          // Pinning makes the event's era the card's era, so a card in another era is refused unless the ruling says the era
+          // moves too (`moveEra: true`) — which era an event sits in is a story call.
+          const evs = bw.eventsOf(doc);
+          const ref = String(op.event || "").trim();
+          let ev = evs.find((x) => x.id === ref);
+          if (!ev) { const hits = evs.filter((x) => norm(bw.eventLabel(doc, x)) === norm(ref) || (x.name && norm(x.name) === norm(ref))); if (hits.length > 1) throw new Error(`"${ref}" names ${hits.length} events; give the id (evt-…)`); ev = hits[0]; }
+          if (!ev) throw new Error(`no event "${ref}"`);
+          const c = findCardRef(doc, op.on) || bw.findCard(doc, String(op.on || "").replace(/^\^/, "")); if (!c) throw new Error(`no card ${op.on}`);
+          if (ev.at === c.id) { skipped.push(`${what}: ${bw.eventLabel(doc, ev)} is already pinned to ${idOf(c)}`); break; }
+          const cardEra = bw.eraIdAt(c);
+          if (!cardEra) throw new Error(`${title(c) || c.meta.kind} ${idOf(c)} sits in no era; the plugin pins an event only to a card with one`);
+          if (cardEra !== ev.era && op.moveEra !== true) throw new Error(`${title(c) || c.meta.kind} ${idOf(c)} is in ${bw.eraById(doc, cardEra)?.name || cardEra}, the event in ${bw.eraById(doc, ev.era)?.name || ev.era}; pinning moves the event's era — only on his ruling (moveEra: true)`);
+          const was = ev.era;
+          if (!bw.pinEvent(doc, ev.id, c)) throw new Error(`${bw.eventLabel(doc, ev)} could not be pinned`);
+          made.push(`event ${bw.eventLabel(doc, ev)} pinned on ${title(c) || c.meta.kind} ${idOf(c)}${cardEra !== was ? ` (era ${bw.eraById(doc, was)?.name || was} → ${bw.eraById(doc, cardEra)?.name})` : ""}`);
+          break;
+        }
+        case "unpin-event": {
+          const ev = bw.eventsOf(doc).find((x) => x.id === op.event); if (!ev) throw new Error(`no event ${op.event} (give the id)`);
+          if (!ev.at) throw new Error(`${bw.eventLabel(doc, ev)} is not pinned`);
+          bw.unpinEvent(doc, ev.id);
+          made.push(`event ${bw.eventLabel(doc, ev)} unpinned (stays in ${bw.eraById(doc, ev.era)?.name || ev.era})`);
           break;
         }
         case "add-idea": {
@@ -453,7 +525,9 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           const arc = bw.plotArcs(doc).find((a) => a.id === op.arc || norm(a.label) === norm(op.arc));
           if (!arc) throw new Error(`no plot arc "${op.arc}"`);
           if (arc.model) throw new Error(`"${arc.label}" carries a model role; subplot steps go on a plot arc without one`);
-          const text = op.from ? sourceText(op.from, ctx) : String(op.text || "");
+          // `from` + `text`: the quote is checked in its source and the step carries the plain line (CRE 2026-10-22)
+          const quoted = op.from ? sourceText(op.from, ctx) : null;
+          const text = op.from && op.text ? String(op.text) : quoted ?? String(op.text || "");
           const st = bw.addPlotArcStep(doc, arc.id, String(op.label || ""), text);
           let where = "";
           const lineOf = (via, i) => {
@@ -843,6 +917,56 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`${idOf(c)} filled from the plan's B${f.n} ${f.spine}${f.set ? ` (${f.set})` : ""}: "${String(cell.text).trim().slice(0, 80)}"`);
           break;
         }
+        case "set-step-text": {
+          // Administrative (CRE 2026-10-22: "Sometimes a summary is better than a quote, because their job is to tell me what
+          // something is, not to stand as my prose"; "if a quote is key, it should stay as my words, but its context needs
+          // inclusion"). An arc step's or sub-step's text becomes a plain line saying what happens there. `was` must be the
+          // step's current text (a moved board refuses). Any span the new text puts in quotation marks claims to be his words:
+          // it must occur word for word in his prose, ideas or arc fields on this board, or in a `sources` file — never typed
+          // in his name. Markers (held —, audit —, …) are not steps and are refused. Undo restores the old text from the log.
+          const c = bw.findCard(doc, String(op.step || "").replace(/^\^/, ""));
+          if (!c || c.meta.kind !== "arcbeat") throw new Error(`${op.step} is not an arc step`);
+          const qn = (x) => String(x || "").replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, " ").trim().toLowerCase();
+          if (op.was == null || qn(op.was) !== qn(c.body)) throw new Error(`${idOf(c)}: was ≠ its current text (${JSON.stringify(c.body.trim().slice(0, 60))}); read the board again`);
+          const isMark = /^(held|audit|body|hermit|bond|adage|keep-dark|sources disagree)\b/i.test(c.body.trim()) || /^(held|audit|body|hermit|bond|adage)\s+—/i.test(c.meta.label || "");
+          const text = String(op.text || "").trim();
+          if (!text) throw new Error("set-step-text needs text");
+          // A ruling marker's text (2026-10-22: "audit —" rulings lead with the ruling, not the raw chat) only with `marker:
+          // true`, keeping its prefix up to the first colon so the marker family still reads; its quotes may come from its
+          // own old text (his chat words), which the plan keeps in full.
+          if (isMark && !op.marker) throw new Error(`${idOf(c)} is a redraft marker, not a step (marker: true rewrites a ruling's text)`);
+          if (isMark) { const b0 = c.body.trim(); const pre = b0.includes(":") ? b0.split(":")[0] + ":" : b0.split(/\s+—\s+/)[0] + " —"; if (!text.startsWith(pre)) throw new Error(`${idOf(c)}: a marker keeps its prefix "${pre}"`); }
+          const quotes = [...text.matchAll(/“([^”]+)”|"([^"]+)"/g)].map((m) => m[1] || m[2]);
+          if (quotes.length) {
+            if (!ctx.hisWords) ctx.hisWords = qn([...doc.cards.filter((k) => k.meta.kind !== "arcbeat").map((k) => k.body), ...bw.plotArcs(doc).flatMap((a) => ["goal", "stakes", "planned_outcome", "outcome_detail"].map((f) => a[f] || ""))].join("\n"));
+            // a subplot step's old text was his words by the old rule (a DEV ruling or his prose), so it may be quoted too
+            const sub = !!c.meta.plotArc && !(bw.plotArcs(doc).find((a) => a.id === c.meta.plotArc) || {}).model;
+            const extra = (op.sources || []).map((p) => qn(sourceOf(p, ctx).body)).join("\n") + (isMark || sub ? "\n" + qn(c.body) : "");
+            for (const q of quotes) if (!ctx.hisWords.includes(qn(q)) && !extra.includes(qn(q))) throw new Error(`${idOf(c)}: the quote ${JSON.stringify(q.slice(0, 60))} is not his words on this board${op.sources ? " or in its sources" : ""}`);
+          }
+          bw.setBody(c, text);
+          made.push(`${idOf(c)} "${(c.meta.label || "").slice(0, 30)}": ${text.slice(0, 90)}${text.length > 90 ? "…" : ""}`);
+          break;
+        }
+        case "set-arc-text": {
+          // Administrative, on his ruling (CRE 2026-10-22: a subplot goal written as a line "becomes the arc's motto with the
+          // goal stated plainly beside it"): one text field of a plot Arc rewritten as a plain line, through the plugin's
+          // setPlotArc. `was` must be the field's current value; quoted spans must be his words — the old value or this
+          // board's prose — so the motto stays his line exactly.
+          const FIELDS = ["goal", "stakes", "planned_outcome", "outcome_detail", "planned_change", "opposition", "conflict"];
+          const qn = (x) => String(x || "").replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, " ").trim().toLowerCase();
+          const a = bw.plotArcs(doc).find((x) => x.id === op.arc || qn(x.label) === qn(op.arc));
+          if (!a) throw new Error(`no plot arc "${op.arc}"`);
+          if (!FIELDS.includes(op.field)) throw new Error(`field must be one of ${FIELDS.join(", ")}`);
+          if (op.was == null || qn(op.was) !== qn(a[op.field])) throw new Error(`"${a.label}" ${op.field} ≠ was; read the board again`);
+          const text = String(op.text || "").trim();
+          if (!text) throw new Error("set-arc-text needs text");
+          if (!ctx.hisWords) ctx.hisWords = qn([...doc.cards.filter((k) => k.meta.kind !== "arcbeat").map((k) => k.body), ...bw.plotArcs(doc).flatMap((x) => ["goal", "stakes", "planned_outcome", "outcome_detail"].map((f) => x[f] || ""))].join("\n"));
+          for (const m of text.matchAll(/“([^”]+)”|"([^"]+)"/g)) { const q = m[1] || m[2]; if (!ctx.hisWords.includes(qn(q))) throw new Error(`"${a.label}": the quote ${JSON.stringify(q.slice(0, 60))} is not his words on this board`); }
+          bw.setPlotArc(doc, a.id, op.field, text);
+          made.push(`"${a.label}" ${op.field.replace("_", " ")}: ${text.slice(0, 100)}`);
+          break;
+        }
         case "replace-arc-words": {
           // replace-words for a plot Arc's own fields (2026-10-22: "the dead withdraw" for Assimilation's planned outcome).
           // ONLY on his explicit word naming the change: an exact phrase swapped in one text field of one plot Arc, through the
@@ -1102,6 +1226,12 @@ function cmdApply() {
   const DRY = flag("--dry");
   if (!DRY) requireWritable(); else { const v = versionStatus(); if (v.status !== "ok") console.log(`note: version check ${v.status} — a real run would be read-only (${v.reasons.join("; ")})`); }
   const board = abs(spec.board);
+  // The ops file names its board; a `--board` that names another one is refused, never silently overridden either way
+  // (2026-10-22, ^obs-474: a "scratch copy" test wrote the live board because the ops file named it).
+  if (arg("--board")) {
+    const same = (p) => { const x = resolve(abs(p)).replace(/\\/g, "/"); return process.platform === "win32" ? x.toLowerCase() : x; };
+    if (same(arg("--board")) !== same(spec.board)) die(`--board ${rel(abs(arg("--board")))} is not the ops file's board ${rel(board)}: nothing written. For a scratch test, write an ops file whose "board" is the scratch copy`);
+  }
   const { text, doc, roundTrip } = loadBoard(board);
   if (!roundTrip) die(`${rel(board)} does not round-trip through the plugin's serializer (a hand edit, or a file saved by an older version): a write would alter bytes outside the run. Open and save it once in Obsidian, or run \`normalize\` as its own logged run first`);
   const s = bw.settingsOf(doc);

@@ -50,7 +50,12 @@ for (const sc of plan.scenes) {
     const missing = ids.filter((id) => !flat.includes(id)), extra = flat.filter((id) => !ids.includes(id));
     problems.push(`^${sc.id}: beats must cover its ${ids.length} micro-beats once each in order (plan has ${flat.length}; missing ${missing.join(",") || "-"}; extra ${extra.join(",") || "-"})`);
   }
-  ops.push({ op: "regroup-beats", scene: `^${sc.id}`, groups: sc.beats.map((b) => ({ cards: b.cards.map((x) => `^${x}`), type: b.type, title: b.title, summary: b.summary })) });
+  // CRE 2026-10-16 / 2026-10-23: a Beat's position (setup … outcome) is read live from the scene line it is linked to, and
+  // climax / valley / hook are his marks on that line — so a Beat is never given a position type. Any other type a plan
+  // names (one of his own) still goes through.
+  const POS = ["setup/hook", "escalation", "scene-climax", "valley", "outcome/hook", "setup", "outcome", "climax", "hook"];
+  for (const b of sc.beats) if (b.type && POS.includes(String(b.type).toLowerCase())) console.log(`  not typed: Beat "${b.title || ""}" (${b.type} is read from its scene line, never stored)`);
+  ops.push({ op: "regroup-beats", scene: `^${sc.id}`, groups: sc.beats.map((b) => ({ cards: b.cards.map((x) => `^${x}`), type: b.type && !POS.includes(String(b.type).toLowerCase()) ? b.type : undefined, title: b.title, summary: b.summary })) });
   for (const [id, type] of Object.entries(sc.micro || {})) {
     const m = bw.findCard(doc, id);
     if (!m || m.meta.kind !== micro) { problems.push(`no micro-beat ^${id}`); continue; }

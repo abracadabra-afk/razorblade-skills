@@ -49,7 +49,8 @@ PLAN_KEYS = {"cast", "roles", "switches", "plotting", "structure", "external", "
 # Subplots (CRE, 2026-10-21): plot arcs with no model role — "the subplot beats would hit the scenes and lines like the others,
 # so each unit holds the entirety of narrative needs - plus they are linked to larger arcs". Each carries its own `status`
 # (pilot / ruled), so setting them leaves the grid's approval alone: the approval covers the model cells, not the subplots.
-SUBPLOT_STEP_KEYS = {"label", "text", "src", "from", "via", "renamed", "cards", "parts", "seq", "ch", "unplaced", "ruling"}
+SUBPLOT_STEP_KEYS = {"label", "text", "src", "from", "via", "renamed", "cards", "parts", "seq", "ch", "unplaced", "ruling", "quote"}
+# quote (CRE 2026-10-22): his exact words that prove a step whose text is a plain administrative line — as a main cell's quote
 SET_KEYS = {"key", "name", "lead", "antagonist", "era", "switches", "external"}
 K_OPTIONS = {
     "K1": ["Changed", "Not changed"], "K2": ["V1", "V2", "V3"], "K3": ["None", "PH1", "PH2", "PH3 leading", "PH3 trailing"],
@@ -392,7 +393,7 @@ def main():
                 if extra:
                     die(f"subplot {sp['key']} step {i + 1}: unknown keys {sorted(extra)}")
                 if not (st.get("text") or "").strip():
-                    die(f"subplot {sp['key']} step {i + 1}: text is required — his words, from a ruling or his prose")
+                    die(f"subplot {sp['key']} step {i + 1}: text is required — a plain line of what happens, or his words; his exact words go in quote when the text is a summary")
         if "spines" in part:
             if not isinstance(part["spines"], list):
                 die("spines is a list of spine sets")

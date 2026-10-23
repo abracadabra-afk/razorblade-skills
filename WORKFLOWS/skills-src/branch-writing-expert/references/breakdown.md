@@ -16,13 +16,18 @@ export is his working draft).
 ```
 Sequence (the chapter)   title (his folder name, kept) · summary · goal holder · chain ENTRY → BUT/THEREFORE → EXIT
  └ Scene                 title · summary · goal holder · chain: ONE LINE PER BEAT · linked to the chapter's line(s)
-    └ Beat               type (setup/hook · escalation · scene-climax · valley · outcome/hook) · title · summary
+    └ Beat               title · summary (NO type: its badge is read live from its scene line — see below)
        │                 linked to its scene line · NO chain of its own (unless he gives it one)
        └ micro-beat      his words, one beat each, typed (action · reaction · epiphany · interiority · sensory/setting ·
                          transition · dialogue)
 ```
 
-- **Depth (CRE, 2026-10-19): chains stop at the Scene.** A Beat is the contract he fills — type, title, summary, its
+- **No beat types (CRE, 2026-10-16, built 2026-10-23 in plugin 0.70).** A Beat's badge is read live from the scene line it
+  is linked to: its position (setup from ENTRY, escalation from a turn, outcome from EXIT) and any key-beat mark he set on
+  that line (climax, valley, hook, his own). Never give a Beat a position type (setup/hook, escalation, scene-climax, valley,
+  outcome/hook) — `admin_plan.mjs` drops one with a line — and never set a key-beat mark: climax and valley are his calls.
+  The 781 types written on the Interlock board before 0.70 stay stored and no longer draw.
+- **Depth (CRE, 2026-10-19): chains stop at the Scene.** A Beat is the contract he fills — title, summary, its
   micro-beats under it. "Beat to microbeat is a drill too far." A beat he wants choreographed (a fight, each back and forth
   a BUT / THEREFORE) gets a chain from the beat's **+** in the plugin, on his click; only then are its micro-beats placed in
   slots (`place-in-bloc`), and only on his word.
@@ -47,7 +52,7 @@ Sequence (the chapter)   title (his folder name, kept) · summary · goal holder
    ops; `scripts/words.mjs` before and after — they must match.
 3. **Type** every untyped micro-beat (`set-type`; the tools refuse `dialogue` on a card with no opening quote).
 4. **Group and carry up** — one plan per chapter → `scripts/admin_plan.mjs` → one ops file: `regroup-beats` per scene
-   (runs of micro-beats, in order, all covered, each Beat typed, titled, summarized), scene title / summary / goal holder /
+   (runs of micro-beats, in order, all covered, each Beat titled and summarized, never typed), scene title / summary / goal holder /
    chain with `linkBeats: true`, the chapter's summary / goal holder / chain and `links` (scenes → chapter lines). Titles,
    summaries and chain lines are yours, plain, and say what the prose already does — never what it should do.
 5. **Prove it.** Words hash unchanged; the board round-trips; read the chains back through the plugin (`chainLines`,
@@ -79,5 +84,5 @@ and any call he says is his.
 
 `chapter-plan.json` — `{ "sequence": {"id", "summary", "goalHolder", "chain": {"entry", "turns": [{"k", "text",
 "outcome"?}], "exit": {"k", "text", "outcome"?}}, "links": [{"scene", "lines": [a, b]}]}, "scenes": [{"id", "title",
-"summary", "goalHolder", "chain", "linkBeats": true, "beats": [{"type", "title", "summary", "cards": [ids]}],
+"summary", "goalHolder", "chain", "linkBeats": true, "beats": [{"title", "summary", "cards": [ids]}],
 "micro": {"<id>": "<type>"}}] }`

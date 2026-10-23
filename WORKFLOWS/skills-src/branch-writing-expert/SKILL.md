@@ -1,6 +1,6 @@
 ---
 name: branch-writing-expert
-description: 'The single front door to CRE''s Branch Writing boards (his Obsidian plugin): executes what he says at any level on the board he names, never his prose. Use whenever CRE says "work the board", "board: …", "import to the board", "break down chapter N", "tag the board", "interlock the arcs", "build the interlock board", "check the interlock" or "audit the board", hands over story ideas to file or place, asks to change cast, eras, relationships, world entries, tags or links, to put chapters on a board, to plot against his Interlocking Arc Model, to audit a whole board (a read-only report), or to undo this skill''s work. Instructions execute with a change list; the levels above his prose (micro-beat types, beats, summaries, chains, links) it writes directly; story inferences are a ruling list first; every write is logged for undo. Do NOT use to write prose, invent beats or characters, export a board, edit the arc model, audit arcs in a draft (arc-audit), cut DEV/ scenes (shape-the-part), or run unattended.'
+description: 'The single front door to CRE''s Branch Writing boards (his Obsidian plugin): executes what he says at any level on the board he names, never his prose. Use whenever CRE says "work the board", "board: …", "import to the board", "break down chapter N", "tag the board", "interlock the arcs", "build the interlock board", "check the interlock", "audit the board", "trace X", "finish the bible", "walk the world", "stage the beats for X", hands over story ideas to file or place, asks to change cast, eras, relationships, world entries, tags or links, to put chapters on a board, to plot against his Interlocking Arc Model, to audit a board or trace a story thread, to fill a board''s bible from his DEV registry, to brief a finalized scene''s beats, or to undo this skill''s work. Inferences are a ruling list first; every write is logged. Do NOT use to write prose, invent beats or characters, export a board, edit the arc model, audit arcs in a draft (arc-audit), cut DEV/ scenes (shape-the-part), or run unattended.'
 ---
 
 # branch-writing-expert
@@ -21,7 +21,7 @@ Canon doc: `WORKFLOWS/branch-writing-expert.md` (if this file and it disagree, t
   plotting and planning tool: he built it to see the pieces identified, find what is missing, write each piece, and export
   them into a working draft he formats. So, reading his prose, you **write directly** — logged, undoable, no ruling list
   first — the splitting of a paragraph into one micro-beat per beat it fires, each micro-beat's type, the Beats that group
-  them (type, title, summary), and each Scene's and Sequence's title, summary, goal holder and chain, carried up and linked
+  them (title, summary — never a beat type: its badge is read from its scene line, CRE 2026-10-23), and each Scene's and Sequence's title, summary, goal holder and chain, carried up and linked
   down (`references/breakdown.md`). Never change, add, drop or reorder one of his words; paragraphing on export is not
   protected (it is his working draft).
 - **Execute his instructions; propose your story inferences.** "Add Mara to the cast", "file these ideas", "chapter 3 on
@@ -33,6 +33,15 @@ Canon doc: `WORKFLOWS/branch-writing-expert.md` (if this file and it disagree, t
   fixture he named, or from a proposal he approved. No tidying, no completing a fragment, no filling a blank "to be
   helpful". What he leaves open stays an open, labelled blank. Titles, summaries and chain lines on the administrative
   levels are yours, in plain words, and say what the prose already does — never what it should do.
+- **A quote is not a summary** (CRE 2026-10-22: "Sometimes a summary is better than a quote, because their job is to
+  tell me what something is, not to stand as my prose"; "if a quote is key, it should stay as my words, but its context
+  needs inclusion"). Anything on the board that tells him what something is — arc steps and sub-steps (subplots too),
+  world-entry descriptions, the text of a ruling marker — is a plain line drawn from his words: what happens there. A
+  line that is itself the story object (the adage, a vow, the verdict, a refrain) stays his words, in quotation marks,
+  with its context: `The hermit's verdict, the deadline he will defy: "He has lived his final autumn…"`. His exact
+  words are never lost: a step's goes to its plan cell's `quote`, a world entry's to `notes`. `set-step-text` writes it,
+  logged; any quoted span must be his words on the board or in a named source, or the tool refuses. A sub-step is a whole
+  line for its own scene, never a fragment of its parent. Still verbatim: micro-beats, idea cards, plan `quote`s.
 - **Never prose.** No prose-level body, conversation line, subtext, line mark or Complete mark (schema §5n, §5q); a
   conversation merge is his click in the plugin. Chain lines, titles and summaries above the micro-beats are not prose.
 - **Live boards are in bounds, under the log.** You write to the board he names or is in. Every run is recorded first in
@@ -81,7 +90,10 @@ there (always the current copy) and the plugin dev folder is `C:\Users\Chad\dev\
 | `scripts/step_lines.mjs` | arc steps onto chain lines: each step's plan cell → its first cited Beat → that Beat's scene line (`place-on-line` ops); lists the steps whose cells cite no board card, for his ruling, never guessed, and the cells that span scenes, for a split into sub-steps (`split-step`, `references/import.md`) |
 | `scripts/subplot_build.mjs` | a plan's subplot (a plot arc with no model role, `plan_tool.py set` with only `subplots` keeps the grid's approval) → its arc and steps on the board by the same rules: line by citation, sub-steps across scenes, unplaced with a reason, ruling items listed, never placed |
 | `scripts/audit_crawl.mjs` | audit mode, read-only: a whole board (+ its plan) → digests in a scratch folder, in story order — outlines and prose per part, every arc's steps, the markers, plan-vs-board alignment, name silences, repeats — plus what the crawl did not check |
-| `scripts/words.mjs` | the words proof: every micro-beat's words on a board, in order, as one hash and a count — run before and after every breakdown run; they must match |
+| `scripts/words.mjs` | the words proof: every micro-beat's words on a board, in order, as one hash and a count — run before and after every breakdown run; they must match. `--ideas` adds a line for the idea cards' words (world walk) |
+| `scripts/world_walk.mjs` | world walk, read-only: one stage's candidates and evidence (`--stage registry / links / eras / seeds / events / profiles / ideas`) from the board, the project's `DEV/registry/` and `REFERENCE/threads.md`, into a scratch folder, plus what it did not check |
+| `scripts/stage_scene.mjs` | stage the beats, read-only: `gather` (a scene's beats in chain order, each arc step on its beat through `plotLine` / `plotFrom` runs, the step before it on its arc, coming-in beats, world names not linked, tags, intensity, DEV note, threads, traces, choreo) · `fingerprint` · `check` (fresh / stale and what moved) · `verify` (a brief against the facts: sections, every step once, run rows, quotes found) · `stamp-ops` (the staged stamp and the brief link, for `apply`) |
+| `scripts/stage_front.py` | the brief's frontmatter from `facts.json`: `yaml.safe_dump`, parse-gated (DIR-004) |
 | `scripts/plan_tool.py` | plotting mode's plan: `new` · `set --json-file` · `beat` · `walk` · `walked` · `render` · `approve` · `status` |
 | `C:\Users\Chad\dev\branch-writing\tools\build-plan.mjs` / `check-board.mjs` | plotting mode's builder (new board or copy) and check report |
 | `scripts/grade.mjs` | the proof grader ("every word given is on the board, and nothing else") — tests only |
@@ -147,6 +159,9 @@ record the answer in the plan or as the ops he names; never pick for him.
 | "tag the board", or asks for speakers, missed tags, links, intensity, wants, states | Tagging (offers, every one by: ai) | `references/tagging.md` |
 | a build lands with no era, blank roles or no relationships; "set up the bible" | Story-bible setup | `references/bible.md` |
 | "audit the board", or asks what is wrong or weak across the whole book (continuity, beat mapping, alignment, plotting, repetition) | Audit (read-only: crawl, five checks, a ranked report in `SYSTEM/reports/`; never writes the board) | `references/audit.md` |
+| "trace X", "trace the X and the Y", or wants to understand how one character, object, relationship, force or piece of lore runs through the book | Trace (read-only: the project's source map, one reader per source family in parallel, exact quotes with file and line, a report in `SYSTEM/reports/` ending in a subplot step table; the table goes to the board only on his "send it") | `references/trace.md` |
+| "finish the bible", "walk the world", or wants a built board's World tab, links, eras, seed check, events, profiles and idea types filled from his DEV registry and thread list | World walk (eight stages, one approval list each: registry → links → eras → seeds → tags → events → profiles → idea admin) | `references/world-walk.md` |
+| "stage the beats for <scene>", "stage scene X", "brief the beats", "restage <scene>", or wants a finalized scene's map laid out beat by beat before he writes it | Stage the beats (one brief page per scene in `WRITING/BOARD BRIEFS/`: per beat what happens, what it accomplishes, coming in, states, a sourced checklist; steps sorted mechanically, scene ideas onto beats by his ruling; the scene stamped staged with a fingerprint and linked) | `references/stage.md` |
 | anything else about a board | Work the board (this file is enough) | — |
 
 ## Talking to CRE
