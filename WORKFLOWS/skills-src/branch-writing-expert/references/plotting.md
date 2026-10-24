@@ -101,7 +101,10 @@ as the question.
 **5. Placement (optional).** Only onto containers he names: `structure` via `set` (`{"kind": "sequence", "title": "The
 Bridge", "under": null}`, `{"kind": "scene", "title": "The far bank", "under": "The Bridge"}` — a scene names the sequence
 it sits under), then `beat --n … --spine … --at "seq:<title>"` or `--at "scene:<title>"` (the prefix is a reminder; the
-builder matches the title). No default structure; an unplaced step waits in the Characters panel. **Lead exits (plugin
+builder matches the title). No default structure; an unplaced step waits in the Characters panel. **Labeled containers
+(plugin 0.76+):** once he has labeled lines with the model's phases and beats, `board_tool.mjs guideposts <board>` proposes
+each waiting step onto the line labeled for its beat (his lead's mark first, then the book's, then the phase) — a ruling
+list; apply the approved rows' `place-on-line` ops. **Lead exits (plugin
 0.62.2+):** the builder writes a lead's exit onto whatever container holds the exit step, and the plugin reads an exit on
 a Sequence (or Part, Book) at the **last scene inside it**, so the Plot tab shows "exits at …" there. A container with no
 scene under it yet reads "stays to the end" until one is added; the builder prints that as a NOT DONE line, which you pass

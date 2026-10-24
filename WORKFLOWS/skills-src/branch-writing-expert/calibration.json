@@ -1,10 +1,10 @@
 {
   "skill": "branch-writing-expert",
-  "plugin": "0.71.7",
+  "plugin": "0.76.1",
   "schemaPluginVersion": "0.71.5",
   "schemaVersion": 1,
   "schemaSha256": "a5d54b91eef1784f7c7d601ebb92ba9d8410e1d815f52bb006295a7dc8730fd2",
-  "coreSha256": "3896e001e3642ecc04cc57909b9e76db51fa569fe7e7851e980b54ca8383f439",
-  "calibrated": "2026-10-23",
+  "coreSha256": "93cf1dcc8961d7e67199ca3030cdd38cfd5c955a8e7663a7c050cb78b6746563",
+  "calibrated": "2026-10-24",
   "note": "Written by `board_tool.mjs calibrate` after the schema's changes were read. The version check compares the installed plugin and the schema doc with this record at every launch; newer → read, then recalibrate; a format change the skill can't account for → read-only."
 }

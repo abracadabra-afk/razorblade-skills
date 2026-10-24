@@ -133,6 +133,19 @@ so in the proposal ("B17 isn't on a card yet; place the step first, or name the 
 approves a placement but names a different card, that is an instruction: do what he said, once. Ground your reasons in
 the board (`read --full` shows each step's text), never in a memory of it.
 
+**Key-beat labels are guideposts** (plugin 0.74–0.76; CRE ratified 2026-10-24, intent `branch-writing-carried-beats`: "if
+i am building a story structure top down in a branch, all of the containers are set and labeled and then it becomes much
+easier for me and the expert to place beats and sort ideas"). He labels lines with the model's phases and beats (Part:
+Setup → Incident; sequence: 6 Inciting Incident …), the labels carry down as he drills, and a mark may name whose beat it is.
+"Place the waiting steps", "sort the ideas by the labels" or "where do these go" → `board_tool.mjs guideposts <board>`: each
+inbox arc step with a model beat is proposed onto the line labeled for it (this lead's mark, then the book's, then the
+phase; deepest card first) with its path, and ideas that name a story label (or "beat 23") the same way. Show it as one
+ruling list (numbered, a sample reply); apply only the approved rows' ops (`place-on-line`, `place-idea`). A step with no
+labeled place stays unplaced and is listed as such — never guessed. Setting or moving a key beat itself is his (the line's
+⋯); you never write a mark. **Story labels** ("1 · Rituals on the Mountain"): admin, under the 2026-10-19 ruling —
+`set-mark-label` writes only the label, drawn from his words on that line or card, logged and undoable; `label: ""` puts
+the model's name back.
+
 **An idea's words are his; everything around them is admin** (CRE-ruled 2026-10-22: "it is not allowed to change the idea
 itself, but should be able to change tags, remove duplicates, types - anything administrative or design related that
 doesn't impact the noted idea itself"). On a placed or inbox idea you write directly, logged and undoable, with a change list

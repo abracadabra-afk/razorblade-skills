@@ -14,6 +14,7 @@
 //   node board_tool.mjs import  (--source <note.md> | --book <dir>) --into <existing.md> [--source-label <t>] [--dry]
 //                                                                   the same, appended under an existing board's Project (one undoable run)
 //   node board_tool.mjs propose <board.md> [--out <file.json>]       structure proposals for an imported board (ruled, never landed)
+//   node board_tool.mjs guideposts <board.md> [--out <file.json>]    arc steps and ideas proposed onto the lines labeled for their beat (ruled)
 //   node board_tool.mjs suggest-tags <board.md> [--out <file.json>]  char:/place: tag offers from names in bodies (ruled)
 //   node board_tool.mjs log     <board.md>                           the runs in the board's change log
 //   node board_tool.mjs calibrate                                    record the installed plugin + schema as calibrated (after reading what changed)
@@ -861,6 +862,31 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           made.push(`${title(c) || c.meta.kind} ${idOf(c)} linked to ${title(par) || par.meta.kind}'s ${a === b ? "line " + (a + 1) : "lines " + (a + 1) + "–" + (b + 1)}`);
           break;
         }
+        case "set-mark-label": {
+          // 0.76 (CRE, 2026-10-24, ruling 10): a key beat placed on a line, renamed for this story ("Rituals on the Mountain")
+          // while it keeps its beat. Administrative under the 2026-10-19 ruling (board text that tells him what something is),
+          // so it is written directly, logged and undoable — but drawn from his words on that line or its card: the label must
+          // share a word with the line's text, the card's title, summary or full summary. `label: ""` puts the model's name back.
+          // Writes plotMarks[line].label only, never the beat itself (which stays his).
+          const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
+          if (!c) throw new Error(`no card ${op.card}`);
+          const lines = bw.chainLines(doc, c).filter((l) => l.id === "entry" || l.id === "exit" || /^t/.test(l.id));
+          const l = lines[Number(op.line)];
+          if (!l) throw new Error(`line ${op.line} is not in ${idOf(c)}'s chain of ${lines.length}`);
+          const mk = bw.cardMarks(c);
+          if (!bw.beatMark(mk, l.id)) throw new Error(`line ${Number(op.line) + 1} of ${idOf(c)} carries no key beat to label`);
+          if (op.was != null && String(op.was) !== bw.markLabel(mk, l.id)) throw new Error(`${idOf(c)} line ${op.line}: was ≠ its current label (${JSON.stringify(bw.markLabel(mk, l.id))}); read the board again`);
+          const label = String(op.label == null ? "" : op.label).replace(/\s+/g, " ").trim();
+          if (label) {
+            const f = c.meta.fields || {};
+            const src = [l.text, title(c), f.summary, f.synopsis].filter((x) => typeof x === "string").join(" ").toLowerCase().replace(/[’']/g, "'");
+            const words = (label.toLowerCase().replace(/[’']/g, "'").match(/[a-z']{4,}/g) || []).filter((w) => !["that", "this", "with", "from", "into", "over", "they", "their", "them", "then", "what", "when"].includes(w));
+            if (!words.length || !words.some((w) => src.includes(w))) throw new Error(`label "${label}" shares no word with ${idOf(c)}'s line, title or summary — a story label is drawn from CRE's words there`);
+          }
+          bw.setMarkLabel(doc, c.id, l.id, label);
+          made.push(`story label on line ${Number(op.line) + 1} of ${title(c) || c.meta.kind} ${idOf(c)}: ${label ? JSON.stringify(label) : "(back to the model's name)"}`);
+          break;
+        }
         case "set-line": {
           // One chain line's words, in place (its id, flavor, ending and every link to it stay): `line` by position, 0 = ENTRY.
           const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
@@ -1658,6 +1684,50 @@ function cmdPropose() {
   for (const c of doc.cards) if (isUnitKind(s, c.meta.kind) && !(c.meta.fields && c.meta.fields.pov)) P.pov.push({ card: `^${c.id}`, title: title(c), reason: "POV is CRE's call; set-field pov once he names it", op: { op: "set-field", card: `^${c.id}`, field: "pov", value: "" } });
   const o = arg("--out"); if (o) { writeFileSync(abs(o), JSON.stringify(P, null, 2), "utf8"); console.log(`wrote ${rel(o)}: ${P.scenes.length} scene(s), ${P.chapters.length} chapter(s), ${P.dialogue.length} dialogue, ${P.cast.length} cast, ${P.pov.length} POV slots open`); } else out(P);
 }
+/**
+ * 0.76 (CRE, 2026-10-24, intent branch-writing-carried-beats, ruling 6): the key-beat labels as guideposts. Every arc step
+ * still in the inbox that has a model beat is matched to the line labeled for that beat — this lead's mark first, then the
+ * book's, then the phase that holds it; deepest card first — and proposed with its full path and a ready op. Ideas whose words
+ * name a story label on the board (or "beat 23" / "B23") are proposed the same way. A ruling list: nothing here is written.
+ * A step with no labeled place stays unplaced, never guessed.
+ */
+function cmdGuideposts() {
+  const board = abs(positional[1]); if (!positional[1]) die("guideposts <board.md> [--out <file.json>]");
+  const { doc } = loadBoard(board);
+  const ix = bw.arcIndex(doc);
+  const marks = bw.guideMarks(doc);
+  const lineAt = (cardId, lineId) => { const c = bw.findCard(doc, cardId); const ls = c ? bw.chainLines(doc, c).filter((l) => l.id === "entry" || l.id === "exit" || /^t/.test(l.id)) : []; return ls.findIndex((l) => l.id === lineId); };
+  const where = (p) => ({ card: `^${p.card}`, path: p.path, line: p.lineLabel, mark: `${p.target && /^b\d/.test(p.target) ? p.target.slice(1) + " " : ""}${p.label || bw.markShow(bw.settingsOf(doc), p.value).text}`, basis: p.basis === "beat" ? (p.whose ? "this lead's mark for this beat" : "the book's mark for this beat") : (p.whose ? "this lead's mark for its phase" : "the book's mark for its phase") });
+  const G = { board: rel(board), note: "Guidepost proposals (a ruling list): each step or idea is proposed onto the line labeled for its beat. Nothing is placed until CRE approves; an approved placement becomes the op shown.", labeledLines: marks.length, steps: [], ideas: [], unmatched: [] };
+  for (const c of doc.cards) {
+    if (c.badJson || c.meta.kind !== "arcbeat" || !bw.isUnplaced(c)) continue;
+    const beat = bw.stepModelBeat(ix, c);
+    if (!beat) continue;
+    const own = bw.stepOwner(doc, c);
+    const castId = own.cast ? own.cast.id : "";
+    const id = bw.stepIdentity(ix, c);
+    const row = { step: `^${c.id}`, says: `${id.code}${id.words || id.label ? " · " + (id.words || id.label) : ""}`, who: own.cast ? bw.castName(own.cast) : "plot", beat };
+    const places = bw.guidePlaces(doc, beat, castId, marks);
+    if (!places.length) { G.unmatched.push({ ...row, why: `no line is labeled ${beat} or its phase${castId ? " (for this lead or the book)" : ""} yet` }); continue; }
+    const p = places[0];
+    G.steps.push({ ...row, to: where(p), also: places.slice(1, 4).map(where), op: { op: "place-on-line", step: `^${c.id}`, on: `^${p.card}`, line: lineAt(p.card, p.line) } });
+  }
+  // Ideas: his words that name a story label on the board, or a beat by number.
+  const labeled = marks.filter((g) => g.label && g.label.split(/\s+/).length >= 2);
+  for (const c of doc.cards) {
+    if (c.badJson || !bw.isUnplaced(c) || c.meta.kind === "arcbeat") continue;
+    const text = c.body.replace(/\s+/g, " ").trim();
+    if (!text) continue;
+    const low = text.toLowerCase();
+    const byLabel = labeled.find((g) => low.includes(g.label.toLowerCase()));
+    const num = /\b(?:b|beat\s+)(\d{1,2})\b/i.exec(text);
+    const p = byLabel ? { ...byLabel, basis: "beat", whose: false } : num ? bw.guidePlaces(doc, Number(num[1]), "", marks)[0] : null;
+    if (!p) continue;
+    G.ideas.push({ idea: `^${c.id}`, says: text.slice(0, 80), why: byLabel ? `names the story label "${byLabel.label}"` : `names beat ${num[1]}`, to: where(p), op: { op: "place-idea", idea: `^${c.id}`, on: `^${p.card}` } });
+  }
+  const o = arg("--out");
+  if (o) { writeFileSync(abs(o), JSON.stringify(G, null, 2), "utf8"); console.log(`wrote ${rel(o)}: ${G.steps.length} step(s) and ${G.ideas.length} idea(s) proposed, ${G.unmatched.length} step(s) with no labeled place (${G.labeledLines} labeled lines)`); } else out(G);
+}
 function cmdSuggestTags() {
   const board = abs(positional[1]); if (!positional[1]) die("suggest-tags <board.md>");
   const { doc } = loadBoard(board); const s = bw.settingsOf(doc);
@@ -1716,6 +1786,7 @@ switch (cmd) {
   case "redo": cmdUndoRedo(true); break;
   case "import": cmdImport(); break;
   case "propose": cmdPropose(); break;
+  case "guideposts": cmdGuideposts(); break;
   case "suggest-tags": cmdSuggestTags(); break;
   case "log": cmdLog(); break;
   case "calibrate": cmdCalibrate(); break;
