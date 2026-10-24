@@ -14,7 +14,8 @@ export is his working draft).
 ## What a chapter ends up as
 
 ```
-Sequence (the chapter)   title (his folder name, kept) · summary · goal holder · chain ENTRY → BUT/THEREFORE → EXIT
+Sequence (the chapter)   title (his folder name, kept) · summary · chain ENTRY → BUT/THEREFORE → EXIT
+                         (goal holders: read live from its scenes, never written — CRE 2026-10-23, plugin 0.71.2)
  └ Scene                 title · summary · goal holder · chain: ONE LINE PER BEAT · linked to the chapter's line(s)
     └ Beat               title · summary (NO type: its badge is read live from its scene line — see below)
        │                 linked to its scene line · NO chain of its own (unless he gives it one)
@@ -31,6 +32,12 @@ Sequence (the chapter)   title (his folder name, kept) · summary · goal holder
   micro-beats under it. "Beat to microbeat is a drill too far." A beat he wants choreographed (a fight, each back and forth
   a BUT / THEREFORE) gets a chain from the beat's **+** in the plugin, on his click; only then are its micro-beats placed in
   slots (`place-in-bloc`), and only on his word.
+- **Above the chapter (plugin 0.71, CRE 2026-10-23: "go with your recs"):** a Part, a Book and the Project card (the series)
+  carry chains the same way, and their lines drill the level below (series → Book or Part, Book → Part, Part → Sequence).
+  On an existing book the expert drafts a Part's chain from its chapters — one line per chapter (ENTRY = the first, EXIT =
+  the last, BUT / THEREFORE between, by what the chapters do), plain words drawn from the chapters' summaries — and links each
+  chapter to its line (`link-from`). It is administrative, logged and undoable; he edits it. A new book is plotted top-down
+  by him. Pilot one Part and let him read it before the rest.
 - **The chapter's chain → its scenes:** each present-day scene carries a run of the chapter's lines (`link-from`, e.g.
   ENTRY + BUT → scene 2, THEREFORE + EXIT → scene 3). One line feeds one scene, so a scene's ending lives on the chapter's
   last line of its run — write it there.
@@ -50,10 +57,13 @@ Sequence (the chapter)   title (his folder name, kept) · summary · goal holder
    cried." sensory/setting → "Cried and cried … into the fire." action → "It screamed there …" reaction). Sentence breaks
    only; a quote with its own tag ("…," she said and stood up.) stays one dialogue piece. Spec → `scripts/split_plan.mjs` →
    ops; `scripts/words.mjs` before and after — they must match.
-3. **Type** every untyped micro-beat (`set-type`; the tools refuse `dialogue` on a card with no opening quote).
+3. **Type** every untyped micro-beat (`set-type`; the tools refuse `dialogue` on a card with no quote marks at all; since plugin 0.71.3 a
+   line carrying its own marks anywhere exports as written).
 4. **Group and carry up** — one plan per chapter → `scripts/admin_plan.mjs` → one ops file: `regroup-beats` per scene
    (runs of micro-beats, in order, all covered, each Beat titled and summarized, never typed), scene title / summary / goal holder /
-   chain with `linkBeats: true`, the chapter's summary / goal holder / chain and `links` (scenes → chapter lines). Titles,
+   chain with `linkBeats: true`, the chapter's summary / chain and `links` (scenes → chapter lines) — never a chapter goal
+   holder (several goal holders above the scene are rolled up live from the scenes; his own list, `goal holders`, is his
+   alone and the tool refuses it). Titles,
    summaries and chain lines are yours, plain, and say what the prose already does — never what it should do.
 5. **Prove it.** Words hash unchanged; the board round-trips; read the chains back through the plugin (`chainLines`,
    `pointRun`) and say so in one line. On a new op or a big run: a scratch copy first (`--log-dir` in the scratchpad), with

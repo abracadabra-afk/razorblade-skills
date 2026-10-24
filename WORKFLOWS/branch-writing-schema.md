@@ -3,7 +3,7 @@ type: schema
 title: Branch Writing card marker schema
 schema_version: 1
 plugin: branch-writing
-plugin_version: 0.70.1
+plugin_version: 0.71.5
 created: '2026-10-07'
 last_updated: '2026-10-23'
 ---
@@ -509,6 +509,8 @@ The Statement Plotting Method v12 through CRE's ratified lean profile ([[WORKFLO
   - `settings.plotting.keyBeats: [names]`: CRE's own key-beat entries, written only from **New key beat…** in a line's ⋯ menu (added and set on that line in one undo step), or since 0.70 from Project settings → Key beats.
   - **Key beats list (plugin 0.70, CRE 2026-10-23):** `settings.plotting.keyBeatOrder: [names]` (the list's order: the positions `setup`, `escalation`, `outcome`, the scene marks, his own; a line's ⋯ offers the marks in it) and `settings.plotting.keyBeatColors: {"<name>": "<swatch id>"}` (the fill of a badge, a ★ chip and a footer run). Both written only from Project settings → Key beats, and only when the list changed. Built-in names are fixed; renaming or removing one of his own rewrites (or takes off) `plotMarks[line].beat` on every card that carries it, in the same undo step as the settings.
   - **A Beat's badge (0.70):** read live, never stored: `pointRun` of the Beat gives its scene line(s); the first line's kind gives the position (ENTRY → setup, a turn → escalation, EXIT → outcome) and the lines' `plotMarks[…].beat` give its marks. On a plotting board a Beat's stored `type` in the retired position list (`setup/hook`, `escalation`, `scene-climax`, `valley`, `outcome/hook`) no longer draws (kept, as ruled 2026-10-16); the expert no longer writes one.
+  - **Chains above the Sequence (0.71, CRE 2026-10-23):** a Part, a Book (any level between the Project card and the Sequence) and the Project card standing for the series carry the same chain keys as a sequence (`plotChain`, `fields["story from"]` / `["story to"]`, `plotMarks`, `plotPins`), and their lines drill the level directly below (`plotFrom` on the child, as for a scene). Their marks offer the story-beat list; their lines take arc steps and ideas; a card drawn from one of their lines shows its "from" lines and carries its marks, read live. Nothing new is stored: these are the existing keys on more kinds of card. The plotting model keeps them in `frames`, apart from `byId` and the statement nodes (`books`).
+  - **Goal holders above the scene (0.71.2, CRE 2026-10-23):** a Sequence, Part, Book or the series shows the goal holders of every scene-level card beneath it, read live (never stored), counted by the name as written. `fields["goal holders"]: "A, B"` is CRE's own list there (written only from his click on the line; the expert never writes it). A sequence's stored single `goal holder` is kept but no longer read as its goal holder.
   - The beat-position types stay retired from the picker (release 1); a stored Beat `type` still reads.
 - **AI writers (0.46):** may read `plotMarks`, an Arc's `chain.marks` and `keyBeats`; never set, suggest, move or clear a mark (lean profile §m: marks are CRE's).
 - **Card types onto the chain, release 3 (0.47, lean profile §m3): shape views.** Nothing is stored, added, renamed or deleted. The views are derived from the keys above (§6 "Shape views").
@@ -541,6 +543,8 @@ The Statement Plotting Method v12 through CRE's ratified lean profile ([[WORKFLO
   - **A category (0.56, derived):** an arc step with at least one sub-step (`parentStep` naming it). One with none is a one-off, placed once.
   - `plotNeeds: ["<step id>", …]` (0.56) on a typed sequence or scene-level unit: the categories that are also needs on this card beyond the card each is placed on. The step card is never copied or moved by it. Added by dropping a category that is placed elsewhere from the Characters panel or the Spine onto the card (off its lines); taken off by the row's **Not needed here**; moved with the row's drag to another card. The last one off drops the key. An entry naming a card that is gone, isn't an arc step or has no sub-steps is not drawn and stays in the file.
   - **The checklist (0.56, derived):** a category's direct sub-steps under its row: ✓ with where on a beat card or a line of a scene or beat chain; "→ where" placed as a need; "○ open" when unplaced. Never a count or a warning.
+  - **On the series card (0.71.4, CRE 2026-10-23):** the Project card's Needs are the steps parked there, waiting. A category whose every direct sub-step is placed (none "○ open") is not waiting and is not listed there; it returns as soon as one of its sub-steps goes back to open. Every other card lists its categories as before. Derived; nothing stored.
+  - **In the Spine view (0.71.5, CRE 2026-10-23):** the same rule for the unplaced column and each character's placed/total count — a parked category whose sub-steps are all settled (placed, or categories settled in turn) is counted as placed and not shown as waiting. Derived; nothing stored.
 - **AI writers (0.55–0.56):** may read needs, `plotNeeds` and checklists to describe a plan; never place, add, move or take off a need, an appearance or a way.
 - **AI writers (under §4):** may read every key here. May set, on CRE's instruction or from his plan, the plotting switch, the roster, a lead's exit (**on a unit only** — the plugin honours exits on Scene-level cards, not sequences; `plottab.ts:241`, `flows.ts:84`), `plotArcs` goal holders and his words. Never write a chain line, a mark, a statement, the Complete mark or an outcome. The statements are the author's words in v12's templates. Nothing here is generated.
 
@@ -690,6 +694,7 @@ Export covers the main line only, with no markers, no block IDs, no `%%` comment
 - Each structural level renders as set in `export`. A chapter heading (`export.chapterHeading`) starts wherever a card's `fields.chapter` value changes.
 - Dialogue cards hold only the line. Export adds `dialogue.quotes`-style quote marks, unless the line already opens with a quote. It adds the tag from `dialogue.tag` per `dialogue.mode`, and joins them with a comma: a final `.` becomes `,`; `?`, `!`, `—` and `…` are kept.
 - A quoted line with text after its closing quote is treated as CRE's own tag and exported as written.
+- **A line that carries its own quotation marks anywhere (0.71.3)** — `"` `“` `”` `«` `»`, or `‘` at a word's start — is exported exactly as written, with no quotes and no tag added: an italic memory line (`*"…"*`), a reversed opening mark (`”…`), a single opening mark (`‘…`), a missing opening mark (`Ready,” he said.`), narration before the quote. Apostrophes (`'` `’`) alone do not count, so `I won't go.` is still quoted. No stored-format change.
 - A conversation's action line (0.63, `convo.act`) is exported exactly as written, like the action card it was, and ends the exchange for the tag rule.
 - Nothing else in a body is changed.
 

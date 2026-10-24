@@ -182,8 +182,9 @@ are his. When a step ends on his taste (is this placement right, is the structur
   hash and count must match. A run whose words changed is undone at once and reported.
 - **A scratch copy first.** A new op, or a run over many cards: apply it to a copy with `--log-dir` in the scratchpad,
   check words, export and `undo` byte-identity, then the board.
-- **The export is checked, not assumed.** Typing a card `dialogue` that doesn't open with a quote makes the export add quote
-  marks — the tools refuse it. A board of imported prose should have dialogue tags `never` (`set-tag-mode`, on his word).
+- **The export is checked, not assumed.** Typing a card `dialogue` that carries no quote marks at all makes the export add
+  them — the tools refuse it. Since plugin 0.71.3 a line with its own marks anywhere (`*"…"*`, a reversed `”`, narration
+  before the quote) exports as written and may be typed dialogue. A board of imported prose should have dialogue tags `never` (`set-tag-mode`, on his word).
 - **When the tool can't do what he named, say so and extend the tool** — never reshape his request around its limits (it
   once built a second board because `import` could only make new ones; `import --into` exists since).
 - **A change he dictates to his own words** ("change 'the hunter' to the woodswoman") goes through `replace-words` with his words as `ruled`: list every match in context first, leave the ones that don't mean what he means ("Better hunter than cook."), and prove afterwards that exactly those words changed. Never edit a chain with `set-chain` once things are linked to it — `set-line`.

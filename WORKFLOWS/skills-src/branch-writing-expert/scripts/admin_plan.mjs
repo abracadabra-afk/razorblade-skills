@@ -61,9 +61,10 @@ for (const sc of plan.scenes) {
     if (!m || m.meta.kind !== micro) { problems.push(`no micro-beat ^${id}`); continue; }
     if (m.meta.type) continue; // a type already there stays (his, or ruled earlier)
     if (!btypes.includes(type)) { problems.push(`^${id}: "${type}" is not in the board's beat types`); continue; }
-    // A card that doesn't open with a quotation mark (an italic *“…”* memory, a stray closing quote) is left untyped rather
-    // than typed dialogue: the export would wrap it in quote marks. Said in one line, never an error.
-    if (type === "dialogue" && !/^\s*["“«]/.test(m.body)) { console.log(`  left untyped: ^${id} (dialogue, but it doesn't open with a quotation mark)`); continue; }
+    // A card that carries no quotation marks at all is left untyped rather than typed dialogue: the export would wrap it in
+    // quote marks. Since plugin 0.71.3 a line with its own marks anywhere (an italic *“…”* memory, a reversed ”) goes out as
+    // written, so it can be typed dialogue. Said in one line, never an error.
+    if (type === "dialogue" && !/["“”«»]|(^|[\s*_(])‘/.test(m.body)) { console.log(`  left untyped: ^${id} (dialogue, but it carries no quotation marks)`); continue; }
     ops.push({ op: "set-type", card: `^${id}`, type });
   }
   if (sc.title) ops.push({ op: "set-title", card: `^${sc.id}`, text: sc.title });
@@ -81,7 +82,9 @@ if (plan.sequence) {
   const q = plan.sequence;
   if (!seq) problems.push(`no sequence ^${q.id}`);
   if (q.summary) ops.push({ op: "set-summary", card: `^${q.id}`, text: q.summary });
-  if (q.goalHolder) ops.push({ op: "set-field", card: `^${q.id}`, field: "goal holder", value: q.goalHolder });
+  // CRE 2026-10-23 (plugin 0.71.2): from the sequence up a card's goal holders are rolled up live from its scenes, or are his
+  // own list — so a plan's sequence goal holder is not written.
+  if (q.goalHolder) console.log(`  not written: the sequence's goal holder "${q.goalHolder}" (read live from its scenes)`);
   if (q.chain) ops.push({ op: "set-chain", card: `^${q.id}`, ...q.chain });
   // A scene linked to the run of the chapter's chain lines it carries; a flashback interlude usually stands beside the chain.
   for (const l of q.links || []) links.push({ op: "link-from", card: `^${l.scene}`, parent: `^${q.id}`, lines: l.lines });

@@ -204,7 +204,7 @@ const isProseKind = (s, k) => k === s.levels[s.levels.length - 1].key || (s.cust
 const sceneKey = (s) => (s.intensity && s.intensity.levels && s.intensity.levels.inner) || "scene";
 const isUnitKind = (s, k) => k === sceneKey(s) || (s.customTypes || []).some((c) => c.key === k && c.like === sceneKey(s));
 // Fields the author owns outright (statements, chain, outcomes) or that arrive only as offers (summary, intensity).
-const NEVER_FIELDS = new Set(["summary", "story from", "story to", "outcome", "outcome detail", "decision", "goal", "sets goal", "reacts to", "reacts to (short)", "stakes", "opposition", "conflict", "what changed", "intensity start", "intensity end", "physical start", "physical end"]);
+const NEVER_FIELDS = new Set(["goal holders", "summary", "story from", "story to", "outcome", "outcome detail", "decision", "goal", "sets goal", "reacts to", "reacts to (short)", "stakes", "opposition", "conflict", "what changed", "intensity start", "intensity end", "physical start", "physical end"]);
 const NEVER_KEYS = new Set(["plotChain", "plotMarks", "plotComplete", "plotFrom", "plotBloc", "plotLine", "plotPins", "plotUntag", "plotNeeds", "plotTurnedAt", "convo", "vis", "visUnit"]);
 
 /** A card by `^id` / `title:…`, or "beat:<scene ref>:<n>" — the scene's n-th Beat (0-based). */
@@ -401,6 +401,23 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           const was = ev.era;
           if (!bw.pinEvent(doc, ev.id, c)) throw new Error(`${bw.eventLabel(doc, ev)} could not be pinned`);
           made.push(`event ${bw.eventLabel(doc, ev)} pinned on ${title(c) || c.meta.kind} ${idOf(c)}${cardEra !== was ? ` (era ${bw.eraById(doc, was)?.name || was} → ${bw.eraById(doc, cardEra)?.name})` : ""}`);
+          break;
+        }
+        case "set-parents": {
+          // 2026-10-23, on his ruling only: the parents on an existing `born` event (schema §5e), through the plugin's own
+          // updateEvent. Parents make the family links (parent/child, siblings, half-siblings) the board derives. Who a
+          // character's parents are is a story call; `parents: []` clears them.
+          const evs = bw.eventsOf(doc);
+          const ref = String(op.event || "").trim();
+          let ev = evs.find((x) => x.id === ref);
+          if (!ev) { const hits = evs.filter((x) => norm(bw.eventLabel(doc, x)) === norm(ref) || (x.name && norm(x.name) === norm(ref))); if (hits.length > 1) throw new Error(`"${ref}" names ${hits.length} events; give the id (evt-…)`); ev = hits[0]; }
+          if (!ev) throw new Error(`no event "${ref}"`);
+          if (ev.type !== "born") throw new Error(`${bw.eventLabel(doc, ev)} is a "${ev.type}" event; parents go only on a born event`);
+          const ps = (op.parents || []).map((r) => { const x = castRef(doc, r); if (!x) throw new Error(`parent "${r}" is not in the cast`); return x; });
+          if (ps.length > 2) throw new Error("a birth names at most two parents");
+          if (ps.some((x) => (ev.who || []).includes(x.id))) throw new Error("a character can't be their own parent");
+          bw.updateEvent(doc, ev.id, { parents: ps.length ? ps.map((x) => x.id) : undefined });
+          made.push(`parents of ${bw.eventLabel(doc, ev)}: ${ps.length ? ps.map((x) => bw.castName ? bw.castName(x) : title(x)).join(" + ") : "cleared"}`);
           break;
         }
         case "unpin-event": {
@@ -742,13 +759,13 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           const btypes = s.beatTypes || [];
           for (const pc of pieces) {
             if (pc.type && !btypes.includes(pc.type)) throw new Error(`"${pc.type}" is not in the board's beat types`);
-            if (pc.type === "dialogue" && !/^\s*["“«]/.test(pc.text)) throw new Error(`dialogue type on a piece that doesn't open with a quote: ${JSON.stringify(pc.text.slice(0, 40))}`);
+            if (pc.type === "dialogue" && !/["“”«»]|(^|[\s*_(])‘/.test(pc.text)) throw new Error(`dialogue type on a piece that carries no quote marks:${JSON.stringify(pc.text.slice(0, 40))}`);
           }
           const w = (x) => (wrap ? wrap + x + wrap : x);
           const keep = c.meta.type;
           bw.setBody(c, w(pieces[0].text));
           if (pieces[0].type) bw.setMeta(c, "type", pieces[0].type);
-          else if (keep === "dialogue" && !/^\s*["“«]/.test(pieces[0].text)) bw.setMeta(c, "type", undefined);
+          else if (keep === "dialogue" && !/["“”«»]|(^|[\s*_(])‘/.test(pieces[0].text)) bw.setMeta(c, "type", undefined);
           if (c.meta.speaker && c.meta.type !== "dialogue") bw.setMeta(c, "speaker", undefined);
           let prev = c;
           for (const pc of pieces.slice(1)) {
@@ -860,7 +877,8 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           // ENTRY → BUT / THEREFORE turns → EXIT, replacing the card's turns; outcomes are the E3 labels.
           const c = findCardRef(doc, op.card) || bw.findCard(doc, String(op.card || "").replace(/^\^/, ""));
           if (!c) throw new Error(`no card ${op.card}`);
-          if (isProseKind(s, c.meta.kind) || ["project", "cast", "world", "idea", "arcbeat"].includes(c.meta.kind)) throw new Error(`${idOf(c)} is not a beat, scene or sequence`);
+          // 0.71: a Part, a Book and the Project card (the series) carry chains too.
+          if (isProseKind(s, c.meta.kind) || ["cast", "world", "idea", "arcbeat"].includes(c.meta.kind)) throw new Error(`${idOf(c)} is not a chain card (series, book, part, sequence, scene or beat)`);
           const OUT = ["Success", "Failure", "False Victory", "False Defeat", "Unresolved", "Disruption"];
           const chk = (o) => { if (o && !OUT.includes(o)) throw new Error(`outcome "${o}" is not one of ${OUT.join(", ")}`); };
           const K = (k) => (k === "but" || k === "therefore" ? k : "");
@@ -1003,7 +1021,11 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           // its text; undo puts it back. A card with anything under it, or one another card points at, is refused.
           const c = findCardRef(doc, op.card);
           if (!c) throw new Error(`no card ${op.card}`);
-          if (!isContainerKind(s, c.meta.kind) || ["part", "sequence"].includes(c.meta.kind) && c.children.length) throw new Error(`${idOf(c)} is not an empty container`);
+          // 2026-10-23, on his word ("remove the empty micro-beat under All her fault"): a micro-beat qualifies only when it holds
+          // nothing at all — no words, type, speaker, tags, links or fields (an accidental Write click). Any word on it refuses.
+          const emptyMicro = c.meta.kind === "micro" && !String(c.body || "").trim() && !c.meta.type && !c.meta.speaker && !(c.meta.tags || []).length && !bw.linksOf(c).length && !Object.keys(c.meta.fields || {}).length;
+          if (c.meta.kind === "micro" && !emptyMicro) throw new Error(`${idOf(c)} is a micro-beat with something on it (words, a type, tags, links or fields); his card, left alone`);
+          if (!emptyMicro && (!isContainerKind(s, c.meta.kind) || ["part", "sequence"].includes(c.meta.kind) && c.children.length)) throw new Error(`${idOf(c)} is not an empty container`);
           if (c.children.length) throw new Error(`${idOf(c)} has ${c.children.length} card(s) under it; left alone`);
           const pointing = doc.cards.filter((k) => k !== c && (String(k.meta.plotFrom || "").startsWith(c.id + ":") || bw.linksOf(k).some((l) => String(l.to).includes(c.id))));
           if (pointing.length) throw new Error(`${idOf(c)} is linked from ${pointing.map(idOf).join(", ")}; left alone`);
@@ -1114,6 +1136,16 @@ function applyOps(doc, s, ops, made, skipped, ctx) {
           st.dialogue = { ...(st.dialogue || {}), mode: op.mode };
           bw.setMeta(pc, "settings", st);
           made.push(`dialogue tags "${was}" → "${op.mode}"`);
+          break;
+        }
+        case "add-book-level": {
+          // 0.71 (CRE 2026-10-23, "isn't the chain series -> books -> parts" … "yes"): the plugin's own "Add Book level…" —
+          // every story card under the Project card moves into one new Book card, in order; text and export unchanged. Once per
+          // board, on his word only. `title` names the Book (default "Book 1").
+          const b = bw.addBookLevel(doc);
+          if (!b) throw new Error("the board already has a Book level (or no Project card)");
+          if (op.title) bw.setBody(b, String(op.title).trim());
+          made.push(`Book level added: "${(b.body.split(String.fromCharCode(10))[0] || "").trim()}" ${idOf(b)} holds the story`);
           break;
         }
         case "set-plotting": {

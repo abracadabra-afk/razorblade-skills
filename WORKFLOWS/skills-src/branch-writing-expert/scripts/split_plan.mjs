@@ -33,7 +33,7 @@ for (const [id, parts] of Object.entries(spec)) {
   const pieces = parts.map(([type], i) => ({ type, text: inner.slice(starts[i], i + 1 < starts.length ? starts[i + 1] : inner.length).trim() }));
   // A piece marked dialogue that doesn't open with a quotation mark (a stray closing quote, an italic quote) is left untyped:
   // the export would wrap it in quote marks. Said in one line.
-  for (const pc of pieces) if (pc.type === "dialogue" && !/^\s*["“«]/.test(pc.text)) { console.log(`  left untyped: a piece of ^${id} ("${pc.text.slice(0, 30)}…")`); pc.type = ""; }
+  for (const pc of pieces) if (pc.type === "dialogue" && !/["“”«»]|(^|[\s*_(])‘/.test(pc.text)) { console.log(`  left untyped: a piece of ^${id} ("${pc.text.slice(0, 30)}…")`); pc.type = ""; }
   ops.push({ op: "split-micro", card: `^${id}`, pieces });
 }
 if (bad.length) { console.error("REFUSED:\n  " + bad.join("\n  ")); process.exit(2); }
